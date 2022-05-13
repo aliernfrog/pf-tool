@@ -3,5 +3,5 @@
     <item android:drawable="@color/black"/>
     <item
         android:gravity="center"
-        android:drawable="@mipmap/ic_launcher_round"/>
+        android:drawable="@mipmap/ic_launcher"/>
 </layer-list>
