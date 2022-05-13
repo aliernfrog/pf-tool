@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PF Tool</string>
+    <string name="manageMaps">Manage maps</string>
+    <string name="manageMapsDescription">Import or export Polyfield maps</string>
+    <string name="options">Options</string>
+    <string name="optionsDescription">Manage PF Tool options</string>
 </resources>
