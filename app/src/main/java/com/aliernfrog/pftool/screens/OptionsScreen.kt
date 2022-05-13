@@ -8,7 +8,7 @@ import com.aliernfrog.pftool.composables.BaseScaffold
 
 @Composable
 fun OptionsScreen() {
-    BaseScaffold(title = LocalContext.current.getString(R.string.options)) {
+    BaseScaffold(title = LocalContext.current.getString(R.string.options), showBackButton = true) {
         Text(text = "Options will be available here")
     }
 }
