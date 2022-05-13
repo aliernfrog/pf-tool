@@ -20,12 +20,9 @@ fun BaseScaffold(title: String, content: @Composable (ColumnScope.() -> Unit)) {
                 content = { Text(text = title, color = MaterialTheme.colors.onSecondary) })
         },
         content = {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .verticalScroll(rememberScrollState()),
-                content = content)
+            Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                Column(Modifier.padding(horizontal = 24.dp), content = content)
+            }
         }
     )
 }
