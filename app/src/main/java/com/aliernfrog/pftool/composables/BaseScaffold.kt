@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BaseScaffold(title: String, content: @Composable() (ColumnScope.() -> Unit)) {
+fun BaseScaffold(title: String, content: @Composable (ColumnScope.() -> Unit)) {
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         topBar = {
