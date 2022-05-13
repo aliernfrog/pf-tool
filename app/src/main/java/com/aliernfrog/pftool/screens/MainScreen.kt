@@ -5,13 +5,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.composables.BaseScaffold
 import com.aliernfrog.pftool.composables.MainButton
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
     BaseScaffold(title = LocalContext.current.getString(R.string.app_name), content = {
         val context = LocalContext.current
         MainButton(
@@ -30,7 +31,7 @@ fun MainScreen() {
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = MaterialTheme.colors.onSecondary,
             onClick = {
-                //TODO
+                navController.navigate("options")
             })
     })
 }
