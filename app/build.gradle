@@ -6,6 +6,17 @@ plugins {
 android {
     compileSdk 32
 
+    signingConfigs {
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            keyAlias properties.getProperty('keyAlias')
+            keyPassword properties.getProperty('keyPassword')
+            storeFile file(properties.getProperty('storeFile'))
+            storePassword properties.getProperty('storePassword')
+        }
+    }
+
     defaultConfig {
         applicationId "com.aliernfrog.pftool"
         minSdk 23
@@ -19,7 +30,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            versionNameSuffix '-release'
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
