@@ -3,5 +3,5 @@
     <item android:drawable="@color/black"/>
     <item
         android:gravity="center"
-        android:drawable="@mipmap/ic_launcher"/>
+        android:drawable="@drawable/pftool120"/>
 </layer-list>
