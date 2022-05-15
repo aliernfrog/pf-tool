@@ -17,8 +17,6 @@ fun MainScreen(navController: NavController) {
             title = context.getString(R.string.manageMaps),
             description = context.getString(R.string.manageMapsDescription),
             painter = painterResource(id = R.drawable.map),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary,
             onClick = {
                 //TODO
             })
@@ -26,8 +24,6 @@ fun MainScreen(navController: NavController) {
             title = context.getString(R.string.options),
             description = context.getString(R.string.optionsDescription),
             painter = painterResource(id = R.drawable.options),
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary,
             onClick = {
                 navController.navigate("options")
             })
