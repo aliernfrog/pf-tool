@@ -19,19 +19,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MainButton(title: String, description: String, painter: Painter, backgroundColor: Color, contentColor: Color, onClick: () -> Unit) {
+fun MainButton(title: String, description: String? = null, painter: Painter? = null, backgroundColor: Color, contentColor: Color, onClick: () -> Unit) {
     Button(modifier = Modifier
         .padding(all = 8.dp)
         .fillMaxWidth(),
         shape = RoundedCornerShape(20),
         colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor, contentColor = contentColor),
         onClick = onClick,
-        contentPadding = PaddingValues(all = 8.dp),
-        content = {
-            Image(painter, title)
-            Column(Modifier.fillMaxWidth().padding(start = 8.dp)) {
-                Text(title, fontWeight = FontWeight.Bold)
-                Text(description, Modifier.alpha(0.8f), fontSize = 12.sp)
-            }
-        })
+        contentPadding = PaddingValues(all = 8.dp)
+    ) {
+        if (painter != null) Image(painter, title, Modifier.padding(end = 8.dp))
+        Column(Modifier.fillMaxWidth()) {
+            Text(title, fontWeight = FontWeight.Bold)
+            if (description != null) Text(description, Modifier.alpha(0.8f), fontSize = 12.sp)
+        }
+    }
 }
