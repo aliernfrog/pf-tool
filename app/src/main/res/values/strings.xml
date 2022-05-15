@@ -5,4 +5,8 @@
     <string name="manageMapsDescription">Import or export Polyfield maps</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
+    <string name="optionsTheme">Theme</string>
+    <string name="optionsThemeSystem">Follow system</string>
+    <string name="optionsThemeLight">Light</string>
+    <string name="optionsThemeDark">Dark</string>
 </resources>
