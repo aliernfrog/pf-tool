@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -22,7 +23,7 @@ fun ColumnRounded(color: Color, title: String?, titleColor: Color?, content: @Co
            .padding(all = 8.dp)
            .clip(RoundedCornerShape(20.dp))) {
        Column(Modifier.background(color).fillMaxWidth().padding(all = 8.dp)) {
-           if (title != null) Text(text = title, style = LocalTextStyle.current.copy(color = titleColor ?: MaterialTheme.colors.onSecondary))
+           if (title != null) Text(text = title, fontWeight = FontWeight.Bold , style = LocalTextStyle.current.copy(color = titleColor ?: MaterialTheme.colors.onSecondary))
            content()
        }
    }

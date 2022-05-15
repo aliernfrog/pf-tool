@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.composables.BaseScaffold
@@ -37,7 +38,7 @@ fun ThemeSelection() {
                     colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary),
                     onClick = { onOptionSelected(option) }
                 )
-                Text(text = option)
+                Text(text = option, fontWeight = FontWeight.Bold)
             }
         }
     }

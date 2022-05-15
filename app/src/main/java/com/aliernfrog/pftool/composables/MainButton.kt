@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -29,7 +30,7 @@ fun MainButton(title: String, description: String, painter: Painter, backgroundC
         content = {
             Image(painter, title)
             Column(Modifier.fillMaxWidth().padding(start = 8.dp)) {
-                Text(title)
+                Text(title, fontWeight = FontWeight.Bold)
                 Text(description, Modifier.alpha(0.8f), fontSize = 12.sp)
             }
         })

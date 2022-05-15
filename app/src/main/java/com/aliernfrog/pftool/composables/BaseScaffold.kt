@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
@@ -37,7 +38,7 @@ fun BaseScaffold(title: String, navController: NavController, content: @Composab
                                 onClick = { navController.navigateUp() })
                         )
                     }
-                    Text(text = title, color = MaterialTheme.colors.onSecondary)
+                    Text(text = title, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onSecondary)
                 })
         },
         content = {
