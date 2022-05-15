@@ -17,13 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ColumnRounded(color: Color, title: String?, titleColor: Color?, content: @Composable ColumnScope.() -> Unit) {
+fun ColumnRounded(color: Color, title: String? = null, titleColor: Color = MaterialTheme.colors.onSecondary, content: @Composable ColumnScope.() -> Unit) {
    Column(
        Modifier
            .padding(all = 8.dp)
            .clip(RoundedCornerShape(20.dp))) {
        Column(Modifier.background(color).fillMaxWidth().padding(all = 8.dp)) {
-           if (title != null) Text(text = title, fontWeight = FontWeight.Bold , style = LocalTextStyle.current.copy(color = titleColor ?: MaterialTheme.colors.onSecondary))
+           if (title != null) Text(text = title, fontWeight = FontWeight.Bold , style = LocalTextStyle.current.copy(color = titleColor))
            content()
        }
    }

@@ -28,7 +28,7 @@ fun ThemeSelection() {
     val context = LocalContext.current
     val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(options[0]) }
-    ColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme), titleColor = null) {
+    ColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme)) {
         options.forEach { option ->
             val isSelected = selectedOption === option
             Row(Modifier.fillMaxWidth()
