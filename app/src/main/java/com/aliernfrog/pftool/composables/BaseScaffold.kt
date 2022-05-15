@@ -1,7 +1,7 @@
 package com.aliernfrog.pftool.composables
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,25 +10,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BaseScaffold(title: String, showBackButton: Boolean, content: @Composable (ColumnScope.() -> Unit)) {
+fun BaseScaffold(title: String, navController: NavController, content: @Composable (ColumnScope.() -> Unit)) {
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         topBar = {
             TopAppBar(backgroundColor = MaterialTheme.colors.secondary,
                 contentPadding = PaddingValues(horizontal = 24.dp),
                 content = {
-                    if (showBackButton) {
-                        Image(
-                            rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                    if (navController.previousBackStackEntry != null) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = LocalContext.current.getString(R.string.action_back),
-                            Modifier.padding(end = 24.dp)
+                            Modifier.padding(end = 24.dp).clickable { navController.navigateUp() }
                         )
                     }
                     Text(text = title, color = MaterialTheme.colors.onSecondary)

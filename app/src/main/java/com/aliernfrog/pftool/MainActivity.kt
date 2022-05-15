@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(navController)
             }
             composable(route = "options") {
-                OptionsScreen()
+                OptionsScreen(navController)
             }
         }
     }

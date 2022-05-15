@@ -13,7 +13,7 @@ import com.aliernfrog.pftool.composables.MainButton
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen(navController: NavController) {
-    BaseScaffold(title = LocalContext.current.getString(R.string.app_name), showBackButton = false, content = {
+    BaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController, content = {
         val context = LocalContext.current
         MainButton(
             title = context.getString(R.string.manageMaps),
