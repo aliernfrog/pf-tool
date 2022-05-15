@@ -2,13 +2,16 @@ package com.aliernfrog.pftool.composables
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -28,7 +31,10 @@ fun BaseScaffold(title: String, navController: NavController, content: @Composab
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = LocalContext.current.getString(R.string.action_back),
-                            Modifier.padding(end = 24.dp).clickable { navController.navigateUp() }
+                            Modifier.padding(end = 24.dp).clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(bounded = false),
+                                onClick = { navController.navigateUp() })
                         )
                     }
                     Text(text = title, color = MaterialTheme.colors.onSecondary)
