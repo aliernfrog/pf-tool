@@ -1,6 +1,5 @@
 package com.aliernfrog.pftool.screens
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
