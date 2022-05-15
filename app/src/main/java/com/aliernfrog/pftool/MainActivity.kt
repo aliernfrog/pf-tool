@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -21,12 +22,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PFToolTheme {
+            PFToolTheme(getDarkThemePreference() ?: isSystemInDarkTheme()) {
                 Box(modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize())
                 SystemBars()
                 Navigation()
             }
         }
+    }
+
+    private fun getDarkThemePreference(): Boolean? {
+        val prefs = getSharedPreferences("APP_CONFIG", MODE_PRIVATE)
+        val theme = prefs.getInt("appTheme", 0) //system
+        if (theme == 1) return false //light
+        if (theme == 2) return true //dark
+        return null
     }
 
     @Composable
