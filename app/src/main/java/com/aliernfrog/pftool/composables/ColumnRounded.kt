@@ -23,7 +23,7 @@ fun ColumnRounded(color: Color, title: String? = null, titleColor: Color = Mater
            .padding(all = 8.dp)
            .clip(RoundedCornerShape(20.dp))) {
        Column(Modifier.background(color).fillMaxWidth().padding(all = 8.dp)) {
-           if (title != null) Text(text = title, fontWeight = FontWeight.Bold , style = LocalTextStyle.current.copy(color = titleColor))
+           if (title != null) Text(text = title, fontWeight = FontWeight.Bold, style = LocalTextStyle.current.copy(color = titleColor), modifier = Modifier.padding(horizontal = 8.dp))
            content()
        }
    }
