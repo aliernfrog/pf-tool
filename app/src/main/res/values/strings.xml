@@ -3,6 +3,7 @@
     <string name="action_back">Back</string>
     <string name="manageMaps">Manage maps</string>
     <string name="manageMapsDescription">Import or export Polyfield maps</string>
+    <string name="manageMapsPickMap">Pick a map</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
     <string name="optionsTheme">Theme</string>

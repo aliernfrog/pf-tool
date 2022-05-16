@@ -17,7 +17,7 @@ fun MainScreen(navController: NavController) {
             description = context.getString(R.string.manageMapsDescription),
             painter = painterResource(id = R.drawable.map),
             onClick = {
-                //TODO
+                navController.navigate("maps")
             })
         MainButton(
             title = context.getString(R.string.options),
