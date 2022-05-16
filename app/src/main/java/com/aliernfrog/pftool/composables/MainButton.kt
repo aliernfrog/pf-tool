@@ -24,7 +24,7 @@ fun MainButton(title: String, description: String? = null, painter: Painter? = n
     Button(modifier = Modifier
         .padding(all = 8.dp)
         .fillMaxWidth(),
-        shape = RoundedCornerShape(20),
+        shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor, contentColor = contentColor),
         onClick = onClick,
         contentPadding = PaddingValues(all = 8.dp)
