@@ -1,10 +1,7 @@
 package com.aliernfrog.pftool.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -29,7 +26,7 @@ fun MainButton(title: String, description: String? = null, painter: Painter? = n
         onClick = onClick,
         contentPadding = PaddingValues(all = 8.dp)
     ) {
-        if (painter != null) Image(painter, title, Modifier.padding(end = 8.dp))
+        if (painter != null) Image(painter, title, Modifier.padding(end = 8.dp).width(40.dp))
         Column(Modifier.fillMaxWidth()) {
             Text(title, fontWeight = FontWeight.Bold)
             if (description != null) Text(description, Modifier.alpha(0.8f), fontSize = 12.sp)
