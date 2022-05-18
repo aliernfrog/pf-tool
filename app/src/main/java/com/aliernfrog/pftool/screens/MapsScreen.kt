@@ -1,6 +1,8 @@
 package com.aliernfrog.pftool.screens
 
 import android.content.Intent
+import android.net.Uri
+import android.provider.DocumentsContract
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,6 +14,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.composables.BaseScaffold
 import com.aliernfrog.pftool.composables.MainButton
+import java.lang.Exception
 
 @Composable
 fun MapsScreen(navController: NavController) {
@@ -33,7 +36,7 @@ fun PickMapFileButtton() {
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
     ) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip").putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         launcher.launch(intent)
     }
 }
