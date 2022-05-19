@@ -27,6 +27,6 @@ fun MainScreen(navController: NavController) {
             onClick = {
                 navController.navigate("options")
             })
-        PermissionSheet()
     }
+    PermissionSheet()
 }
