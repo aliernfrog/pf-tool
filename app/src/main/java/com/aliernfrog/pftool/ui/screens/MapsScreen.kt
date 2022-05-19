@@ -15,9 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.composables.BaseScaffold
-import com.aliernfrog.pftool.ui.composables.ColumnRounded
-import com.aliernfrog.pftool.ui.composables.MainButton
+import com.aliernfrog.pftool.ui.composables.PFToolBaseScaffold
+import com.aliernfrog.pftool.ui.composables.PFToolColumnRounded
+import com.aliernfrog.pftool.ui.composables.PFToolButton
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import java.io.File
@@ -29,7 +29,7 @@ private var mapNameOriginal = mutableStateOf("")
 @Composable
 fun MapsScreen(navController: NavController) {
     val context = LocalContext.current
-    BaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
+    PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
         PickMapFileButtton()
         MapName()
     }
@@ -46,7 +46,7 @@ fun PickMapFileButtton() {
             Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
         }
     }
-    MainButton(
+    PFToolButton(
         title = context.getString(R.string.manageMapsPickMap),
         painter = painterResource(id = R.drawable.map),
         backgroundColor = MaterialTheme.colors.primary,
@@ -61,7 +61,7 @@ fun PickMapFileButtton() {
 fun MapName() {
     if (mapPath.value != "") {
         val context = LocalContext.current
-        ColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
+        PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             OutlinedTextField(
                 value = mapNameEdit.value,
                 placeholder = { Text(mapNameOriginal.value) },

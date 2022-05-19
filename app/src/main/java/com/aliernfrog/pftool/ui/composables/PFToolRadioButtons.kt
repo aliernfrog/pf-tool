@@ -16,9 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun RadioButtons(options: List<String>, columnColor: Color = MaterialTheme.colors.secondary, selectedIndex: Int = 0, onSelect: (String) -> Unit) {
+fun PFToolRadioButtons(options: List<String>, columnColor: Color = MaterialTheme.colors.secondary, selectedIndex: Int = 0, onSelect: (String) -> Unit) {
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(options[selectedIndex]) }
-    ColumnRounded(color = columnColor) {
+    PFToolColumnRounded(color = columnColor) {
         options.forEach { option ->
             val isSelected = selectedOption === option
             val onSelected = {

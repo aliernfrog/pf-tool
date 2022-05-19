@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MainButton(title: String, description: String? = null, painter: Painter? = null, backgroundColor: Color = MaterialTheme.colors.secondary, contentColor: Color = MaterialTheme.colors.onBackground, onClick: () -> Unit) {
+fun PFToolButton(title: String, description: String? = null, painter: Painter? = null, backgroundColor: Color = MaterialTheme.colors.secondary, contentColor: Color = MaterialTheme.colors.onBackground, onClick: () -> Unit) {
     Button(modifier = Modifier
         .padding(all = 8.dp)
         .fillMaxWidth(),
