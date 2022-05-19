@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composables
+package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

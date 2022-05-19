@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composables
+package com.aliernfrog.pftool.ui.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
