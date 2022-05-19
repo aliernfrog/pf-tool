@@ -64,7 +64,7 @@ fun MapName() {
             OutlinedTextField(
                 value = mapNameEdit.value,
                 placeholder = { Text(file.name) },
-                onValueChange = { mapNameEdit.value = it},
+                onValueChange = { mapNameEdit.value = it },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
