@@ -19,7 +19,7 @@ fun OptionsScreen(navController: NavController) {
 }
 
 @Composable
-fun ThemeSelection() {
+private fun ThemeSelection() {
     val context = LocalContext.current
     val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
     PFToolColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme)) {
@@ -29,12 +29,12 @@ fun ThemeSelection() {
     }
 }
 
-fun getThemePreference(context: Context): Int {
+private fun getThemePreference(context: Context): Int {
     val prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)
     return prefs.getInt("appTheme", 0)
 }
 
-fun applyTheme(option: String, context: Context) {
+private fun applyTheme(option: String, context: Context) {
     val prefsEditor = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE).edit()
     var theme = 0 //system
     if (option == context.getString(R.string.optionsThemeLight)) theme = 1 //light

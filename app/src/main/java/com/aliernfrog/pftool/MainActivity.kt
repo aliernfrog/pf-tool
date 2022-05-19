@@ -42,13 +42,13 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SystemBars() {
+    private fun SystemBars() {
         val systemUiController = rememberSystemUiController()
         systemUiController.setSystemBarsColor(MaterialTheme.colors.background)
     }
 
     @Composable
-    fun Navigation() {
+    private fun Navigation() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "main") {
             composable(route = "main") {

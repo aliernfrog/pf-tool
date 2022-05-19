@@ -36,7 +36,7 @@ fun MapsScreen(navController: NavController) {
 }
 
 @Composable
-fun PickMapFileButtton() {
+private fun PickMapFileButtton() {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
@@ -58,7 +58,7 @@ fun PickMapFileButtton() {
 }
 
 @Composable
-fun MapName() {
+private fun MapName() {
     if (mapPath.value != "") {
         val context = LocalContext.current
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
@@ -73,7 +73,7 @@ fun MapName() {
     }
 }
 
-fun getMap(path: String, context: Context) {
+private fun getMap(path: String, context: Context) {
     val file = File(path)
     if (file.exists()) {
         mapPath.value = file.absolutePath
