@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.ui.theme.sheetScrim
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -20,6 +21,8 @@ fun PFToolRoundedModalBottomSheet(title: String? = null, sheetState: ModalBottom
         sheetBackgroundColor = MaterialTheme.colors.background,
         sheetContentColor = MaterialTheme.colors.onBackground,
         sheetState = sheetState,
+        scrimColor = MaterialTheme.colors.sheetScrim,
+        sheetElevation = 0.dp,
         content = {},
         sheetContent = {
             Box(modifier = Modifier

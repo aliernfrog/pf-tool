@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -32,6 +33,9 @@ private val DarkColorPalette = darkColors(
     onBackground = Color.White,
     onSurface = Color.White
 )
+
+val Colors.sheetScrim: Color
+get() = if (isLight) SheetScrimLight else SheetScrimDark
 
 @Composable
 fun PFToolTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
