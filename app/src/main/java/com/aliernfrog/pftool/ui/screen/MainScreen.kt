@@ -19,14 +19,16 @@ fun MainScreen(navController: NavController) {
             painter = painterResource(id = R.drawable.map),
             onClick = {
                 navController.navigate("maps")
-            })
+            }
+        )
         PFToolButton(
             title = context.getString(R.string.options),
             description = context.getString(R.string.optionsDescription),
             painter = painterResource(id = R.drawable.options),
             onClick = {
                 navController.navigate("options")
-            })
+            }
+        )
     }
     PermissionSheet()
 }
