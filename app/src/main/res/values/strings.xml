@@ -6,6 +6,7 @@
     <string name="warning_fileDoesntExist">File does not exist</string>
     <string name="warning_missingPermissions">Missing permissions</string>
     <string name="info_storagePermission">PF Tool needs storage permission to access Polyfield maps. You can grant the permission in the next screen</string>
+    <string name="info_allFilesPermission">PF Tool needs access to all files to access Polyfield maps. You can grant the permission in the next screen</string>
     <string name="manageMaps">Manage maps</string>
     <string name="manageMapsDescription">Import or export Polyfield maps</string>
     <string name="manageMapsPickMap">Pick a map</string>
