@@ -21,7 +21,7 @@ import com.aliernfrog.pftool.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BaseScaffold(title: String, navController: NavController, content: @Composable (ColumnScope.() -> Unit)) {
+fun BaseScaffold(title: String, navController: NavController, onNavigationClick: (() -> Unit)? = null, content: @Composable (ColumnScope.() -> Unit)) {
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         topBar = {
@@ -35,7 +35,11 @@ fun BaseScaffold(title: String, navController: NavController, content: @Composab
                             Modifier.padding(end = 24.dp).clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = rememberRipple(bounded = false),
-                                onClick = { navController.navigateUp() })
+                                onClick = {
+                                    if (onNavigationClick != null) onNavigationClick()
+                                    navController.navigateUp()
+                                }
+                            )
                         )
                     }
                     Text(text = title, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onSecondary)

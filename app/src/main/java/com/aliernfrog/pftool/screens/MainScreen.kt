@@ -10,7 +10,7 @@ import com.aliernfrog.pftool.composables.MainButton
 
 @Composable
 fun MainScreen(navController: NavController) {
-    BaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController, content = {
+    BaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController) {
         val context = LocalContext.current
         MainButton(
             title = context.getString(R.string.manageMaps),
@@ -26,5 +26,5 @@ fun MainScreen(navController: NavController) {
             onClick = {
                 navController.navigate("options")
             })
-    })
+    }
 }
