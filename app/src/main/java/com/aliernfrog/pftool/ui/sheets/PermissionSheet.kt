@@ -9,12 +9,10 @@ import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PermissionSheet() {
     val context = LocalContext.current
-    val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
-    PFToolRoundedModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
+    PFToolRoundedModalBottomSheet(title = context.getString(R.string.warning_missingPermissions)) {
         PFToolColumnRounded {
             Text(context.getString(R.string.info_storagePermission), fontWeight = FontWeight.Bold)
         }
