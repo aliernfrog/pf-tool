@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.composables.BaseScaffold
 import com.aliernfrog.pftool.composables.MainButton
+import com.aliernfrog.pftool.utils.UriToFileUtil
 
 @Composable
 fun MapsScreen(navController: NavController) {
@@ -25,7 +26,12 @@ fun MapsScreen(navController: NavController) {
 fun PickMapFileButtton() {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        Toast.makeText(context, "${it.data?.data}", Toast.LENGTH_SHORT).show()
+        val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
+        if (convertedPath != null) {
+            Toast.makeText(context, convertedPath, Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
+        }
     }
     MainButton(
         title = context.getString(R.string.manageMapsPickMap),
