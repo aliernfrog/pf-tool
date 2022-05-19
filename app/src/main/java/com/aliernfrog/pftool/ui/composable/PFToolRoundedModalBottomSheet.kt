@@ -10,15 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PFToolRoundedModalBottomSheet(sheetContent: @Composable ColumnScope.() -> Unit, ) {
+fun PFToolRoundedModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetContent: @Composable ColumnScope.() -> Unit) {
     ModalBottomSheetLayout(
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetBackgroundColor = MaterialTheme.colors.background,
         sheetContentColor = MaterialTheme.colors.onBackground,
-        sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded),
+        sheetState = sheetState,
         content = {},
         sheetContent = {
             Box(modifier = Modifier
@@ -32,6 +33,7 @@ fun PFToolRoundedModalBottomSheet(sheetContent: @Composable ColumnScope.() -> Un
                 Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())) {
+                if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))
                 Column(Modifier.padding(horizontal = 24.dp), content = sheetContent)
             }
         }
