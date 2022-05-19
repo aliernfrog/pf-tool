@@ -17,13 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PFToolButton(title: String, description: String? = null, painter: Painter? = null, backgroundColor: Color = MaterialTheme.colors.secondary, contentColor: Color = MaterialTheme.colors.onBackground, onClick: () -> Unit) {
+fun PFToolButton(title: String, description: String? = null, painter: Painter? = null, backgroundColor: Color = MaterialTheme.colors.secondary, contentColor: Color = MaterialTheme.colors.onBackground, enabled: Boolean = true, onClick: () -> Unit) {
     Button(modifier = Modifier
         .padding(all = 8.dp)
         .fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor, contentColor = contentColor),
         onClick = onClick,
+        enabled = enabled,
         contentPadding = PaddingValues(all = 8.dp)
     ) {
         if (painter != null) Image(painter, title, Modifier.padding(end = 8.dp).width(40.dp))
