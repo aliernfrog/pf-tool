@@ -39,11 +39,13 @@ fun MapsScreen(navController: NavController) {
 private fun PickMapFileButtton() {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
-        if (convertedPath != null) {
-            getMap(convertedPath, context)
-        } else {
-            Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
+        if (it.data?.data != null) {
+            val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
+            if (convertedPath != null) {
+                getMap(convertedPath, context)
+            } else {
+                Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
+            }
         }
     }
     PFToolButton(
