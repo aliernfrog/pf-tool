@@ -9,6 +9,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.ui.theme.sheetHandleBar
@@ -18,27 +20,29 @@ import com.aliernfrog.pftool.ui.theme.sheetScrim
 @Composable
 fun PFToolRoundedModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetContent: @Composable ColumnScope.() -> Unit) {
     ModalBottomSheetLayout(
-        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-        sheetBackgroundColor = MaterialTheme.colors.background,
+        sheetBackgroundColor = Color(0x00000000),
         sheetContentColor = MaterialTheme.colors.onBackground,
         sheetState = sheetState,
         scrimColor = MaterialTheme.colors.sheetScrim,
         sheetElevation = 0.dp,
         content = {},
         sheetContent = {
-            Box(modifier = Modifier
-                .padding(top = 8.dp, bottom = 8.dp)
-                .background(MaterialTheme.colors.sheetHandleBar, shape = RoundedCornerShape(20.dp))
-                .width(30.dp)
-                .height(5.dp)
-                .align(Alignment.CenterHorizontally)
-            )
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())) {
-                if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))
-                Column(Modifier.padding(horizontal = 24.dp), content = sheetContent)
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(modifier = Modifier
+                    .padding(top = 8.dp, bottom = 8.dp)
+                    .background(MaterialTheme.colors.sheetHandleBar, shape = RoundedCornerShape(20.dp))
+                    .width(50.dp)
+                    .height(5.dp)
+                    .align(Alignment.CenterHorizontally)
+                )
+                Column(Modifier
+                    .widthIn(0.dp, 600.dp)
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .verticalScroll(rememberScrollState())
+                    .background(MaterialTheme.colors.background).padding(horizontal = 16.dp)) {
+                    if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))
+                    sheetContent()
+                }
             }
         }
     )

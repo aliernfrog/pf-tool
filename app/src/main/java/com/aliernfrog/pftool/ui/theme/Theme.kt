@@ -38,7 +38,7 @@ val Colors.sheetScrim: Color
 get() = if (isLight) SheetScrimLight else SheetScrimDark
 
 val Colors.sheetHandleBar: Color
-get() = if (isLight) ButtonLight else LinearDark
+get() = if (isLight) ButtonLight else ButtonLight
 
 @Composable
 fun PFToolTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
