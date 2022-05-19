@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.ui.theme.sheetHandleBar
 import com.aliernfrog.pftool.ui.theme.sheetScrim
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -27,7 +28,7 @@ fun PFToolRoundedModalBottomSheet(title: String? = null, sheetState: ModalBottom
         sheetContent = {
             Box(modifier = Modifier
                 .padding(top = 8.dp, bottom = 8.dp)
-                .background(MaterialTheme.colors.onBackground, shape = RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colors.sheetHandleBar, shape = RoundedCornerShape(20.dp))
                 .width(30.dp)
                 .height(5.dp)
                 .align(Alignment.CenterHorizontally)
