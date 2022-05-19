@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.screens
+package com.aliernfrog.pftool.ui.screens
 
 import android.content.Context
 import android.widget.Toast
@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.composables.BaseScaffold
-import com.aliernfrog.pftool.composables.ColumnRounded
-import com.aliernfrog.pftool.composables.RadioButtons
+import com.aliernfrog.pftool.ui.composables.BaseScaffold
+import com.aliernfrog.pftool.ui.composables.ColumnRounded
+import com.aliernfrog.pftool.ui.composables.RadioButtons
 
 @Composable
 fun OptionsScreen(navController: NavController) {

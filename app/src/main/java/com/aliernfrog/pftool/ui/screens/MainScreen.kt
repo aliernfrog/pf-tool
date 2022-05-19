@@ -1,12 +1,12 @@
-package com.aliernfrog.pftool.screens
+package com.aliernfrog.pftool.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.composables.BaseScaffold
-import com.aliernfrog.pftool.composables.MainButton
+import com.aliernfrog.pftool.ui.composables.BaseScaffold
+import com.aliernfrog.pftool.ui.composables.MainButton
 
 @Composable
 fun MainScreen(navController: NavController) {

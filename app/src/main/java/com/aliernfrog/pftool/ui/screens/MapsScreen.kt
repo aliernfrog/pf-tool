@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.screens
+package com.aliernfrog.pftool.ui.screens
 
 import android.content.Context
 import android.content.Intent
@@ -15,9 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.composables.BaseScaffold
-import com.aliernfrog.pftool.composables.ColumnRounded
-import com.aliernfrog.pftool.composables.MainButton
+import com.aliernfrog.pftool.ui.composables.BaseScaffold
+import com.aliernfrog.pftool.ui.composables.ColumnRounded
+import com.aliernfrog.pftool.ui.composables.MainButton
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import java.io.File

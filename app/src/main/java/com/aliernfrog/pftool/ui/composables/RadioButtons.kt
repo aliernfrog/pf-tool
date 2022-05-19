@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.composables
+package com.aliernfrog.pftool.ui.composables
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

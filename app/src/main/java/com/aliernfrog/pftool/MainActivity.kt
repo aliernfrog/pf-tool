@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aliernfrog.pftool.screens.MainScreen
-import com.aliernfrog.pftool.screens.MapsScreen
-import com.aliernfrog.pftool.screens.OptionsScreen
+import com.aliernfrog.pftool.ui.screens.MainScreen
+import com.aliernfrog.pftool.ui.screens.MapsScreen
+import com.aliernfrog.pftool.ui.screens.OptionsScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
