@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ColumnRounded(color: Color, title: String? = null, titleColor: Color = MaterialTheme.colors.onSecondary, content: @Composable ColumnScope.() -> Unit) {
+fun ColumnRounded(color: Color = MaterialTheme.colors.secondary, title: String? = null, titleColor: Color = MaterialTheme.colors.onSecondary, content: @Composable ColumnScope.() -> Unit) {
    Column(
        Modifier
            .padding(all = 8.dp)
