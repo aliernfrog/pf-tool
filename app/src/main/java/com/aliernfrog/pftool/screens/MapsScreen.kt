@@ -18,11 +18,13 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.composables.BaseScaffold
 import com.aliernfrog.pftool.composables.ColumnRounded
 import com.aliernfrog.pftool.composables.MainButton
+import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import java.io.File
 
 private var mapPath = mutableStateOf("")
 private var mapNameEdit = mutableStateOf("")
+private var mapNameOriginal = mutableStateOf("")
 
 @Composable
 fun MapsScreen(navController: NavController) {
@@ -59,11 +61,10 @@ fun PickMapFileButtton() {
 fun MapName() {
     if (mapPath.value != "") {
         val context = LocalContext.current
-        val file = File(mapPath.value)
         ColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             OutlinedTextField(
                 value = mapNameEdit.value,
-                placeholder = { Text(file.name) },
+                placeholder = { Text(mapNameOriginal.value) },
                 onValueChange = { mapNameEdit.value = it },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -76,7 +77,8 @@ fun getMap(path: String, context: Context) {
     val file = File(path)
     if (file.exists()) {
         mapPath.value = file.absolutePath
-        mapNameEdit.value = file.name
+        mapNameEdit.value = FileUtil.removeExtension(file.name)
+        mapNameOriginal.value = mapNameEdit.value
     } else {
         Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
     }
