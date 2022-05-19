@@ -8,6 +8,10 @@ import android.provider.MediaStore
 import java.io.File
 import java.lang.Exception
 
+/*
+This is a simplified version of https://github.com/HBiSoft/PickiT
+Currently does not have most features PickiT has
+*/
 class UriToFileUtil {
     companion object {
         fun getRealFilePath(uri: Uri, context: Context): String? {
