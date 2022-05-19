@@ -2,9 +2,11 @@
     <string name="app_name">PF Tool</string>
     <string name="action_back">Back</string>
     <string name="warning_couldntConvertToPath">Could not get path of this file</string>
+    <string name="warning_fileDoesntExist">File does not exist</string>
     <string name="manageMaps">Manage maps</string>
     <string name="manageMapsDescription">Import or export Polyfield maps</string>
     <string name="manageMapsPickMap">Pick a map</string>
+    <string name="manageMapsMapName">Map name</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
     <string name="optionsTheme">Theme</string>
