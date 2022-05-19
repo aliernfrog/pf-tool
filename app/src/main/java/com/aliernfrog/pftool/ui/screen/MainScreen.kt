@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
+import com.aliernfrog.pftool.ui.sheets.PermissionSheet
 
 @Composable
 fun MainScreen(navController: NavController) {
@@ -26,5 +27,6 @@ fun MainScreen(navController: NavController) {
             onClick = {
                 navController.navigate("options")
             })
+        PermissionSheet()
     }
 }
