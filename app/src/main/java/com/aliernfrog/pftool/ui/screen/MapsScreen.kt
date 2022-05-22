@@ -4,11 +4,13 @@ import android.content.Context
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
@@ -67,8 +69,18 @@ private fun MapActions() {
                 placeholder = { Text(mapNameOriginal.value) },
                 onValueChange = { mapNameEdit.value = it },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
             )
+            if (isImported && mapNameEdit.value != "" && (mapNameEdit.value != mapNameOriginal.value)) {
+                PFToolButton(
+                    title = context.getString(R.string.manageMapsRename),
+                    painter = painterResource(id = R.drawable.edit),
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = MaterialTheme.colors.onPrimary
+                ) {
+                    renameChosenMap(context)
+                }
+            }
         }
         if (!isImported) {
             PFToolButton(
@@ -109,6 +121,16 @@ private fun getMap(path: String, context: Context) {
         } else {
             Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
         }
+    }
+}
+
+private fun renameChosenMap(context: Context) {
+    val outputFile = File("${mapsBase}/${mapNameEdit.value}")
+    if (outputFile.exists()) {
+        Toast.makeText(context, context.getString(R.string.warning_mapAlreadyExists), Toast.LENGTH_SHORT).show()
+    } else {
+        File(mapPath.value).renameTo(outputFile)
+        Toast.makeText(context, R.string.info_done, Toast.LENGTH_SHORT).show()
     }
 }
 
