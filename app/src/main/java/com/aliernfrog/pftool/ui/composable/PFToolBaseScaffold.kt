@@ -21,9 +21,9 @@ import com.aliernfrog.pftool.R
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun PFToolBaseScaffold(title: String, navController: NavController, onNavigationClick: (() -> Unit)? = null, content: @Composable (ColumnScope.() -> Unit)) {
+fun PFToolBaseScaffold(title: String, navController: NavController, state: ScaffoldState = rememberScaffoldState(), onNavigationClick: (() -> Unit)? = null, content: @Composable (ColumnScope.() -> Unit)) {
     Scaffold(
-        scaffoldState = rememberScaffoldState(),
+        scaffoldState = state,
         topBar = {
             TopAppBar(backgroundColor = MaterialTheme.colors.secondary,
                 contentPadding = PaddingValues(horizontal = 24.dp),
