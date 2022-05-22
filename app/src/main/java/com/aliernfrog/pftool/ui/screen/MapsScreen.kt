@@ -130,6 +130,7 @@ private fun renameChosenMap(context: Context) {
         Toast.makeText(context, context.getString(R.string.warning_mapAlreadyExists), Toast.LENGTH_SHORT).show()
     } else {
         File(mapPath.value).renameTo(outputFile)
+        getMap(outputFile.absolutePath, context)
         Toast.makeText(context, R.string.info_done, Toast.LENGTH_SHORT).show()
     }
 }
@@ -140,6 +141,7 @@ private fun importChosenMap(context: Context) {
         Toast.makeText(context, context.getString(R.string.warning_mapAlreadyExists), Toast.LENGTH_SHORT).show()
     } else {
         ZipUtil.unzip(mapPath.value, outputFile.absolutePath)
+        getMap(outputFile.absolutePath, context)
         Toast.makeText(context, context.getString(R.string.info_done), Toast.LENGTH_SHORT).show()
     }
 }
