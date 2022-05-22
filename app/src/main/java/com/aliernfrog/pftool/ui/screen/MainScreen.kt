@@ -40,7 +40,7 @@ fun MainScreen(navController: NavController) {
             }
         )
     }
-    if (!checkPermissions(context)) PermissionSheet()
+    if (!checkPermissions(context)) PermissionSheet { hasPermissions.value = true }
 }
 
 private fun checkPermissions(context: Context): Boolean {

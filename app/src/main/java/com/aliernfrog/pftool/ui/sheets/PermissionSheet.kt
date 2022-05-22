@@ -32,7 +32,7 @@ val allFilesAccess = Build.VERSION.SDK_INT >= 30
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PermissionSheet() {
+fun PermissionSheet(onGrant: () -> Unit) {
     val context = LocalContext.current
     val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
     val scope = rememberCoroutineScope()
@@ -41,23 +41,22 @@ fun PermissionSheet() {
             val text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission)
             Text(text, fontWeight = FontWeight.Bold)
         }
-        OkButton(scope, state)
+        OkButton(scope, state, onGrant)
     }
 }
 
 @SuppressLint("InlinedApi")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
+fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState, onGrant: () -> Unit) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
+            onGrant()
             if (it) scope.launch { state.hide() }
         })
-    Button(modifier = Modifier
-        .padding(8.dp)
-        .fillMaxWidth(),
+    Button(modifier = Modifier.padding(8.dp).fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.primary,
@@ -68,6 +67,7 @@ fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
         onClick = {
             if (allFilesAccess) {
                 if (Environment.isExternalStorageManager()) {
+                    onGrant()
                     scope.launch { state.hide() }
                 } else {
                     val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
@@ -76,11 +76,8 @@ fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
                     context.startActivity(intent)
                 }
             } else {
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    onGrant()
                     scope.launch { state.hide() }
                 } else {
                     launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
