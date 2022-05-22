@@ -35,7 +35,7 @@ fun MapsScreen(navController: NavController) {
     val context = LocalContext.current
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
         PickMapFileButtton()
-        MapName()
+        MapActions()
     }
 }
 
@@ -64,7 +64,7 @@ private fun PickMapFileButtton() {
 }
 
 @Composable
-private fun MapName() {
+private fun MapActions() {
     if (mapPath.value != "") {
         val context = LocalContext.current
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
