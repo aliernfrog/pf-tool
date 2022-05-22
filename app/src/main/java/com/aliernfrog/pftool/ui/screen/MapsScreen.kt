@@ -1,15 +1,10 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.content.Context
-import android.content.Intent
 import android.os.Environment
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,9 +14,10 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolButton
+import com.aliernfrog.pftool.ui.sheets.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
-import com.aliernfrog.pftool.utils.UriToFileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
+import kotlinx.coroutines.launch
 import java.io.File
 
 private val mapPath = mutableStateOf("")
@@ -30,36 +26,30 @@ private val mapNameOriginal = mutableStateOf("")
 
 private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapsScreen(navController: NavController) {
     val context = LocalContext.current
+    val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
-        PickMapFileButtton()
+        PickMapFileButton(pickMapSheetState)
         MapActions()
     }
+    PickMapSheet(pickMapSheetState) { getMap(it, context) }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickMapFileButtton() {
+private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.data?.data != null) {
-            val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
-            if (convertedPath != null) {
-                getMap(convertedPath, context)
-            } else {
-                Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    val scope = rememberCoroutineScope()
     PFToolButton(
         title = context.getString(R.string.manageMapsPickMap),
         painter = painterResource(id = R.drawable.map),
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
     ) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip").putExtra(Intent.EXTRA_LOCAL_ONLY, true)
-        launcher.launch(intent)
+        scope.launch { pickMapSheetState.show() }
     }
 }
 
