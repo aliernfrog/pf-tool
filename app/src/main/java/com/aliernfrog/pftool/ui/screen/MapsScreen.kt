@@ -97,9 +97,11 @@ private fun getMap(path: String, context: Context) {
         mapNameOriginal.value = ""
     } else {
         val file = File(path)
+        var mapName = file.name
+        if (!file.isDirectory) mapName = file.nameWithoutExtension
         if (file.exists()) {
             mapPath.value = file.absolutePath
-            mapNameEdit.value = file.nameWithoutExtension
+            mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
         } else {
             Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
