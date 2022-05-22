@@ -57,6 +57,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
 private fun MapActions() {
     if (mapPath.value != "") {
         val context = LocalContext.current
+        val isImported = mapPath.value.startsWith(mapsBase)
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             OutlinedTextField(
                 value = mapNameEdit.value,
@@ -66,12 +67,15 @@ private fun MapActions() {
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        PFToolButton(
-            title = context.getString(R.string.manageMapsImport),
-            painter = painterResource(id = R.drawable.download),
-            backgroundColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.onPrimary) {
-            importChosenMap(context)
+        if (!isImported) {
+            PFToolButton(
+                title = context.getString(R.string.manageMapsImport),
+                painter = painterResource(id = R.drawable.download),
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary
+            ) {
+                importChosenMap(context)
+            }
         }
     }
 }
