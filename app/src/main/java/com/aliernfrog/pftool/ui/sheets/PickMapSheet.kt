@@ -20,6 +20,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -58,7 +59,9 @@ private fun PickFromDeviceButton(state: ModalBottomSheetState, onMapPick: (Strin
 private fun ImportedMaps(mapsFolder: String, state: ModalBottomSheetState, onMapPick: (String) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val files = File(mapsFolder).listFiles()?.filter { it.isDirectory }
+    val files = File(mapsFolder).listFiles()
+    files?.let { Arrays.sort(it) }
+    files?.filter { it.isDirectory }
     Text(text = context.getString(R.string.manageMapsPickMapYourMaps), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
     if (files == null || files.isEmpty()) {
         PFToolColumnRounded(color = MaterialTheme.colors.error) {
