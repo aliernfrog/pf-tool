@@ -19,6 +19,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.sheets.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -34,9 +35,10 @@ private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/P
 fun MapsScreen(navController: NavController) {
     val context = LocalContext.current
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
+    val scaffoldState = rememberScaffoldState()
+    PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
         PickMapFileButton(pickMapSheetState)
-        MapActions()
+        MapActions(scaffoldState)
     }
     PickMapSheet(mapsBase, pickMapSheetState) { getMap(it, context) }
     recompose.value
@@ -59,9 +61,10 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
 }
 
 @Composable
-private fun MapActions() {
+private fun MapActions(scaffoldState: ScaffoldState) {
     if (mapPath.value != "") {
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
         val isImported = mapPath.value.startsWith(mapsBase)
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             OutlinedTextField(
@@ -69,7 +72,9 @@ private fun MapActions() {
                 placeholder = { Text(mapNameOriginal.value) },
                 onValueChange = { mapNameEdit.value = it },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             )
             if (isImported && mapNameEdit.value != "" && (mapNameEdit.value != mapNameOriginal.value)) {
                 PFToolButton(
@@ -78,7 +83,7 @@ private fun MapActions() {
                     backgroundColor = MaterialTheme.colors.primary,
                     contentColor = MaterialTheme.colors.onPrimary
                 ) {
-                    renameChosenMap(context)
+                    renameChosenMap(scaffoldState, scope, context)
                 }
             }
         }
@@ -89,7 +94,7 @@ private fun MapActions() {
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = MaterialTheme.colors.onPrimary
             ) {
-                importChosenMap(context)
+                importChosenMap(scaffoldState, scope, context)
             }
         }
         if (isImported) {
@@ -99,7 +104,7 @@ private fun MapActions() {
                 backgroundColor = MaterialTheme.colors.error,
                 contentColor = MaterialTheme.colors.onError
             ) {
-                deleteChosenMap(context)
+                deleteChosenMap(scaffoldState, scope, context)
             }
         }
     }
@@ -124,30 +129,30 @@ private fun getMap(path: String, context: Context) {
     }
 }
 
-private fun renameChosenMap(context: Context) {
+private fun renameChosenMap(scaffoldState: ScaffoldState, scope: CoroutineScope, context: Context) {
     val outputFile = File("${mapsBase}/${mapNameEdit.value}")
     if (outputFile.exists()) {
-        Toast.makeText(context, context.getString(R.string.warning_mapAlreadyExists), Toast.LENGTH_SHORT).show()
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
         File(mapPath.value).renameTo(outputFile)
         getMap(outputFile.absolutePath, context)
-        Toast.makeText(context, R.string.info_done, Toast.LENGTH_SHORT).show()
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }
 
-private fun importChosenMap(context: Context) {
+private fun importChosenMap(scaffoldState: ScaffoldState, scope: CoroutineScope, context: Context) {
     val outputFile = File("${mapsBase}/${mapNameEdit.value}")
     if (outputFile.exists()) {
-        Toast.makeText(context, context.getString(R.string.warning_mapAlreadyExists), Toast.LENGTH_SHORT).show()
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
         ZipUtil.unzip(mapPath.value, outputFile.absolutePath)
         getMap(outputFile.absolutePath, context)
-        Toast.makeText(context, context.getString(R.string.info_done), Toast.LENGTH_SHORT).show()
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }
 
-private fun deleteChosenMap(context: Context) {
+private fun deleteChosenMap(scaffoldState: ScaffoldState, scope: CoroutineScope, context: Context) {
     FileUtil.deleteDirectory(File(mapPath.value))
     getMap("", context)
-    Toast.makeText(context, R.string.info_done, Toast.LENGTH_SHORT).show()
+    scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
 }
