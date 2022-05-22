@@ -48,7 +48,7 @@ fun PermissionSheet(onGrant: () -> Unit) {
 @SuppressLint("InlinedApi")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState, onGrant: () -> Unit) {
+private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState, onGrant: () -> Unit) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
