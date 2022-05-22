@@ -23,6 +23,7 @@ import java.io.File
 private val mapPath = mutableStateOf("")
 private val mapNameEdit = mutableStateOf("")
 private val mapNameOriginal = mutableStateOf("")
+private val recompose = mutableStateOf(false)
 
 private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
 
@@ -36,6 +37,7 @@ fun MapsScreen(navController: NavController) {
         MapActions()
     }
     PickMapSheet(mapsBase, pickMapSheetState) { getMap(it, context) }
+    recompose.value
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -49,6 +51,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
     ) {
+        recompose.value = !recompose.value
         scope.launch { pickMapSheetState.show() }
     }
 }
