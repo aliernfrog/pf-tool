@@ -15,10 +15,12 @@ private val LightColorPalette = lightColors(
     primaryVariant = Blue,
     secondary = LinearLight,
     secondaryVariant = ButtonLight,
+    error = RedLight,
     onPrimary = Color.White,
     onSecondary = Color.Black,
     onBackground = Color.Black,
-    onSurface = Color.Black
+    onSurface = Color.Black,
+    onError = Color.White
 )
 
 private val DarkColorPalette = darkColors(
@@ -28,10 +30,12 @@ private val DarkColorPalette = darkColors(
     primaryVariant = Blue,
     secondary = LinearDark,
     secondaryVariant = ButtonDark,
+    error = RedDark,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
+    onError = Color.White
 )
 
 val Colors.sheetScrim: Color
