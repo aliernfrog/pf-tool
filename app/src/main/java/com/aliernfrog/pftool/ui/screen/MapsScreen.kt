@@ -2,6 +2,7 @@ package com.aliernfrog.pftool.ui.screen
 
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
+import com.aliernfrog.pftool.utils.ZipUtil
 import java.io.File
 
 private var mapPath = mutableStateOf("")
@@ -71,6 +73,13 @@ private fun MapName() {
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+        PFToolButton(
+            title = context.getString(R.string.manageMapsImport),
+            painter = painterResource(id = R.drawable.download),
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary) {
+            ZipUtil.unzip(mapPath.value, "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest/${mapNameEdit.value}")
         }
     }
 }
