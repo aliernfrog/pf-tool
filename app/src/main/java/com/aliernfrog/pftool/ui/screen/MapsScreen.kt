@@ -28,6 +28,8 @@ private var mapPath = mutableStateOf("")
 private var mapNameEdit = mutableStateOf("")
 private var mapNameOriginal = mutableStateOf("")
 
+private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
+
 @Composable
 fun MapsScreen(navController: NavController) {
     val context = LocalContext.current
@@ -79,7 +81,7 @@ private fun MapName() {
             painter = painterResource(id = R.drawable.download),
             backgroundColor = MaterialTheme.colors.primary,
             contentColor = MaterialTheme.colors.onPrimary) {
-            ZipUtil.unzip(mapPath.value, "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest/${mapNameEdit.value}")
+            importChosenMap(context)
         }
     }
 }
@@ -92,5 +94,15 @@ private fun getMap(path: String, context: Context) {
         mapNameOriginal.value = mapNameEdit.value
     } else {
         Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
+    }
+}
+
+private fun importChosenMap(context: Context) {
+    val outputFile = File("${mapsBase}/${mapNameEdit.value}")
+    if (outputFile.exists()) {
+        Toast.makeText(context, context.getString(R.string.warning_mapAlreadyExists), Toast.LENGTH_SHORT).show()
+    } else {
+        ZipUtil.unzip(mapPath.value, outputFile.absolutePath)
+        Toast.makeText(context, context.getString(R.string.info_done), Toast.LENGTH_SHORT).show()
     }
 }
