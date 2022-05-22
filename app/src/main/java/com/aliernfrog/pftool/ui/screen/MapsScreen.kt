@@ -99,7 +99,7 @@ private fun getMap(path: String, context: Context) {
         val file = File(path)
         if (file.exists()) {
             mapPath.value = file.absolutePath
-            mapNameEdit.value = FileUtil.removeExtension(file.name)
+            mapNameEdit.value = file.nameWithoutExtension
             mapNameOriginal.value = mapNameEdit.value
         } else {
             Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
