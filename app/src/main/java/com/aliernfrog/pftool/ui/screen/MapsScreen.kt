@@ -24,9 +24,9 @@ import com.aliernfrog.pftool.utils.UriToFileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
 import java.io.File
 
-private var mapPath = mutableStateOf("")
-private var mapNameEdit = mutableStateOf("")
-private var mapNameOriginal = mutableStateOf("")
+private val mapPath = mutableStateOf("")
+private val mapNameEdit = mutableStateOf("")
+private val mapNameOriginal = mutableStateOf("")
 
 private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
 
