@@ -77,17 +77,33 @@ private fun MapActions() {
                 importChosenMap(context)
             }
         }
+        if (isImported) {
+            PFToolButton(
+                title = context.getString(R.string.manageMapsDelete),
+                painter = painterResource(id = R.drawable.trash),
+                backgroundColor = MaterialTheme.colors.error,
+                contentColor = MaterialTheme.colors.onError
+            ) {
+                deleteChosenMap(context)
+            }
+        }
     }
 }
 
 private fun getMap(path: String, context: Context) {
-    val file = File(path)
-    if (file.exists()) {
-        mapPath.value = file.absolutePath
-        mapNameEdit.value = FileUtil.removeExtension(file.name)
-        mapNameOriginal.value = mapNameEdit.value
+    if (path == "") {
+        mapPath.value = ""
+        mapNameEdit.value = ""
+        mapNameOriginal.value = ""
     } else {
-        Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
+        val file = File(path)
+        if (file.exists()) {
+            mapPath.value = file.absolutePath
+            mapNameEdit.value = FileUtil.removeExtension(file.name)
+            mapNameOriginal.value = mapNameEdit.value
+        } else {
+            Toast.makeText(context, context.getString(R.string.warning_fileDoesntExist), Toast.LENGTH_SHORT).show()
+        }
     }
 }
 
@@ -99,4 +115,10 @@ private fun importChosenMap(context: Context) {
         ZipUtil.unzip(mapPath.value, outputFile.absolutePath)
         Toast.makeText(context, context.getString(R.string.info_done), Toast.LENGTH_SHORT).show()
     }
+}
+
+private fun deleteChosenMap(context: Context) {
+    FileUtil.deleteDirectory(File(mapPath.value))
+    getMap("", context)
+    Toast.makeText(context, R.string.info_done, Toast.LENGTH_SHORT).show()
 }

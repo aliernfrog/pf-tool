@@ -17,6 +17,7 @@
     <string name="manageMapsPickMapNoMapsFound">You do not have any maps</string>
     <string name="manageMapsMapName">Map name</string>
     <string name="manageMapsImport">Import this map</string>
+    <string name="manageMapsDelete">Delete this map</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
     <string name="optionsTheme">Theme</string>
