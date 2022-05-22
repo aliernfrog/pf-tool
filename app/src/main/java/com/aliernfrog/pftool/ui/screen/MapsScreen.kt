@@ -35,7 +35,7 @@ fun MapsScreen(navController: NavController) {
         PickMapFileButton(pickMapSheetState)
         MapActions()
     }
-    PickMapSheet(pickMapSheetState) { getMap(it, context) }
+    PickMapSheet(mapsBase, pickMapSheetState) { getMap(it, context) }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
