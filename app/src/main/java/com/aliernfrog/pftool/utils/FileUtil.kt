@@ -7,6 +7,11 @@ import java.io.File
 
 class FileUtil {
     companion object {
+        fun getFileName(path: String): String {
+            val split = path.split("/")
+            return split[split.size-1]
+        }
+
         fun shareFile(filePath: String, type: String, context: Context): Intent {
             val file = File(filePath)
             val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)

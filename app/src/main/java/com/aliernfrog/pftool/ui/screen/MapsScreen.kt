@@ -154,7 +154,7 @@ private fun importChosenMap(context: Context) {
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
-        ZipUtil.unzip(mapPath.value, outputFile.absolutePath)
+        ZipUtil.unzipMap(mapPath.value, outputFile.absolutePath)
         getMap(outputFile.absolutePath, context)
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
