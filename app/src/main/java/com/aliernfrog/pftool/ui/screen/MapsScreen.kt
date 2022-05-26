@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.content.Context
+import android.content.Intent
 import android.os.Environment
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -167,7 +168,15 @@ private fun exportChosenMap(context: Context) {
     } else {
         ZipUtil.zipFolderContent(folderPath = mapPath.value, zipPath = outputFile.absolutePath)
         val snackbarString = "${context.getString(R.string.info_exportedMap)}\n${outputFile.absolutePath}"
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(snackbarString) }
+        scope.launch {
+            when (scaffoldState.snackbarHostState.showSnackbar(snackbarString, context.getString(R.string.action_share))) {
+                SnackbarResult.ActionPerformed -> {
+                    val intent = FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
+                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
+                }
+                SnackbarResult.Dismissed -> { }
+            }
+        }
     }
 }
 
