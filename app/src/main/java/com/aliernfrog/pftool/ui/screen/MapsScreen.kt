@@ -101,6 +101,7 @@ private fun MapActions() {
         if (isImported) {
             PFToolButton(
                 title = context.getString(R.string.manageMapsExport),
+                description = context.getString(R.string.manageMapsExportDescription),
                 painter = painterResource(id = R.drawable.download)) {
                 exportChosenMap(context)
             }
