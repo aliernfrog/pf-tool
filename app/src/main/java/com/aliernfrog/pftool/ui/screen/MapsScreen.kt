@@ -28,6 +28,7 @@ private val mapNameOriginal = mutableStateOf("")
 private val recompose = mutableStateOf(false)
 
 private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
+private val exportedMapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/exported"
 
 private lateinit var scope: CoroutineScope
 private lateinit var scaffoldState: ScaffoldState
@@ -159,12 +160,14 @@ private fun importChosenMap(context: Context) {
 }
 
 private fun exportChosenMap(context: Context) {
-    val outputFile = File("${mapsBase}/${mapNameEdit.value}.zip")
+    val outputFile = File("${exportedMapsBase}/${mapNameEdit.value}.zip")
+    if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
         ZipUtil.zipFolderContent(folderPath = mapPath.value, zipPath = outputFile.absolutePath)
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        val snackbarString = "${context.getString(R.string.info_exportedMap)}\n${outputFile.absolutePath}"
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(snackbarString) }
     }
 }
 
