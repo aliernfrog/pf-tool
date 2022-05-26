@@ -100,6 +100,11 @@ private fun MapActions() {
         }
         if (isImported) {
             PFToolButton(
+                title = context.getString(R.string.manageMapsExport),
+                painter = painterResource(id = R.drawable.download)) {
+                exportChosenMap(context)
+            }
+            PFToolButton(
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
                 backgroundColor = MaterialTheme.colors.error,
@@ -148,6 +153,16 @@ private fun importChosenMap(context: Context) {
     } else {
         ZipUtil.unzip(mapPath.value, outputFile.absolutePath)
         getMap(outputFile.absolutePath, context)
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+    }
+}
+
+private fun exportChosenMap(context: Context) {
+    val outputFile = File("${mapsBase}/${mapNameEdit.value}.zip")
+    if (outputFile.exists()) {
+        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+    } else {
+        ZipUtil.zipFolderContent(folderPath = mapPath.value, zipPath = outputFile.absolutePath)
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }
