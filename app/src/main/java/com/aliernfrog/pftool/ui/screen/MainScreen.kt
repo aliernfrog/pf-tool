@@ -16,7 +16,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.sheets.PermissionSheet
 
-val hasPermissions = mutableStateOf(true)
+private val hasPermissions = mutableStateOf(true)
 
 @Composable
 fun MainScreen(navController: NavController) {
