@@ -5,8 +5,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
@@ -15,20 +18,21 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.sheets.PermissionSheet
+import kotlinx.coroutines.launch
 
-private val hasPermissions = mutableStateOf(true)
-
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(navController: NavController) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val permissionsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController) {
         PFToolButton(
             title = context.getString(R.string.manageMaps),
             description = context.getString(R.string.manageMapsDescription),
             painter = painterResource(id = R.drawable.map),
-            enabled = hasPermissions.value,
             onClick = {
-                navController.navigate("maps")
+                checkPermissions(context, onDeny = { scope.launch { permissionsSheetState.show() } }, onGrant = { navController.navigate("maps") })
             }
         )
         PFToolButton(
@@ -40,11 +44,11 @@ fun MainScreen(navController: NavController) {
             }
         )
     }
-    if (!checkPermissions(context)) PermissionSheet { hasPermissions.value = true }
+    PermissionSheet(permissionsSheetState)
 }
 
-private fun checkPermissions(context: Context): Boolean {
-    hasPermissions.value = if (Build.VERSION.SDK_INT >= 30) Environment.isExternalStorageManager()
+private fun checkPermissions(context: Context, onDeny: () -> Unit, onGrant: () -> Unit) {
+    val hasPerms = if (Build.VERSION.SDK_INT >= 30) Environment.isExternalStorageManager()
     else ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-    return hasPermissions.value
+    if (hasPerms) onGrant() else onDeny()
 }

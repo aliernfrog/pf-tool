@@ -3,10 +3,8 @@ package com.aliernfrog.pftool.ui.sheets
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
@@ -32,28 +29,26 @@ private val allFilesAccess = Build.VERSION.SDK_INT >= 30
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PermissionSheet(onGrant: () -> Unit) {
+fun PermissionSheet(state: ModalBottomSheetState) {
     val context = LocalContext.current
-    val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
     val scope = rememberCoroutineScope()
     PFToolRoundedModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
         PFToolColumnRounded {
             val text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission)
             Text(text, fontWeight = FontWeight.Bold)
         }
-        OkButton(scope, state, onGrant)
+        OkButton(scope, state)
     }
 }
 
 @SuppressLint("InlinedApi")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState, onGrant: () -> Unit) {
+private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
-            onGrant()
             if (it) scope.launch { state.hide() }
         })
     Button(modifier = Modifier.padding(8.dp).fillMaxWidth(),
@@ -66,22 +61,12 @@ private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState, onGran
         content = { Text(context.getString(R.string.action_ok), fontWeight = FontWeight.Bold) },
         onClick = {
             if (allFilesAccess) {
-                if (Environment.isExternalStorageManager()) {
-                    onGrant()
-                    scope.launch { state.hide() }
-                } else {
-                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    val uri = Uri.fromParts("package", context.packageName, null)
-                    intent.data = uri
-                    context.startActivity(intent)
-                }
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                val uri = Uri.fromParts("package", context.packageName, null)
+                intent.data = uri
+                context.startActivity(intent)
             } else {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    onGrant()
-                    scope.launch { state.hide() }
-                } else {
-                    launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
+                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }
     )
