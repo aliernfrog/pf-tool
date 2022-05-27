@@ -48,9 +48,7 @@ private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = {
-            if (it) scope.launch { state.hide() }
-        })
+        onResult = {})
     Button(modifier = Modifier.padding(8.dp).fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
@@ -65,9 +63,8 @@ private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
                 val uri = Uri.fromParts("package", context.packageName, null)
                 intent.data = uri
                 context.startActivity(intent)
-            } else {
-                launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
+            } else launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            scope.launch { state.hide() }
         }
     )
 }
