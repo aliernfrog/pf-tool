@@ -18,7 +18,11 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.sheets.PermissionSheet
+import com.aliernfrog.pftool.ui.sheets.UriPermissionSheet
+import com.aliernfrog.pftool.utils.FileUtil
 import kotlinx.coroutines.launch
+
+private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -26,13 +30,16 @@ fun MainScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val permissionsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val uriPermsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController) {
         PFToolButton(
             title = context.getString(R.string.manageMaps),
             description = context.getString(R.string.manageMapsDescription),
             painter = painterResource(id = R.drawable.map),
             onClick = {
-                checkPermissions(context, onDeny = { scope.launch { permissionsSheetState.show() } }, onGrant = { navController.navigate("maps") })
+                checkPermissions(context, onDeny = { scope.launch { permissionsSheetState.show() } }, onGrant = {
+                    checkUriPermissions(context, { scope.launch { uriPermsSheetState.show() } }, { navController.navigate("maps") })
+                })
             }
         )
         PFToolButton(
@@ -45,10 +52,16 @@ fun MainScreen(navController: NavController) {
         )
     }
     PermissionSheet(permissionsSheetState)
+    UriPermissionSheet(mapsFolder = mapsBase, state = uriPermsSheetState)
 }
 
 private fun checkPermissions(context: Context, onDeny: () -> Unit, onGrant: () -> Unit) {
     val hasPerms = if (Build.VERSION.SDK_INT >= 30) Environment.isExternalStorageManager()
     else ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     if (hasPerms) onGrant() else onDeny()
+}
+
+private fun checkUriPermissions(context: Context, onDeny: () -> Unit, onGrant: () -> Unit) {
+    if (Build.VERSION.SDK_INT < 30) return onGrant()
+    if (FileUtil.checkUriPermission(mapsBase, context)) onGrant() else onDeny()
 }

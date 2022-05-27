@@ -2,6 +2,9 @@ package com.aliernfrog.pftool.utils
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Environment
+import android.provider.DocumentsContract
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -25,6 +28,12 @@ class FileUtil {
                 else file.delete()
             }
             directory.delete()
+        }
+
+        fun checkUriPermission(path: String, context: Context): Boolean {
+            val treeId = path.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
+            val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
+            return context.checkUriPermission(treeUri, android.os.Process.myPid(), android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
         }
     }
 }
