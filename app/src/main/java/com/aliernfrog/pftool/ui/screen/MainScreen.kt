@@ -2,6 +2,7 @@ package com.aliernfrog.pftool.ui.screen
 
 import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
@@ -22,15 +23,16 @@ import com.aliernfrog.pftool.ui.sheets.UriPermissionSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import kotlinx.coroutines.launch
 
-private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
+private lateinit var mapsDir: String
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController, config: SharedPreferences) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val permissionsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val uriPermsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    mapsDir = config.getString("mapsDir", "") ?: ""
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController) {
         PFToolButton(
             title = context.getString(R.string.manageMaps),
@@ -52,7 +54,7 @@ fun MainScreen(navController: NavController) {
         )
     }
     PermissionSheet(permissionsSheetState)
-    UriPermissionSheet(mapsFolder = mapsBase, state = uriPermsSheetState)
+    UriPermissionSheet(mapsFolder = mapsDir, state = uriPermsSheetState)
 }
 
 private fun checkPermissions(context: Context, onDeny: () -> Unit, onGrant: () -> Unit) {
@@ -63,5 +65,5 @@ private fun checkPermissions(context: Context, onDeny: () -> Unit, onGrant: () -
 
 private fun checkUriPermissions(context: Context, onDeny: () -> Unit, onGrant: () -> Unit) {
     if (Build.VERSION.SDK_INT < 30) return onGrant()
-    if (FileUtil.checkUriPermission(mapsBase, context)) onGrant() else onDeny()
+    if (FileUtil.checkUriPermission(mapsDir, context)) onGrant() else onDeny()
 }

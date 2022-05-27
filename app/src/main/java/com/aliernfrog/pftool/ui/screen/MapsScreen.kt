@@ -2,7 +2,7 @@ package com.aliernfrog.pftool.ui.screen
 
 import android.content.Context
 import android.content.Intent
-import android.os.Environment
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -28,24 +28,26 @@ private val mapNameEdit = mutableStateOf("")
 private val mapNameOriginal = mutableStateOf("")
 private val recompose = mutableStateOf(false)
 
-private val mapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/unzipTest"
-private val exportedMapsBase = "${Environment.getExternalStorageDirectory()}/Documents/PFTool/exported"
+private lateinit var mapsDir: String
+private lateinit var mapsExportDir: String
 
 private lateinit var scope: CoroutineScope
 private lateinit var scaffoldState: ScaffoldState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(navController: NavController) {
+fun MapsScreen(navController: NavController, config: SharedPreferences) {
     val context = LocalContext.current
     scope = rememberCoroutineScope()
     scaffoldState = rememberScaffoldState()
+    mapsDir = config.getString("mapsDir", "") ?: ""
+    mapsExportDir = config.getString("mapsExportDir", "") ?: ""
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
         PickMapFileButton(pickMapSheetState)
         MapActions()
     }
-    PickMapSheet(mapsBase, pickMapSheetState) { getMap(it, context) }
+    PickMapSheet(mapsDir, pickMapSheetState) { getMap(it, context) }
     recompose.value
 }
 
@@ -68,7 +70,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
 private fun MapActions() {
     if (mapPath.value != "") {
         val context = LocalContext.current
-        val isImported = mapPath.value.startsWith(mapsBase)
+        val isImported = mapPath.value.startsWith(mapsDir)
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             OutlinedTextField(
                 value = mapNameEdit.value,
@@ -139,7 +141,7 @@ private fun getMap(path: String, context: Context) {
 }
 
 private fun renameChosenMap(context: Context) {
-    val outputFile = File("${mapsBase}/${mapNameEdit.value}")
+    val outputFile = File("${mapsDir}/${mapNameEdit.value}")
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
@@ -150,7 +152,7 @@ private fun renameChosenMap(context: Context) {
 }
 
 private fun importChosenMap(context: Context) {
-    val outputFile = File("${mapsBase}/${mapNameEdit.value}")
+    val outputFile = File("${mapsDir}/${mapNameEdit.value}")
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
@@ -161,7 +163,7 @@ private fun importChosenMap(context: Context) {
 }
 
 private fun exportChosenMap(context: Context) {
-    val outputFile = File("${exportedMapsBase}/${mapNameEdit.value}.zip")
+    val outputFile = File("${mapsExportDir}/${mapNameEdit.value}.zip")
     if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
