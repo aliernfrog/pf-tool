@@ -28,7 +28,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-val allFilesAccess = Build.VERSION.SDK_INT >= 30
+private val allFilesAccess = Build.VERSION.SDK_INT >= 30
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
