@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
     private lateinit var configEditor: SharedPreferences.Editor
 
-    private val defaultMapsDir = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/editor"
+    private val defaultMapsDir = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
     private val defaultMapsExportDir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
 
     override fun onCreate(savedInstanceState: Bundle?) {
