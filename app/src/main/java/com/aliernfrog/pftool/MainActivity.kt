@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 MapsScreen(navController, config)
             }
             composable(route = "options") {
-                OptionsScreen(navController)
+                OptionsScreen(navController, config)
             }
         }
     }

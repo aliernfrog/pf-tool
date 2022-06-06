@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.ui.screen
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,37 +21,33 @@ private lateinit var scope: CoroutineScope
 private lateinit var scaffoldState: ScaffoldState
 
 @Composable
-fun OptionsScreen(navController: NavController) {
+fun OptionsScreen(navController: NavController, config: SharedPreferences) {
     scope = rememberCoroutineScope()
     scaffoldState = rememberScaffoldState()
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), state = scaffoldState, navController = navController) {
-        ThemeSelection()
+        ThemeSelection(config)
     }
 }
 
 @Composable
-private fun ThemeSelection() {
+private fun ThemeSelection(config: SharedPreferences) {
     val context = LocalContext.current
     val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
+    val chosen = config.getInt("appTheme", 0)
     PFToolColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme)) {
-        PFToolRadioButtons(options = options, selectedIndex = getThemePreference(context), columnColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
-            applyTheme(option, context)
+        PFToolRadioButtons(options = options, selectedIndex = chosen, columnColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
+            applyTheme(option, config, context)
         })
     }
 }
 
-private fun getThemePreference(context: Context): Int {
-    val prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)
-    return prefs.getInt("appTheme", 0)
-}
-
-private fun applyTheme(option: String, context: Context) {
-    val prefsEditor = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE).edit()
+private fun applyTheme(option: String, config: SharedPreferences, context: Context) {
+    val configEditor = config.edit()
     var theme = 0 //system
     if (option == context.getString(R.string.optionsThemeLight)) theme = 1 //light
     if (option == context.getString(R.string.optionsThemeDark)) theme = 2 //dark
-    prefsEditor.putInt("appTheme", theme)
-    prefsEditor.apply()
+    configEditor.putInt("appTheme", theme)
+    configEditor.apply()
     scope.launch {
         when(scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.optionsThemeChanged), context.getString(R.string.action_restartNow))) {
             SnackbarResult.ActionPerformed -> { restartApp(context) }
