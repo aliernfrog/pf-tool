@@ -44,19 +44,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setPaths() {
-        if (!config.contains("mapsDir")) configEditor.putString("mapsDir", defaultMapsDir)
-        if (!config.contains("mapsExportDir")) configEditor.putString("mapsExportDir", defaultMapsExportDir)
-        configEditor.apply()
-    }
-
-    private fun getDarkThemePreference(): Boolean? {
-        val theme = config.getInt("appTheme", 0) //system
-        if (theme == 1) return false //light
-        if (theme == 2) return true //dark
-        return null
-    }
-
     @Composable
     private fun SystemBars() {
         val systemUiController = rememberSystemUiController()
@@ -77,5 +64,18 @@ class MainActivity : ComponentActivity() {
                 OptionsScreen(navController, config)
             }
         }
+    }
+
+    private fun setPaths() {
+        if (!config.contains("mapsDir")) configEditor.putString("mapsDir", defaultMapsDir)
+        if (!config.contains("mapsExportDir")) configEditor.putString("mapsExportDir", defaultMapsExportDir)
+        configEditor.apply()
+    }
+
+    private fun getDarkThemePreference(): Boolean? {
+        val theme = config.getInt("appTheme", 0) //system
+        if (theme == 1) return false //light
+        if (theme == 2) return true //dark
+        return null
     }
 }
