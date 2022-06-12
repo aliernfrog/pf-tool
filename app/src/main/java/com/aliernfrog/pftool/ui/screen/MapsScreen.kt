@@ -47,7 +47,13 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsTree
         PickMapFileButton(pickMapSheetState)
         MapActions()
     }
-    PickMapSheet(mapsDir, pickMapSheetState) { getMap(it, context = context) }
+    PickMapSheet(
+        mapsFolder = mapsDir,
+        mapsDocumentFile = if (::mapsDocumentFile.isInitialized) mapsDocumentFile else null,
+        state = pickMapSheetState,
+        onPathPick = { getMap(it, context = context) },
+        onDocumentFilePick = { getMap(documentFile = it, context = context) }
+    )
     recompose.value
 }
 

@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.sheets
 
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -13,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.documentfile.provider.DocumentFile
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
@@ -24,24 +26,24 @@ import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PickMapSheet(mapsFolder: String, state: ModalBottomSheetState, onMapPick: (String) -> Unit) {
+fun PickMapSheet(mapsFolder: String, mapsDocumentFile: DocumentFile?, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
     val context = LocalContext.current
     PFToolRoundedModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state) {
-        PickFromDeviceButton(state, onMapPick)
-        ImportedMaps(mapsFolder, state, onMapPick)
+        PickFromDeviceButton(state, onPathPick)
+        ImportedMaps(mapsFolder, mapsDocumentFile, state, onPathPick, onDocumentFilePick)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickFromDeviceButton(state: ModalBottomSheetState, onMapPick: (String) -> Unit) {
+private fun PickFromDeviceButton(state: ModalBottomSheetState, onPathPick: (String) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) {
             val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
             if (convertedPath != null) {
-                onMapPick(convertedPath)
+                onPathPick(convertedPath)
                 scope.launch { state.hide() }
             } else {
                 Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
@@ -56,21 +58,40 @@ private fun PickFromDeviceButton(state: ModalBottomSheetState, onMapPick: (Strin
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ImportedMaps(mapsFolder: String, state: ModalBottomSheetState, onMapPick: (String) -> Unit) {
+private fun ImportedMaps(mapsFolder: String, mapsDocumentFile: DocumentFile?, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val files = File(mapsFolder).listFiles()?.filter { it.isDirectory }?.sortedBy { it.name.lowercase(Locale.getDefault()) }
     Text(text = context.getString(R.string.manageMapsPickMapYourMaps), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-    if (files == null || files.isEmpty()) {
-        PFToolColumnRounded(color = MaterialTheme.colors.error) {
-            Text(text = context.getString(R.string.manageMapsPickMapNoMapsFound), fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onError)
-        }
-    } else {
-        files.forEach {file ->
-            PFToolButton(title = file.name, painter = painterResource(id = R.drawable.map)) {
-                onMapPick(file.absolutePath)
-                scope.launch { state.hide() }
+    if (mapsDocumentFile != null) {
+        val files = mapsDocumentFile.listFiles().filter { it.isDirectory }.sortedBy { it.name?.lowercase(Locale.getDefault()) }
+        if (files.isEmpty()) {
+            NoImportedMaps(context)
+        } else {
+            files.forEach { file ->
+                PFToolButton(title = file.name.toString(), painter = painterResource(id = R.drawable.map)) {
+                    onDocumentFilePick(file)
+                    scope.launch { state.hide() }
+                }
             }
         }
+    } else {
+        val files = File(mapsFolder).listFiles()?.filter { it.isDirectory }?.sortedBy { it.name.lowercase(Locale.getDefault()) }
+        if (files == null || files.isEmpty()) {
+            NoImportedMaps(context)
+        } else {
+            files.forEach { file ->
+                PFToolButton(title = file.name, painter = painterResource(id = R.drawable.map)) {
+                    onPathPick(file.absolutePath)
+                    scope.launch { state.hide() }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NoImportedMaps(context: Context) {
+    PFToolColumnRounded(color = MaterialTheme.colors.error) {
+        Text(text = context.getString(R.string.manageMapsPickMapNoMapsFound), fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onError)
     }
 }
