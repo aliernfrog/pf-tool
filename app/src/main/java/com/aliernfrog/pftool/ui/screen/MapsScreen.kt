@@ -148,13 +148,24 @@ private fun getMap(path: String? = null, documentFile: DocumentFile? = null, con
 }
 
 private fun renameChosenMap(context: Context) {
-    val outputFile = File("${mapsDir}/${mapNameEdit.value}")
-    if (outputFile.exists()) {
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+    if (::mapsDocumentFile.isInitialized) {
+        val outputFile = mapsDocumentFile.findFile(mapNameEdit.value)
+        if (outputFile != null && outputFile.exists()) {
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        } else {
+            mapsDocumentFile.findFile(mapNameOriginal.value)?.renameTo(mapNameEdit.value)
+            getMap(documentFile = mapsDocumentFile.findFile(mapNameEdit.value), context = context)
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        }
     } else {
-        File(mapPath.value).renameTo(outputFile)
-        getMap(outputFile.absolutePath, context = context)
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        val outputFile = File("${mapsDir}/${mapNameEdit.value}")
+        if (outputFile.exists()) {
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        } else {
+            File(mapPath.value).renameTo(outputFile)
+            getMap(outputFile.absolutePath, context = context)
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        }
     }
 }
 
