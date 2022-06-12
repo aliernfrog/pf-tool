@@ -3,19 +3,16 @@ package com.aliernfrog.pftool.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolButton
+import com.aliernfrog.pftool.ui.composable.PFToolTextField
 import com.aliernfrog.pftool.ui.sheets.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
@@ -72,14 +69,11 @@ private fun MapActions() {
         val context = LocalContext.current
         val isImported = mapPath.value.startsWith(mapsDir)
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
-            OutlinedTextField(
+            PFToolTextField(
                 value = mapNameEdit.value,
                 placeholder = { Text(mapNameOriginal.value) },
                 onValueChange = { mapNameEdit.value = it },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+                singleLine = true
             )
             if (isImported && mapNameEdit.value != "" && (mapNameEdit.value != mapNameOriginal.value)) {
                 PFToolButton(
