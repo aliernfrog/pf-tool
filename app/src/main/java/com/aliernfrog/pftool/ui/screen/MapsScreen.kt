@@ -202,7 +202,8 @@ private fun exportChosenMap(context: Context) {
 }
 
 private fun deleteChosenMap(context: Context) {
-    FileUtil.deleteDirectory(File(mapPath.value))
+    if (::mapsDocumentFile.isInitialized) mapsDocumentFile.findFile(mapNameOriginal.value)?.delete()
+    else FileUtil.deleteDirectory(File(mapPath.value))
     getMap(context = context)
     scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
 }
