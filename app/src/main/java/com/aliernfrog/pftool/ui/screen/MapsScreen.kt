@@ -3,7 +3,6 @@ package com.aliernfrog.pftool.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.widget.Toast
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -150,14 +149,24 @@ private fun renameChosenMap(context: Context) {
 }
 
 private fun importChosenMap(context: Context) {
-    val outputFile = File("${mapsDir}/${mapNameEdit.value}")
-    if (outputFile.exists()) {
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+    if (::mapsDocumentFile.isInitialized) {
+        var outputFile = mapsDocumentFile.findFile(mapNameEdit.value)
+        if (outputFile != null && outputFile.exists()) {
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        } else {
+            outputFile = mapsDocumentFile.createDirectory(mapNameEdit.value)
+            if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        }
     } else {
-        if (::mapsDocumentFile.isInitialized) ZipUtil.unzipMap(mapPath.value, mapsDocumentFile.createDirectory(mapNameEdit.value)!!, context)
-        else ZipUtil.unzipMap(mapPath.value, outputFile.absolutePath)
-        //getMap(outputFile.absolutePath, context) TODO
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        val outputFile = File("${mapsDir}/${mapNameEdit.value}")
+        if (outputFile.exists()) {
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        } else {
+            ZipUtil.unzipMap(mapPath.value, outputFile.absolutePath)
+            getMap(outputFile.absolutePath, context)
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        }
     }
 }
 
