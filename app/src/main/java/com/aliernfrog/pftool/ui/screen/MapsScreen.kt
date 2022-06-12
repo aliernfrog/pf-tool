@@ -47,7 +47,7 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsTree
         PickMapFileButton(pickMapSheetState)
         MapActions()
     }
-    PickMapSheet(mapsDir, pickMapSheetState) { getMap(it, context) }
+    PickMapSheet(mapsDir, pickMapSheetState) { getMap(it, context = context) }
     recompose.value
 }
 
@@ -118,12 +118,8 @@ private fun MapActions() {
     }
 }
 
-private fun getMap(path: String, context: Context) {
-    if (path == "") {
-        mapPath.value = ""
-        mapNameEdit.value = ""
-        mapNameOriginal.value = ""
-    } else {
+private fun getMap(path: String? = null, documentFile: DocumentFile? = null, context: Context) {
+    if (path != null) {
         val file = File(path)
         var mapName = file.name
         if (!file.isDirectory) mapName = file.nameWithoutExtension
@@ -134,6 +130,20 @@ private fun getMap(path: String, context: Context) {
         } else {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_fileDoesntExist)) }
         }
+    } else if (documentFile != null) {
+        var mapName = documentFile.name ?: "map"
+        if (!documentFile.isDirectory) mapName = FileUtil.removeExtension(mapName)
+        if (documentFile.exists()) {
+            mapPath.value = "$mapsDir/$mapName"
+            mapNameEdit.value = mapName
+            mapNameOriginal.value = mapNameEdit.value
+        } else {
+            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_fileDoesntExist)) }
+        }
+    } else {
+        mapPath.value = ""
+        mapNameEdit.value = ""
+        mapNameOriginal.value = ""
     }
 }
 
@@ -143,7 +153,7 @@ private fun renameChosenMap(context: Context) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
         File(mapPath.value).renameTo(outputFile)
-        getMap(outputFile.absolutePath, context)
+        getMap(outputFile.absolutePath, context = context)
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }
@@ -156,6 +166,7 @@ private fun importChosenMap(context: Context) {
         } else {
             outputFile = mapsDocumentFile.createDirectory(mapNameEdit.value)
             if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
+            getMap(documentFile = outputFile, context = context)
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
         }
     } else {
@@ -164,7 +175,7 @@ private fun importChosenMap(context: Context) {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
         } else {
             ZipUtil.unzipMap(mapPath.value, outputFile.absolutePath)
-            getMap(outputFile.absolutePath, context)
+            getMap(outputFile.absolutePath, context = context)
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
         }
     }
@@ -192,6 +203,6 @@ private fun exportChosenMap(context: Context) {
 
 private fun deleteChosenMap(context: Context) {
     FileUtil.deleteDirectory(File(mapPath.value))
-    getMap("", context)
+    getMap(context = context)
     scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
 }

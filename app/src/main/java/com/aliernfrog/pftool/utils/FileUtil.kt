@@ -15,6 +15,12 @@ class FileUtil {
             return split[split.size-1]
         }
 
+        fun removeExtension(path: String): String {
+            val extensionIndex = path.lastIndexOf(".")
+            if (extensionIndex == -1) return path
+            return path.substring(0, extensionIndex)
+        }
+
         fun shareFile(filePath: String, type: String, context: Context): Intent {
             val file = File(filePath)
             val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
