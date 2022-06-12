@@ -3,10 +3,12 @@ package com.aliernfrog.pftool.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
@@ -27,18 +29,20 @@ private val recompose = mutableStateOf(false)
 
 private lateinit var mapsDir: String
 private lateinit var mapsExportDir: String
+private lateinit var mapsDocumentFile: DocumentFile
 
 private lateinit var scope: CoroutineScope
 private lateinit var scaffoldState: ScaffoldState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(navController: NavController, config: SharedPreferences) {
+fun MapsScreen(navController: NavController, config: SharedPreferences, mapsTreeDocumentFile: DocumentFile?) {
     val context = LocalContext.current
     scope = rememberCoroutineScope()
     scaffoldState = rememberScaffoldState()
     mapsDir = config.getString("mapsDir", "") ?: ""
     mapsExportDir = config.getString("mapsExportDir", "") ?: ""
+    if (mapsTreeDocumentFile != null) mapsDocumentFile = mapsTreeDocumentFile
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
         PickMapFileButton(pickMapSheetState)
@@ -150,8 +154,9 @@ private fun importChosenMap(context: Context) {
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
-        ZipUtil.unzipMap(mapPath.value, outputFile.absolutePath)
-        getMap(outputFile.absolutePath, context)
+        if (::mapsDocumentFile.isInitialized) ZipUtil.unzipMap(mapPath.value, mapsDocumentFile.createDirectory(mapNameEdit.value)!!, context)
+        else ZipUtil.unzipMap(mapPath.value, outputFile.absolutePath)
+        //getMap(outputFile.absolutePath, context) TODO
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }

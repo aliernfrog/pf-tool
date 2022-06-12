@@ -1,6 +1,8 @@
 package com.aliernfrog.pftool.utils
 
+import android.content.Context
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import java.io.*
 import java.util.*
 import java.util.zip.ZipEntry
@@ -42,6 +44,23 @@ class ZipUtil {
                 output.close()
             }
             zip.close()
+        }
+
+        fun unzipMap(zipPath: String, destDocumentFile: DocumentFile, context: Context) {
+            if (!destDocumentFile.isDirectory) destDocumentFile.parentFile?.createDirectory(destDocumentFile.name.toString())
+            val zip = ZipFile(zipPath)
+            val entries = zip.entries().asSequence().filter { allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase(Locale.ROOT)) }
+            entries.forEach { entry ->
+                var entryName = entry.name
+                if (entryName.contains("/")) entryName = FileUtil.getFileName(entry.name)
+                var outputFile = destDocumentFile.findFile(entryName)
+                if (outputFile == null) outputFile = destDocumentFile.createFile("", entryName)
+                val input = zip.getInputStream(entry)
+                val output = context.contentResolver.openOutputStream(outputFile?.uri!!)
+                input.copyTo(output!!)
+                input.close()
+                output.close()
+            }
         }
     }
 }
