@@ -33,4 +33,7 @@
     <string name="optionsThemeLight">Light</string>
     <string name="optionsThemeDark">Dark</string>
     <string name="optionsThemeChanged">Theme will be applied after app restart</string>
+    <string name="optionsAbout">About</string>
+    <string name="optionsAboutInfo">PF Tool is an unofficial app made by aliernfrog#9747</string>
+    <string name="optionsAboutVersion">PF Tool version</string>
 </resources>

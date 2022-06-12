@@ -4,16 +4,22 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.icu.util.VersionInfo
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolRadioButtons
+import com.aliernfrog.pftool.utils.AppUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -26,6 +32,7 @@ fun OptionsScreen(navController: NavController, config: SharedPreferences) {
     scaffoldState = rememberScaffoldState()
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), state = scaffoldState, navController = navController) {
         ThemeSelection(config)
+        AboutPFTool()
     }
 }
 
@@ -38,6 +45,16 @@ private fun ThemeSelection(config: SharedPreferences) {
         PFToolRadioButtons(options = options, selectedIndex = chosen, columnColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
             applyTheme(option, config, context)
         })
+    }
+}
+
+@Composable
+private fun AboutPFTool() {
+    val context = LocalContext.current
+    val version = "${AppUtil.getAppVersionName(context)} (${AppUtil.getAppVersionCode(context)})"
+    val fullText = "${context.getString(R.string.optionsAboutInfo)}\n${context.getString(R.string.optionsAboutVersion)}: $version"
+    PFToolColumnRounded(title = context.getString(R.string.optionsAbout)) {
+        Text(text = fullText, Modifier.padding(horizontal = 8.dp))
     }
 }
 
