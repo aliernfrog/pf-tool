@@ -24,6 +24,17 @@ class ZipUtil {
             }
         }
 
+        fun zipMap(folder: DocumentFile, zipPath: String, context: Context) {
+            ZipOutputStream(BufferedOutputStream(FileOutputStream(zipPath))).use { zos ->
+                val files = folder.listFiles().filter { it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name.toString()).lowercase(Locale.ROOT)) }
+                files.forEach { file ->
+                    val entry = ZipEntry(file.name)
+                    zos.putNextEntry(entry)
+                    context.contentResolver.openInputStream(file.uri)?.copyTo(zos)
+                }
+            }
+        }
+
         fun unzipMap(zipPath: String, destPath: String) {
             val dest = File(destPath)
             if (!dest.isDirectory) dest.mkdirs()
