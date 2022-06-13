@@ -204,7 +204,7 @@ private fun exportChosenMap(context: Context) {
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
-        ZipUtil.zipFolderContent(folderPath = mapPath.value, zipPath = outputFile.absolutePath)
+        ZipUtil.zipMap(folderPath = mapPath.value, zipPath = outputFile.absolutePath)
         val snackbarString = "${context.getString(R.string.info_exportedMap)}\n${outputFile.absolutePath}"
         scope.launch {
             when (scaffoldState.snackbarHostState.showSnackbar(snackbarString, context.getString(R.string.action_share))) {

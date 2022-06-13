@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import java.io.*
 import java.util.*
@@ -13,17 +12,14 @@ class ZipUtil {
     companion object {
         private val allowedMapFiles = arrayOf("colormap.jpg","heightmap.jpg","map.txt","thumbnail.jpg")
 
-        fun zipFolderContent(folderPath: String, zipPath: String) {
+        fun zipMap(folderPath: String, zipPath: String) {
             val folder = File(folderPath)
             ZipOutputStream(BufferedOutputStream(FileOutputStream(zipPath))).use { zos ->
-                folder.walkTopDown().forEach { file ->
-                    if (file.absolutePath != folder.absolutePath) {
-                        val zipFileName = file.absolutePath.removePrefix(folder.absolutePath).removePrefix("/")
-                        Log.d("", "zipFolderContent: ${file.absolutePath} - $zipFileName")
-                        val entry = ZipEntry("$zipFileName${(if (file.isDirectory) "/" else "")}")
-                        zos.putNextEntry(entry)
-                        if (file.isFile) file.inputStream().copyTo(zos)
-                    }
+                val files = folder.listFiles()?.filter { it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase(Locale.ROOT)) }
+                files?.forEach { file ->
+                    val entry = ZipEntry(file.name)
+                    zos.putNextEntry(entry)
+                    file.inputStream().copyTo(zos)
                 }
             }
         }
