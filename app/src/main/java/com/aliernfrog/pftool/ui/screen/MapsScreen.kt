@@ -84,7 +84,7 @@ private fun MapActions() {
                 onValueChange = { mapNameEdit.value = it },
                 singleLine = true
             )
-            if (isImported && mapNameEdit.value != "" && (mapNameEdit.value != mapNameOriginal.value)) {
+            if (isImported && getMapNameEdit() != mapNameOriginal.value) {
                 PFToolButton(
                     title = context.getString(R.string.manageMapsRename),
                     painter = painterResource(id = R.drawable.edit),
@@ -155,16 +155,16 @@ private fun getMap(path: String? = null, documentFile: DocumentFile? = null, con
 
 private fun renameChosenMap(context: Context) {
     if (::mapsDocumentFile.isInitialized) {
-        val outputFile = mapsDocumentFile.findFile(mapNameEdit.value)
+        val outputFile = mapsDocumentFile.findFile(getMapNameEdit())
         if (outputFile != null && outputFile.exists()) {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
         } else {
-            mapsDocumentFile.findFile(mapNameOriginal.value)?.renameTo(mapNameEdit.value)
-            getMap(documentFile = mapsDocumentFile.findFile(mapNameEdit.value), context = context)
+            mapsDocumentFile.findFile(mapNameOriginal.value)?.renameTo(getMapNameEdit())
+            getMap(documentFile = mapsDocumentFile.findFile(getMapNameEdit()), context = context)
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
         }
     } else {
-        val outputFile = File("${mapsDir}/${mapNameEdit.value}")
+        val outputFile = File("${mapsDir}/${getMapNameEdit()}")
         if (outputFile.exists()) {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
         } else {
@@ -177,17 +177,17 @@ private fun renameChosenMap(context: Context) {
 
 private fun importChosenMap(context: Context) {
     if (::mapsDocumentFile.isInitialized) {
-        var outputFile = mapsDocumentFile.findFile(mapNameEdit.value)
+        var outputFile = mapsDocumentFile.findFile(getMapNameEdit())
         if (outputFile != null && outputFile.exists()) {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
         } else {
-            outputFile = mapsDocumentFile.createDirectory(mapNameEdit.value)
+            outputFile = mapsDocumentFile.createDirectory(getMapNameEdit())
             if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
             getMap(documentFile = outputFile, context = context)
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
         }
     } else {
-        val outputFile = File("${mapsDir}/${mapNameEdit.value}")
+        val outputFile = File("${mapsDir}/${getMapNameEdit()}")
         if (outputFile.exists()) {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
         } else {
@@ -199,7 +199,7 @@ private fun importChosenMap(context: Context) {
 }
 
 private fun exportChosenMap(context: Context) {
-    val outputFile = File("${mapsExportDir}/${mapNameEdit.value}.zip")
+    val outputFile = File("${mapsExportDir}/${getMapNameEdit()}.zip")
     if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
@@ -224,4 +224,8 @@ private fun deleteChosenMap(context: Context) {
     else FileUtil.deleteDirectory(File(mapPath.value))
     getMap(context = context)
     scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+}
+
+private fun getMapNameEdit(): String {
+    return mapNameEdit.value.ifBlank { mapNameOriginal.value }
 }
