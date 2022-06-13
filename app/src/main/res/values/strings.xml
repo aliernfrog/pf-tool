@@ -26,6 +26,9 @@
     <string name="manageMapsExport">Export this map</string>
     <string name="manageMapsExportDescription">Export your map and optionally share it</string>
     <string name="manageMapsDelete">Delete this map</string>
+    <string name="exportedMaps">Exported maps</string>
+    <string name="exportedMapsDescription">View the maps that was exported</string>
+    <string name="exportedMapsNoMaps">You haven\'t exported any maps</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
     <string name="optionsTheme">Theme</string>
