@@ -19,6 +19,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
+import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import kotlinx.coroutines.launch
 import java.io.File
@@ -68,7 +69,7 @@ private fun ImportedMaps(mapsFolder: String, mapsDocumentFile: DocumentFile?, st
             NoImportedMaps(context)
         } else {
             files.forEach { file ->
-                PFToolButton(title = file.name.toString(), painter = painterResource(id = R.drawable.map)) {
+                PFToolButton(title = file.name.toString(), description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
                     onDocumentFilePick(file)
                     scope.launch { state.hide() }
                 }
@@ -80,7 +81,7 @@ private fun ImportedMaps(mapsFolder: String, mapsDocumentFile: DocumentFile?, st
             NoImportedMaps(context)
         } else {
             files.forEach { file ->
-                PFToolButton(title = file.name, painter = painterResource(id = R.drawable.map)) {
+                PFToolButton(title = file.name, description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
                     onPathPick(file.absolutePath)
                     scope.launch { state.hide() }
                 }
