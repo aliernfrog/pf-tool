@@ -109,7 +109,7 @@ private fun MapActions() {
             PFToolButton(
                 title = context.getString(R.string.manageMapsExport),
                 description = context.getString(R.string.manageMapsExportDescription),
-                painter = painterResource(id = R.drawable.download)) {
+                painter = painterResource(id = R.drawable.share)) {
                 exportChosenMap(context)
             }
             PFToolButton(
