@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.content.SharedPreferences
+import android.text.format.DateUtils
 import android.widget.Toast
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -40,7 +41,8 @@ private fun ExportedMapsList() {
             Text(text = context.getString(R.string.exportedMapsHint), fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
         }
         files.forEach {file ->
-            PFToolButton(title = file.nameWithoutExtension, painter = painterResource(id = R.drawable.map)) {
+            val lastModified = DateUtils.getRelativeDateTimeString(context, file.lastModified(), DateUtils.SECOND_IN_MILLIS, DateUtils.DAY_IN_MILLIS, 0).toString()
+            PFToolButton(title = file.nameWithoutExtension, description = lastModified, painter = painterResource(id = R.drawable.map)) {
                 Toast.makeText(context, file.absolutePath, Toast.LENGTH_SHORT).show()
             }
         }
