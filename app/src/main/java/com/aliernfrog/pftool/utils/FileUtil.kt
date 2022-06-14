@@ -7,6 +7,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import java.io.File
 
 class FileUtil {
@@ -23,6 +24,10 @@ class FileUtil {
         }
 
         fun getLastModified(file: File, context: Context): String {
+            return DateUtils.getRelativeDateTimeString(context, file.lastModified(), DateUtils.SECOND_IN_MILLIS, DateUtils.DAY_IN_MILLIS, 0).toString()
+        }
+
+        fun getLastModified(file: DocumentFile, context: Context): String {
             return DateUtils.getRelativeDateTimeString(context, file.lastModified(), DateUtils.SECOND_IN_MILLIS, DateUtils.DAY_IN_MILLIS, 0).toString()
         }
 
