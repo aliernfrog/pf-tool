@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.content.SharedPreferences
-import android.text.format.DateUtils
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +14,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.sheets.ExportedMapSheet
+import com.aliernfrog.pftool.utils.FileUtil
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
@@ -53,8 +53,7 @@ private fun ExportedMapsList(exportedMapSheetState: ModalBottomSheetState) {
             Text(text = context.getString(R.string.exportedMapsHint), fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
         }
         files.forEach {file ->
-            val lastModified = DateUtils.getRelativeDateTimeString(context, file.lastModified(), DateUtils.SECOND_IN_MILLIS, DateUtils.DAY_IN_MILLIS, 0).toString()
-            PFToolButton(title = file.nameWithoutExtension, description = lastModified, painter = painterResource(id = R.drawable.map)) {
+            PFToolButton(title = file.nameWithoutExtension, description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
                 chosenMap = file
                 recompose.value = !recompose.value
                 scope.launch { exportedMapSheetState.show() }

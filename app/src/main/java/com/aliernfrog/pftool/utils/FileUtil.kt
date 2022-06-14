@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Environment
 import android.provider.DocumentsContract
+import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -19,6 +20,10 @@ class FileUtil {
             val extensionIndex = path.lastIndexOf(".")
             if (extensionIndex == -1) return path
             return path.substring(0, extensionIndex)
+        }
+
+        fun getLastModified(file: File, context: Context): String {
+            return DateUtils.getRelativeDateTimeString(context, file.lastModified(), DateUtils.SECOND_IN_MILLIS, DateUtils.DAY_IN_MILLIS, 0).toString()
         }
 
         fun shareFile(filePath: String, type: String, context: Context): Intent {
