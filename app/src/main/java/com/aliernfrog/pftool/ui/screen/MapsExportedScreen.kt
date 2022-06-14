@@ -36,6 +36,9 @@ private fun ExportedMapsList() {
             Text(text = context.getString(R.string.exportedMapsNoMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onError)
         }
     } else {
+        PFToolColumnRounded(color = MaterialTheme.colors.primary) {
+            Text(text = context.getString(R.string.exportedMapsHint), fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
+        }
         files.forEach {file ->
             PFToolButton(title = file.nameWithoutExtension, painter = painterResource(id = R.drawable.map)) {
                 Toast.makeText(context, file.absolutePath, Toast.LENGTH_SHORT).show()
