@@ -30,7 +30,7 @@
     <string name="exportedMaps">Exported maps</string>
     <string name="exportedMapsDescription">View the maps that was exported</string>
     <string name="exportedMapsNoMaps">You haven\'t exported any maps</string>
-    <string name="exportedMapsHint">Click on maps to view more actions</string>
+    <string name="exportedMapsHint">Click maps to view more actions</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
     <string name="optionsTheme">Theme</string>
