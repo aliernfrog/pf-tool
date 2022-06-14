@@ -24,6 +24,7 @@
     <string name="manageMapsRename">Rename this map</string>
     <string name="manageMapsImport">Import this map</string>
     <string name="manageMapsExport">Export this map</string>
+    <string name="manageMapsShare">Share this map</string>
     <string name="manageMapsExportDescription">Export your map and optionally share it</string>
     <string name="manageMapsDelete">Delete this map</string>
     <string name="exportedMaps">Exported maps</string>
