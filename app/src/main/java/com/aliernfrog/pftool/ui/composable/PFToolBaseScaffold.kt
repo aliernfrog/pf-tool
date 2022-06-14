@@ -25,33 +25,26 @@ fun PFToolBaseScaffold(title: String, navController: NavController, state: Scaff
     Scaffold(
         scaffoldState = state,
         topBar = {
-            TopAppBar(backgroundColor = MaterialTheme.colors.secondary,
-                contentPadding = PaddingValues(horizontal = 24.dp),
-                content = {
-                    if (navController.previousBackStackEntry != null) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = LocalContext.current.getString(R.string.action_back),
-                            Modifier.padding(end = 24.dp).clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = rememberRipple(bounded = false),
-                                onClick = {
-                                    if (onNavigationClick != null) onNavigationClick()
-                                    navController.navigateUp()
-                                }
-                            )
-                        )
-                    }
-                    Text(text = title, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onSecondary)
-                })
-        },
-        content = {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())) {
-                Column(Modifier.padding(horizontal = 24.dp), content = content)
+            TopAppBar(backgroundColor = MaterialTheme.colors.secondary, contentPadding = PaddingValues(horizontal = 24.dp)) {
+                if (navController.previousBackStackEntry != null) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = LocalContext.current.getString(R.string.action_back), Modifier.padding(end = 24.dp).clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(bounded = false),
+                        onClick = {
+                            if (onNavigationClick != null) onNavigationClick()
+                            navController.navigateUp()
+                        })
+                    )
+                }
+                Text(text = title, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onSecondary)
             }
         }
-    )
+    ) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            Column(Modifier.padding(horizontal = 24.dp)) {
+                content()
+                Spacer(Modifier.height(8.dp))
+            }
+        }
+    }
 }
