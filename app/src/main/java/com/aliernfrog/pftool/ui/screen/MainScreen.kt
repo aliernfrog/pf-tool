@@ -72,6 +72,5 @@ private fun checkPermissions(context: Context, onDeny: () -> Unit, onGrant: () -
 }
 
 private fun checkUriPermissions(context: Context, onDeny: () -> Unit, onGrant: () -> Unit) {
-    if (Build.VERSION.SDK_INT < 30) return onGrant()
     if (FileUtil.checkUriPermission(mapsDir, context)) onGrant() else onDeny()
 }

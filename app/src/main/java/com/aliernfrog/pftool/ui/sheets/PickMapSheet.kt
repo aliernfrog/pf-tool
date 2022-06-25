@@ -22,16 +22,15 @@ import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PickMapSheet(mapsFolder: String, mapsDocumentFile: DocumentFile?, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
+fun PickMapSheet(mapsDocumentFile: DocumentFile, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
     val context = LocalContext.current
     PFToolRoundedModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state) {
         PickFromDeviceButton(state, onPathPick)
-        ImportedMaps(mapsFolder, mapsDocumentFile, state, onPathPick, onDocumentFilePick)
+        ImportedMaps(mapsDocumentFile, state, onDocumentFilePick)
     }
 }
 
@@ -59,32 +58,18 @@ private fun PickFromDeviceButton(state: ModalBottomSheetState, onPathPick: (Stri
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ImportedMaps(mapsFolder: String, mapsDocumentFile: DocumentFile?, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
+private fun ImportedMaps(mapsDocumentFile: DocumentFile, state: ModalBottomSheetState, onDocumentFilePick: (DocumentFile) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Text(text = context.getString(R.string.manageMapsPickMapYourMaps), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-    if (mapsDocumentFile != null) {
-        val files = mapsDocumentFile.listFiles().filter { it.isDirectory }.sortedBy { it.name?.lowercase(Locale.getDefault()) }
-        if (files.isEmpty()) {
-            NoImportedMaps(context)
-        } else {
-            files.forEach { file ->
-                PFToolButton(title = file.name.toString(), description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
-                    onDocumentFilePick(file)
-                    scope.launch { state.hide() }
-                }
-            }
-        }
+    val files = mapsDocumentFile.listFiles().filter { it.isDirectory }.sortedBy { it.name?.lowercase(Locale.getDefault()) }
+    if (files.isEmpty()) {
+        NoImportedMaps(context)
     } else {
-        val files = File(mapsFolder).listFiles()?.filter { it.isDirectory }?.sortedBy { it.name.lowercase(Locale.getDefault()) }
-        if (files == null || files.isEmpty()) {
-            NoImportedMaps(context)
-        } else {
-            files.forEach { file ->
-                PFToolButton(title = file.name, description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
-                    onPathPick(file.absolutePath)
-                    scope.launch { state.hide() }
-                }
+        files.forEach { file ->
+            PFToolButton(title = file.name.toString(), description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
+                onDocumentFilePick(file)
+                scope.launch { state.hide() }
             }
         }
     }

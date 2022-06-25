@@ -1,10 +1,8 @@
 package com.aliernfrog.pftool.ui.sheets
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Environment
 import android.provider.DocumentsContract
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ExperimentalMaterialApi
@@ -19,7 +17,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButtonCentered
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
-import com.aliernfrog.pftool.utils.FileUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -37,7 +34,6 @@ fun UriPermissionSheet(mapsFolder: String, state: ModalBottomSheetState) {
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-@SuppressLint("InlinedApi")
 @Composable
 private fun OkButton(mapsFolder: String, scope: CoroutineScope, state: ModalBottomSheetState) {
     val context = LocalContext.current
