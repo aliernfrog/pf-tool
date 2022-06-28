@@ -37,15 +37,6 @@ class FileUtil {
             return Intent(Intent.ACTION_SEND).setType(type).putExtra(Intent.EXTRA_STREAM, uri)
         }
 
-        fun deleteDirectory(directory: File) {
-            val files = directory.listFiles()
-            files?.forEach { file ->
-                if (file.isDirectory) deleteDirectory(file)
-                else file.delete()
-            }
-            directory.delete()
-        }
-
         fun checkUriPermission(path: String, context: Context): Boolean {
             val treeId = path.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
             val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)

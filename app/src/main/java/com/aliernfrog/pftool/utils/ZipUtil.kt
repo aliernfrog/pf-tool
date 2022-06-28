@@ -12,18 +12,6 @@ class ZipUtil {
     companion object {
         private val allowedMapFiles = arrayOf("colormap.jpg","heightmap.jpg","map.txt","thumbnail.jpg")
 
-        fun zipMap(folderPath: String, zipPath: String) {
-            val folder = File(folderPath)
-            ZipOutputStream(BufferedOutputStream(FileOutputStream(zipPath))).use { zos ->
-                val files = folder.listFiles()?.filter { it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase(Locale.ROOT)) }
-                files?.forEach { file ->
-                    val entry = ZipEntry(file.name)
-                    zos.putNextEntry(entry)
-                    file.inputStream().copyTo(zos)
-                }
-            }
-        }
-
         fun zipMap(folder: DocumentFile, zipPath: String, context: Context) {
             ZipOutputStream(BufferedOutputStream(FileOutputStream(zipPath))).use { zos ->
                 val files = folder.listFiles().filter { it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name.toString()).lowercase(Locale.ROOT)) }
@@ -33,24 +21,6 @@ class ZipUtil {
                     context.contentResolver.openInputStream(file.uri)?.copyTo(zos)
                 }
             }
-        }
-
-        fun unzipMap(zipPath: String, destPath: String) {
-            val dest = File(destPath)
-            if (!dest.isDirectory) dest.mkdirs()
-            val zip = ZipFile(zipPath)
-            val entries = zip.entries().asSequence().filter { allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase(Locale.ROOT)) }
-            entries.forEach { entry ->
-                var entryName = entry.name
-                if (entryName.contains("/")) entryName = FileUtil.getFileName(entry.name)
-                val outputFile = File("${dest.absolutePath}/${entryName}")
-                val input = zip.getInputStream(entry)
-                val output = outputFile.outputStream()
-                input.copyTo(output)
-                input.close()
-                output.close()
-            }
-            zip.close()
         }
 
         fun unzipMap(zipPath: String, destDocumentFile: DocumentFile, context: Context) {
