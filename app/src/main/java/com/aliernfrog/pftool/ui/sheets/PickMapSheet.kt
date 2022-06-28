@@ -5,6 +5,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -26,9 +27,9 @@ import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PickMapSheet(mapsDocumentFile: DocumentFile, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
+fun PickMapSheet(mapsDocumentFile: DocumentFile, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
     val context = LocalContext.current
-    PFToolRoundedModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state) {
+    PFToolRoundedModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state, scrollState) {
         PickFromDeviceButton(state, onPathPick)
         ImportedMaps(mapsDocumentFile, state, onDocumentFilePick)
     }

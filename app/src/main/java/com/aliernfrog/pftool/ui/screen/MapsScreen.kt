@@ -3,6 +3,8 @@ package com.aliernfrog.pftool.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -43,13 +45,15 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsTree
     mapsExportDir = config.getString("mapsExportDir", "") ?: ""
     mapsDocumentFile = mapsTreeDocumentFile
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val pickMapSheetScrollState = rememberScrollState()
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
-        PickMapFileButton(pickMapSheetState)
+        PickMapFileButton(pickMapSheetState, pickMapSheetScrollState)
         MapActions()
     }
     PickMapSheet(
         mapsDocumentFile = mapsDocumentFile,
         state = pickMapSheetState,
+        scrollState = pickMapSheetScrollState,
         onPathPick = { getMap(it, context = context) },
         onDocumentFilePick = { getMap(documentFile = it, context = context) }
     )
@@ -58,7 +62,7 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsTree
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
+private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapSheetScrollState: ScrollState) {
     val context = LocalContext.current
     PFToolButton(
         title = context.getString(R.string.manageMapsPickMap),
@@ -67,7 +71,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
         contentColor = MaterialTheme.colors.onPrimary,
     ) {
         recompose.value = !recompose.value
-        scope.launch { pickMapSheetState.show() }
+        scope.launch { openPickMapSheet(pickMapSheetState, pickMapSheetScrollState) }
     }
 }
 
@@ -203,4 +207,10 @@ private fun deleteChosenMap(context: Context) {
 
 private fun getMapNameEdit(): String {
     return mapNameEdit.value.ifBlank { mapNameOriginal.value }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+private suspend fun openPickMapSheet(pickMapSheetState: ModalBottomSheetState, pickMapSheetScrollState: ScrollState) {
+    pickMapSheetScrollState.scrollTo(0)
+    pickMapSheetState.show()
 }
