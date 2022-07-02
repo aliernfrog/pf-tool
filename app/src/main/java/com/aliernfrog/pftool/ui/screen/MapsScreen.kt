@@ -9,7 +9,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
@@ -19,6 +18,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolTextField
 import com.aliernfrog.pftool.ui.sheets.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
+import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -30,32 +30,30 @@ private val recompose = mutableStateOf(false)
 
 private lateinit var mapsDir: String
 private lateinit var mapsExportDir: String
-private lateinit var mapsDocumentFile: DocumentFile
 
 private lateinit var scope: CoroutineScope
 private lateinit var scaffoldState: ScaffoldState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(navController: NavController, config: SharedPreferences, mapsTreeDocumentFile: DocumentFile) {
+fun MapsScreen(navController: NavController, config: SharedPreferences, mapsFile: DocumentFileCompat) {
     val context = LocalContext.current
     scope = rememberCoroutineScope()
     scaffoldState = rememberScaffoldState()
     mapsDir = config.getString("mapsDir", "") ?: ""
     mapsExportDir = config.getString("mapsExportDir", "") ?: ""
-    mapsDocumentFile = mapsTreeDocumentFile
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val pickMapSheetScrollState = rememberScrollState()
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
         PickMapFileButton(pickMapSheetState, pickMapSheetScrollState)
-        MapActions()
+        MapActions(mapsFile)
     }
     PickMapSheet(
-        mapsDocumentFile = mapsDocumentFile,
+        mapsFile = mapsFile,
         state = pickMapSheetState,
         scrollState = pickMapSheetScrollState,
         onPathPick = { getMap(it, context = context) },
-        onDocumentFilePick = { getMap(documentFile = it, context = context) }
+        onMapFilePick = { getMap(mapFile = it, context = context) }
     )
     recompose.value
 }
@@ -76,7 +74,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
 }
 
 @Composable
-private fun MapActions() {
+private fun MapActions(mapsFile: DocumentFileCompat) {
     if (mapPath.value != "") {
         val context = LocalContext.current
         val isImported = mapPath.value.startsWith(mapsDir)
@@ -94,7 +92,7 @@ private fun MapActions() {
                     backgroundColor = MaterialTheme.colors.primary,
                     contentColor = MaterialTheme.colors.onPrimary
                 ) {
-                    renameChosenMap(context)
+                    renameChosenMap(context, mapsFile)
                 }
             }
         }
@@ -105,7 +103,7 @@ private fun MapActions() {
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = MaterialTheme.colors.onPrimary
             ) {
-                importChosenMap(context)
+                importChosenMap(context, mapsFile)
             }
         }
         if (isImported) {
@@ -113,7 +111,7 @@ private fun MapActions() {
                 title = context.getString(R.string.manageMapsExport),
                 description = context.getString(R.string.manageMapsExportDescription),
                 painter = painterResource(id = R.drawable.share)) {
-                exportChosenMap(context)
+                exportChosenMap(context, mapsFile)
             }
             PFToolButton(
                 title = context.getString(R.string.manageMapsDelete),
@@ -121,13 +119,13 @@ private fun MapActions() {
                 backgroundColor = MaterialTheme.colors.error,
                 contentColor = MaterialTheme.colors.onError
             ) {
-                deleteChosenMap(context)
+                deleteChosenMap(context, mapsFile)
             }
         }
     }
 }
 
-private fun getMap(path: String? = null, documentFile: DocumentFile? = null, context: Context) {
+private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, context: Context) {
     if (path != null) {
         val file = File(path)
         var mapName = file.name
@@ -139,10 +137,10 @@ private fun getMap(path: String? = null, documentFile: DocumentFile? = null, con
         } else {
             scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_fileDoesntExist)) }
         }
-    } else if (documentFile != null) {
-        var mapName = documentFile.name ?: "map"
-        if (!documentFile.isDirectory) mapName = FileUtil.removeExtension(mapName)
-        if (documentFile.exists()) {
+    } else if (mapFile != null) {
+        var mapName = mapFile.name
+        if (!mapFile.isDirectory()) mapName = FileUtil.removeExtension(mapName)
+        if (mapFile.exists()) {
             mapPath.value = "$mapsDir/$mapName"
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
@@ -156,36 +154,36 @@ private fun getMap(path: String? = null, documentFile: DocumentFile? = null, con
     }
 }
 
-private fun renameChosenMap(context: Context) {
-    val outputFile = mapsDocumentFile.findFile(getMapNameEdit())
+private fun renameChosenMap(context: Context, mapsFile: DocumentFileCompat) {
+    val outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
-        mapsDocumentFile.findFile(mapNameOriginal.value)?.renameTo(getMapNameEdit())
-        getMap(documentFile = mapsDocumentFile.findFile(getMapNameEdit()), context = context)
+        mapsFile.findFile(mapNameOriginal.value)?.renameTo(getMapNameEdit())
+        getMap(mapFile = mapsFile.findFile(getMapNameEdit()), context = context)
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }
 
-private fun importChosenMap(context: Context) {
-    var outputFile = mapsDocumentFile.findFile(getMapNameEdit())
+private fun importChosenMap(context: Context, mapsFile: DocumentFileCompat) {
+    var outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
-        outputFile = mapsDocumentFile.createDirectory(getMapNameEdit())
+        outputFile = mapsFile.createDirectory(getMapNameEdit())
         if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
-        getMap(documentFile = outputFile, context = context)
+        getMap(mapFile = outputFile, context = context)
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
     }
 }
 
-private fun exportChosenMap(context: Context) {
+private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = File("${mapsExportDir}/${getMapNameEdit()}.zip")
     if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
         scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
     } else {
-        ZipUtil.zipMap(folder = mapsDocumentFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
+        ZipUtil.zipMap(folder = mapsFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
         val snackbarString = "${context.getString(R.string.info_exportedMap)}\n${outputFile.absolutePath}"
         scope.launch {
             when (scaffoldState.snackbarHostState.showSnackbar(snackbarString, context.getString(R.string.action_share))) {
@@ -199,8 +197,8 @@ private fun exportChosenMap(context: Context) {
     }
 }
 
-private fun deleteChosenMap(context: Context) {
-    mapsDocumentFile.findFile(mapNameOriginal.value)?.delete()
+private fun deleteChosenMap(context: Context, mapsFile: DocumentFileCompat) {
+    mapsFile.findFile(mapNameOriginal.value)?.delete()
     getMap(context = context)
     scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
 }

@@ -15,23 +15,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.documentfile.provider.DocumentFile
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
+import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.launch
 import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PickMapSheet(mapsDocumentFile: DocumentFile, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onDocumentFilePick: (DocumentFile) -> Unit) {
+fun PickMapSheet(mapsFile: DocumentFileCompat, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     PFToolRoundedModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state, scrollState) {
         PickFromDeviceButton(state, onPathPick)
-        ImportedMaps(mapsDocumentFile, state, onDocumentFilePick)
+        ImportedMaps(mapsFile, state, onMapFilePick)
     }
 }
 
@@ -59,17 +59,17 @@ private fun PickFromDeviceButton(state: ModalBottomSheetState, onPathPick: (Stri
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ImportedMaps(mapsDocumentFile: DocumentFile, state: ModalBottomSheetState, onDocumentFilePick: (DocumentFile) -> Unit) {
+private fun ImportedMaps(mapsFile: DocumentFileCompat, state: ModalBottomSheetState, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Text(text = context.getString(R.string.manageMapsPickMapYourMaps), textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
-    val files = mapsDocumentFile.listFiles().filter { it.isDirectory }.sortedBy { it.name?.lowercase(Locale.getDefault()) }
+    val files = mapsFile.listFiles().filter { it.isDirectory() }.sortedBy { it.name.lowercase(Locale.getDefault()) }
     if (files.isEmpty()) {
         NoImportedMaps(context)
     } else {
         files.forEach { file ->
-            PFToolButton(title = file.name.toString(), description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
-                onDocumentFilePick(file)
+            PFToolButton(title = file.name, description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
+                onMapFilePick(file)
                 scope.launch { state.hide() }
             }
         }

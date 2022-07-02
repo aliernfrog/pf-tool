@@ -1,7 +1,7 @@
 package com.aliernfrog.pftool.utils
 
 import android.content.Context
-import androidx.documentfile.provider.DocumentFile
+import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import java.io.*
 import java.util.*
 import java.util.zip.ZipEntry
@@ -12,9 +12,9 @@ class ZipUtil {
     companion object {
         private val allowedMapFiles = arrayOf("colormap.jpg","heightmap.jpg","map.txt","thumbnail.jpg")
 
-        fun zipMap(folder: DocumentFile, zipPath: String, context: Context) {
+        fun zipMap(folder: DocumentFileCompat, zipPath: String, context: Context) {
             ZipOutputStream(BufferedOutputStream(FileOutputStream(zipPath))).use { zos ->
-                val files = folder.listFiles().filter { it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name.toString()).lowercase(Locale.ROOT)) }
+                val files = folder.listFiles().filter { it.isFile() && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase(Locale.ROOT)) }
                 files.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
@@ -23,8 +23,7 @@ class ZipUtil {
             }
         }
 
-        fun unzipMap(zipPath: String, destDocumentFile: DocumentFile, context: Context) {
-            if (!destDocumentFile.isDirectory) destDocumentFile.parentFile?.createDirectory(destDocumentFile.name.toString())
+        fun unzipMap(zipPath: String, destDocumentFile: DocumentFileCompat, context: Context) {
             val zip = ZipFile(zipPath)
             val entries = zip.entries().asSequence().filter { allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase(Locale.ROOT)) }
             entries.forEach { entry ->

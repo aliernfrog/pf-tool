@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +22,7 @@ import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.lazygeniouz.filecompat.file.DocumentFileCompat
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(navController, config)
             }
             composable(route = "maps") {
-                MapsScreen(navController, config, getMapsTreeDocumentFile())
+                MapsScreen(navController, config, getMapsFile())
             }
             composable(route = "mapsExported") {
                 MapsExportedScreen(navController, config)
@@ -70,10 +70,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getMapsTreeDocumentFile(): DocumentFile {
+    private fun getMapsFile(): DocumentFileCompat {
         val treeId = config.getString("mapsDir", defaultMapsDir)?.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
         val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
-        return DocumentFile.fromTreeUri(applicationContext, treeUri)!!
+        return DocumentFileCompat.fromTreeUri(applicationContext, treeUri)!!
     }
 
     private fun setConfig() {
