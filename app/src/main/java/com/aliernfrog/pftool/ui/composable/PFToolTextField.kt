@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 fun PFToolTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     singleLine: Boolean = false,
     colors: TextFieldColors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.secondaryVariant)) {
@@ -23,6 +24,7 @@ fun PFToolTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(20.dp)),
+        label = label,
         placeholder = placeholder,
         singleLine = singleLine,
         colors = colors
