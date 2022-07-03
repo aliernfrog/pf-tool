@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalTextStyle
@@ -18,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PFToolColumnRounded(color: Color = MaterialTheme.colors.secondary, title: String? = null, titleColor: Color = MaterialTheme.colors.onSecondary, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
-    var modifier = Modifier.padding(all = 8.dp).clip(RoundedCornerShape(20.dp))
+    var modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(20.dp))
     if (onClick != null) modifier = modifier.clickable { onClick() }
     modifier = modifier.background(color).padding(all = 8.dp)
     Column(modifier) {
