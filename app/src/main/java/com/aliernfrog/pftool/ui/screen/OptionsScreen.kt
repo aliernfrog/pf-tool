@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -58,11 +57,11 @@ private fun AboutPFTool() {
     val context = LocalContext.current
     val version = "${AppUtil.getAppVersionName(context)} (${AppUtil.getAppVersionCode(context)})"
     val fullText = "${context.getString(R.string.optionsAboutInfo)}\n${context.getString(R.string.optionsAboutVersion)}: $version"
-    PFToolColumnRounded(title = context.getString(R.string.optionsAbout)) {
-        Text(text = fullText, Modifier.padding(horizontal = 8.dp).clickable {
-            aboutClickCount.value++
-            if (aboutClickCount.value == experimentalRequiredClicks) scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.optionsExperimentalEnabled)) }
-        })
+    PFToolColumnRounded(title = context.getString(R.string.optionsAbout), onClick = {
+        aboutClickCount.value++
+        if (aboutClickCount.value == experimentalRequiredClicks) scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.optionsExperimentalEnabled)) }
+    }) {
+        Text(text = fullText, Modifier.padding(horizontal = 8.dp))
     }
 }
 
