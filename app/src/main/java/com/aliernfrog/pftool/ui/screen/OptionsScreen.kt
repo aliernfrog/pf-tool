@@ -13,6 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.MainActivity
@@ -36,6 +38,7 @@ fun OptionsScreen(navController: NavController, config: SharedPreferences) {
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), state = scaffoldState, navController = navController) {
         ThemeSelection(config)
         AboutPFTool()
+        Links()
         if (aboutClickCount.value >= experimentalRequiredClicks) ExperimentalOptions(config)
     }
 }
@@ -62,6 +65,25 @@ private fun AboutPFTool() {
         if (aboutClickCount.value == experimentalRequiredClicks) scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.optionsExperimentalEnabled)) }
     }) {
         Text(text = fullText, Modifier.padding(horizontal = 8.dp))
+    }
+}
+
+@Composable
+private fun Links() {
+    val links = listOf(listOf("Polyfield Discord","https://discord.gg/X6WzGpCgDJ"), listOf("PF Tool GitHub","https://github.com/aliernfrog/pf-tool"))
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    PFToolColumnRounded(title = context.getString(R.string.optionsLinks)) {
+        links.forEach{ list ->
+            val icon = when(list[1].split("/")[2]) {
+                "discord.gg" -> painterResource(id = R.drawable.discord)
+                "github.com" -> painterResource(id = R.drawable.github)
+                else -> null
+            }
+            PFToolButton(title = list[0], painter = icon, backgroundColor = MaterialTheme.colors.secondaryVariant) {
+                uriHandler.openUri(list[1])
+            }
+        }
     }
 }
 

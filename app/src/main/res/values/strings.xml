@@ -44,6 +44,7 @@
     <string name="optionsAbout">About</string>
     <string name="optionsAboutInfo">PF Tool is an unofficial app made by aliernfrog#9747</string>
     <string name="optionsAboutVersion">PF Tool version</string>
+    <string name="optionsLinks">Links</string>
     <string name="optionsExperimental">Experimental options (might break PF Tool)</string>
     <string name="optionsExperimentalEnabled">Experimental options enabled!</string>
     <string name="optionsExperimentalResetPrefs">Reset prefs</string>
