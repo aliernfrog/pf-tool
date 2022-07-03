@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">PF Tool</string>
     <string name="action_back">Back</string>
+    <string name="action_cancel">Cancel</string>
     <string name="action_ok">OK</string>
     <string name="action_restartNow">Restart now</string>
     <string name="action_share">Share</string>
+    <string name="action_delete">Delete</string>
     <string name="warning_couldntConvertToPath">Could not get path of this file</string>
     <string name="warning_fileDoesntExist">File does not exist</string>
     <string name="warning_missingPermissions">Missing permissions</string>
@@ -14,6 +16,7 @@
     <string name="info_allFilesPermission">PF Tool needs access to all files to access Polyfield maps. You can grant the permission in the next screen</string>
     <string name="info_mapsFolderPermission">PF Tool needs access to the folder below to access Polyfield maps. You can grant the permission in the next screen</string>
     <string name="info_mapsFolderPermission_note">You might have to create the folder manually if this folder is not on the next screen</string>
+    <string name="info_deleteQuestion">Are you sure you want to delete %NAME%?\n This can NOT be undone!</string>
     <string name="manageMaps">Manage maps</string>
     <string name="manageMapsDescription">Import or export Polyfield maps</string>
     <string name="manageMapsPickMap">Pick a map</string>

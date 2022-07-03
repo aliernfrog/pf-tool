@@ -2,10 +2,7 @@ package com.aliernfrog.pftool.ui.sheets
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -22,15 +19,23 @@ import java.io.File
 @Composable
 fun ExportedMapSheet(map: File?, scaffoldState: ScaffoldState, state: ModalBottomSheetState, onFileChange: () -> Unit) {
     if (map != null) {
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
         PFToolRoundedModalBottomSheet(title = map.nameWithoutExtension, sheetState = state) {
-            MapActions(map, scaffoldState, state, onFileChange)
+            MapActions(map, state, deleteMapSheetState)
+        }
+        DeleteMapSheet(mapName = map.nameWithoutExtension, state = deleteMapSheetState, onCancel = {
+            scope.launch { state.show() }
+        }) {
+            deleteMap(map, scope, scaffoldState, context, onFileChange)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun MapActions(map: File, scaffoldState: ScaffoldState, state: ModalBottomSheetState, onFileChange: () -> Unit) {
+private fun MapActions(map: File, state: ModalBottomSheetState, deleteMapSheetState: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     PFToolButton(
@@ -46,7 +51,10 @@ private fun MapActions(map: File, scaffoldState: ScaffoldState, state: ModalBott
         backgroundColor = MaterialTheme.colors.error,
         contentColor = MaterialTheme.colors.onError
     ) {
-        deleteMap(map, scope, scaffoldState, state, context, onFileChange)
+        scope.launch {
+            state.hide()
+            deleteMapSheetState.show()
+        }
     }
 }
 
@@ -58,11 +66,10 @@ private fun shareMap(map: File, scope: CoroutineScope, state: ModalBottomSheetSt
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-private fun deleteMap(map: File, scope: CoroutineScope, scaffoldState: ScaffoldState, state: ModalBottomSheetState, context: Context, onFileChange: () -> Unit) {
+private fun deleteMap(map: File, scope: CoroutineScope, scaffoldState: ScaffoldState, context: Context, onFileChange: () -> Unit) {
     map.delete()
     onFileChange()
     scope.launch {
-        state.hide()
         scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done))
     }
 }

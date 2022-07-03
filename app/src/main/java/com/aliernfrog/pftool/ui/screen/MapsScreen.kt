@@ -15,6 +15,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
+import com.aliernfrog.pftool.ui.sheets.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheets.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
@@ -43,10 +44,11 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsFile
     mapsDir = config.getString("mapsDir", "") ?: ""
     mapsExportDir = config.getString("mapsExportDir", "") ?: ""
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
     val pickMapSheetScrollState = rememberScrollState()
     PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
         PickMapFileButton(pickMapSheetState, pickMapSheetScrollState)
-        MapActions(mapsFile)
+        MapActions(mapsFile, deleteMapSheetState)
     }
     PickMapSheet(
         mapsFile = mapsFile,
@@ -55,6 +57,9 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsFile
         onPathPick = { getMap(it, context = context) },
         onMapFilePick = { getMap(mapFile = it, context = context) }
     )
+    DeleteMapSheet(mapName = mapNameOriginal.value, state = deleteMapSheetState) {
+        deleteChosenMap(context, mapsFile)
+    }
     recompose.value
 }
 
@@ -73,10 +78,12 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun MapActions(mapsFile: DocumentFileCompat) {
+private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalBottomSheetState) {
     if (mapPath.value != "") {
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
         val isImported = mapPath.value.startsWith(mapsDir)
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             PFToolTextField(
@@ -119,7 +126,7 @@ private fun MapActions(mapsFile: DocumentFileCompat) {
                 backgroundColor = MaterialTheme.colors.error,
                 contentColor = MaterialTheme.colors.onError
             ) {
-                deleteChosenMap(context, mapsFile)
+                scope.launch { deleteMapSheetState.show() }
             }
         }
     }
