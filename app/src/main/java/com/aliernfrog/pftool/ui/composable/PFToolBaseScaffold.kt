@@ -42,7 +42,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, state: Scaff
     ) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp)) {
             content()
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(60.dp))
         }
     }
 }
