@@ -30,8 +30,8 @@ private lateinit var mapsDir: String
 fun MainScreen(navController: NavController, config: SharedPreferences) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val permissionsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val uriPermsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val permissionsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
+    val uriPermsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
     mapsDir = config.getString("mapsDir", "") ?: ""
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController) {
         PFToolButton(
