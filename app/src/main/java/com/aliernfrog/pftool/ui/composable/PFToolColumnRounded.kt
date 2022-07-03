@@ -21,8 +21,8 @@ fun PFToolColumnRounded(color: Color = MaterialTheme.colors.secondary, title: St
     var modifier = Modifier.padding(all = 8.dp).clip(RoundedCornerShape(20.dp))
     if (onClick != null) modifier = modifier.clickable { onClick() }
     modifier = modifier.background(color).padding(all = 8.dp)
-   Column(modifier) {
-       if (title != null) Text(text = title, fontWeight = FontWeight.Bold, style = LocalTextStyle.current.copy(color = titleColor), modifier = Modifier.padding(horizontal = 8.dp))
-       content()
-   }
+    Column(modifier) {
+        if (title != null) Text(text = title, fontWeight = FontWeight.Bold, style = LocalTextStyle.current.copy(color = titleColor), modifier = Modifier.padding(horizontal = 8.dp))
+        content()
+    }
 }
