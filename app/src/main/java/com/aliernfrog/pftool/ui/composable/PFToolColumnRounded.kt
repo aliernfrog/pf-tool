@@ -18,13 +18,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PFToolColumnRounded(color: Color = MaterialTheme.colors.secondary, title: String? = null, titleColor: Color = MaterialTheme.colors.onSecondary, content: @Composable ColumnScope.() -> Unit) {
-   Column(
-       Modifier
-           .padding(all = 8.dp)
-           .clip(RoundedCornerShape(20.dp))) {
-       Column(Modifier.background(color).fillMaxWidth().padding(all = 8.dp)) {
-           if (title != null) Text(text = title, fontWeight = FontWeight.Bold, style = LocalTextStyle.current.copy(color = titleColor), modifier = Modifier.padding(horizontal = 8.dp))
-           content()
-       }
+   Column(Modifier.padding(all = 8.dp).clip(RoundedCornerShape(20.dp)).background(color).padding(all = 8.dp)) {
+       if (title != null) Text(text = title, fontWeight = FontWeight.Bold, style = LocalTextStyle.current.copy(color = titleColor), modifier = Modifier.padding(horizontal = 8.dp))
+       content()
    }
 }
