@@ -27,7 +27,7 @@ private lateinit var scaffoldState: ScaffoldState
 
 private val aboutClickCount = mutableStateOf(0)
 
-private const val experimentalRequiredClicks = 0
+private const val experimentalRequiredClicks = 10
 
 @Composable
 fun OptionsScreen(navController: NavController, config: SharedPreferences) {
