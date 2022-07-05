@@ -7,7 +7,9 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
@@ -63,10 +65,11 @@ fun MapsScreen(navController: NavController, config: SharedPreferences, mapsFile
     recompose.value
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapSheetScrollState: ScrollState) {
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     PFToolButton(
         title = context.getString(R.string.manageMapsPickMap),
         painter = painterResource(id = R.drawable.map),
@@ -74,15 +77,20 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
         contentColor = MaterialTheme.colors.onPrimary,
     ) {
         recompose.value = !recompose.value
-        scope.launch { openPickMapSheet(pickMapSheetState, pickMapSheetScrollState) }
+        scope.launch {
+            keyboardController?.hide()
+            pickMapSheetScrollState.scrollTo(0)
+            pickMapSheetState.show()
+        }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalBottomSheetState) {
     if (mapPath.value != "") {
         val context = LocalContext.current
+        val keyboardController = LocalSoftwareKeyboardController.current
         val scope = rememberCoroutineScope()
         val isImported = mapPath.value.startsWith(mapsDir)
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
@@ -126,7 +134,10 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 backgroundColor = MaterialTheme.colors.error,
                 contentColor = MaterialTheme.colors.onError
             ) {
-                scope.launch { deleteMapSheetState.show() }
+                scope.launch {
+                    keyboardController?.hide()
+                    deleteMapSheetState.show()
+                }
             }
         }
     }
@@ -212,10 +223,4 @@ private fun deleteChosenMap(context: Context, mapsFile: DocumentFileCompat) {
 
 private fun getMapNameEdit(): String {
     return mapNameEdit.value.ifBlank { mapNameOriginal.value }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-private suspend fun openPickMapSheet(pickMapSheetState: ModalBottomSheetState, pickMapSheetScrollState: ScrollState) {
-    pickMapSheetScrollState.scrollTo(0)
-    pickMapSheetState.show()
 }
