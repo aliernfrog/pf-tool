@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButtonCentered
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
+import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 fun DeleteMapSheet(mapName: String?, state: ModalBottomSheetState, onCancel: (() -> Unit)? = null, onDeleteConfirm: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    PFToolRoundedModalBottomSheet(sheetState = state) {
+    PFToolModalBottomSheet(sheetState = state) {
         PFToolColumnRounded {
             Text(text = context.getString(R.string.info_deleteQuestion).replace("%NAME%", mapName ?: ""), fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }

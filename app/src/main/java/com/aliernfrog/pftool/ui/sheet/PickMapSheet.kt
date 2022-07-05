@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
+import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
@@ -29,7 +29,7 @@ import java.util.*
 @Composable
 fun PickMapSheet(mapsFile: DocumentFileCompat, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
-    PFToolRoundedModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state, scrollState) {
+    PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state, scrollState) {
         PickFromDeviceButton(state, onPathPick)
         ImportedMaps(mapsFile, state, onMapFilePick)
     }

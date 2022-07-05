@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
-import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
+import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -22,7 +22,7 @@ fun ExportedMapSheet(map: File?, scaffoldState: ScaffoldState, state: ModalBotto
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
         val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
-        PFToolRoundedModalBottomSheet(title = map.nameWithoutExtension, sheetState = state) {
+        PFToolModalBottomSheet(title = map.nameWithoutExtension, sheetState = state) {
             MapActions(map, state, deleteMapSheetState)
         }
         DeleteMapSheet(mapName = map.nameWithoutExtension, state = deleteMapSheetState, onCancel = {

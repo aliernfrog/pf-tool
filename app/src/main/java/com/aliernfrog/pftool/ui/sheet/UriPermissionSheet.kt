@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButtonCentered
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
+import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 fun UriPermissionSheet(mapsFolder: String, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    PFToolRoundedModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
+    PFToolModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
         PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission), fontWeight = FontWeight.Bold) }
         PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission_note), fontWeight = FontWeight.Bold) }
         PFToolColumnRounded { Text(mapsFolder) }

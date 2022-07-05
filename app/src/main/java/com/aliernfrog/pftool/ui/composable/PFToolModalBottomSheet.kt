@@ -19,7 +19,7 @@ import com.aliernfrog.pftool.ui.theme.sheetScrim
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PFToolRoundedModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetScrollState: ScrollState = rememberScrollState(), sheetContent: @Composable ColumnScope.() -> Unit) {
+fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetScrollState: ScrollState = rememberScrollState(), sheetContent: @Composable ColumnScope.() -> Unit) {
     ModalBottomSheetLayout(
         sheetBackgroundColor = Color(0x00000000),
         sheetContentColor = MaterialTheme.colors.onBackground,

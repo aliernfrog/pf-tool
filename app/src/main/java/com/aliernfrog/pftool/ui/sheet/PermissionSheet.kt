@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButtonCentered
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolRoundedModalBottomSheet
+import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -27,7 +27,7 @@ private val allFilesAccess = Build.VERSION.SDK_INT >= 30
 fun PermissionSheet(state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    PFToolRoundedModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
+    PFToolModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
         PFToolColumnRounded {
             val text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission)
             Text(text, fontWeight = FontWeight.Bold)
