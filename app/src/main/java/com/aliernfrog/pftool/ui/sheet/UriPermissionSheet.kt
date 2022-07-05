@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButtonCentered
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
@@ -26,9 +27,13 @@ fun UriPermissionSheet(mapsFolder: String, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     PFToolModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
-        PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission), fontWeight = FontWeight.Bold) }
-        PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission_note), fontWeight = FontWeight.Bold) }
-        PFToolColumnRounded { Text(mapsFolder) }
+        PFToolColumnRounded {
+            Text(context.getString(R.string.info_mapsFolderPermission), fontWeight = FontWeight.Bold)
+            PFToolColumnRounded(color = MaterialTheme.colors.secondaryVariant) {
+                Text(mapsFolder.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontSize = 14.sp)
+            }
+        }
+        PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission_note), fontWeight = FontWeight.Bold, fontSize = 14.sp) }
         OkButton(mapsFolder, scope, state)
     }
 }
