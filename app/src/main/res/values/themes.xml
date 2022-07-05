@@ -3,6 +3,6 @@
 
     <style name="Theme.PFTool" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/black</item>
-        <item name="android:windowBackground">@drawable/pftool120</item>
+        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 </resources>
