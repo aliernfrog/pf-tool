@@ -18,8 +18,8 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
-import com.aliernfrog.pftool.ui.sheets.PermissionSheet
-import com.aliernfrog.pftool.ui.sheets.UriPermissionSheet
+import com.aliernfrog.pftool.ui.sheet.PermissionSheet
+import com.aliernfrog.pftool.ui.sheet.UriPermissionSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import kotlinx.coroutines.launch
 

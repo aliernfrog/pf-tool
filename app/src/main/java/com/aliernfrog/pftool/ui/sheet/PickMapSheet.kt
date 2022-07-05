@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.sheets
+package com.aliernfrog.pftool.ui.sheet
 
 import android.content.Context
 import android.content.Intent

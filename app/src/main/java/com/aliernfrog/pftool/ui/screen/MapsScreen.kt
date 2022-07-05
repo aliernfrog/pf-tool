@@ -15,8 +15,8 @@ import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
-import com.aliernfrog.pftool.ui.sheets.DeleteMapSheet
-import com.aliernfrog.pftool.ui.sheets.PickMapSheet
+import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
+import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
 import com.lazygeniouz.filecompat.file.DocumentFileCompat

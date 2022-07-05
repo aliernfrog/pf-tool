@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.sheets
+package com.aliernfrog.pftool.ui.sheet
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
