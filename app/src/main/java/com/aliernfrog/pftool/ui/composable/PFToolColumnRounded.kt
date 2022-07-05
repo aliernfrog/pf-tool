@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.composable
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,7 @@ import androidx.compose.ui.unit.dp
 fun PFToolColumnRounded(color: Color = MaterialTheme.colors.secondary, title: String? = null, titleColor: Color = MaterialTheme.colors.onSecondary, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
     var modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(20.dp))
     if (onClick != null) modifier = modifier.clickable { onClick() }
-    modifier = modifier.background(color).padding(all = 8.dp)
+    modifier = modifier.background(color).padding(all = 8.dp).animateContentSize()
     Column(modifier) {
         if (title != null) Text(text = title, fontWeight = FontWeight.Bold, style = LocalTextStyle.current.copy(color = titleColor), modifier = Modifier.padding(horizontal = 8.dp))
         content()

@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.composable
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -40,7 +41,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, state: Scaff
             }
         }
     ) {
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).animateContentSize()) {
             content()
             Spacer(Modifier.height(60.dp))
         }

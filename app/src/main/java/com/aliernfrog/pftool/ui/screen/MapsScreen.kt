@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.ui.screen
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
@@ -100,7 +101,7 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 onValueChange = { mapNameEdit.value = it },
                 singleLine = true
             )
-            if (isImported && getMapNameEdit() != mapNameOriginal.value) {
+            AnimatedVisibility(visible = isImported && getMapNameEdit() != mapNameOriginal.value) {
                 PFToolButton(
                     title = context.getString(R.string.manageMapsRename),
                     painter = painterResource(id = R.drawable.edit),
@@ -111,7 +112,7 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 }
             }
         }
-        if (!isImported) {
+        AnimatedVisibility(visible = !isImported) {
             PFToolButton(
                 title = context.getString(R.string.manageMapsImport),
                 painter = painterResource(id = R.drawable.download),
@@ -121,13 +122,16 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 importChosenMap(context, mapsFile)
             }
         }
-        if (isImported) {
+        AnimatedVisibility(visible = isImported) {
             PFToolButton(
                 title = context.getString(R.string.manageMapsExport),
                 description = context.getString(R.string.manageMapsExportDescription),
-                painter = painterResource(id = R.drawable.share)) {
+                painter = painterResource(id = R.drawable.share)
+            ) {
                 exportChosenMap(context, mapsFile)
             }
+        }
+        AnimatedVisibility(visible = isImported) {
             PFToolButton(
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
