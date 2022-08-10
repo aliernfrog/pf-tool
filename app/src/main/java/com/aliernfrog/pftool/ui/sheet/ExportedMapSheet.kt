@@ -65,7 +65,6 @@ private fun shareMap(map: File, scope: CoroutineScope, state: ModalBottomSheetSt
     context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 private fun deleteMap(map: File, scope: CoroutineScope, scaffoldState: ScaffoldState, context: Context, onFileChange: () -> Unit) {
     map.delete()
     onFileChange()
