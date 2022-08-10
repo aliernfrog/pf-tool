@@ -11,13 +11,14 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
+import com.aliernfrog.toptoast.TopToastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ExportedMapSheet(map: File?, scaffoldState: ScaffoldState, state: ModalBottomSheetState, onFileChange: () -> Unit) {
+fun ExportedMapSheet(map: File?, topToastManager: TopToastManager, state: ModalBottomSheetState, onFileChange: () -> Unit) {
     if (map != null) {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
@@ -28,7 +29,7 @@ fun ExportedMapSheet(map: File?, scaffoldState: ScaffoldState, state: ModalBotto
         DeleteMapSheet(mapName = map.nameWithoutExtension, state = deleteMapSheetState, onCancel = {
             scope.launch { state.show() }
         }) {
-            deleteMap(map, scope, scaffoldState, context, onFileChange)
+            deleteMap(map, topToastManager, context, onFileChange)
         }
     }
 }
@@ -65,10 +66,8 @@ private fun shareMap(map: File, scope: CoroutineScope, state: ModalBottomSheetSt
     context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
 }
 
-private fun deleteMap(map: File, scope: CoroutineScope, scaffoldState: ScaffoldState, context: Context, onFileChange: () -> Unit) {
+private fun deleteMap(map: File, topToastManager: TopToastManager, context: Context, onFileChange: () -> Unit) {
     map.delete()
     onFileChange()
-    scope.launch {
-        scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done))
-    }
+    topToastManager.showToast(context.getString(R.string.info_done))
 }

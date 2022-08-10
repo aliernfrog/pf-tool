@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -21,21 +20,18 @@ import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.utils.AppUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.aliernfrog.toptoast.TopToastManager
 
-private lateinit var scope: CoroutineScope
-private lateinit var scaffoldState: ScaffoldState
+private lateinit var topToastManager: TopToastManager
 
 private val aboutClickCount = mutableStateOf(0)
 
 private const val experimentalRequiredClicks = 10
 
 @Composable
-fun OptionsScreen(navController: NavController, config: SharedPreferences) {
-    scope = rememberCoroutineScope()
-    scaffoldState = rememberScaffoldState()
-    PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), state = scaffoldState, navController = navController) {
+fun OptionsScreen(navController: NavController, toastManager: TopToastManager, config: SharedPreferences) {
+    topToastManager = toastManager
+    PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), navController = navController) {
         ThemeSelection(config)
         AboutPFTool()
         Links()
@@ -62,7 +58,7 @@ private fun AboutPFTool() {
     val fullText = "${context.getString(R.string.optionsAboutInfo)}\n${context.getString(R.string.optionsAboutVersion)}: $version"
     PFToolColumnRounded(title = context.getString(R.string.optionsAbout), onClick = {
         aboutClickCount.value++
-        if (aboutClickCount.value == experimentalRequiredClicks) scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.optionsExperimentalEnabled)) }
+        if (aboutClickCount.value == experimentalRequiredClicks) topToastManager.showToast(context.getString(R.string.optionsExperimentalEnabled))
     }) {
         Text(text = fullText, Modifier.padding(horizontal = 8.dp))
     }
@@ -119,12 +115,7 @@ private fun applyTheme(option: String, config: SharedPreferences, context: Conte
     if (option == context.getString(R.string.optionsThemeDark)) theme = 2 //dark
     configEditor.putInt("appTheme", theme)
     configEditor.apply()
-    scope.launch {
-        when(scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.optionsThemeChanged), context.getString(R.string.action_restartNow))) {
-            SnackbarResult.ActionPerformed -> { restartApp(context) }
-            SnackbarResult.Dismissed -> {  }
-        }
-    }
+    topToastManager.showToast(context.getString(R.string.optionsThemeChanged)) { restartApp(context) }
 }
 
 private fun restartApp(context: Context) {

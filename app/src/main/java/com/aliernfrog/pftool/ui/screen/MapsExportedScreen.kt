@@ -15,26 +15,27 @@ import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.sheet.ExportedMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
+import com.aliernfrog.toptoast.TopToastManager
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
 private val recompose = mutableStateOf(false)
-private lateinit var scaffoldState: ScaffoldState
+private lateinit var topToastManager: TopToastManager
 private lateinit var mapsExportDir: String
 private lateinit var chosenMap: File
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsExportedScreen(navController: NavController, config: SharedPreferences) {
+fun MapsExportedScreen(navController: NavController, toastManager: TopToastManager, config: SharedPreferences) {
     val context = LocalContext.current
-    scaffoldState = rememberScaffoldState()
+    topToastManager = toastManager
     mapsExportDir = config.getString("mapsExportDir", "") ?: ""
     val exportedMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
-    PFToolBaseScaffold(title = context.getString(R.string.exportedMaps), navController = navController, scaffoldState) {
+    PFToolBaseScaffold(title = context.getString(R.string.exportedMaps), navController = navController) {
         ExportedMapsList(exportedMapSheetState)
     }
-    ExportedMapSheet(map = if (::chosenMap.isInitialized) chosenMap else null, scaffoldState = scaffoldState, state = exportedMapSheetState) { recompose.value = !recompose.value }
+    ExportedMapSheet(map = if (::chosenMap.isInitialized) chosenMap else null, topToastManager, state = exportedMapSheetState) { recompose.value = !recompose.value }
     recompose.value
 }
 

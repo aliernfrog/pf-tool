@@ -67,5 +67,6 @@ dependencies {
     implementation "androidx.activity:activity-compose:1.4.0"
     implementation "androidx.navigation:navigation-compose:2.4.2"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.8-beta"
+    implementation "com.github.aliernfrog:top-toast-compose:0.0.4"
     implementation "com.lazygeniouz:documentfile_compat:0.8"
 }
