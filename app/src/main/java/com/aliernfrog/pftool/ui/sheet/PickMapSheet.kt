@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.sheet
 
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
@@ -21,23 +20,25 @@ import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.UriToFileUtil
+import com.aliernfrog.toptoast.TopToastColorType
+import com.aliernfrog.toptoast.TopToastManager
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.launch
 import java.util.*
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PickMapSheet(mapsFile: DocumentFileCompat, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
+fun PickMapSheet(mapsFile: DocumentFileCompat, topToastManager: TopToastManager, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state, scrollState) {
-        PickFromDeviceButton(state, onPathPick)
+        PickFromDeviceButton(topToastManager, state, onPathPick)
         ImportedMaps(mapsFile, state, onMapFilePick)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickFromDeviceButton(state: ModalBottomSheetState, onPathPick: (String) -> Unit) {
+private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalBottomSheetState, onPathPick: (String) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -47,7 +48,7 @@ private fun PickFromDeviceButton(state: ModalBottomSheetState, onPathPick: (Stri
                 onPathPick(convertedPath)
                 scope.launch { state.hide() }
             } else {
-                Toast.makeText(context, context.getString(R.string.warning_couldntConvertToPath), Toast.LENGTH_SHORT).show()
+                topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
             }
         }
     }

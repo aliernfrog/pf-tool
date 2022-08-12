@@ -11,6 +11,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import com.aliernfrog.pftool.utils.FileUtil
+import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -69,5 +70,5 @@ private fun shareMap(map: File, scope: CoroutineScope, state: ModalBottomSheetSt
 private fun deleteMap(map: File, topToastManager: TopToastManager, context: Context, onFileChange: () -> Unit) {
     map.delete()
     onFileChange()
-    topToastManager.showToast(context.getString(R.string.info_done))
+    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
 }

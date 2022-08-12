@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.utils.AppUtil
+import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 
 private lateinit var topToastManager: TopToastManager
@@ -102,7 +102,6 @@ private fun ExperimentalOptions(config: SharedPreferences) {
                 configEditor.remove(key)
                 configEditor.apply()
             }
-            Toast.makeText(context, R.string.info_done, Toast.LENGTH_SHORT).show()
             restartApp(context)
         }
     }
@@ -115,7 +114,7 @@ private fun applyTheme(option: String, config: SharedPreferences, context: Conte
     if (option == context.getString(R.string.optionsThemeDark)) theme = 2 //dark
     configEditor.putInt("appTheme", theme)
     configEditor.apply()
-    topToastManager.showToast(context.getString(R.string.optionsThemeChanged)) { restartApp(context) }
+    topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }
 
 private fun restartApp(context: Context) {

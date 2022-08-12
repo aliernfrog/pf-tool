@@ -22,6 +22,7 @@ import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.utils.FileUtil
 import com.aliernfrog.pftool.utils.ZipUtil
+import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.CoroutineScope
@@ -56,6 +57,7 @@ fun MapsScreen(navController: NavController, toastManager: TopToastManager, conf
     }
     PickMapSheet(
         mapsFile = mapsFile,
+        topToastManager = topToastManager,
         state = pickMapSheetState,
         scrollState = pickMapSheetScrollState,
         onPathPick = { getMap(it, context = context) },
@@ -158,7 +160,7 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
         } else {
-            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist))
+            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
         }
     } else if (mapFile != null) {
         var mapName = mapFile.name
@@ -168,7 +170,7 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
         } else {
-            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist))
+            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
         }
     } else {
         mapPath.value = ""
@@ -180,23 +182,23 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
 private fun renameChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists))
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         mapsFile.findFile(mapNameOriginal.value)?.renameTo(getMapNameEdit())
         getMap(mapFile = mapsFile.findFile(getMapNameEdit()), context = context)
-        topToastManager.showToast(context.getString(R.string.info_done))
+        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
     }
 }
 
 private fun importChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     var outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists))
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         outputFile = mapsFile.createDirectory(getMapNameEdit())
         if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
         getMap(mapFile = outputFile, context = context)
-        topToastManager.showToast(context.getString(R.string.info_done))
+        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
     }
 }
 
@@ -204,10 +206,10 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = File("${mapsExportDir}/${getMapNameEdit()}.zip")
     if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists))
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         ZipUtil.zipMap(folder = mapsFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
-        topToastManager.showToast(context.getString(R.string.info_exportedMap), onToastClick = {
+        topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY, onToastClick = {
             val intent = FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
             context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
         })
@@ -217,7 +219,7 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
 private fun deleteChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     mapsFile.findFile(mapNameOriginal.value)?.delete()
     getMap(context = context)
-    topToastManager.showToast(context.getString(R.string.info_done))
+    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
 }
 
 private fun getMapNameEdit(): String {
