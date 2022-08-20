@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.ui.theme.sheetBackground
 import com.aliernfrog.pftool.ui.theme.sheetHandleBar
 import com.aliernfrog.pftool.ui.theme.sheetScrim
 
@@ -40,7 +41,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                     .widthIn(0.dp, 600.dp)
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .verticalScroll(sheetScrollState)
-                    .background(MaterialTheme.colors.background).padding(horizontal = 24.dp)) {
+                    .background(MaterialTheme.colors.sheetBackground).padding(horizontal = 24.dp)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
                 }
