@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.utils.AppUtil
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -26,7 +27,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, state: Scaff
     Scaffold(
         scaffoldState = state,
         topBar = {
-            TopAppBar(backgroundColor = MaterialTheme.colors.secondary, contentPadding = PaddingValues(horizontal = 24.dp)) {
+            TopAppBar(backgroundColor = MaterialTheme.colors.secondary, contentPadding = PaddingValues(top = AppUtil.getStatusBarHeight(), start = 24.dp, end = 24.dp)) {
                 if (navController.previousBackStackEntry != null) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = LocalContext.current.getString(R.string.action_back), Modifier.padding(end = 24.dp).clickable(
                         interactionSource = remember { MutableInteractionSource() },
@@ -43,7 +44,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, state: Scaff
     ) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).animateContentSize()) {
             content()
-            Spacer(Modifier.height(60.dp))
+            Spacer(Modifier.height(60.dp+AppUtil.getNavigationBarHeight()))
         }
     }
 }

@@ -7,8 +7,11 @@ import android.provider.DocumentsContract
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,28 +35,30 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences("APP_CONFIG", MODE_PRIVATE)
         configEditor = config.edit()
         topToastManager = TopToastManager()
         setConfig()
         setContent {
-            PFToolTheme(getDarkThemePreference() ?: isSystemInDarkTheme()) {
+            val darkTheme = getDarkThemePreference() ?: isSystemInDarkTheme()
+            PFToolTheme(darkTheme) {
                 TopToastBase(backgroundColor = MaterialTheme.colors.background, manager = topToastManager, content = { Navigation() })
-                SystemBars()
+                SystemBars(darkTheme)
             }
         }
     }
 
     @Composable
-    private fun SystemBars() {
-        val systemUiController = rememberSystemUiController()
-        systemUiController.setSystemBarsColor(MaterialTheme.colors.background)
+    private fun SystemBars(darkTheme: Boolean) {
+        val controller = rememberSystemUiController()
+        controller.statusBarDarkContentEnabled = !darkTheme
     }
 
     @Composable
     private fun Navigation() {
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = "main") {
+        NavHost(navController = navController, startDestination = "main", modifier = Modifier.imePadding()) {
             composable(route = "main") {
                 MainScreen(navController, config)
             }
