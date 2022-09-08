@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -79,6 +80,8 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
         painter = painterResource(id = R.drawable.map),
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
+        painterTintColor = null,
+        painterBackgroundColor = Color.Black
     ) {
         recompose.value = !recompose.value
         scope.launch {
@@ -109,7 +112,9 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                     title = context.getString(R.string.manageMapsRename),
                     painter = painterResource(id = R.drawable.edit),
                     backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.onPrimary
+                    contentColor = MaterialTheme.colors.onPrimary,
+                    painterTintColor = null,
+                    painterBackgroundColor = Color.Black
                 ) {
                     renameChosenMap(context, mapsFile)
                 }
@@ -120,7 +125,9 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 title = context.getString(R.string.manageMapsImport),
                 painter = painterResource(id = R.drawable.download),
                 backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.onPrimary
+                contentColor = MaterialTheme.colors.onPrimary,
+                painterTintColor = null,
+                painterBackgroundColor = Color.Black
             ) {
                 importChosenMap(context, mapsFile)
             }
@@ -139,7 +146,9 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
                 backgroundColor = MaterialTheme.colors.error,
-                contentColor = MaterialTheme.colors.onError
+                contentColor = MaterialTheme.colors.onError,
+                painterTintColor = null,
+                painterBackgroundColor = Color.Black
             ) {
                 scope.launch {
                     keyboardController?.hide()
@@ -160,7 +169,7 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
         } else {
-            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
+            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
         }
     } else if (mapFile != null) {
         var mapName = mapFile.name
@@ -170,7 +179,7 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
         } else {
-            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
+            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
         }
     } else {
         mapPath.value = ""
@@ -182,23 +191,23 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
 private fun renameChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         mapsFile.findFile(mapNameOriginal.value)?.renameTo(getMapNameEdit())
         getMap(mapFile = mapsFile.findFile(getMapNameEdit()), context = context)
-        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
+        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY)
     }
 }
 
 private fun importChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     var outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         outputFile = mapsFile.createDirectory(getMapNameEdit())
         if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
         getMap(mapFile = outputFile, context = context)
-        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
+        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY)
     }
 }
 
@@ -206,10 +215,10 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = File("${mapsExportDir}/${getMapNameEdit()}.zip")
     if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation_white, iconBackgroundColorType = TopToastColorType.ERROR)
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         ZipUtil.zipMap(folder = mapsFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
-        topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY, onToastClick = {
+        topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY, onToastClick = {
             val intent = FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
             context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
         })
@@ -219,7 +228,7 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
 private fun deleteChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     mapsFile.findFile(mapNameOriginal.value)?.delete()
     getMap(context = context)
-    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
+    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY)
 }
 
 private fun getMapNameEdit(): String {

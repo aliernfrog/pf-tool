@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.aliernfrog.pftool.R
@@ -51,7 +52,9 @@ private fun MapActions(map: File, state: ModalBottomSheetState, deleteMapSheetSt
         title = context.getString(R.string.manageMapsDelete),
         painter = painterResource(id = R.drawable.trash),
         backgroundColor = MaterialTheme.colors.error,
-        contentColor = MaterialTheme.colors.onError
+        contentColor = MaterialTheme.colors.onError,
+        painterTintColor = null,
+        painterBackgroundColor = Color.Black
     ) {
         scope.launch {
             state.hide()
@@ -70,5 +73,5 @@ private fun shareMap(map: File, scope: CoroutineScope, state: ModalBottomSheetSt
 private fun deleteMap(map: File, topToastManager: TopToastManager, context: Context, onFileChange: () -> Unit) {
     map.delete()
     onFileChange()
-    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY)
+    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY)
 }

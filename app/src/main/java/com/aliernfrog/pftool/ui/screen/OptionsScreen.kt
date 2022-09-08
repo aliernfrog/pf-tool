@@ -114,7 +114,7 @@ private fun applyTheme(option: String, config: SharedPreferences, context: Conte
     if (option == context.getString(R.string.optionsThemeDark)) theme = 2 //dark
     configEditor.putInt("appTheme", theme)
     configEditor.apply()
-    topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check_white, iconBackgroundColorType = TopToastColorType.PRIMARY) { restartApp(context) }
+    topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }
 
 private fun restartApp(context: Context) {
