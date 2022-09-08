@@ -49,7 +49,9 @@ fun MainScreen(navController: NavController, config: SharedPreferences) {
             description = context.getString(R.string.exportedMapsDescription),
             painter = painterResource(id = R.drawable.download),
             onClick = {
-                navController.navigate("mapsExported")
+                checkPermissions(context, onDeny = { scope.launch { permissionsSheetState.show() } }, onGrant = {
+                    navController.navigate("mapsExported")
+                })
             }
         )
         PFToolButton(
