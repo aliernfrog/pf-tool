@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.ui.theme.sheetBackground
 import com.aliernfrog.pftool.ui.theme.sheetHandleBar
 import com.aliernfrog.pftool.ui.theme.sheetScrim
-import com.aliernfrog.pftool.utils.AppUtil
+import com.aliernfrog.pftool.util.AppUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)

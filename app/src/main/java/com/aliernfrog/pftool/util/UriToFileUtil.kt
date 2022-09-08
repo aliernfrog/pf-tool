@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.utils
+package com.aliernfrog.pftool.util
 
 import android.content.ContentUris
 import android.content.Context

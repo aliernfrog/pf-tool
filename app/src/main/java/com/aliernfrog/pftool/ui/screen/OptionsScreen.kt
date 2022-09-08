@@ -19,7 +19,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.*
-import com.aliernfrog.pftool.utils.AppUtil
+import com.aliernfrog.pftool.util.AppUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 

@@ -22,8 +22,8 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
-import com.aliernfrog.pftool.utils.FileUtil
-import com.aliernfrog.pftool.utils.UriToFileUtil
+import com.aliernfrog.pftool.util.FileUtil
+import com.aliernfrog.pftool.util.UriToFileUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 import com.lazygeniouz.filecompat.file.DocumentFileCompat

@@ -20,7 +20,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.sheet.PermissionSheet
 import com.aliernfrog.pftool.ui.sheet.UriPermissionSheet
-import com.aliernfrog.pftool.utils.FileUtil
+import com.aliernfrog.pftool.util.FileUtil
 import kotlinx.coroutines.launch
 
 private lateinit var mapsDir: String
