@@ -25,6 +25,7 @@ import com.aliernfrog.pftool.util.GeneralUtil
 @Composable
 fun PFToolBaseScaffold(title: String, navController: NavController, state: ScaffoldState = rememberScaffoldState(), onNavigationClick: (() -> Unit)? = null, content: @Composable (ColumnScope.() -> Unit)) {
     Scaffold(
+        modifier = Modifier.imePadding(),
         scaffoldState = state,
         topBar = {
             TopAppBar(backgroundColor = MaterialTheme.colors.secondary, contentPadding = PaddingValues(top = GeneralUtil.getStatusBarHeight(), start = 24.dp, end = 24.dp)) {
