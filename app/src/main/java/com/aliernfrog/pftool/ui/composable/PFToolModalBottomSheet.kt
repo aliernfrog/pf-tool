@@ -1,13 +1,13 @@
 package com.aliernfrog.pftool.ui.composable
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,10 +17,13 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.ui.theme.sheetBackground
 import com.aliernfrog.pftool.ui.theme.sheetHandleBar
 import com.aliernfrog.pftool.ui.theme.sheetScrim
+import com.aliernfrog.pftool.utils.AppUtil
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetState, sheetScrollState: ScrollState = rememberScrollState(), sheetContent: @Composable ColumnScope.() -> Unit) {
+    val scope = rememberCoroutineScope()
     ModalBottomSheetLayout(
         sheetBackgroundColor = Color(0x00000000),
         sheetContentColor = MaterialTheme.colors.onBackground,
@@ -30,11 +33,16 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
         content = {},
         sheetContent = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(Modifier.fillMaxWidth().height(AppUtil.getStatusBarHeight()+60.dp).clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { scope.launch { sheetState.hide() } }
+                ))
                 Box(modifier = Modifier
                     .padding(top = 8.dp, bottom = 8.dp)
                     .background(MaterialTheme.colors.sheetHandleBar, shape = RoundedCornerShape(20.dp))
                     .width(50.dp)
-                    .height(5.dp)
+                    .height(4.dp)
                     .align(Alignment.CenterHorizontally)
                 )
                 Column(Modifier
@@ -44,6 +52,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                     .background(MaterialTheme.colors.sheetBackground).padding(horizontal = 24.dp)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
+                    Spacer(modifier = Modifier.height(AppUtil.getNavigationBarHeight()))
                 }
             }
         }
