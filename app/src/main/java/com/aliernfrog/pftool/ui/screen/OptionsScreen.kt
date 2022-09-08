@@ -19,7 +19,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.*
-import com.aliernfrog.pftool.util.AppUtil
+import com.aliernfrog.pftool.util.GeneralUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 
@@ -55,7 +55,7 @@ private fun ThemeSelection(config: SharedPreferences) {
 @Composable
 private fun AboutPFTool() {
     val context = LocalContext.current
-    val version = "${AppUtil.getAppVersionName(context)} (${AppUtil.getAppVersionCode(context)})"
+    val version = "${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
     val fullText = "${context.getString(R.string.optionsAboutInfo)}\n${context.getString(R.string.optionsAboutVersion)}: $version"
     PFToolColumnRounded(title = context.getString(R.string.optionsAbout), onClick = {
         aboutClickCount.value++

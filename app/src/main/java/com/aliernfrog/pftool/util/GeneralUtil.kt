@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 
 @Suppress("DEPRECATION")
-class AppUtil {
+class GeneralUtil {
     companion object {
         @Composable
         fun getStatusBarHeight(): Dp {

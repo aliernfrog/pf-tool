@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.ui.theme.sheetBackground
 import com.aliernfrog.pftool.ui.theme.sheetHandleBar
 import com.aliernfrog.pftool.ui.theme.sheetScrim
-import com.aliernfrog.pftool.util.AppUtil
+import com.aliernfrog.pftool.util.GeneralUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -33,7 +33,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
         content = {},
         sheetContent = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(Modifier.fillMaxWidth().height(AppUtil.getStatusBarHeight()+60.dp).clickable(
+                Spacer(Modifier.fillMaxWidth().height(GeneralUtil.getStatusBarHeight()+60.dp).clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = { scope.launch { sheetState.hide() } }
@@ -52,7 +52,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                     .background(MaterialTheme.colors.sheetBackground).padding(horizontal = 24.dp)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
-                    Spacer(modifier = Modifier.height(AppUtil.getNavigationBarHeight()))
+                    Spacer(modifier = Modifier.height(GeneralUtil.getNavigationBarHeight()))
                 }
             }
         }
