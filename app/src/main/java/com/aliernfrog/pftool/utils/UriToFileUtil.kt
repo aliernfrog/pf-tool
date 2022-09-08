@@ -7,7 +7,6 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import java.io.File
-import java.lang.Exception
 
 /*
 This is a simplified version of https://github.com/HBiSoft/PickiT
