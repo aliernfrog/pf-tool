@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -81,9 +80,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
         title = context.getString(R.string.manageMapsPickMap),
         painter = painterResource(id = R.drawable.map),
         backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary,
-        painterTintColor = null,
-        painterBackgroundColor = Color.Black
+        contentColor = MaterialTheme.colors.onPrimary
     ) {
         recompose.value = !recompose.value
         scope.launch {
@@ -114,9 +111,7 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                     title = context.getString(R.string.manageMapsRename),
                     painter = painterResource(id = R.drawable.edit),
                     backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.onPrimary,
-                    painterTintColor = null,
-                    painterBackgroundColor = Color.Black
+                    contentColor = MaterialTheme.colors.onPrimary
                 ) {
                     renameChosenMap(context, mapsFile)
                 }
@@ -127,9 +122,7 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 title = context.getString(R.string.manageMapsImport),
                 painter = painterResource(id = R.drawable.download),
                 backgroundColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.onPrimary,
-                painterTintColor = null,
-                painterBackgroundColor = Color.Black
+                contentColor = MaterialTheme.colors.onPrimary
             ) {
                 importChosenMap(context, mapsFile)
             }
@@ -148,9 +141,7 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
                 backgroundColor = MaterialTheme.colors.error,
-                contentColor = MaterialTheme.colors.onError,
-                painterTintColor = null,
-                painterBackgroundColor = Color.Black
+                contentColor = MaterialTheme.colors.onError
             ) {
                 scope.launch {
                     keyboardController?.hide()

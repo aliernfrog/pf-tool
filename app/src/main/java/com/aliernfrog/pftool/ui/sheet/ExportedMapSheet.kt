@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.aliernfrog.pftool.R
@@ -52,9 +51,7 @@ private fun MapActions(map: File, state: ModalBottomSheetState, deleteMapSheetSt
         title = context.getString(R.string.manageMapsDelete),
         painter = painterResource(id = R.drawable.trash),
         backgroundColor = MaterialTheme.colors.error,
-        contentColor = MaterialTheme.colors.onError,
-        painterTintColor = null,
-        painterBackgroundColor = Color.Black
+        contentColor = MaterialTheme.colors.onError
     ) {
         scope.launch {
             state.hide()
