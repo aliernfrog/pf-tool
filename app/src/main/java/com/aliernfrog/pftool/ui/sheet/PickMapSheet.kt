@@ -67,7 +67,7 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalB
 private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED) }
-    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps),"hey")) {
+    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
         selectedSegment = it
     }
     AnimatedContent(targetState = selectedSegment) {
@@ -75,7 +75,6 @@ private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: Mo
             when(it) {
                 PickMapSheetSegments.IMPORTED -> ImportedMaps(mapsFile, state, onMapFilePick)
                 PickMapSheetSegments.EXPORTED -> ExportedMaps(exportedMapsFile, state, onPathPick)
-                3 -> { Text("3") }
             }
         }
     }
