@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
@@ -69,9 +70,11 @@ private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: Mo
         selectedDir = it
     }
     AnimatedContent(targetState = selectedDir) {
-        when(it) {
-            context.getString(R.string.manageMapsPickMapYourMaps) -> ImportedMaps(mapsFile, state, onMapFilePick)
-            context.getString(R.string.manageMapsPickMapExportedMaps) -> ExportedMaps(exportedMapsFile, state, onPathPick)
+        Column {
+            when(it) {
+                context.getString(R.string.manageMapsPickMapYourMaps) -> ImportedMaps(mapsFile, state, onMapFilePick)
+                context.getString(R.string.manageMapsPickMapExportedMaps) -> ExportedMaps(exportedMapsFile, state, onPathPick)
+            }
         }
     }
 }
