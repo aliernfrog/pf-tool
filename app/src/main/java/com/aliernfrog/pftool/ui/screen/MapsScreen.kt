@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
@@ -48,8 +49,8 @@ fun MapsScreen(navController: NavController, toastManager: TopToastManager, conf
     val context = LocalContext.current
     scope = rememberCoroutineScope()
     topToastManager = toastManager
-    mapsDir = config.getString("mapsDir", "") ?: ""
-    mapsExportDir = config.getString("mapsExportDir", "") ?: ""
+    mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, "") ?: ""
+    mapsExportDir = config.getString(ConfigKey.KEY_MAPS_EXPORT_DIR, "") ?: ""
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
     val pickMapSheetScrollState = rememberScrollState()

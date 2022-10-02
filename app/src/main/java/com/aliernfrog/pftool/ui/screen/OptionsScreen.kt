@@ -16,8 +16,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.aliernfrog.pftool.MainActivity
-import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.util.GeneralUtil
 import com.aliernfrog.toptoast.TopToastColorType
@@ -44,7 +43,7 @@ fun OptionsScreen(navController: NavController, toastManager: TopToastManager, c
 private fun ThemeSelection(config: SharedPreferences) {
     val context = LocalContext.current
     val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
-    val chosen = config.getInt("appTheme", 0)
+    val chosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
     PFToolColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme)) {
         PFToolRadioButtons(options = options, selectedIndex = chosen, columnColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
             applyTheme(option, config, context)
@@ -67,18 +66,17 @@ private fun AboutPFTool() {
 
 @Composable
 private fun Links() {
-    val links = listOf(listOf("Polyfield Discord","https://discord.gg/X6WzGpCgDJ"), listOf("PF Tool GitHub","https://github.com/aliernfrog/pf-tool"))
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     PFToolColumnRounded(title = context.getString(R.string.optionsLinks)) {
-        links.forEach{ list ->
-            val icon = when(list[1].split("/")[2]) {
+        Link.socials.forEach {
+            val icon = when(it.url.split("/")[2]) {
                 "discord.gg" -> painterResource(id = R.drawable.discord)
                 "github.com" -> painterResource(id = R.drawable.github)
                 else -> null
             }
-            PFToolButton(title = list[0], painter = icon, backgroundColor = MaterialTheme.colors.secondaryVariant) {
-                uriHandler.openUri(list[1])
+            PFToolButton(title = it.name, painter = icon, backgroundColor = MaterialTheme.colors.secondaryVariant) {
+                uriHandler.openUri(it.url)
             }
         }
     }
@@ -88,7 +86,7 @@ private fun Links() {
 private fun ExperimentalOptions(config: SharedPreferences) {
     val context = LocalContext.current
     val configEditor = config.edit()
-    val prefEdits = listOf("mapsDir","mapsExportDir")
+    val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
     PFToolColumnRounded(title = context.getString(R.string.optionsExperimental)) {
         prefEdits.forEach { key ->
             val value = remember { mutableStateOf(config.getString(key, "")!!) }
@@ -110,10 +108,12 @@ private fun ExperimentalOptions(config: SharedPreferences) {
 
 private fun applyTheme(option: String, config: SharedPreferences, context: Context) {
     val configEditor = config.edit()
-    var theme = 0 //system
-    if (option == context.getString(R.string.optionsThemeLight)) theme = 1 //light
-    if (option == context.getString(R.string.optionsThemeDark)) theme = 2 //dark
-    configEditor.putInt("appTheme", theme)
+    val theme = when(option) {
+        context.getString(R.string.optionsThemeLight) -> Theme.LIGHT
+        context.getString(R.string.optionsThemeDark) -> Theme.DARK
+        else -> Theme.SYSTEM
+    }
+    configEditor.putInt(ConfigKey.KEY_APP_THEME, theme)
     configEditor.apply()
     topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }

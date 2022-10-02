@@ -27,13 +27,13 @@ class MainActivity : ComponentActivity() {
     private lateinit var configEditor: SharedPreferences.Editor
     private lateinit var topToastManager: TopToastManager
 
-    private val defaultMapsDir = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
-    private val defaultMapsExportDir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
+    private val defaultMapsDir = ConfigKey.DEFAULT_MAPS_DIR.replace("%STORAGE%", Environment.getExternalStorageDirectory().toString())
+    private val defaultMapsExportDir = ConfigKey.DEFAULT_MAPS_EXPORT_DIR.replace("%DOCUMENTS%", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        config = getSharedPreferences("APP_CONFIG", MODE_PRIVATE)
+        config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         configEditor = config.edit()
         topToastManager = TopToastManager()
         setConfig()
@@ -55,35 +55,36 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Navigation() {
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = "main") {
-            composable(route = "main") {
+        NavHost(navController = navController, startDestination = NavRoutes.MAIN) {
+            composable(route = NavRoutes.MAIN) {
                 MainScreen(navController, config)
             }
-            composable(route = "maps") {
+            composable(route = NavRoutes.MAPS) {
                 MapsScreen(navController, topToastManager, config, getMapsFile())
             }
-            composable(route = "options") {
+            composable(route = NavRoutes.OPTIONS) {
                 OptionsScreen(navController, topToastManager, config)
             }
         }
     }
 
     private fun getMapsFile(): DocumentFileCompat {
-        val treeId = config.getString("mapsDir", defaultMapsDir)?.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
+        val treeId = config.getString(ConfigKey.KEY_MAPS_DIR, defaultMapsDir)?.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
         val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
         return DocumentFileCompat.fromTreeUri(applicationContext, treeUri)!!
     }
 
     private fun setConfig() {
-        if (!config.contains("mapsDir")) configEditor.putString("mapsDir", defaultMapsDir)
-        if (!config.contains("mapsExportDir")) configEditor.putString("mapsExportDir", defaultMapsExportDir)
+        if (!config.contains(ConfigKey.KEY_MAPS_DIR)) configEditor.putString(ConfigKey.KEY_MAPS_DIR, defaultMapsDir)
+        if (!config.contains(ConfigKey.KEY_MAPS_EXPORT_DIR)) configEditor.putString(ConfigKey.KEY_MAPS_EXPORT_DIR, defaultMapsExportDir)
         configEditor.apply()
     }
 
     private fun getDarkThemePreference(): Boolean? {
-        val theme = config.getInt("appTheme", 0) //system
-        if (theme == 1) return false //light
-        if (theme == 2) return true //dark
-        return null
+        return when(config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)) {
+            Theme.LIGHT -> false
+            Theme.DARK -> true
+            else -> null
+        }
     }
 }
