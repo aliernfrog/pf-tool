@@ -224,9 +224,8 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
         topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
     } else {
         ZipUtil.zipMap(folder = mapsFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
-        topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.share, iconBackgroundColorType = TopToastColorType.PRIMARY, onToastClick = {
-            FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
-        })
+        getMap(outputFile.absolutePath, context = context)
+        topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.share, iconBackgroundColorType = TopToastColorType.PRIMARY)
     }
 }
 
