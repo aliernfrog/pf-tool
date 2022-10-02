@@ -45,7 +45,7 @@ private fun ThemeSelection(config: SharedPreferences) {
     val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
     val chosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
     PFToolColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme)) {
-        PFToolRadioButtons(options = options, selectedIndex = chosen, columnColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
+        PFToolRadioButtons(options = options, initialIndex = chosen, backgroundColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
             applyTheme(option, config, context)
         })
     }
@@ -106,14 +106,9 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     }
 }
 
-private fun applyTheme(option: String, config: SharedPreferences, context: Context) {
+private fun applyTheme(option: Int, config: SharedPreferences, context: Context) {
     val configEditor = config.edit()
-    val theme = when(option) {
-        context.getString(R.string.optionsThemeLight) -> Theme.LIGHT
-        context.getString(R.string.optionsThemeDark) -> Theme.DARK
-        else -> Theme.SYSTEM
-    }
-    configEditor.putInt(ConfigKey.KEY_APP_THEME, theme)
+    configEditor.putInt(ConfigKey.KEY_APP_THEME, option)
     configEditor.apply()
     topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }
