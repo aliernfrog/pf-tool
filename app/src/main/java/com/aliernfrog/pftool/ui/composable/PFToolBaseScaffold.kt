@@ -43,7 +43,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, state: Scaff
             }
         }
     ) {
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).animateContentSize()) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).animateContentSize().padding(horizontal = 24.dp)) {
             content()
             Spacer(Modifier.height(60.dp+GeneralUtil.getNavigationBarHeight()))
         }
