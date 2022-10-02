@@ -38,7 +38,6 @@ private val recompose = mutableStateOf(false)
 
 private lateinit var mapsDir: String
 private lateinit var mapsExportDir: String
-private lateinit var exportedMapsFile: File
 
 private lateinit var scope: CoroutineScope
 private lateinit var topToastManager: TopToastManager
@@ -51,7 +50,6 @@ fun MapsScreen(navController: NavController, toastManager: TopToastManager, conf
     topToastManager = toastManager
     mapsDir = config.getString("mapsDir", "") ?: ""
     mapsExportDir = config.getString("mapsExportDir", "") ?: ""
-    exportedMapsFile = File(mapsExportDir)
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
     val pickMapSheetScrollState = rememberScrollState()
