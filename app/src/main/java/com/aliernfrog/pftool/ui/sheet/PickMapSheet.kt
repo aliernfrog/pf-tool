@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import com.aliernfrog.pftool.PickMapSheetSegments
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
@@ -65,15 +66,16 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalB
 @Composable
 private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
-    var selectedDir by remember { mutableStateOf(context.getString(R.string.manageMapsPickMapYourMaps)) }
-    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
-        selectedDir = it
+    var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED) }
+    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps),"hey")) {
+        selectedSegment = it
     }
-    AnimatedContent(targetState = selectedDir) {
+    AnimatedContent(targetState = selectedSegment) {
         Column {
             when(it) {
-                context.getString(R.string.manageMapsPickMapYourMaps) -> ImportedMaps(mapsFile, state, onMapFilePick)
-                context.getString(R.string.manageMapsPickMapExportedMaps) -> ExportedMaps(exportedMapsFile, state, onPathPick)
+                PickMapSheetSegments.IMPORTED -> ImportedMaps(mapsFile, state, onMapFilePick)
+                PickMapSheetSegments.EXPORTED -> ExportedMaps(exportedMapsFile, state, onPathPick)
+                3 -> { Text("3") }
             }
         }
     }

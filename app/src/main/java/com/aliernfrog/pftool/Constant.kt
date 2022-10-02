@@ -24,6 +24,11 @@ object NavRoutes {
     const val OPTIONS = "options"
 }
 
+object PickMapSheetSegments {
+    const val IMPORTED = 0
+    const val EXPORTED = 1
+}
+
 object Theme {
     const val SYSTEM = 0
     const val LIGHT = 1
