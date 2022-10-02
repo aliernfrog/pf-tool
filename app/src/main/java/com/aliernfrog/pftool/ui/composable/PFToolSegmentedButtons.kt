@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PFToolSegmentedButtons(
+fun PFToolSegmentedButtonsHorizontal(
     options: List<String>,
     initialIndex: Int = 0,
     backgroundColor: Color = MaterialTheme.colors.secondary,
@@ -43,6 +43,35 @@ fun PFToolSegmentedButtons(
                         .background(if (selected) selectedBackgroundColor else backgroundColor)
                         .padding(8.dp)
                         .alpha(if (selected) 1f else 0.6f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PFToolSegmentedButtonsVertical(
+    options: List<String>,
+    initialIndex: Int = 0,
+    backgroundColor: Color = MaterialTheme.colors.secondary,
+    selectedBackgroundColor: Color = MaterialTheme.colors.secondaryVariant,
+    contentColor: Color = MaterialTheme.colors.onSecondary,
+    selectedContentColor: Color = contentColor,
+    onSelect: (Int) -> Unit
+) {
+    val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
+    Crossfade(targetState = selectedIndex) {
+        Column(Modifier.fillMaxWidth().padding(vertical = 8.dp).clip(RoundedCornerShape(20.dp)).background(backgroundColor).padding(8.dp)) {
+            options.forEachIndexed { index, option ->
+                val selected = it == index
+                Text(
+                    text = option,
+                    color = if (selected) selectedContentColor else contentColor,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(3.dp).clip(RoundedCornerShape(20.dp))
+                        .clickable { onOptionSelect(index); onSelect(index) }
+                        .background(if (selected) selectedBackgroundColor else backgroundColor)
+                        .padding(8.dp)
                 )
             }
         }

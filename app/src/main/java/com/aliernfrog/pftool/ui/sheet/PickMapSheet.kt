@@ -21,7 +21,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
-import com.aliernfrog.pftool.ui.composable.PFToolSegmentedButtons
+import com.aliernfrog.pftool.ui.composable.PFToolSegmentedButtonsHorizontal
 import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.UriToFileUtil
 import com.aliernfrog.toptoast.TopToastColorType
@@ -67,7 +67,7 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalB
 private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED) }
-    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
+    PFToolSegmentedButtonsHorizontal(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
         selectedSegment = it
     }
     AnimatedContent(targetState = selectedSegment) {
