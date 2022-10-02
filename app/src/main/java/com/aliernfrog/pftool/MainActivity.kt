@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.screen.MainScreen
-import com.aliernfrog.pftool.ui.screen.MapsExportedScreen
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
@@ -62,9 +61,6 @@ class MainActivity : ComponentActivity() {
             }
             composable(route = "maps") {
                 MapsScreen(navController, topToastManager, config, getMapsFile())
-            }
-            composable(route = "mapsExported") {
-                MapsExportedScreen(navController, topToastManager, config)
             }
             composable(route = "options") {
                 OptionsScreen(navController, topToastManager, config)

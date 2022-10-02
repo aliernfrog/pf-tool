@@ -18,7 +18,7 @@
     <string name="info_deleteQuestion">Are you sure you want to delete %NAME%?\n This can NOT be undone!</string>
     <string name="internalStorage">Internal storage</string>
     <string name="manageMaps">Manage maps</string>
-    <string name="manageMapsDescription">Import or export Polyfield maps</string>
+    <string name="manageMapsDescription">Import or share Polyfield maps</string>
     <string name="manageMapsPickMap">Pick a map</string>
     <string name="manageMapsPickMapFromDevice">Pick from device</string>
     <string name="manageMapsPickMapYourMaps">Your maps</string>
@@ -32,10 +32,6 @@
     <string name="manageMapsExportDescription">Export your map and optionally share it</string>
     <string name="manageMapsShare">Share this map</string>
     <string name="manageMapsDelete">Delete this map</string>
-    <string name="exportedMaps">Exported maps</string>
-    <string name="exportedMapsDescription">View the maps that was exported</string>
-    <string name="exportedMapsNoMaps">You haven\'t exported any maps</string>
-    <string name="exportedMapsHint">Click maps to view more actions</string>
     <string name="options">Options</string>
     <string name="optionsDescription">Manage PF Tool options</string>
     <string name="optionsTheme">Theme</string>
