@@ -22,7 +22,9 @@
     <string name="manageMapsPickMap">Pick a map</string>
     <string name="manageMapsPickMapFromDevice">Pick from device</string>
     <string name="manageMapsPickMapYourMaps">Your maps</string>
-    <string name="manageMapsPickMapNoMapsFound">You do not have any maps</string>
+    <string name="manageMapsPickMapExportedMaps">Exported maps</string>
+    <string name="manageMapsPickMapNoImportedMaps">You do not have any maps</string>
+    <string name="manageMapsPickMapNoExportedMaps">You haven\'t exported any maps</string>
     <string name="manageMapsMapName">Map name</string>
     <string name="manageMapsRename">Rename this map</string>
     <string name="manageMapsImport">Import this map</string>
