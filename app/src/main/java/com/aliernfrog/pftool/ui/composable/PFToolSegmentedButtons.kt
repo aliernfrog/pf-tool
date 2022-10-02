@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,7 @@ fun PFToolSegmentedButtons(
                         .clickable { onClick() }
                         .background(if (selected) selectedBackgroundColor else backgroundColor)
                         .padding(8.dp)
+                        .alpha(if (selected) 1f else 0.6f)
                 )
             }
         }
