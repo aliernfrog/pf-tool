@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
@@ -34,6 +33,7 @@ import java.io.File
 private val mapPath = mutableStateOf("")
 private val mapNameEdit = mutableStateOf("")
 private val mapNameOriginal = mutableStateOf("")
+private val mapIsUri = mutableStateOf(false)
 private val recompose = mutableStateOf(false)
 
 private lateinit var mapsDir: String
@@ -100,6 +100,8 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
         val keyboardController = LocalSoftwareKeyboardController.current
         val scope = rememberCoroutineScope()
         val isImported = mapPath.value.startsWith(mapsDir)
+        val isExported = mapPath.value.startsWith(mapsExportDir)
+        val isZip = mapPath.value.lowercase().endsWith(".zip")
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             PFToolTextField(
                 value = mapNameEdit.value,
@@ -137,7 +139,15 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 exportChosenMap(context, mapsFile)
             }
         }
-        AnimatedVisibility(visible = isImported) {
+        AnimatedVisibility(visible = isZip) {
+            PFToolButton(
+                title = context.getString(R.string.manageMapsShare),
+                painter = painterResource(id = R.drawable.share)
+            ) {
+                FileUtil.shareFile(mapPath.value, "application/zip", context)
+            }
+        }
+        AnimatedVisibility(visible = isImported || isExported) {
             PFToolButton(
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
@@ -162,6 +172,7 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapPath.value = file.absolutePath
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
+            mapIsUri.value = false
         } else {
             topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
         }
@@ -172,6 +183,7 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapPath.value = "$mapsDir/$mapName"
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
+            mapIsUri.value = true
         } else {
             topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
         }
@@ -213,14 +225,14 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     } else {
         ZipUtil.zipMap(folder = mapsFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
         topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.share, iconBackgroundColorType = TopToastColorType.PRIMARY, onToastClick = {
-            val intent = FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
-            context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
+            FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
         })
     }
 }
 
 private fun deleteChosenMap(context: Context, mapsFile: DocumentFileCompat) {
-    mapsFile.findFile(mapNameOriginal.value)?.delete()
+    if (mapIsUri.value) mapsFile.findFile(mapNameOriginal.value)?.delete()
+    else File(mapPath.value).delete()
     getMap(context = context)
     topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY)
 }

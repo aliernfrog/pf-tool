@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.ui.sheet
 
 import android.content.Context
-import android.content.Intent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,8 +62,7 @@ private fun MapActions(map: File, state: ModalBottomSheetState, deleteMapSheetSt
 @OptIn(ExperimentalMaterialApi::class)
 private fun shareMap(map: File, scope: CoroutineScope, state: ModalBottomSheetState, context: Context) {
     scope.launch { state.hide() }
-    val intent = FileUtil.shareFile(map.absolutePath, "application/zip", context)
-    context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
+    FileUtil.shareFile(map.absolutePath, "application/zip", context)
 }
 
 private fun deleteMap(map: File, topToastManager: TopToastManager, context: Context, onFileChange: () -> Unit) {
