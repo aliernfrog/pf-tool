@@ -19,7 +19,7 @@ class ZipUtil {
                 files.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
-                    context.contentResolver.openInputStream(file.uri)?.copyTo(zos)
+                    context.contentResolver.openInputStream(file.uri)?.use { it.copyTo(zos) }
                 }
             }
         }
