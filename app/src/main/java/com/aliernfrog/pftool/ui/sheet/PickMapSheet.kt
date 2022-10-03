@@ -52,7 +52,7 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalB
                 onPathPick(convertedPath)
                 scope.launch { state.hide() }
             } else {
-                topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconBackgroundColorType = TopToastColorType.ERROR)
+                topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
             }
         }
     }

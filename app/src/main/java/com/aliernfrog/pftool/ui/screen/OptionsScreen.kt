@@ -110,7 +110,7 @@ private fun applyTheme(option: Int, config: SharedPreferences, context: Context)
     val configEditor = config.edit()
     configEditor.putInt(ConfigKey.KEY_APP_THEME, option)
     configEditor.apply()
-    topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconBackgroundColorType = TopToastColorType.PRIMARY) { restartApp(context) }
+    topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }
 
 private fun restartApp(context: Context) {
