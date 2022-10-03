@@ -30,7 +30,7 @@ fun PFToolRadioButtons(
     onSelect: (Int) -> Unit
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
-    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp).clip(RoundedCornerShape(20.dp)).background(backgroundColor).padding(8.dp)) {
+    Column(Modifier.fillMaxWidth().padding(8.dp).clip(RoundedCornerShape(20.dp)).background(backgroundColor).padding(8.dp)) {
         options.forEachIndexed { index, option ->
             val selected = selectedIndex == index
             val onSelected = { onOptionSelect(index); onSelect(index) }
