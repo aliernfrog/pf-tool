@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         topToastManager = TopToastManager()
         setConfig()
         setContent {
-            val darkTheme = getDarkThemePreference() ?: isSystemInDarkTheme()
+            val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme) {
                 TopToastBase(backgroundColor = MaterialTheme.colors.background, manager = topToastManager, content = { Navigation() })
                 SystemBars(darkTheme)
@@ -80,11 +80,12 @@ class MainActivity : ComponentActivity() {
         configEditor.apply()
     }
 
-    private fun getDarkThemePreference(): Boolean? {
+    @Composable
+    private fun getDarkThemePreference(): Boolean {
         return when(config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)) {
             Theme.LIGHT -> false
             Theme.DARK -> true
-            else -> null
+            else -> isSystemInDarkTheme()
         }
     }
 }
