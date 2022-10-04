@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.utils
+package com.aliernfrog.pftool.util
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
+import com.aliernfrog.pftool.R
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import java.io.File
 
@@ -31,10 +32,11 @@ class FileUtil {
             return DateUtils.getRelativeDateTimeString(context, file.lastModified, DateUtils.SECOND_IN_MILLIS, DateUtils.DAY_IN_MILLIS, 0).toString()
         }
 
-        fun shareFile(filePath: String, type: String, context: Context): Intent {
+        fun shareFile(filePath: String, type: String, context: Context, title: String = context.getString(R.string.action_share)) {
             val file = File(filePath)
             val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-            return Intent(Intent.ACTION_SEND).setType(type).putExtra(Intent.EXTRA_STREAM, uri)
+            val intent = Intent(Intent.ACTION_SEND).setType(type).putExtra(Intent.EXTRA_STREAM, uri)
+            context.startActivity(Intent.createChooser(intent, title))
         }
 
         fun checkUriPermission(path: String, context: Context): Boolean {

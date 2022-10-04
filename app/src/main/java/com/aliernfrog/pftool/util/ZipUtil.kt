@@ -1,8 +1,9 @@
-package com.aliernfrog.pftool.utils
+package com.aliernfrog.pftool.util
 
 import android.content.Context
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.FileOutputStream
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -18,7 +19,7 @@ class ZipUtil {
                 files.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
-                    context.contentResolver.openInputStream(file.uri)?.copyTo(zos)
+                    context.contentResolver.openInputStream(file.uri)?.use { it.copyTo(zos) }
                 }
             }
         }

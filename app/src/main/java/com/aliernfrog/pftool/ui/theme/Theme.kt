@@ -38,6 +38,9 @@ private val DarkColorPalette = darkColors(
     onError = Color.White
 )
 
+val Colors.sheetBackground: Color
+get() = if (isLight) SheetBackgroundLight else SheetBackgroundDark
+
 val Colors.sheetScrim: Color
 get() = if (isLight) SheetScrimLight else SheetScrimDark
 

@@ -15,12 +15,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.aliernfrog.pftool.ConfigKey
+import com.aliernfrog.pftool.NavRoutes
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.sheet.PermissionSheet
 import com.aliernfrog.pftool.ui.sheet.UriPermissionSheet
-import com.aliernfrog.pftool.utils.FileUtil
+import com.aliernfrog.pftool.util.FileUtil
 import kotlinx.coroutines.launch
 
 private lateinit var mapsDir: String
@@ -32,7 +34,7 @@ fun MainScreen(navController: NavController, config: SharedPreferences) {
     val scope = rememberCoroutineScope()
     val permissionsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
     val uriPermsSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
-    mapsDir = config.getString("mapsDir", "") ?: ""
+    mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, "") ?: ""
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.app_name), navController = navController) {
         PFToolButton(
             title = context.getString(R.string.manageMaps),
@@ -40,16 +42,8 @@ fun MainScreen(navController: NavController, config: SharedPreferences) {
             painter = painterResource(id = R.drawable.map),
             onClick = {
                 checkPermissions(context, onDeny = { scope.launch { permissionsSheetState.show() } }, onGrant = {
-                    checkUriPermissions(context, { scope.launch { uriPermsSheetState.show() } }, { navController.navigate("maps") })
+                    checkUriPermissions(context, { scope.launch { uriPermsSheetState.show() } }, { navController.navigate(NavRoutes.MAPS) })
                 })
-            }
-        )
-        PFToolButton(
-            title = context.getString(R.string.exportedMaps),
-            description = context.getString(R.string.exportedMapsDescription),
-            painter = painterResource(id = R.drawable.download),
-            onClick = {
-                navController.navigate("mapsExported")
             }
         )
         PFToolButton(
@@ -57,7 +51,7 @@ fun MainScreen(navController: NavController, config: SharedPreferences) {
             description = context.getString(R.string.optionsDescription),
             painter = painterResource(id = R.drawable.options),
             onClick = {
-                navController.navigate("options")
+                navController.navigate(NavRoutes.OPTIONS)
             }
         )
     }

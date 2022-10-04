@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.utils
+package com.aliernfrog.pftool.util
 
 import android.content.ContentUris
 import android.content.Context
@@ -7,17 +7,17 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import java.io.File
-import java.lang.Exception
 
 /*
-This is a simplified version of https://github.com/HBiSoft/PickiT
+This is a simplified and improved version of https://github.com/HBiSoft/PickiT
+Only for local files, at least for now
 */
 
 class UriToFileUtil {
     companion object {
         fun getRealFilePath(uri: Uri, context: Context): String? {
             var docId: String? = null
-            try { docId = DocumentsContract.getDocumentId(uri) } catch (e: Exception) {}
+            try { docId = DocumentsContract.getDocumentId(uri) } catch (_: Exception) {}
             if (docId != null && docId.startsWith("msf")) {
                 //was selected from download provider
                 val fileName = getFileNameFromContentResolver(uri, context)
@@ -26,8 +26,8 @@ class UriToFileUtil {
                     return file.absolutePath
                 } else {
                     try {
-                        val parcelFileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")
-                        val fd = parcelFileDescriptor?.fd
+                        var fd: Int?
+                        context.contentResolver.openFileDescriptor(uri, "r").use { fd = it?.fd }
                         val pid = android.os.Process.myPid()
                         val mediaFile = File("/proc/$pid/fd/$fd")
                         if (mediaFile.exists()) return mediaFile.absolutePath
@@ -69,7 +69,7 @@ class UriToFileUtil {
                         return cursor.getString(index)
                     }
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
             return null
         }
 
@@ -94,12 +94,14 @@ class UriToFileUtil {
                     //external storage document
                     val docId = DocumentsContract.getDocumentId(uri)
                     val split = docId.split(":")
-                    val type = split[0]
-                    if (type == "primary") {
-                        return if (split.size > 1) {
-                            "${Environment.getExternalStorageDirectory()}/${split[1]}"
-                        } else {
-                            "${Environment.getExternalStorageDirectory()}/"
+                    when (split[0]) {
+                        "primary" -> {
+                            return if (split.size > 1) "${Environment.getExternalStorageDirectory()}/${split[1]}"
+                            else "${Environment.getExternalStorageDirectory()}/"
+                        }
+                        "home" -> {
+                            return if (split.size > 1) "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/${split[1]}"
+                            else "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/"
                         }
                     }
                 } else if (uri.toString().contains("com.android.providers.downloads.documents/document/raw")) {

@@ -1,27 +1,31 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
-import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolButton
+import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
-import com.aliernfrog.pftool.utils.FileUtil
-import com.aliernfrog.pftool.utils.ZipUtil
+import com.aliernfrog.pftool.util.FileUtil
+import com.aliernfrog.pftool.util.ZipUtil
+import com.aliernfrog.toptoast.TopToastColorType
+import com.aliernfrog.toptoast.TopToastManager
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -30,31 +34,34 @@ import java.io.File
 private val mapPath = mutableStateOf("")
 private val mapNameEdit = mutableStateOf("")
 private val mapNameOriginal = mutableStateOf("")
+private val mapIsUri = mutableStateOf(false)
 private val recompose = mutableStateOf(false)
 
 private lateinit var mapsDir: String
 private lateinit var mapsExportDir: String
 
 private lateinit var scope: CoroutineScope
-private lateinit var scaffoldState: ScaffoldState
+private lateinit var topToastManager: TopToastManager
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(navController: NavController, config: SharedPreferences, mapsFile: DocumentFileCompat) {
+fun MapsScreen(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsFile: DocumentFileCompat) {
     val context = LocalContext.current
     scope = rememberCoroutineScope()
-    scaffoldState = rememberScaffoldState()
-    mapsDir = config.getString("mapsDir", "") ?: ""
-    mapsExportDir = config.getString("mapsExportDir", "") ?: ""
+    topToastManager = toastManager
+    mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, "") ?: ""
+    mapsExportDir = config.getString(ConfigKey.KEY_MAPS_EXPORT_DIR, "") ?: ""
     val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
     val pickMapSheetScrollState = rememberScrollState()
-    PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController, scaffoldState) {
+    PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
         PickMapFileButton(pickMapSheetState, pickMapSheetScrollState)
         MapActions(mapsFile, deleteMapSheetState)
     }
     PickMapSheet(
         mapsFile = mapsFile,
+        exportedMapsFile = File(mapsExportDir),
+        topToastManager = topToastManager,
         state = pickMapSheetState,
         scrollState = pickMapSheetScrollState,
         onPathPick = { getMap(it, context = context) },
@@ -75,7 +82,7 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
         title = context.getString(R.string.manageMapsPickMap),
         painter = painterResource(id = R.drawable.map),
         backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary,
+        contentColor = MaterialTheme.colors.onPrimary
     ) {
         recompose.value = !recompose.value
         scope.launch {
@@ -94,6 +101,8 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
         val keyboardController = LocalSoftwareKeyboardController.current
         val scope = rememberCoroutineScope()
         val isImported = mapPath.value.startsWith(mapsDir)
+        val isExported = mapPath.value.startsWith(mapsExportDir)
+        val isZip = mapPath.value.lowercase().endsWith(".zip")
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             PFToolTextField(
                 value = mapNameEdit.value,
@@ -131,7 +140,15 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
                 exportChosenMap(context, mapsFile)
             }
         }
-        AnimatedVisibility(visible = isImported) {
+        AnimatedVisibility(visible = isZip) {
+            PFToolButton(
+                title = context.getString(R.string.manageMapsShare),
+                painter = painterResource(id = R.drawable.share)
+            ) {
+                FileUtil.shareFile(mapPath.value, "application/zip", context)
+            }
+        }
+        AnimatedVisibility(visible = isImported || isExported) {
             PFToolButton(
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
@@ -156,8 +173,9 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapPath.value = file.absolutePath
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
+            mapIsUri.value = false
         } else {
-            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_fileDoesntExist)) }
+            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
         }
     } else if (mapFile != null) {
         var mapName = mapFile.name
@@ -166,8 +184,9 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
             mapPath.value = "$mapsDir/$mapName"
             mapNameEdit.value = mapName
             mapNameOriginal.value = mapNameEdit.value
+            mapIsUri.value = true
         } else {
-            scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_fileDoesntExist)) }
+            topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
         }
     } else {
         mapPath.value = ""
@@ -179,23 +198,23 @@ private fun getMap(path: String? = null, mapFile: DocumentFileCompat? = null, co
 private fun renameChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
     } else {
         mapsFile.findFile(mapNameOriginal.value)?.renameTo(getMapNameEdit())
         getMap(mapFile = mapsFile.findFile(getMapNameEdit()), context = context)
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
     }
 }
 
 private fun importChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     var outputFile = mapsFile.findFile(getMapNameEdit())
     if (outputFile != null && outputFile.exists()) {
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
     } else {
         outputFile = mapsFile.createDirectory(getMapNameEdit())
         if (outputFile != null) ZipUtil.unzipMap(mapPath.value, outputFile, context)
         getMap(mapFile = outputFile, context = context)
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+        topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
     }
 }
 
@@ -203,26 +222,19 @@ private fun exportChosenMap(context: Context, mapsFile: DocumentFileCompat) {
     val outputFile = File("${mapsExportDir}/${getMapNameEdit()}.zip")
     if (!outputFile.parentFile?.isDirectory!!) outputFile.parentFile?.mkdirs()
     if (outputFile.exists()) {
-        scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.warning_mapAlreadyExists)) }
+        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
     } else {
         ZipUtil.zipMap(folder = mapsFile.findFile(mapNameOriginal.value)!!, zipPath = outputFile.absolutePath, context)
-        val snackbarString = "${context.getString(R.string.info_exportedMap)}\n${outputFile.absolutePath}"
-        scope.launch {
-            when (scaffoldState.snackbarHostState.showSnackbar(snackbarString, context.getString(R.string.action_share))) {
-                SnackbarResult.ActionPerformed -> {
-                    val intent = FileUtil.shareFile(outputFile.absolutePath, "application/zip", context)
-                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
-                }
-                SnackbarResult.Dismissed -> { }
-            }
-        }
+        getMap(outputFile.absolutePath, context = context)
+        topToastManager.showToast(context.getString(R.string.info_exportedMap), iconDrawableId = R.drawable.share, iconTintColorType = TopToastColorType.PRIMARY)
     }
 }
 
 private fun deleteChosenMap(context: Context, mapsFile: DocumentFileCompat) {
-    mapsFile.findFile(mapNameOriginal.value)?.delete()
+    if (mapIsUri.value) mapsFile.findFile(mapNameOriginal.value)?.delete()
+    else File(mapPath.value).delete()
     getMap(context = context)
-    scope.launch { scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.info_done)) }
+    topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
 }
 
 private fun getMapNameEdit(): String {
