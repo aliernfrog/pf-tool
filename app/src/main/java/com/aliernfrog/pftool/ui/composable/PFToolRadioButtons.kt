@@ -25,21 +25,21 @@ import androidx.compose.ui.unit.dp
 fun PFToolRadioButtons(
     options: List<String>,
     initialIndex: Int = 0,
-    backgroundColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onTertiaryContainer,
+    backgroundColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
     onSelect: (Int) -> Unit
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
-    Column(Modifier.fillMaxWidth().padding(8.dp).clip(RoundedCornerShape(20.dp)).background(backgroundColor).padding(8.dp)) {
+    Column(Modifier.fillMaxWidth().padding(8.dp).clip(RoundedCornerShape(30.dp)).background(backgroundColor).padding(8.dp)) {
         options.forEachIndexed { index, option ->
             val selected = selectedIndex == index
             val onSelected = { onOptionSelect(index); onSelect(index) }
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(30.dp))
                     .clickable { onSelected() }) {
-                RadioButton(colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary),
+                RadioButton(colors = RadioButtonDefaults.colors(selectedColor = contentColor, unselectedColor = contentColor.copy(0.5f), disabledSelectedColor = contentColor.copy(0.7f), disabledUnselectedColor = contentColor.copy(0.5f)),
                     selected = selected,
                     onClick = { onSelected() }
                 )

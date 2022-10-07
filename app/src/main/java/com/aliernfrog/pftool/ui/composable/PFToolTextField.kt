@@ -28,7 +28,7 @@ fun PFToolTextField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(20.dp)),
+        modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(30.dp)),
         label = label,
         placeholder = placeholder,
         singleLine = singleLine,

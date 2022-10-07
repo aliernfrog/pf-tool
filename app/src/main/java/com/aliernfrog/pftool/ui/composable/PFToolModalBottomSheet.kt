@@ -44,7 +44,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                 )
                 Column(Modifier
                     .widthIn(0.dp, 600.dp)
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                     .verticalScroll(sheetScrollState)
                     .background(MaterialTheme.colorScheme.background).padding(horizontal = 24.dp)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))

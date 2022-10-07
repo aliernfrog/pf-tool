@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PFToolColumnRounded(color: Color = MaterialTheme.colorScheme.secondaryContainer, title: String? = null, titleColor: Color = MaterialTheme.colorScheme.onSecondaryContainer, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
-    var modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(20.dp))
+    var modifier = Modifier.fillMaxWidth().padding(8.dp).clip(RoundedCornerShape(30.dp))
     if (onClick != null) modifier = modifier.clickable { onClick() }
     Column(modifier.background(color).animateContentSize().padding(8.dp)) {
         if (title != null) Text(text = title, fontWeight = FontWeight.Bold, color = titleColor, modifier = Modifier.padding(horizontal = 8.dp))

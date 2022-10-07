@@ -30,7 +30,7 @@ fun PFToolSegmentedButtons(
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
     Crossfade(targetState = selectedIndex) {
-        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(RoundedCornerShape(20.dp)).background(backgroundColor).padding(3.dp)) {
+        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(RoundedCornerShape(30.dp)).background(backgroundColor).padding(3.dp)) {
             options.forEachIndexed { index, option ->
                 val selected = it == index
                 Text(
@@ -38,7 +38,7 @@ fun PFToolSegmentedButtons(
                     color = if (selected) selectedContentColor else contentColor,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().weight(1f).clip(RoundedCornerShape(20.dp))
+                    modifier = Modifier.fillMaxSize().weight(1f).clip(RoundedCornerShape(30.dp))
                         .clickable { onOptionSelect(index); onSelect(index) }
                         .background(if (selected) selectedBackgroundColor else backgroundColor)
                         .padding(8.dp)

@@ -13,16 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun PFToolButtonCentered(title: String, containerColor: Color = MaterialTheme.colorScheme.secondaryContainer, contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer, onClick: () -> Unit) {
     Button(
         modifier = Modifier.padding(all = 8.dp).fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(30.dp),
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         onClick = onClick,
-        contentPadding = PaddingValues(all = 16.dp)
+        contentPadding = PaddingValues(16.dp)
     ) {
-        Text(title, fontWeight = FontWeight.Bold)
+        Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
     }
 }

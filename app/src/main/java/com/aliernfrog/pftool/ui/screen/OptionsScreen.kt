@@ -75,7 +75,7 @@ private fun Links() {
                 "github.com" -> painterResource(id = R.drawable.github)
                 else -> null
             }
-            PFToolButton(title = it.name, painter = icon, containerColor = MaterialTheme.colorScheme.tertiaryContainer, contentColor = MaterialTheme.colorScheme.onTertiaryContainer) {
+            PFToolButton(title = it.name, painter = icon, containerColor = MaterialTheme.colorScheme.secondary, contentColor = MaterialTheme.colorScheme.onSecondary) {
                 uriHandler.openUri(it.url)
             }
         }

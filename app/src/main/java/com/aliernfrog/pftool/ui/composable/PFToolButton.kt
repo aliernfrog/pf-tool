@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -22,21 +21,21 @@ fun PFToolButton(
     title: String,
     description: String? = null,
     painter: Painter? = null,
-    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    containerColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
     painterTintColor: Color? = contentColor,
     enabled: Boolean = true,
     onClick: () -> Unit) {
-    Button(modifier = Modifier.padding(all = 8.dp).fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+    Button(
+        modifier = Modifier.padding(8.dp).fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         onClick = onClick,
         enabled = enabled,
-        contentPadding = PaddingValues(all = 8.dp)
+        contentPadding = PaddingValues(8.dp)
     ) {
         if (painter != null) Image(painter, title, Modifier.padding(end = 4.dp).size(40.dp).padding(4.dp), colorFilter = if (painterTintColor != null) ColorFilter.tint(painterTintColor) else null)
         Column(Modifier.fillMaxWidth()) {
-            Text(title, fontWeight = FontWeight.Bold)
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             if (description != null) Text(description, Modifier.alpha(0.8f), fontSize = 12.sp)
         }
     }
