@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -27,7 +27,7 @@ fun DeleteMapSheet(mapName: String?, state: ModalBottomSheetState, onCancel: (()
     val scope = rememberCoroutineScope()
     PFToolModalBottomSheet(sheetState = state) {
         PFToolColumnRounded {
-            Text(text = context.getString(R.string.info_deleteQuestion).replace("%NAME%", mapName ?: ""), fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+            Text(text = context.getString(R.string.info_deleteQuestion).replace("%NAME%", mapName ?: ""), color = MaterialTheme.colorScheme.onSecondaryContainer, fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
         Row {
             Column(Modifier.weight(1f)) {
@@ -37,7 +37,7 @@ fun DeleteMapSheet(mapName: String?, state: ModalBottomSheetState, onCancel: (()
                 }
             }
             Column(Modifier.weight(1f)) {
-                PFToolButtonCentered(title = context.getString(R.string.action_delete), backgroundColor = MaterialTheme.colors.error, contentColor = MaterialTheme.colors.onError) {
+                PFToolButtonCentered(title = context.getString(R.string.action_delete), containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.onErrorContainer) {
                     scope.launch { state.hide() }
                     onDeleteConfirm()
                 }

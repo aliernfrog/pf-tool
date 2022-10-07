@@ -9,9 +9,9 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +33,7 @@ fun PermissionSheet(state: ModalBottomSheetState) {
     PFToolModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
         PFToolColumnRounded {
             val text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission)
-            Text(text, fontWeight = FontWeight.Bold)
+            Text(text, color = MaterialTheme.colorScheme.onSecondaryContainer, fontWeight = FontWeight.Bold)
         }
         OkButton(scope, state)
     }
@@ -45,7 +45,7 @@ fun PermissionSheet(state: ModalBottomSheetState) {
 private fun OkButton(scope: CoroutineScope, state: ModalBottomSheetState) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(), onResult = {})
-    PFToolButtonCentered(title = context.getString(R.string.action_ok), backgroundColor = MaterialTheme.colors.primary, contentColor = MaterialTheme.colors.onPrimary) {
+    PFToolButtonCentered(title = context.getString(R.string.action_ok), containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
         if (allFilesAccess) {
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
             val uri = Uri.fromParts("package", context.packageName, null)

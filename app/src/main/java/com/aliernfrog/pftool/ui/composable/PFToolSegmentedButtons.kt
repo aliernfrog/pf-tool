@@ -5,8 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 fun PFToolSegmentedButtons(
     options: List<String>,
     initialIndex: Int = 0,
-    backgroundColor: Color = MaterialTheme.colors.secondary,
-    selectedBackgroundColor: Color = MaterialTheme.colors.secondaryVariant,
-    contentColor: Color = MaterialTheme.colors.onSecondary,
-    selectedContentColor: Color = contentColor,
+    backgroundColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    selectedBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    selectedContentColor: Color = MaterialTheme.colorScheme.onSecondary,
     onSelect: (Int) -> Unit
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }

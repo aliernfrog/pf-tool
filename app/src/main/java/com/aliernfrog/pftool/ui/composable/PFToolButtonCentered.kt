@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,12 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PFToolButtonCentered(title: String, backgroundColor: Color = MaterialTheme.colors.secondary, contentColor: Color = MaterialTheme.colors.onBackground, onClick: () -> Unit) {
-    Button(modifier = Modifier
-        .padding(all = 8.dp)
-        .fillMaxWidth(),
+fun PFToolButtonCentered(title: String, containerColor: Color = MaterialTheme.colorScheme.secondaryContainer, contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier.padding(all = 8.dp).fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor, contentColor = contentColor),
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         onClick = onClick,
         contentPadding = PaddingValues(all = 16.dp)
     ) {

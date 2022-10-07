@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,8 +44,8 @@ private fun ThemeSelection(config: SharedPreferences) {
     val context = LocalContext.current
     val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
     val chosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
-    PFToolColumnRounded(color = MaterialTheme.colors.secondary, title = context.getString(R.string.optionsTheme)) {
-        PFToolRadioButtons(options = options, initialIndex = chosen, backgroundColor = MaterialTheme.colors.secondaryVariant, onSelect = { option ->
+    PFToolColumnRounded(title = context.getString(R.string.optionsTheme)) {
+        PFToolRadioButtons(options = options, initialIndex = chosen, onSelect = { option ->
             applyTheme(option, config, context)
         })
     }
@@ -75,7 +75,7 @@ private fun Links() {
                 "github.com" -> painterResource(id = R.drawable.github)
                 else -> null
             }
-            PFToolButton(title = it.name, painter = icon, backgroundColor = MaterialTheme.colors.secondaryVariant) {
+            PFToolButton(title = it.name, painter = icon, containerColor = MaterialTheme.colorScheme.tertiaryContainer, contentColor = MaterialTheme.colorScheme.onTertiaryContainer) {
                 uriHandler.openUri(it.url)
             }
         }
@@ -96,7 +96,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
                 configEditor.apply()
             })
         }
-        PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), backgroundColor = MaterialTheme.colors.error, contentColor = MaterialTheme.colors.onError) {
+        PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.onErrorContainer) {
             prefEdits.forEach { key ->
                 configEditor.remove(key)
                 configEditor.apply()

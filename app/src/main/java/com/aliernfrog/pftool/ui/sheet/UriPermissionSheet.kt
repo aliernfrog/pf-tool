@@ -6,12 +6,13 @@ import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
@@ -28,12 +29,12 @@ fun UriPermissionSheet(mapsFolder: String, state: ModalBottomSheetState) {
     val scope = rememberCoroutineScope()
     PFToolModalBottomSheet(title = context.getString(R.string.warning_missingPermissions), state) {
         PFToolColumnRounded {
-            Text(context.getString(R.string.info_mapsFolderPermission), fontWeight = FontWeight.Bold)
-            PFToolColumnRounded(color = MaterialTheme.colors.secondaryVariant) {
-                Text(mapsFolder.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontSize = 14.sp)
+            Text(context.getString(R.string.info_mapsFolderPermission), color = MaterialTheme.colorScheme.onSecondaryContainer, fontWeight = FontWeight.Bold)
+            PFToolColumnRounded(color = MaterialTheme.colorScheme.secondary) {
+                Text(mapsFolder.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp)
             }
         }
-        PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission_note), fontWeight = FontWeight.Bold, fontSize = 14.sp) }
+        PFToolColumnRounded { Text(context.getString(R.string.info_mapsFolderPermission_note), color = MaterialTheme.colorScheme.onSecondaryContainer, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
         OkButton(mapsFolder, scope, state)
     }
 }
@@ -50,7 +51,7 @@ private fun OkButton(mapsFolder: String, scope: CoroutineScope, state: ModalBott
             scope.launch { state.hide() }
         }
     })
-    PFToolButtonCentered(title = context.getString(R.string.action_ok), backgroundColor = MaterialTheme.colors.primary, contentColor = MaterialTheme.colors.onPrimary) {
+    PFToolButtonCentered(title = context.getString(R.string.action_ok), containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
         val treeId = mapsFolder.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
         val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
         launcher.launch(uri)
