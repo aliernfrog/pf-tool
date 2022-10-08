@@ -1,6 +1,11 @@
 package com.aliernfrog.pftool
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.data.Social
+
+val PFToolRoundnessSize = 30.dp
+val PFToolComposableShape = RoundedCornerShape(PFToolRoundnessSize)
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"

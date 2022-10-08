@@ -15,6 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.PFToolComposableShape
+import com.aliernfrog.pftool.PFToolRoundnessSize
 import com.aliernfrog.pftool.util.GeneralUtil
 import kotlinx.coroutines.launch
 
@@ -37,14 +39,14 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                 ))
                 Box(modifier = Modifier
                     .padding(top = 8.dp, bottom = 8.dp)
-                    .background(Color.White, shape = RoundedCornerShape(20.dp))
+                    .background(Color.White, shape = PFToolComposableShape)
                     .width(50.dp)
                     .height(4.dp)
                     .align(Alignment.CenterHorizontally)
                 )
                 Column(Modifier
                     .widthIn(0.dp, 600.dp)
-                    .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+                    .clip(RoundedCornerShape(topStart = PFToolRoundnessSize, topEnd = PFToolRoundnessSize))
                     .verticalScroll(sheetScrollState)
                     .background(MaterialTheme.colorScheme.background).padding(horizontal = 24.dp)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).align(Alignment.CenterHorizontally))

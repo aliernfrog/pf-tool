@@ -4,7 +4,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.pftool.PFToolComposableShape
 
 @Composable
 fun PFToolSegmentedButtons(
@@ -30,7 +30,7 @@ fun PFToolSegmentedButtons(
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
     Crossfade(targetState = selectedIndex) {
-        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(RoundedCornerShape(30.dp)).background(backgroundColor).padding(3.dp)) {
+        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(PFToolComposableShape).background(backgroundColor).padding(3.dp)) {
             options.forEachIndexed { index, option ->
                 val selected = it == index
                 Text(
@@ -38,7 +38,7 @@ fun PFToolSegmentedButtons(
                     color = if (selected) selectedContentColor else contentColor,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().weight(1f).clip(RoundedCornerShape(30.dp))
+                    modifier = Modifier.fillMaxSize().weight(1f).clip(PFToolComposableShape)
                         .clickable { onOptionSelect(index); onSelect(index) }
                         .background(if (selected) selectedBackgroundColor else backgroundColor)
                         .padding(8.dp)

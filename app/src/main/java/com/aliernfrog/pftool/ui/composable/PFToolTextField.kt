@@ -2,12 +2,12 @@ package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.pftool.PFToolComposableShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +28,7 @@ fun PFToolTextField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(RoundedCornerShape(30.dp)),
+        modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(PFToolComposableShape),
         label = label,
         placeholder = placeholder,
         singleLine = singleLine,

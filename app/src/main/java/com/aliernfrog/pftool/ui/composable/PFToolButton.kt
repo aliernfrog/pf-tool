@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.PFToolComposableShape
 
 @Composable
 fun PFToolButton(
@@ -27,10 +28,11 @@ fun PFToolButton(
     enabled: Boolean = true,
     onClick: () -> Unit) {
     Button(
-        modifier = Modifier.padding(8.dp).fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         onClick = onClick,
+        modifier = Modifier.padding(8.dp).fillMaxWidth(),
         enabled = enabled,
+        shape = PFToolComposableShape,
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         contentPadding = PaddingValues(8.dp)
     ) {
         if (painter != null) Image(painter, title, Modifier.padding(end = 4.dp).size(40.dp).padding(4.dp), colorFilter = if (painterTintColor != null) ColorFilter.tint(painterTintColor) else null)
