@@ -86,8 +86,8 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState, pickMapS
     PFToolButton(
         title = context.getString(R.string.manageMapsPickMap),
         painter = painterResource(id = R.drawable.map),
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
         recompose.value = !recompose.value
         scope.launch {
