@@ -39,7 +39,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                     .size(30.dp, 5.dp)
                     .align(Alignment.CenterHorizontally)
                 )
-                Column(Modifier.verticalScroll(sheetScrollState).padding(horizontal = 24.dp)) {
+                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = PFToolRoundnessSize, topEnd = PFToolRoundnessSize)).verticalScroll(sheetScrollState)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
                     Spacer(modifier = Modifier.height(GeneralUtil.getNavigationBarHeight()))
