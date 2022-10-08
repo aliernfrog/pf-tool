@@ -128,8 +128,8 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
             PFToolButton(
                 title = context.getString(R.string.manageMapsImport),
                 painter = painterResource(id = R.drawable.download),
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 importChosenMap(context, mapsFile)
             }
@@ -155,8 +155,8 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
             PFToolButton(
                 title = context.getString(R.string.manageMapsDelete),
                 painter = painterResource(id = R.drawable.trash),
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
             ) {
                 scope.launch {
                     keyboardController?.hide()

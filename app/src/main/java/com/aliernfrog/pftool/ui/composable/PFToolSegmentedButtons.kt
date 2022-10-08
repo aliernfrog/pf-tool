@@ -22,9 +22,9 @@ import com.aliernfrog.pftool.PFToolComposableShape
 fun PFToolSegmentedButtons(
     options: List<String>,
     initialIndex: Int = 0,
-    backgroundColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     selectedBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
-    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     selectedContentColor: Color = MaterialTheme.colorScheme.onSecondary,
     onSelect: (Int) -> Unit
 ) {

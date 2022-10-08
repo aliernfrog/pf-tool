@@ -16,7 +16,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.util.FileUtil
@@ -58,7 +58,7 @@ private fun PermissionsSetUp(mapsDir: String) {
         visible = !GeneralUtil.checkStoragePermissions(context),
         title = context.getString(R.string.warning_missingStoragePermissions),
         content = {
-            Text(text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onErrorContainer)
+            Text(text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
         }
     ) {
         if (allFilesAccess) {
@@ -81,9 +81,9 @@ private fun PermissionsSetUp(mapsDir: String) {
         visible = !FileUtil.checkUriPermission(mapsDir, context),
         title = context.getString(R.string.warning_missingUriPermissions),
         content = {
-            Text(text = context.getString(R.string.info_mapsFolderPermission), color = MaterialTheme.colorScheme.onErrorContainer)
+            Text(text = context.getString(R.string.info_mapsFolderPermission), color = MaterialTheme.colorScheme.onError)
             Spacer(Modifier.height(8.dp))
-            Text(mapsDir.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+            Text(mapsDir.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onError)
         }
     ) {
         val treeId = mapsDir.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
@@ -95,8 +95,8 @@ private fun PermissionsSetUp(mapsDir: String) {
 @Composable
 private fun ErrorColumn(visible: Boolean = true, title: String, content: @Composable () -> Unit, onClick: () -> Unit) {
     AnimatedVisibility(visible) {
-        Column(Modifier.fillMaxWidth().padding(8.dp).clip(RoundedCornerShape(30.dp)).clickable { onClick() }.background(MaterialTheme.colorScheme.errorContainer).padding(vertical = 8.dp, horizontal = 16.dp)) {
-            Text(text = title, color = MaterialTheme.colorScheme.onErrorContainer, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+        Column(Modifier.fillMaxWidth().padding(8.dp).clip(PFToolComposableShape).clickable { onClick() }.background(MaterialTheme.colorScheme.error).padding(vertical = 8.dp, horizontal = 16.dp)) {
+            Text(text = title, color = MaterialTheme.colorScheme.onError, fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(10.dp))
             content()
         }
