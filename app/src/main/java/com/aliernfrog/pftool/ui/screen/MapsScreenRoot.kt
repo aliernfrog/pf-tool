@@ -13,6 +13,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,15 +37,18 @@ import com.aliernfrog.pftool.util.GeneralUtil
 import com.aliernfrog.toptoast.TopToastManager
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 
-private var recompose = mutableStateOf(false)
+private var hasStoragePerms = mutableStateOf(true)
+private var hasUriPerms = mutableStateOf(true)
 
 @Composable
 fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsDir: String) {
     val context = LocalContext.current
-    val hasPerms = GeneralUtil.checkStoragePermissions(context) && FileUtil.checkUriPermission(mapsDir, context)
-    if (hasPerms) MapsScreen(navController, toastManager, config, getMapsFile(mapsDir, context))
-    else PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) { PermissionsSetUp(mapsDir) }
-    recompose.value
+    hasStoragePerms.value = GeneralUtil.checkStoragePermissions(context)
+    hasUriPerms.value = FileUtil.checkUriPermission(mapsDir, context)
+    Crossfade(targetState = (hasUriPerms.value && hasStoragePerms.value)) {
+        if (it) MapsScreen(navController, toastManager, config, getMapsFile(mapsDir, context))
+        else PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) { PermissionsSetUp(mapsDir) }
+    }
 }
 
 @SuppressLint("InlinedApi")
@@ -53,20 +57,23 @@ private fun PermissionsSetUp(mapsDir: String) {
     val context = LocalContext.current
     val allFilesAccess = Build.VERSION.SDK_INT >= 30
 
-    val storagePermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(), onResult = { recompose.value = !recompose.value })
+    val storagePermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(), onResult = {})
     ErrorColumn(
-        visible = !GeneralUtil.checkStoragePermissions(context),
+        visible = !hasStoragePerms.value,
         title = context.getString(R.string.warning_missingStoragePermissions),
         content = {
             Text(text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
         }
     ) {
-        if (allFilesAccess) {
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            val uri = Uri.fromParts("package", context.packageName, null)
-            intent.data = uri
-            context.startActivity(intent)
-        } else storagePermsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        hasStoragePerms.value = GeneralUtil.checkStoragePermissions(context)
+        if (!hasStoragePerms.value) {
+            if (allFilesAccess) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                val uri = Uri.fromParts("package", context.packageName, null)
+                intent.data = uri
+                context.startActivity(intent)
+            } else storagePermsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
     }
 
     val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
@@ -74,11 +81,10 @@ private fun PermissionsSetUp(mapsDir: String) {
             val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             context.grantUriPermission(context.packageName, it, takeFlags)
             context.contentResolver.takePersistableUriPermission(it, takeFlags)
-            recompose.value = !recompose.value
         }
     })
     ErrorColumn(
-        visible = !FileUtil.checkUriPermission(mapsDir, context),
+        visible = !hasUriPerms.value,
         title = context.getString(R.string.warning_missingUriPermissions),
         content = {
             Text(text = context.getString(R.string.info_mapsFolderPermission), color = MaterialTheme.colorScheme.onError)
@@ -86,9 +92,12 @@ private fun PermissionsSetUp(mapsDir: String) {
             Text(mapsDir.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onError)
         }
     ) {
-        val treeId = mapsDir.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-        val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
-        uriPermsLauncher.launch(uri)
+        hasUriPerms.value = FileUtil.checkUriPermission(mapsDir, context)
+        if (!hasUriPerms.value) {
+            val treeId = mapsDir.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
+            val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
+            uriPermsLauncher.launch(uri)
+        }
     }
 }
 
