@@ -103,11 +103,12 @@ private fun PermissionsSetUp(mapsDir: String) {
 
 @Composable
 private fun ErrorColumn(visible: Boolean = true, title: String, content: @Composable () -> Unit, onClick: () -> Unit) {
+    val context = LocalContext.current
     AnimatedVisibility(visible) {
         Column(Modifier.fillMaxWidth().padding(8.dp).clip(PFToolComposableShape).clickable { onClick() }.background(MaterialTheme.colorScheme.error).padding(vertical = 8.dp, horizontal = 16.dp)) {
-            Text(text = title, color = MaterialTheme.colorScheme.onError, fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(10.dp))
+            Text(text = title, color = MaterialTheme.colorScheme.onError, fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp))
             content()
+            Text(text = context.getString(R.string.info_permissionsHint), color = MaterialTheme.colorScheme.onError, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
         }
     }
 }
