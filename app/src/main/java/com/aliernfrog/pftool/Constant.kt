@@ -19,7 +19,6 @@ object Link {
 }
 
 object NavRoutes {
-    const val MAIN = "main"
     const val MAPS = "maps"
     const val OPTIONS = "options"
 }
