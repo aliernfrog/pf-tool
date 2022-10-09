@@ -1,6 +1,6 @@
 package com.aliernfrog.pftool.ui.composable
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -53,9 +53,8 @@ fun PFToolBaseScaffold(title: String, navController: NavController, onNavigation
         },
         bottomBar = { BottomBar(navController) }
     ) { padding ->
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).animateContentSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).animateContentSize().padding(padding)) {
             content()
-            Spacer(Modifier.height(60.dp+GeneralUtil.getNavigationBarHeight()))
         }
     }
 }
@@ -69,14 +68,16 @@ private fun BottomBar(navController: NavController) {
         Screen(NavRoutes.MAPS, context.getString(R.string.manageMaps), painterResource(id = R.drawable.map)),
         Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options))
     )
-    BottomAppBar {
-        navScreens.forEach {
-            NavigationBarItem(
-                selected = it.route == currentRoute,
-                onClick = { navController.navigate(it.route) { popUpTo(0) } },
-                icon = { Image(it.icon, it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
-                label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) }
-            )
+    AnimatedVisibility(visible = !GeneralUtil.isKeyboardVisible(), enter = slideInVertically(initialOffsetY = { it })+fadeIn(), exit = slideOutVertically(targetOffsetY = { it })+fadeOut()) {
+        BottomAppBar {
+            navScreens.forEach {
+                NavigationBarItem(
+                    selected = it.route == currentRoute,
+                    onClick = { navController.navigate(it.route) { popUpTo(0) } },
+                    icon = { Image(it.icon, it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
+                    label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) }
+                )
+            }
         }
     }
 }

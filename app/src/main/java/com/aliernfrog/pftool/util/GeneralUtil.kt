@@ -5,25 +5,25 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 
 @Suppress("DEPRECATION")
 class GeneralUtil {
     companion object {
         @Composable
-        fun getStatusBarHeight(): Dp {
-            return WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        fun getNavigationBarHeight(): Dp {
+            return WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         }
 
         @Composable
-        fun getNavigationBarHeight(): Dp {
-            return WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        fun isKeyboardVisible(): Boolean {
+            val navigationHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            return WindowInsets.ime.getBottom(LocalDensity.current).dp >= navigationHeight
         }
 
         fun getAppVersionName(context: Context): String {
