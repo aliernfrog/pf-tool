@@ -118,7 +118,7 @@ private fun ExportedMaps(exportedMapsFile: File, state: ModalBottomSheetState, o
 
 @Composable
 private fun NoMaps(context: Context, exportedMaps: Boolean = false) {
-    PFToolColumnRounded(color = MaterialTheme.colorScheme.errorContainer) {
-        Text(text = context.getString(if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps else R.string.manageMapsPickMapNoImportedMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onErrorContainer)
+    PFToolColumnRounded(color = MaterialTheme.colorScheme.error) {
+        Text(text = context.getString(if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps else R.string.manageMapsPickMapNoImportedMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onError)
     }
 }
