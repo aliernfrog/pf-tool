@@ -26,7 +26,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.pftool.NavRoutes
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.Screen
-import com.aliernfrog.pftool.util.GeneralUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +59,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, onNavigation
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun BottomBar(navController: NavController) {
     val context = LocalContext.current
@@ -70,7 +70,7 @@ private fun BottomBar(navController: NavController) {
         Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options))
     )
     AnimatedVisibility(
-        visible = !GeneralUtil.isKeyboardVisible(),
+        visible = !WindowInsets.isImeVisible,
         enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(durationMillis = 100)) + fadeIn(),
         exit = fadeOut(animationSpec = tween(durationMillis = 50))
     ) {
