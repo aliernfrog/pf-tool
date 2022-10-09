@@ -6,7 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val LightColors = lightColorScheme(
+private val LightColorPalette = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     primaryContainer = md_theme_light_primaryContainer,
@@ -37,7 +37,7 @@ private val LightColors = lightColorScheme(
 )
 
 
-private val DarkColors = darkColorScheme(
+private val DarkColorPalette = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -73,8 +73,8 @@ fun PFToolTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
     val colors = when {
         dynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
         dynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
-        darkTheme -> DarkColors
-        else -> LightColors
+        darkTheme -> DarkColorPalette
+        else -> LightColorPalette
     }
 
     MaterialTheme(
