@@ -72,7 +72,7 @@ private fun BottomBar(navController: NavController) {
     AnimatedVisibility(
         visible = !WindowInsets.isImeVisible,
         enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(durationMillis = 100)) + fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = 50))
+        exit = fadeOut(animationSpec = tween(durationMillis = 0))
     ) {
         BottomAppBar {
             navScreens.forEach {
