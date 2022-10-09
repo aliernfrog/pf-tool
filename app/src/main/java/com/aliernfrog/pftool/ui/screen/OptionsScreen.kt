@@ -96,7 +96,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
                 configEditor.apply()
             })
         }
-        PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.onErrorContainer) {
+        PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), containerColor = MaterialTheme.colorScheme.error, contentColor = MaterialTheme.colorScheme.onError) {
             prefEdits.forEach { key ->
                 configEditor.remove(key)
                 configEditor.apply()
