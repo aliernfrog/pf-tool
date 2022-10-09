@@ -48,7 +48,8 @@ private fun ThemeSelection(config: SharedPreferences) {
     val dynamicTheme = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, true)) }
     PFToolColumnRounded(title = context.getString(R.string.optionsTheme)) {
         PFToolRadioButtons(options = themeOptions, initialIndex = themeChosen, onSelect = { option ->
-            applyTheme(option, config, context)
+            config.edit().putInt(ConfigKey.KEY_APP_THEME, option).apply()
+            onThemeUpdate(context)
         })
         if (supportsDynamicTheme) {
             PFToolSwitch(
@@ -57,7 +58,7 @@ private fun ThemeSelection(config: SharedPreferences) {
             ) {
                 dynamicTheme.value = it
                 config.edit().putBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, it).apply()
-                topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY) { restartApp(context) }
+                onThemeUpdate(context)
             }
         }
     }
@@ -125,10 +126,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     }
 }
 
-private fun applyTheme(option: Int, config: SharedPreferences, context: Context) {
-    val configEditor = config.edit()
-    configEditor.putInt(ConfigKey.KEY_APP_THEME, option)
-    configEditor.apply()
+private fun onThemeUpdate(context: Context) {
     topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }
 
