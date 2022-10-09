@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.ui.composable.*
+import com.aliernfrog.pftool.ui.theme.supportsDynamicTheme
 import com.aliernfrog.pftool.util.GeneralUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
@@ -42,12 +43,23 @@ fun OptionsScreen(navController: NavController, toastManager: TopToastManager, c
 @Composable
 private fun ThemeSelection(config: SharedPreferences) {
     val context = LocalContext.current
-    val options = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
-    val chosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
+    val themeOptions = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
+    val themeChosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
+    val dynamicTheme = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, true)) }
     PFToolColumnRounded(title = context.getString(R.string.optionsTheme)) {
-        PFToolRadioButtons(options = options, initialIndex = chosen, onSelect = { option ->
+        PFToolRadioButtons(options = themeOptions, initialIndex = themeChosen, onSelect = { option ->
             applyTheme(option, config, context)
         })
+        if (supportsDynamicTheme) {
+            PFToolSwitch(
+                text = context.getString(R.string.optionsThemeDynamicTheme),
+                checked = dynamicTheme.value
+            ) {
+                dynamicTheme.value = it
+                config.edit().putBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, it).apply()
+                topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY) { restartApp(context) }
+            }
+        }
     }
 }
 

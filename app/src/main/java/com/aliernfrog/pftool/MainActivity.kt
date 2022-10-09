@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         setConfig()
         setContent {
             val darkTheme = getDarkThemePreference()
-            PFToolTheme(darkTheme) {
+            PFToolTheme(darkTheme, getDynamicThemePreference()) {
                 TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, manager = topToastManager, content = { Navigation() })
                 SystemBars(darkTheme)
             }
@@ -77,5 +77,9 @@ class MainActivity : ComponentActivity() {
             Theme.DARK -> true
             else -> isSystemInDarkTheme()
         }
+    }
+
+    private fun getDynamicThemePreference(): Boolean {
+        return config.getBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, true)
     }
 }
