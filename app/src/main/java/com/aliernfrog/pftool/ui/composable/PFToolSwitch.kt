@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,11 +13,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.PFToolComposableShape
 
 @Composable
 fun PFToolSwitch(
-    text: String,
+    title: String,
+    description: String? = null,
     checked: Boolean,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     onCheckedChange: (Boolean) -> Unit
@@ -25,7 +28,10 @@ fun PFToolSwitch(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp).clip(PFToolComposableShape).clickable { onCheckedChange(!checked) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text, color = contentColor, fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth().weight(1f).padding(start = 8.dp))
+        Column(Modifier.fillMaxWidth().weight(1f).padding(start = 8.dp)) {
+            Text(text = title, color = contentColor, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            if (description != null) Text(text = description, color = contentColor, fontSize = 14.sp)
+        }
         Switch(checked = checked, onCheckedChange = onCheckedChange, modifier = Modifier.padding(end = 8.dp))
     }
 }

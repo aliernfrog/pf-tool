@@ -44,5 +44,7 @@
     <string name="optionsLinks">Links</string>
     <string name="optionsExperimental">Experimental options (might break PF Tool)</string>
     <string name="optionsExperimentalEnabled">Experimental options enabled!</string>
+    <string name="optionsExperimentalSwitch">Well hidden switch</string>
+    <string name="optionsExperimentalSwitchDescription">Congrats!</string>
     <string name="optionsExperimentalResetPrefs">Reset prefs</string>
 </resources>

@@ -52,7 +52,7 @@ private fun ThemeSelection(config: SharedPreferences) {
         })
         if (supportsDynamicTheme) {
             PFToolSwitch(
-                text = context.getString(R.string.optionsThemeDynamicTheme),
+                title = context.getString(R.string.optionsThemeDynamicTheme),
                 checked = dynamicTheme.value
             ) {
                 dynamicTheme.value = it
@@ -99,6 +99,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     val context = LocalContext.current
     val configEditor = config.edit()
     val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
+    val veryHiddenSwitchChecked = remember { mutableStateOf(false) }
     PFToolColumnRounded(title = context.getString(R.string.optionsExperimental)) {
         prefEdits.forEach { key ->
             val value = remember { mutableStateOf(config.getString(key, "")!!) }
@@ -115,6 +116,12 @@ private fun ExperimentalOptions(config: SharedPreferences) {
             }
             restartApp(context)
         }
+        PFToolSwitch(
+            title = context.getString(R.string.optionsExperimentalSwitch),
+            description = context.getString(R.string.optionsExperimentalSwitchDescription),
+            checked = veryHiddenSwitchChecked.value,
+            onCheckedChange = { veryHiddenSwitchChecked.value = it }
+        )
     }
 }
 
