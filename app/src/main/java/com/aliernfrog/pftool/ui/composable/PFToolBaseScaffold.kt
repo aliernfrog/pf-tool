@@ -35,7 +35,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, onNavigation
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).imePadding(),
         topBar = {
             LargeTopAppBar(
-                title = { Text(text = title, fontWeight = FontWeight.Bold) },
+                title = { Text(text = title, fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     if (navController.previousBackStackEntry != null) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = LocalContext.current.getString(R.string.action_back), Modifier.padding(horizontal = 8.dp).clickable(
