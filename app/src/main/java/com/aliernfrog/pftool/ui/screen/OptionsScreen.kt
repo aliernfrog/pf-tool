@@ -26,6 +26,7 @@ import com.aliernfrog.toptoast.TopToastManager
 private lateinit var topToastManager: TopToastManager
 
 private val aboutClickCount = mutableStateOf(0)
+private val forceShowDynamicColorsOption = mutableStateOf(false)
 
 private const val experimentalRequiredClicks = 10
 
@@ -51,7 +52,7 @@ private fun ThemeSelection(config: SharedPreferences) {
             config.edit().putInt(ConfigKey.KEY_APP_THEME, option).apply()
             onThemeUpdate(context)
         })
-        if (supportsDynamicTheme) {
+        if (forceShowDynamicColorsOption.value || supportsDynamicTheme) {
             PFToolSwitch(
                 title = context.getString(R.string.optionsThemeDynamicTheme),
                 checked = dynamicTheme.value
@@ -100,8 +101,14 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     val context = LocalContext.current
     val configEditor = config.edit()
     val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
-    val veryHiddenSwitchChecked = remember { mutableStateOf(false) }
     PFToolColumnRounded(title = context.getString(R.string.optionsExperimental)) {
+        PFToolSwitch(
+            title = context.getString(R.string.optionsExperimentalShowDynamicColorsOption),
+            checked = forceShowDynamicColorsOption.value,
+            onCheckedChange = {
+                forceShowDynamicColorsOption.value = it
+            }
+        )
         prefEdits.forEach { key ->
             val value = remember { mutableStateOf(config.getString(key, "")!!) }
             PFToolTextField(label = { Text(text = "Prefs: $key") }, value = value.value, onValueChange = {
@@ -117,12 +124,6 @@ private fun ExperimentalOptions(config: SharedPreferences) {
             }
             restartApp(context)
         }
-        PFToolSwitch(
-            title = context.getString(R.string.optionsExperimentalSwitch),
-            description = context.getString(R.string.optionsExperimentalSwitchDescription),
-            checked = veryHiddenSwitchChecked.value,
-            onCheckedChange = { veryHiddenSwitchChecked.value = it }
-        )
     }
 }
 
