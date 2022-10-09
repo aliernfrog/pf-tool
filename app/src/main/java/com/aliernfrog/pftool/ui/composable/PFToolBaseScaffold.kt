@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -68,7 +69,11 @@ private fun BottomBar(navController: NavController) {
         Screen(NavRoutes.MAPS, context.getString(R.string.manageMaps), painterResource(id = R.drawable.map)),
         Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options))
     )
-    AnimatedVisibility(visible = !GeneralUtil.isKeyboardVisible(), enter = slideInVertically(initialOffsetY = { it })+fadeIn(), exit = slideOutVertically(targetOffsetY = { it })+fadeOut()) {
+    AnimatedVisibility(
+        visible = !GeneralUtil.isKeyboardVisible(),
+        enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(durationMillis = 100)) + fadeIn(),
+        exit = fadeOut(animationSpec = tween(durationMillis = 50))
+    ) {
         BottomAppBar {
             navScreens.forEach {
                 NavigationBarItem(
