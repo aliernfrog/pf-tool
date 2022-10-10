@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.ui.composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun PFToolRadioButtons(
@@ -27,12 +29,14 @@ fun PFToolRadioButtons(
     options.forEachIndexed { index, option ->
         val selected = selectedIndex == index
         val onSelected = { onOptionSelect(index); onSelect(index) }
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().clickable { onSelected() }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().clickable { onSelected() }.padding(horizontal = 2.dp)
         ) {
-            RadioButton(colors = RadioButtonDefaults.colors(selectedColor = selectedColor, unselectedColor = contentColor.copy(0.5f), disabledSelectedColor = contentColor.copy(0.7f), disabledUnselectedColor = contentColor.copy(0.5f)),
+            RadioButton(
                 selected = selected,
-                onClick = { onSelected() }
+                onClick = { onSelected() },
+                colors = RadioButtonDefaults.colors(selectedColor = selectedColor, unselectedColor = contentColor.copy(0.5f), disabledSelectedColor = contentColor.copy(0.7f), disabledUnselectedColor = contentColor.copy(0.5f)),
             )
             Text(text = option, fontWeight = FontWeight.Bold, color = contentColor)
         }
