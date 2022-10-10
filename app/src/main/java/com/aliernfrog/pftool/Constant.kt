@@ -1,10 +1,16 @@
 package com.aliernfrog.pftool
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.data.Social
+
+val PFToolRoundnessSize = 30.dp
+val PFToolComposableShape = RoundedCornerShape(PFToolRoundnessSize)
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
     const val KEY_APP_THEME = "appTheme"
+    const val KEY_APP_MATERIAL_YOU = "materialYou"
     const val KEY_MAPS_DIR = "mapsDir"
     const val KEY_MAPS_EXPORT_DIR = "mapsExportDir"
     const val DEFAULT_MAPS_DIR = "%STORAGE%/Android/data/com.MA.Polyfield/files/editor"
@@ -19,7 +25,6 @@ object Link {
 }
 
 object NavRoutes {
-    const val MAIN = "main"
     const val MAPS = "maps"
     const val OPTIONS = "options"
 }

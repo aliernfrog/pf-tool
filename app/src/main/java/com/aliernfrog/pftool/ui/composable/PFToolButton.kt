@@ -2,11 +2,10 @@ package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -16,27 +15,29 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.PFToolComposableShape
 
 @Composable
 fun PFToolButton(
     title: String,
     description: String? = null,
     painter: Painter? = null,
-    backgroundColor: Color = MaterialTheme.colors.secondary,
-    contentColor: Color = MaterialTheme.colors.onBackground,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     painterTintColor: Color? = contentColor,
     enabled: Boolean = true,
     onClick: () -> Unit) {
-    Button(modifier = Modifier.padding(all = 8.dp).fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor, contentColor = contentColor),
+    Button(
         onClick = onClick,
+        modifier = Modifier.padding(8.dp).fillMaxWidth(),
         enabled = enabled,
-        contentPadding = PaddingValues(all = 8.dp)
+        shape = PFToolComposableShape,
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
+        contentPadding = PaddingValues(8.dp)
     ) {
         if (painter != null) Image(painter, title, Modifier.padding(end = 4.dp).size(40.dp).padding(4.dp), colorFilter = if (painterTintColor != null) ColorFilter.tint(painterTintColor) else null)
         Column(Modifier.fillMaxWidth()) {
-            Text(title, fontWeight = FontWeight.Bold)
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             if (description != null) Text(description, Modifier.alpha(0.8f), fontSize = 12.sp)
         }
     }

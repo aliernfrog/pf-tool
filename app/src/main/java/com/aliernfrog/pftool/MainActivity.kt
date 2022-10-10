@@ -3,24 +3,21 @@ package com.aliernfrog.pftool
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Environment
-import android.provider.DocumentsContract
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aliernfrog.pftool.ui.screen.MainScreen
-import com.aliernfrog.pftool.ui.screen.MapsScreen
+import com.aliernfrog.pftool.ui.screen.MapsScreenRoot
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.toptoast.TopToastBase
 import com.aliernfrog.toptoast.TopToastManager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.lazygeniouz.filecompat.file.DocumentFileCompat
 
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
@@ -29,6 +26,7 @@ class MainActivity : ComponentActivity() {
 
     private val defaultMapsDir = ConfigKey.DEFAULT_MAPS_DIR.replace("%STORAGE%", Environment.getExternalStorageDirectory().toString())
     private val defaultMapsExportDir = ConfigKey.DEFAULT_MAPS_EXPORT_DIR.replace("%DOCUMENTS%", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString())
+    private var mapsDir = defaultMapsDir
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,11 +34,12 @@ class MainActivity : ComponentActivity() {
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         configEditor = config.edit()
         topToastManager = TopToastManager()
+        mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, defaultMapsDir).toString()
         setConfig()
         setContent {
             val darkTheme = getDarkThemePreference()
-            PFToolTheme(darkTheme) {
-                TopToastBase(backgroundColor = MaterialTheme.colors.background, manager = topToastManager, content = { Navigation() })
+            PFToolTheme(darkTheme, getDynamicColorsPreference()) {
+                TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, manager = topToastManager, content = { Navigation() })
                 SystemBars(darkTheme)
             }
         }
@@ -55,23 +54,14 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Navigation() {
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = NavRoutes.MAIN) {
-            composable(route = NavRoutes.MAIN) {
-                MainScreen(navController, config)
-            }
+        NavHost(navController = navController, startDestination = NavRoutes.MAPS) {
             composable(route = NavRoutes.MAPS) {
-                MapsScreen(navController, topToastManager, config, getMapsFile())
+                MapsScreenRoot(navController, topToastManager, config, mapsDir)
             }
             composable(route = NavRoutes.OPTIONS) {
                 OptionsScreen(navController, topToastManager, config)
             }
         }
-    }
-
-    private fun getMapsFile(): DocumentFileCompat {
-        val treeId = config.getString(ConfigKey.KEY_MAPS_DIR, defaultMapsDir)?.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-        val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
-        return DocumentFileCompat.fromTreeUri(applicationContext, treeUri)!!
     }
 
     private fun setConfig() {
@@ -87,5 +77,9 @@ class MainActivity : ComponentActivity() {
             Theme.DARK -> true
             else -> isSystemInDarkTheme()
         }
+    }
+
+    private fun getDynamicColorsPreference(): Boolean {
+        return config.getBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, true)
     }
 }
