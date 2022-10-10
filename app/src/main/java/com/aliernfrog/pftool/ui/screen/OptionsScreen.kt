@@ -126,7 +126,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     val context = LocalContext.current
     val configEditor = config.edit()
     val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
-    OptionsColumn(title = context.getString(R.string.optionsExperimental), topDivider = true) {
+    OptionsColumn(title = context.getString(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
         PFToolSwitch(
             title = context.getString(R.string.optionsExperimentalShowMaterialYouOption),
             checked = forceShowMaterialYouOption.value,
