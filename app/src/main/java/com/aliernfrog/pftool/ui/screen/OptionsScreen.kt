@@ -138,8 +138,9 @@ private fun ExperimentalOptions(config: SharedPreferences) {
         prefEdits.forEach { key ->
             val value = remember { mutableStateOf(config.getString(key, "")!!) }
             PFToolTextField(label = { Text(text = "Prefs: $key") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surface,
+                rounded = false,
                 onValueChange = {
                     value.value = it
                     configEditor.putString(key, it)
@@ -147,7 +148,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
                 }
             )
         }
-        PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), modifier = Modifier.padding(horizontal = 8.dp), containerColor = MaterialTheme.colorScheme.error, contentColor = MaterialTheme.colorScheme.onError) {
+        OptionsButton(title = context.getString(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
             prefEdits.forEach { key ->
                 configEditor.remove(key)
                 configEditor.apply()

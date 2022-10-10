@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.PFToolComposableShape
 
@@ -23,6 +24,7 @@ fun PFToolTextField(
     singleLine: Boolean = false,
     contentColor: Color = MaterialTheme.colorScheme.onSecondary,
     containerColor: Color = MaterialTheme.colorScheme.secondary,
+    rounded: Boolean = true,
     colors: TextFieldColors = TextFieldDefaults.textFieldColors(
         textColor = contentColor,
         containerColor = containerColor,
@@ -36,7 +38,7 @@ fun PFToolTextField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth().padding(all = 8.dp).clip(PFToolComposableShape).animateContentSize(),
+        modifier = modifier.fillMaxWidth().padding(all = 8.dp).clip(if (rounded) PFToolComposableShape else RectangleShape).animateContentSize(),
         label = label,
         placeholder = placeholder,
         singleLine = singleLine,
