@@ -14,15 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.PFToolComposableShape
 
 @Composable
-fun PFToolColumnRounded(color: Color = MaterialTheme.colorScheme.surfaceVariant, title: String? = null, titleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant, padding: Dp = 8.dp, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
-    var modifier = Modifier.fillMaxWidth().padding(8.dp).clip(PFToolComposableShape)
-    if (onClick != null) modifier = modifier.clickable { onClick() }
-    Column(modifier.background(color).animateContentSize().padding(padding)) {
+fun PFToolColumnRounded(modifier: Modifier = Modifier, color: Color = MaterialTheme.colorScheme.surfaceVariant, title: String? = null, titleColor: Color = MaterialTheme.colorScheme.onSurfaceVariant, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
+    var columnModifier = modifier.fillMaxWidth().padding(8.dp).clip(PFToolComposableShape)
+    if (onClick != null) columnModifier = columnModifier.clickable { onClick() }
+    Column(columnModifier.background(color).animateContentSize().padding(8.dp)) {
         if (title != null) Text(text = title, fontWeight = FontWeight.Bold, color = titleColor, modifier = Modifier.padding(horizontal = 8.dp))
         content()
     }
