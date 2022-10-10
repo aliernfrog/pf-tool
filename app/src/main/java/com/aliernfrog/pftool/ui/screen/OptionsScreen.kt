@@ -35,7 +35,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.*
-import com.aliernfrog.pftool.ui.theme.supportsDynamicTheme
+import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.GeneralUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
@@ -43,7 +43,7 @@ import com.aliernfrog.toptoast.TopToastManager
 private lateinit var topToastManager: TopToastManager
 
 private val aboutClickCount = mutableStateOf(0)
-private val forceShowDynamicColorsOption = mutableStateOf(false)
+private val forceShowMaterialYouOption = mutableStateOf(false)
 
 private const val experimentalRequiredClicks = 10
 
@@ -62,20 +62,20 @@ private fun ThemeOptions(config: SharedPreferences) {
     val context = LocalContext.current
     val themeOptions = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
     val themeChosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
-    val dynamicTheme = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, true)) }
+    val dynamicTheme = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, true)) }
     OptionsColumn(title = context.getString(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
         PFToolRadioButtons(options = themeOptions, initialIndex = themeChosen, onSelect = { option ->
             config.edit().putInt(ConfigKey.KEY_APP_THEME, option).apply()
             onThemeUpdate(context)
         })
-        if (forceShowDynamicColorsOption.value || supportsDynamicTheme) {
+        if (forceShowMaterialYouOption.value || supportsMaterialYou) {
             PFToolSwitch(
-                title = context.getString(R.string.optionsThemeDynamicTheme),
-                description = context.getString(R.string.optionsThemeDynamicThemeDescription),
+                title = context.getString(R.string.optionsThemeMaterialYou),
+                description = context.getString(R.string.optionsThemeMaterialYouDescription),
                 checked = dynamicTheme.value
             ) {
                 dynamicTheme.value = it
-                config.edit().putBoolean(ConfigKey.KEY_APP_DYNAMIC_COLORS, it).apply()
+                config.edit().putBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, it).apply()
                 onThemeUpdate(context)
             }
         }
@@ -128,10 +128,10 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
     OptionsColumn(title = context.getString(R.string.optionsExperimental), topDivider = true) {
         PFToolSwitch(
-            title = context.getString(R.string.optionsExperimentalShowDynamicColorsOption),
-            checked = forceShowDynamicColorsOption.value,
+            title = context.getString(R.string.optionsExperimentalShowMaterialYouOption),
+            checked = forceShowMaterialYouOption.value,
             onCheckedChange = {
-                forceShowDynamicColorsOption.value = it
+                forceShowMaterialYouOption.value = it
             }
         )
         PFToolColumnRounded(Modifier.padding(horizontal = 8.dp)) {

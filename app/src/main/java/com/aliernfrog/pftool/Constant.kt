@@ -10,7 +10,7 @@ val PFToolComposableShape = RoundedCornerShape(PFToolRoundnessSize)
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
     const val KEY_APP_THEME = "appTheme"
-    const val KEY_APP_DYNAMIC_COLORS = "dynamicColors"
+    const val KEY_APP_MATERIAL_YOU = "materialYou"
     const val KEY_MAPS_DIR = "mapsDir"
     const val KEY_MAPS_EXPORT_DIR = "mapsExportDir"
     const val DEFAULT_MAPS_DIR = "%STORAGE%/Android/data/com.MA.Polyfield/files/editor"

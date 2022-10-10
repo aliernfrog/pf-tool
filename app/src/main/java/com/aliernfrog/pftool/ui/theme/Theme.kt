@@ -6,7 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-val supportsDynamicTheme = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+val supportsMaterialYou = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 private val LightColorPalette = lightColorScheme(
     primary = md_theme_light_primary,
@@ -70,11 +70,11 @@ private val DarkColorPalette = darkColorScheme(
 )
 
 @Composable
-fun PFToolTheme(darkTheme: Boolean = isSystemInDarkTheme(), dynamicTheme: Boolean = true, content: @Composable () -> Unit) {
-    val useDynamicTheme = supportsDynamicTheme && dynamicTheme
+fun PFToolTheme(darkTheme: Boolean = isSystemInDarkTheme(), dynamicColors: Boolean = true, content: @Composable () -> Unit) {
+    val useDynamicColors = supportsMaterialYou && dynamicColors
     val colors = when {
-        useDynamicTheme && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        useDynamicTheme && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+        useDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        useDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
         darkTheme -> DarkColorPalette
         else -> LightColorPalette
     }

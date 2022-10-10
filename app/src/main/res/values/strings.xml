@@ -36,15 +36,15 @@
     <string name="optionsThemeSystem">Follow system</string>
     <string name="optionsThemeLight">Light</string>
     <string name="optionsThemeDark">Dark</string>
-    <string name="optionsThemeDynamicTheme">Dynamic theme</string>
-    <string name="optionsThemeDynamicThemeDescription">Theme based on colors of your device</string>
+    <string name="optionsThemeMaterialYou">Material You</string>
+    <string name="optionsThemeMaterialYouDescription">Theme based on colors of your device</string>
     <string name="optionsThemeChanged">Theme will be applied after app restart, click to restart now</string>
     <string name="optionsAbout">About</string>
     <string name="optionsAboutVersion">PF Tool version</string>
     <string name="optionsAboutLinks">Related links</string>
     <string name="optionsAboutLinksDescription">Click to view related links</string>
     <string name="optionsExperimental">Experimental options (might break PF Tool)</string>
-    <string name="optionsExperimentalShowDynamicColorsOption">Force show dynamic colors option</string>
+    <string name="optionsExperimentalShowMaterialYouOption">Force show Material You option</string>
     <string name="optionsExperimentalEnabled">Experimental options enabled!</string>
     <string name="optionsExperimentalResetPrefs">Reset prefs</string>
 </resources>
