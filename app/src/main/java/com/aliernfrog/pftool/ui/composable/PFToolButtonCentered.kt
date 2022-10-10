@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.PFToolComposableShape
 
 @Composable
-fun PFToolButtonCentered(title: String, containerColor: Color = MaterialTheme.colorScheme.secondary, contentColor: Color = MaterialTheme.colorScheme.onSecondary, onClick: () -> Unit) {
+fun PFToolButtonCentered(title: String, modifier: Modifier = Modifier, containerColor: Color = MaterialTheme.colorScheme.secondary, contentColor: Color = MaterialTheme.colorScheme.onSecondary, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.padding(all = 8.dp).fillMaxWidth(),
+        modifier = modifier.padding(all = 8.dp).fillMaxWidth(),
         shape = PFToolComposableShape,
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         contentPadding = PaddingValues(16.dp)

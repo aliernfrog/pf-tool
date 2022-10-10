@@ -43,7 +43,8 @@
     <string name="optionsAboutVersion">PF Tool version</string>
     <string name="optionsAboutLinks">Related links</string>
     <string name="optionsAboutLinksDescription">Click to view related links</string>
-    <string name="optionsExperimental">Experimental options (might break PF Tool)</string>
+    <string name="optionsExperimental">Experimental options</string>
+    <string name="optionsExperimentalDescription">These options are not intended for normal usage and they might break PF Tool if they are misused</string>
     <string name="optionsExperimentalShowMaterialYouOption">Force show Material You option</string>
     <string name="optionsExperimentalEnabled">Experimental options enabled!</string>
     <string name="optionsExperimentalResetPrefs">Reset prefs</string>

@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.PFToolComposableShape
 
@@ -16,23 +17,26 @@ import com.aliernfrog.pftool.PFToolComposableShape
 fun PFToolTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     singleLine: Boolean = false,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
+    containerColor: Color = MaterialTheme.colorScheme.secondary,
     colors: TextFieldColors = TextFieldDefaults.textFieldColors(
-        textColor = MaterialTheme.colorScheme.onSecondary,
-        containerColor = MaterialTheme.colorScheme.secondary,
-        cursorColor = MaterialTheme.colorScheme.onSecondary,
-        selectionColors = TextSelectionColors(handleColor = MaterialTheme.colorScheme.onSecondary, backgroundColor = MaterialTheme.colorScheme.onSecondary.copy(0.5f)),
-        focusedLabelColor = MaterialTheme.colorScheme.onSecondary,
-        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary.copy(0.7f),
-        placeholderColor = MaterialTheme.colorScheme.onSecondary.copy(0.7f)
+        textColor = contentColor,
+        containerColor = containerColor,
+        cursorColor = contentColor,
+        selectionColors = TextSelectionColors(handleColor = contentColor, backgroundColor = contentColor.copy(0.5f)),
+        focusedLabelColor = contentColor,
+        unfocusedLabelColor = contentColor.copy(0.7f),
+        placeholderColor = contentColor.copy(0.7f)
     )
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth().padding(all = 8.dp).clip(PFToolComposableShape).animateContentSize(),
+        modifier = modifier.fillMaxWidth().padding(all = 8.dp).clip(PFToolComposableShape).animateContentSize(),
         label = label,
         placeholder = placeholder,
         singleLine = singleLine,

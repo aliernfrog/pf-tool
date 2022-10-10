@@ -127,6 +127,7 @@ private fun ExperimentalOptions(config: SharedPreferences) {
     val configEditor = config.edit()
     val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
     OptionsColumn(title = context.getString(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
+        Text(context.getString(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
         PFToolSwitch(
             title = context.getString(R.string.optionsExperimentalShowMaterialYouOption),
             checked = forceShowMaterialYouOption.value,
@@ -134,22 +135,24 @@ private fun ExperimentalOptions(config: SharedPreferences) {
                 forceShowMaterialYouOption.value = it
             }
         )
-        PFToolColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-            prefEdits.forEach { key ->
-                val value = remember { mutableStateOf(config.getString(key, "")!!) }
-                PFToolTextField(label = { Text(text = "Prefs: $key") }, value = value.value, onValueChange = {
+        prefEdits.forEach { key ->
+            val value = remember { mutableStateOf(config.getString(key, "")!!) }
+            PFToolTextField(label = { Text(text = "Prefs: $key") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                onValueChange = {
                     value.value = it
                     configEditor.putString(key, it)
                     configEditor.apply()
-                })
-            }
-            PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), containerColor = MaterialTheme.colorScheme.error, contentColor = MaterialTheme.colorScheme.onError) {
-                prefEdits.forEach { key ->
-                    configEditor.remove(key)
-                    configEditor.apply()
                 }
-                restartApp(context)
+            )
+        }
+        PFToolButtonCentered(title = context.getString(R.string.optionsExperimentalResetPrefs), modifier = Modifier.padding(horizontal = 8.dp), containerColor = MaterialTheme.colorScheme.error, contentColor = MaterialTheme.colorScheme.onError) {
+            prefEdits.forEach { key ->
+                configEditor.remove(key)
+                configEditor.apply()
             }
+            restartApp(context)
         }
     }
 }
