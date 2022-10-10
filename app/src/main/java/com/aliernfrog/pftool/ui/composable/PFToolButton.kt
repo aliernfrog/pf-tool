@@ -22,8 +22,8 @@ fun PFToolButton(
     title: String,
     description: String? = null,
     painter: Painter? = null,
-    containerColor: Color = MaterialTheme.colorScheme.secondary,
-    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     painterTintColor: Color? = contentColor,
     enabled: Boolean = true,
     onClick: () -> Unit) {
