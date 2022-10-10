@@ -25,8 +25,8 @@ fun PFToolTextField(
         cursorColor = MaterialTheme.colorScheme.onSecondary,
         selectionColors = TextSelectionColors(handleColor = MaterialTheme.colorScheme.onSecondary, backgroundColor = MaterialTheme.colorScheme.onSecondary.copy(0.5f)),
         focusedLabelColor = MaterialTheme.colorScheme.onSecondary,
-        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary.copy(0.5f),
-        placeholderColor = MaterialTheme.colorScheme.onSecondary.copy(0.5f)
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary.copy(0.7f),
+        placeholderColor = MaterialTheme.colorScheme.onSecondary.copy(0.7f)
     )
 ) {
     TextField(
