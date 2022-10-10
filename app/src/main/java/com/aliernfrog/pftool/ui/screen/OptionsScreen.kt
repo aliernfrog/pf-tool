@@ -162,6 +162,7 @@ private fun OptionsColumn(title: String, modifier: Modifier = Modifier, bottomDi
     if (bottomDivider) Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun OptionsButton(title: String, description: String? = null, painter: Painter? = null, rounded: Boolean = false, expanded: Boolean? = null, contentColor: Color = MaterialTheme.colorScheme.onSurface, onClick: () -> Unit) {
     Row(Modifier.fillMaxWidth().heightIn(44.dp).clip(if (rounded) PFToolComposableShape else RectangleShape).clickable { onClick() }.padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -170,7 +171,9 @@ private fun OptionsButton(title: String, description: String? = null, painter: P
             Text(text = title, color = contentColor, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             if (description != null) Text(text = description, color = contentColor, fontSize = 14.sp)
         }
-        if (expanded != null) Image(Icons.Default.ArrowDropDown, null, modifier = Modifier.rotate(if (expanded) 180f else 0f), colorFilter = ColorFilter.tint(contentColor))
+        if (expanded != null) AnimatedContent(targetState = expanded) {
+            Image(Icons.Default.ArrowDropDown, null, modifier = Modifier.rotate(if (it) 180f else 0f), colorFilter = ColorFilter.tint(contentColor))
+        }
     }
 }
 
