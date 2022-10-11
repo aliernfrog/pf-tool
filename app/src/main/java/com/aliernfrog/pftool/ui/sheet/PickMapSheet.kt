@@ -18,9 +18,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import com.aliernfrog.pftool.data.MapsListItem
 import com.aliernfrog.pftool.PickMapSheetSegments
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.data.MapsListItem
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
