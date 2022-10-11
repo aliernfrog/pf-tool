@@ -56,7 +56,7 @@ fun PFToolBaseScaffold(title: String, navController: NavController, onNavigation
         },
         bottomBar = { BottomBar(navController) }
     ) { padding ->
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             content()
         }
     }
