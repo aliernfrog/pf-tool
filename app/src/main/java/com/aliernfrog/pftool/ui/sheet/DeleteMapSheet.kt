@@ -30,7 +30,7 @@ fun DeleteMapSheet(mapName: String?, state: ModalBottomSheetState, onCancel: (()
         Text(text = context.getString(R.string.info_deleteQuestion).replace("%NAME%", mapName ?: ""), color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold, fontSize = 20.sp, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(8.dp))
         Row {
             Column(Modifier.weight(1f)) {
-                PFToolButtonCentered(title = context.getString(R.string.action_cancel), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
+                PFToolButtonCentered(title = context.getString(R.string.action_cancel), containerColor = MaterialTheme.colorScheme.surfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant) {
                     scope.launch { state.hide() }
                     if (onCancel != null) onCancel()
                 }

@@ -118,7 +118,9 @@ private fun MapActions(mapsFile: DocumentFileCompat, deleteMapSheetState: ModalB
             AnimatedVisibility(visible = isImported && getMapNameEdit() != mapNameOriginal.value) {
                 PFToolButton(
                     title = context.getString(R.string.manageMapsRename),
-                    painter = painterResource(id = R.drawable.edit)
+                    painter = painterResource(id = R.drawable.edit),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
                     renameChosenMap(context, mapsFile)
                 }
