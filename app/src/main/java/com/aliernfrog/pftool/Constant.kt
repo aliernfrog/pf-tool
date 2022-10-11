@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool
 
+import android.os.Environment
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.data.Social
@@ -13,8 +14,8 @@ object ConfigKey {
     const val KEY_APP_MATERIAL_YOU = "materialYou"
     const val KEY_MAPS_DIR = "mapsDir"
     const val KEY_MAPS_EXPORT_DIR = "mapsExportDir"
-    const val DEFAULT_MAPS_DIR = "%STORAGE%/Android/data/com.MA.Polyfield/files/editor"
-    const val DEFAULT_MAPS_EXPORT_DIR = "%DOCUMENTS%/PFTool/exported"
+    val DEFAULT_MAPS_DIR = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
+    val DEFAULT_MAPS_EXPORT_DIR = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
 }
 
 object Link {

@@ -2,7 +2,6 @@ package com.aliernfrog.pftool
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Environment
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -24,18 +23,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var configEditor: SharedPreferences.Editor
     private lateinit var topToastManager: TopToastManager
 
-    private val defaultMapsDir = ConfigKey.DEFAULT_MAPS_DIR.replace("%STORAGE%", Environment.getExternalStorageDirectory().toString())
-    private val defaultMapsExportDir = ConfigKey.DEFAULT_MAPS_EXPORT_DIR.replace("%DOCUMENTS%", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString())
-    private var mapsDir = defaultMapsDir
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         configEditor = config.edit()
         topToastManager = TopToastManager()
-        mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, defaultMapsDir).toString()
-        setConfig()
         setContent {
             val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme, getDynamicColorsPreference()) {
@@ -56,18 +49,12 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = NavRoutes.MAPS) {
             composable(route = NavRoutes.MAPS) {
-                MapsScreenRoot(navController, topToastManager, config, mapsDir)
+                MapsScreenRoot(navController, topToastManager, config)
             }
             composable(route = NavRoutes.OPTIONS) {
                 OptionsScreen(navController, topToastManager, config)
             }
         }
-    }
-
-    private fun setConfig() {
-        if (!config.contains(ConfigKey.KEY_MAPS_DIR)) configEditor.putString(ConfigKey.KEY_MAPS_DIR, defaultMapsDir)
-        if (!config.contains(ConfigKey.KEY_MAPS_EXPORT_DIR)) configEditor.putString(ConfigKey.KEY_MAPS_EXPORT_DIR, defaultMapsExportDir)
-        configEditor.apply()
     }
 
     @Composable
