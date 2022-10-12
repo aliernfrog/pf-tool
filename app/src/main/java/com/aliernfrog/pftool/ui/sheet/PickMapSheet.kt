@@ -32,17 +32,18 @@ import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PickMapSheet(mapsState: MapsState, topToastManager: TopToastManager, sheetState: ModalBottomSheetState, scrollState: ScrollState = rememberScrollState(), onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
+fun PickMapSheet(mapsState: MapsState, topToastManager: TopToastManager, sheetState: ModalBottomSheetState, scrollState: ScrollState = rememberScrollState(), onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
     val hideSheet = { scope.launch { sheetState.hide() } }
     PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), sheetState, scrollState) {
-        PickFromDeviceButton(topToastManager, onPathPick)
-        Maps(mapsState, { onPathPick(it); hideSheet() }, { onMapFilePick(it); hideSheet() })
+        PickFromDeviceButton(topToastManager, onFilePick)
+        Maps(mapsState, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
     }
     LaunchedEffect(sheetState.isVisible) {
         if (sheetState.isVisible) keyboardController?.hide()
@@ -51,13 +52,13 @@ fun PickMapSheet(mapsState: MapsState, topToastManager: TopToastManager, sheetSt
 }
 
 @Composable
-private fun PickFromDeviceButton(topToastManager: TopToastManager, onPathPick: (String) -> Unit) {
+private fun PickFromDeviceButton(topToastManager: TopToastManager, onFilePick: (File) -> Unit) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) {
             val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
             if (convertedPath != null) {
-                onPathPick(convertedPath)
+                onFilePick(File(convertedPath))
             } else {
                 topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
             }
@@ -71,7 +72,7 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, onPathPick: (
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun Maps(mapsState: MapsState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
+private fun Maps(mapsState: MapsState, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED) }
     PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
@@ -80,19 +81,19 @@ private fun Maps(mapsState: MapsState, onPathPick: (String) -> Unit, onMapFilePi
     AnimatedContent(targetState = selectedSegment) {
         Column {
             val maps = if (it == PickMapSheetSegments.IMPORTED) mapsState.importedMaps else mapsState.exportedMaps
-            MapsList(maps = maps.value, exportedMaps = it == PickMapSheetSegments.EXPORTED, onPathPick, onMapFilePick)
+            MapsList(maps = maps.value, exportedMaps = it == PickMapSheetSegments.EXPORTED, onFilePick, onDocumentFilePick)
         }
     }
 }
 
 @Composable
-private fun MapsList(maps: List<MapsListItem>, exportedMaps: Boolean, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
+private fun MapsList(maps: List<MapsListItem>, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     if (maps.isNotEmpty()) {
         maps.forEach { map ->
             PFToolButton(title = map.name, description = FileUtil.lastModifiedFromLong(map.lastModified, context), painter = painterResource(id = R.drawable.map)) {
-                if (map.documentFile != null) onMapFilePick(map.documentFile)
-                else if (map.file != null) onPathPick(map.file.absolutePath)
+                if (map.documentFile != null) onDocumentFilePick(map.documentFile)
+                else if (map.file != null) onFilePick(map.file)
             }
         }
     } else {

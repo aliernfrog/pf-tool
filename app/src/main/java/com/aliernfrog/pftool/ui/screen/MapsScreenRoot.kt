@@ -41,7 +41,7 @@ private var hasStoragePerms = mutableStateOf(true)
 private var hasUriPerms = mutableStateOf(true)
 
 @Composable
-fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsState: MapsState = remember { MapsState(config) }) {
+fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsState: MapsState = remember { MapsState(toastManager, config) }) {
     val context = LocalContext.current
     hasStoragePerms.value = GeneralUtil.checkStoragePermissions(context)
     hasUriPerms.value = FileUtil.checkUriPermission(mapsState.mapsDir, context)
