@@ -52,7 +52,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
         else withContext(Dispatchers.IO) {
             mapsFile.findFile(chosenMap.value!!.fileName)?.renameTo(mapNameEdit.value)
             getMap(documentFile = mapsFile.findFile(mapNameEdit.value), context = context)
-            topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastManager.showToast(context.getString(R.string.info_renamedMap), iconDrawableId = R.drawable.edit, iconTintColorType = TopToastColorType.PRIMARY)
             getImportedMaps()
         }
     }
@@ -64,7 +64,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
             output = mapsFile.createDirectory(mapNameEdit.value)
             if (output != null) ZipUtil.unzipMap(chosenMap.value!!.filePath, output!!, context)
             getMap(documentFile = output, context = context)
-            topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastManager.showToast(context.getString(R.string.info_importedMap), iconDrawableId = R.drawable.download, iconTintColorType = TopToastColorType.PRIMARY)
             getImportedMaps()
         }
     }
@@ -91,7 +91,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
                 getExportedMaps()
             }
             getMap(context = context)
-            topToastManager.showToast(context.getString(R.string.info_done), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastManager.showToast(context.getString(R.string.info_deletedMap), iconDrawableId = R.drawable.trash, iconTintColorType = TopToastColorType.PRIMARY)
         }
     }
 
