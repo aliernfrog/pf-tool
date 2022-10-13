@@ -1,6 +1,5 @@
 package com.aliernfrog.pftool.ui.sheet
 
-import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,20 +7,25 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.PickMapSheetSegments
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.data.MapsListItem
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
 import com.aliernfrog.pftool.ui.composable.PFToolSegmentedButtons
+import com.aliernfrog.pftool.ui.state.MapsState
 import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.UriToFileUtil
 import com.aliernfrog.toptoast.TopToastColorType
@@ -30,30 +34,31 @@ import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PickMapSheet(mapsFile: DocumentFileCompat, exportedMapsFile: File, topToastManager: TopToastManager, state: ModalBottomSheetState, scrollState: ScrollState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
+fun PickMapSheet(mapsState: MapsState, topToastManager: TopToastManager, sheetState: ModalBottomSheetState, scrollState: ScrollState = rememberScrollState(), onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
-    PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), state, scrollState) {
-        PickFromDeviceButton(topToastManager, state, onPathPick)
-        Maps(mapsFile, exportedMapsFile, state, onPathPick, onMapFilePick)
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
+    val hideSheet = { scope.launch { sheetState.hide() } }
+    PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), sheetState, scrollState) {
+        PickFromDeviceButton(topToastManager) { onFilePick(it); hideSheet() }
+        Maps(mapsState, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
+    }
+    LaunchedEffect(sheetState.isVisible) {
+        if (sheetState.isVisible) keyboardController?.hide()
+        else scrollState.scrollTo(0)
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalBottomSheetState, onPathPick: (String) -> Unit) {
+private fun PickFromDeviceButton(topToastManager: TopToastManager, onFilePick: (File) -> Unit) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) {
             val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
-            if (convertedPath != null) {
-                onPathPick(convertedPath)
-                scope.launch { state.hide() }
-            } else {
-                topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
-            }
+            if (convertedPath != null) onFilePick(File(convertedPath))
+            else topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
         }
     }
     PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = painterResource(id = R.drawable.device), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
@@ -62,9 +67,9 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, state: ModalB
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: ModalBottomSheetState, onPathPick: (String) -> Unit, onMapFilePick: (DocumentFileCompat) -> Unit) {
+private fun Maps(mapsState: MapsState, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED) }
     PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
@@ -72,53 +77,25 @@ private fun Maps(mapsFile: DocumentFileCompat, exportedMapsFile: File, state: Mo
     }
     AnimatedContent(targetState = selectedSegment) {
         Column {
-            when(it) {
-                PickMapSheetSegments.IMPORTED -> ImportedMaps(mapsFile, state, onMapFilePick)
-                PickMapSheetSegments.EXPORTED -> ExportedMaps(exportedMapsFile, state, onPathPick)
-            }
+            val maps = if (it == PickMapSheetSegments.IMPORTED) mapsState.importedMaps else mapsState.exportedMaps
+            MapsList(maps = maps.value, exportedMaps = it == PickMapSheetSegments.EXPORTED, onFilePick, onDocumentFilePick)
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ImportedMaps(mapsFile: DocumentFileCompat, state: ModalBottomSheetState, onMapFilePick: (DocumentFileCompat) -> Unit) {
+private fun MapsList(maps: List<MapsListItem>, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val files = mapsFile.listFiles().filter { it.isDirectory() }.sortedBy { it.name.lowercase() }
-    if (files.isNotEmpty()) {
-        files.forEach { file ->
-            PFToolButton(title = file.name, description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
-                onMapFilePick(file)
-                scope.launch { state.hide() }
+    if (maps.isNotEmpty()) {
+        maps.forEach { map ->
+            PFToolButton(title = map.name, description = FileUtil.lastModifiedFromLong(map.lastModified, context), painter = painterResource(id = R.drawable.map)) {
+                if (map.documentFile != null) onDocumentFilePick(map.documentFile)
+                else if (map.file != null) onFilePick(map.file)
             }
         }
     } else {
-        NoMaps(context)
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun ExportedMaps(exportedMapsFile: File, state: ModalBottomSheetState, onPathPick: (String) -> Unit) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val files = exportedMapsFile.listFiles()?.filter { it.isFile && it.name.lowercase().endsWith(".zip") }?.sortedBy { it.name.lowercase() }
-    if (files != null && files.isNotEmpty()) {
-        files.forEach { file ->
-            PFToolButton(title = file.nameWithoutExtension, description = FileUtil.getLastModified(file, context), painter = painterResource(id = R.drawable.map)) {
-                onPathPick(file.absolutePath)
-                scope.launch { state.hide() }
-            }
+        PFToolColumnRounded(color = MaterialTheme.colorScheme.error) {
+            Text(text = context.getString(if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps else R.string.manageMapsPickMapNoImportedMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onError)
         }
-    } else {
-        NoMaps(context, true)
-    }
-}
-
-@Composable
-private fun NoMaps(context: Context, exportedMaps: Boolean = false) {
-    PFToolColumnRounded(color = MaterialTheme.colorScheme.error) {
-        Text(text = context.getString(if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps else R.string.manageMapsPickMapNoImportedMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onError)
     }
 }

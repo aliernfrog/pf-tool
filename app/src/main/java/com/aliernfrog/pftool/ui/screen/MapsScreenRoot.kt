@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.screen
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -21,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -32,22 +32,22 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
+import com.aliernfrog.pftool.ui.state.MapsState
 import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.GeneralUtil
 import com.aliernfrog.toptoast.TopToastManager
-import com.lazygeniouz.filecompat.file.DocumentFileCompat
 
 private var hasStoragePerms = mutableStateOf(true)
 private var hasUriPerms = mutableStateOf(true)
 
 @Composable
-fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsDir: String) {
+fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsState: MapsState = remember { MapsState(toastManager, config) }) {
     val context = LocalContext.current
     hasStoragePerms.value = GeneralUtil.checkStoragePermissions(context)
-    hasUriPerms.value = FileUtil.checkUriPermission(mapsDir, context)
+    hasUriPerms.value = FileUtil.checkUriPermission(mapsState.mapsDir, context)
     Crossfade(targetState = (hasUriPerms.value && hasStoragePerms.value)) {
-        if (it) MapsScreen(navController, toastManager, config, getMapsFile(mapsDir, context))
-        else PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) { PermissionsSetUp(mapsDir) }
+        if (it) MapsScreen(navController, toastManager, mapsState)
+        else PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) { PermissionsSetUp(mapsState.mapsDir) }
     }
 }
 
@@ -111,10 +111,4 @@ private fun ErrorColumn(visible: Boolean = true, title: String, content: @Compos
             Text(text = context.getString(R.string.info_permissionsHint), color = MaterialTheme.colorScheme.onError, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
         }
     }
-}
-
-private fun getMapsFile(mapsDir: String, context: Context): DocumentFileCompat {
-    val treeId = mapsDir.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-    val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
-    return DocumentFileCompat.fromTreeUri(context, treeUri)!!
 }

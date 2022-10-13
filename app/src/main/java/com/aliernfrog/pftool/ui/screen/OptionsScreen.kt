@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.GeneralUtil
@@ -125,7 +126,10 @@ private fun Links() {
 private fun ExperimentalOptions(config: SharedPreferences) {
     val context = LocalContext.current
     val configEditor = config.edit()
-    val prefEdits = listOf(ConfigKey.KEY_MAPS_DIR,ConfigKey.KEY_MAPS_EXPORT_DIR)
+    val prefEdits = listOf(
+        PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
+        PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
+    )
     OptionsColumn(title = context.getString(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
         Text(context.getString(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
         PFToolSwitch(
@@ -135,22 +139,22 @@ private fun ExperimentalOptions(config: SharedPreferences) {
                 forceShowMaterialYouOption.value = it
             }
         )
-        prefEdits.forEach { key ->
-            val value = remember { mutableStateOf(config.getString(key, "")!!) }
-            PFToolTextField(label = { Text(text = "Prefs: $key") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
+        prefEdits.forEach { prefEdit ->
+            val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
+            PFToolTextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 containerColor = MaterialTheme.colorScheme.surface,
                 rounded = false,
                 onValueChange = {
                     value.value = it
-                    configEditor.putString(key, it)
+                    configEditor.putString(prefEdit.key, it)
                     configEditor.apply()
                 }
             )
         }
         OptionsButton(title = context.getString(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
-            prefEdits.forEach { key ->
-                configEditor.remove(key)
+            prefEdits.forEach {
+                configEditor.remove(it.key)
                 configEditor.apply()
             }
             restartApp(context)
