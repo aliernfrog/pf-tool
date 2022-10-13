@@ -1,6 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -67,12 +67,13 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomSheetState) {
-    if (mapsState.chosenMap.value != null) {
-        val context = LocalContext.current
-        val scope = rememberCoroutineScope()
-        val isImported = mapsState.chosenMap.value!!.filePath.startsWith(mapsState.mapsDir)
-        val isExported = mapsState.chosenMap.value!!.filePath.startsWith(mapsState.mapsExportDir)
-        val isZip = mapsState.chosenMap.value!!.filePath.lowercase().endsWith(".zip")
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val mapChosen = mapsState.chosenMap.value != null
+    val isImported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsDir) ?: false
+    val isExported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsExportDir) ?: false
+    val isZip = mapsState.chosenMap.value?.filePath?.lowercase()?.endsWith(".zip") ?: false
+    MapActionVisibility(visible = mapChosen) {
         PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
             PFToolTextField(
                 value = mapsState.mapNameEdit.value,
@@ -80,7 +81,7 @@ private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomShe
                 onValueChange = { mapsState.mapNameEdit.value = it },
                 singleLine = true
             )
-            AnimatedVisibility(visible = isImported && mapsState.getMapNameEdit() != mapsState.chosenMap.value!!.mapName) {
+            MapActionVisibility(visible = isImported && mapsState.getMapNameEdit() != mapsState.chosenMap.value!!.mapName) {
                 PFToolButton(
                     title = context.getString(R.string.manageMapsRename),
                     painter = painterResource(id = R.drawable.edit),
@@ -91,42 +92,52 @@ private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomShe
                 }
             }
         }
-        AnimatedVisibility(visible = !isImported) {
-            PFToolButton(
-                title = context.getString(R.string.manageMapsImport),
-                painter = painterResource(id = R.drawable.download),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                scope.launch { mapsState.importChosenMap(context) }
-            }
-        }
-        AnimatedVisibility(visible = isImported) {
-            PFToolButton(
-                title = context.getString(R.string.manageMapsExport),
-                description = context.getString(R.string.manageMapsExportDescription),
-                painter = painterResource(id = R.drawable.share)
-            ) {
-                scope.launch { mapsState.exportChosenMap(context) }
-            }
-        }
-        AnimatedVisibility(visible = isZip) {
-            PFToolButton(
-                title = context.getString(R.string.manageMapsShare),
-                painter = painterResource(id = R.drawable.share)
-            ) {
-                FileUtil.shareFile(mapsState.chosenMap.value!!.filePath, "application/zip", context)
-            }
-        }
-        AnimatedVisibility(visible = isImported || isExported) {
-            PFToolButton(
-                title = context.getString(R.string.manageMapsDelete),
-                painter = painterResource(id = R.drawable.trash),
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError
-            ) {
-                scope.launch { deleteMapSheetState.show() }
-            }
+    }
+    MapActionVisibility(visible = mapChosen && !isImported) {
+        PFToolButton(
+            title = context.getString(R.string.manageMapsImport),
+            painter = painterResource(id = R.drawable.download),
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ) {
+            scope.launch { mapsState.importChosenMap(context) }
         }
     }
+    MapActionVisibility(visible = mapChosen && isImported) {
+        PFToolButton(
+            title = context.getString(R.string.manageMapsExport),
+            description = context.getString(R.string.manageMapsExportDescription),
+            painter = painterResource(id = R.drawable.share)
+        ) {
+            scope.launch { mapsState.exportChosenMap(context) }
+        }
+    }
+    MapActionVisibility(visible = mapChosen && isZip) {
+        PFToolButton(
+            title = context.getString(R.string.manageMapsShare),
+            painter = painterResource(id = R.drawable.share)
+        ) {
+            FileUtil.shareFile(mapsState.chosenMap.value!!.filePath, "application/zip", context)
+        }
+    }
+    MapActionVisibility(visible = mapChosen && (isImported || isExported)) {
+        PFToolButton(
+            title = context.getString(R.string.manageMapsDelete),
+            painter = painterResource(id = R.drawable.trash),
+            containerColor = MaterialTheme.colorScheme.error,
+            contentColor = MaterialTheme.colorScheme.onError
+        ) {
+            scope.launch { deleteMapSheetState.show() }
+        }
+    }
+}
+
+@Composable
+private fun MapActionVisibility(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
+    return AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically(),
+        content = content
+    )
 }
