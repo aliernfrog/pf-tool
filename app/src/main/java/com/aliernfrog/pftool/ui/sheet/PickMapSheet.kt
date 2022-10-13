@@ -42,7 +42,7 @@ fun PickMapSheet(mapsState: MapsState, topToastManager: TopToastManager, sheetSt
     val scope = rememberCoroutineScope()
     val hideSheet = { scope.launch { sheetState.hide() } }
     PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), sheetState, scrollState) {
-        PickFromDeviceButton(topToastManager, onFilePick)
+        PickFromDeviceButton(topToastManager) { onFilePick(it); hideSheet() }
         Maps(mapsState, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
     }
     LaunchedEffect(sheetState.isVisible) {
@@ -57,11 +57,8 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, onFilePick: (
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) {
             val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
-            if (convertedPath != null) {
-                onFilePick(File(convertedPath))
-            } else {
-                topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
-            }
+            if (convertedPath != null) onFilePick(File(convertedPath))
+            else topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
         }
     }
     PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = painterResource(id = R.drawable.device), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
