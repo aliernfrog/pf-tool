@@ -47,21 +47,21 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
     }
 
     suspend fun renameChosenMap(context: Context) {
-        val output = mapsFile.findFile(mapNameEdit.value)
+        val output = mapsFile.findFile(getMapNameEdit())
         if (output != null && output.exists()) fileAlreadyExists(context)
         else withContext(Dispatchers.IO) {
-            mapsFile.findFile(chosenMap.value!!.fileName)?.renameTo(mapNameEdit.value)
-            getMap(documentFile = mapsFile.findFile(mapNameEdit.value), context = context)
+            mapsFile.findFile(chosenMap.value!!.fileName)?.renameTo(getMapNameEdit())
+            getMap(documentFile = mapsFile.findFile(getMapNameEdit()), context = context)
             topToastManager.showToast(context.getString(R.string.info_renamedMap), iconDrawableId = R.drawable.edit, iconTintColorType = TopToastColorType.PRIMARY)
             getImportedMaps()
         }
     }
 
     suspend fun importChosenMap(context: Context) {
-        var output = mapsFile.findFile(mapNameEdit.value)
+        var output = mapsFile.findFile(getMapNameEdit())
         if (output != null && output.exists()) fileAlreadyExists(context)
         else withContext(Dispatchers.IO) {
-            output = mapsFile.createDirectory(mapNameEdit.value)
+            output = mapsFile.createDirectory(getMapNameEdit())
             if (output != null) ZipUtil.unzipMap(chosenMap.value!!.filePath, output!!, context)
             getMap(documentFile = output, context = context)
             topToastManager.showToast(context.getString(R.string.info_importedMap), iconDrawableId = R.drawable.download, iconTintColorType = TopToastColorType.PRIMARY)
@@ -70,7 +70,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
     }
 
     suspend fun exportChosenMap(context: Context) {
-        val output = File("${mapsExportDir}/${mapNameEdit.value}.zip")
+        val output = File("${mapsExportDir}/${getMapNameEdit()}.zip")
         if (output.exists()) fileAlreadyExists(context)
         else withContext(Dispatchers.IO) {
             if (!output.parentFile?.isDirectory!!) output.parentFile?.mkdirs()
@@ -96,7 +96,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
     }
 
     fun getMapNameEdit(): String {
-        return mapNameEdit.value.ifBlank { chosenMap.value?.mapName ?: "" }
+        return mapNameEdit.value.ifBlank { chosenMap.value!!.mapName }
     }
 
     private fun setChosenMap(map: PfMap?) {
