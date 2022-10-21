@@ -8,5 +8,6 @@ data class MapsListItem(
     val fileName: String,
     val lastModified: Long,
     val file: File?,
-    val documentFile: DocumentFileCompat?
+    val documentFile: DocumentFileCompat?,
+    val thumbnailPainterModel: Any? = null
 )

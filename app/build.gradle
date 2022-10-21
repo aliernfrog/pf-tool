@@ -69,4 +69,5 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.8-beta"
     implementation "com.github.aliernfrog:top-toast-compose:0.0.12"
     implementation "com.lazygeniouz:documentfile_compat:0.8"
+    implementation "io.coil-kt:coil-compose:2.2.2"
 }

@@ -126,7 +126,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
     suspend fun getImportedMaps() {
         withContext(Dispatchers.IO) {
             val files = mapsFile.listFiles().filter { it.isDirectory() }.sortedBy { it.name.lowercase() }
-            val maps = files.map { MapsListItem(it.name, it.name, it.lastModified, null, it) }
+            val maps = files.map { MapsListItem(it.name, it.name, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
             importedMaps.value = maps
         }
     }

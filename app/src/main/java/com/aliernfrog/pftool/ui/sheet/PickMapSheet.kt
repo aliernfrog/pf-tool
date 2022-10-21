@@ -21,12 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.PickMapSheetSegments
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapsListItem
-import com.aliernfrog.pftool.ui.composable.PFToolButton
-import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
-import com.aliernfrog.pftool.ui.composable.PFToolSegmentedButtons
+import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.ui.state.MapsState
-import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.UriToFileUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
@@ -88,7 +84,7 @@ private fun MapsList(maps: List<MapsListItem>, exportedMaps: Boolean, onFilePick
     val context = LocalContext.current
     if (maps.isNotEmpty()) {
         maps.forEach { map ->
-            PFToolButton(title = map.name, description = FileUtil.lastModifiedFromLong(map.lastModified, context), painter = painterResource(id = R.drawable.map)) {
+            PFToolMapButton(map) {
                 if (map.documentFile != null) onDocumentFilePick(map.documentFile)
                 else if (map.file != null) onFilePick(map.file)
             }
