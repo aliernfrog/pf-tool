@@ -35,16 +35,14 @@ fun PFToolMapButton(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    var thumbnailLoaded by remember { mutableStateOf(false) }
     Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(PFToolComposableShape).background(containerColor).clickable { onClick() }) {
         AsyncImage(
             model = map.thumbnailPainterModel,
             contentDescription = null,
-            modifier = Modifier.fillMaxWidth().heightIn(if (thumbnailLoaded) 70.dp else 0.dp),
+            modifier = Modifier.fillMaxWidth(),
             placeholder = ColorPainter(containerColor),
             error = ColorPainter(containerColor),
             fallback = ColorPainter(containerColor),
-            onSuccess = { thumbnailLoaded = false },
             contentScale = ContentScale.Crop,
             alpha = 0.5f
         )
