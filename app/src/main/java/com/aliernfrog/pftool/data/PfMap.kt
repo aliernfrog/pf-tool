@@ -4,5 +4,6 @@ data class PfMap(
     val mapName: String,
     val fileName: String,
     val filePath: String,
-    val isFromUri: Boolean
+    val isFromUri: Boolean,
+    val thumbnailPainterModel: Any? = null
 )
