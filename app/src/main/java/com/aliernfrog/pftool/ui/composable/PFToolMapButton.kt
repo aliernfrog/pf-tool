@@ -49,7 +49,7 @@ fun PFToolMapButton(
         Row(
             modifier = Modifier
                 .fillMaxHeight()
-                .background(Brush.horizontalGradient(listOf(containerColor,Color.Transparent), startX = 400f))
+                .background(Brush.horizontalGradient(listOf(containerColor,Color.Transparent)))
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
