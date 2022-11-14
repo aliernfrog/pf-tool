@@ -1,10 +1,7 @@
 package com.aliernfrog.pftool.ui.composable
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -53,8 +50,12 @@ fun PFToolBaseScaffold(navController: NavController, contentScrollState: ScrollS
 private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScrollBehavior, currentScreen: Screen?) {
     val context = LocalContext.current
     LargeTopAppBar(
-        title = { Text(text = currentScreen?.name ?: "", fontWeight = FontWeight.SemiBold) },
         scrollBehavior = scrollBehavior,
+        title = {
+            Crossfade(targetState = currentScreen?.name) {
+                Text(text = it ?: "", fontWeight = FontWeight.SemiBold)
+            }
+        },
         navigationIcon = {
             AnimatedVisibility(visible = navController.previousBackStackEntry != null) {
                 Icon(
