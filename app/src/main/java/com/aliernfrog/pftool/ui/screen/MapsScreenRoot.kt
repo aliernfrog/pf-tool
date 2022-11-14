@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.state.MapsState
+import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.GeneralUtil
 

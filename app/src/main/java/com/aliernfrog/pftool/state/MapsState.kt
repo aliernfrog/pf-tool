@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.state
+package com.aliernfrog.pftool.state
 
 import android.content.Context
 import android.content.SharedPreferences
