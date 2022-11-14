@@ -3,7 +3,6 @@ package com.aliernfrog.pftool.ui.screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -20,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -28,26 +26,23 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.state.MapsState
 import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.GeneralUtil
-import com.aliernfrog.toptoast.TopToastManager
 
 private var hasStoragePerms = mutableStateOf(true)
 private var hasUriPerms = mutableStateOf(true)
 
 @Composable
-fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, config: SharedPreferences, mapsState: MapsState = remember { MapsState(toastManager, config) }) {
+fun MapsScreenRoot(mapsState: MapsState) {
     val context = LocalContext.current
     hasStoragePerms.value = GeneralUtil.checkStoragePermissions(context)
     hasUriPerms.value = FileUtil.checkUriPermission(mapsState.mapsDir, context)
     Crossfade(targetState = (hasUriPerms.value && hasStoragePerms.value)) {
-        if (it) MapsScreen(navController, toastManager, config, mapsState)
-        else PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) { PermissionsSetUp(mapsState.mapsDir) }
+        if (it) MapsScreen(mapsState)
+        else Column { PermissionsSetUp(mapsState.mapsDir) }
     }
 }
 

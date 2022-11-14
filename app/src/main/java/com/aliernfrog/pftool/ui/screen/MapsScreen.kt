@@ -1,61 +1,36 @@
 package com.aliernfrog.pftool.ui.screen
 
-import android.content.SharedPreferences
 import androidx.compose.animation.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavController
-import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
-import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
-import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.state.MapsState
 import com.aliernfrog.pftool.util.FileUtil
-import com.aliernfrog.toptoast.TopToastManager
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(navController: NavController, topToastManager: TopToastManager, config: SharedPreferences, mapsState: MapsState) {
+fun MapsScreen(mapsState: MapsState) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) { mapsState.getMapsFile(context); mapsState.getImportedMaps(); mapsState.getExportedMaps() }
-    val pickMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val deleteMapSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, skipHalfExpanded = true)
-    PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) {
-        PickMapFileButton(pickMapSheetState)
-        MapActions(mapsState, deleteMapSheetState)
-    }
-    PickMapSheet(
-        mapsState = mapsState,
-        topToastManager = topToastManager,
-        sheetState = pickMapSheetState,
-        showMapThumbnails = remember { config.getBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true) },
-        onFilePick = { mapsState.getMap(file = it, context = context) },
-        onDocumentFilePick = { mapsState.getMap(documentFile = it, context = context) }
-    )
-    DeleteMapSheet(mapName = mapsState.lastMapName.value, sheetState = deleteMapSheetState) {
-        scope.launch { mapsState.deleteChosenMap(context) }
+    Column {
+        PickMapFileButton(mapsState)
+        MapActions(mapsState)
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
+private fun PickMapFileButton(mapsState: MapsState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     PFToolButton(
@@ -64,13 +39,13 @@ private fun PickMapFileButton(pickMapSheetState: ModalBottomSheetState) {
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
-        scope.launch { pickMapSheetState.show() }
+        scope.launch { mapsState.pickMapSheetState.show() }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomSheetState) {
+private fun MapActions(mapsState: MapsState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mapChosen = mapsState.chosenMap.value != null
@@ -131,7 +106,7 @@ private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomShe
             containerColor = MaterialTheme.colorScheme.error,
             contentColor = MaterialTheme.colorScheme.onError
         ) {
-            scope.launch { deleteMapSheetState.show() }
+            scope.launch { mapsState.deleteMapSheetState.show() }
         }
     }
 }
