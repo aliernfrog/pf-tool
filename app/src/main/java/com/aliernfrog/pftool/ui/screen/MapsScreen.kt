@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
+import android.content.SharedPreferences
 import androidx.compose.animation.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -9,10 +10,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
@@ -27,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(navController: NavController, topToastManager: TopToastManager, mapsState: MapsState) {
+fun MapsScreen(navController: NavController, topToastManager: TopToastManager, config: SharedPreferences, mapsState: MapsState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) { mapsState.getMapsFile(context); mapsState.getImportedMaps(); mapsState.getExportedMaps() }
@@ -41,6 +44,7 @@ fun MapsScreen(navController: NavController, topToastManager: TopToastManager, m
         mapsState = mapsState,
         topToastManager = topToastManager,
         sheetState = pickMapSheetState,
+        showMapThumbnails = remember { config.getBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true) },
         onFilePick = { mapsState.getMap(file = it, context = context) },
         onDocumentFilePick = { mapsState.getMap(documentFile = it, context = context) }
     )

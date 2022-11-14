@@ -21,12 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.PickMapSheetSegments
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapsListItem
-import com.aliernfrog.pftool.ui.composable.PFToolButton
-import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolModalBottomSheet
-import com.aliernfrog.pftool.ui.composable.PFToolSegmentedButtons
+import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.ui.state.MapsState
-import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.UriToFileUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
@@ -36,14 +32,22 @@ import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PickMapSheet(mapsState: MapsState, topToastManager: TopToastManager, sheetState: ModalBottomSheetState, scrollState: ScrollState = rememberScrollState(), onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
+fun PickMapSheet(
+    mapsState: MapsState,
+    topToastManager: TopToastManager,
+    sheetState: ModalBottomSheetState,
+    scrollState: ScrollState = rememberScrollState(),
+    showMapThumbnails: Boolean = true,
+    onFilePick: (File) -> Unit,
+    onDocumentFilePick: (DocumentFileCompat) -> Unit
+) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
     val hideSheet = { scope.launch { sheetState.hide() } }
     PFToolModalBottomSheet(title = context.getString(R.string.manageMapsPickMap), sheetState, scrollState) {
         PickFromDeviceButton(topToastManager) { onFilePick(it); hideSheet() }
-        Maps(mapsState, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
+        Maps(mapsState, showMapThumbnails, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
     }
     LaunchedEffect(sheetState.isVisible) {
         if (sheetState.isVisible) keyboardController?.hide()
@@ -69,7 +73,7 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, onFilePick: (
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun Maps(mapsState: MapsState, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
+private fun Maps(mapsState: MapsState, showMapThumbnails: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED) }
     PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
@@ -78,17 +82,17 @@ private fun Maps(mapsState: MapsState, onFilePick: (File) -> Unit, onDocumentFil
     AnimatedContent(targetState = selectedSegment) {
         Column {
             val maps = if (it == PickMapSheetSegments.IMPORTED) mapsState.importedMaps else mapsState.exportedMaps
-            MapsList(maps = maps.value, exportedMaps = it == PickMapSheetSegments.EXPORTED, onFilePick, onDocumentFilePick)
+            MapsList(maps = maps.value, showMapThumbnails, exportedMaps = it == PickMapSheetSegments.EXPORTED, onFilePick, onDocumentFilePick)
         }
     }
 }
 
 @Composable
-private fun MapsList(maps: List<MapsListItem>, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
+private fun MapsList(maps: List<MapsListItem>, showMapThumbnails: Boolean, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     val context = LocalContext.current
     if (maps.isNotEmpty()) {
         maps.forEach { map ->
-            PFToolButton(title = map.name, description = FileUtil.lastModifiedFromLong(map.lastModified, context), painter = painterResource(id = R.drawable.map)) {
+            PFToolMapButton(map, showMapThumbnail = showMapThumbnails) {
                 if (map.documentFile != null) onDocumentFilePick(map.documentFile)
                 else if (map.file != null) onFilePick(map.file)
             }

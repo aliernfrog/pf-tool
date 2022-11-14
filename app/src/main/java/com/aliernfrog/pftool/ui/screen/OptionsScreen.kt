@@ -53,6 +53,7 @@ fun OptionsScreen(navController: NavController, toastManager: TopToastManager, c
     topToastManager = toastManager
     PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), navController = navController) {
         ThemeOptions(config)
+        MapsOptions(config)
         AboutPFTool()
         if (aboutClickCount.value >= experimentalRequiredClicks) ExperimentalOptions(config)
     }
@@ -79,6 +80,22 @@ private fun ThemeOptions(config: SharedPreferences) {
                 config.edit().putBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, it).apply()
                 onThemeUpdate(context)
             }
+        }
+    }
+}
+
+@Composable
+private fun MapsOptions(config: SharedPreferences) {
+    val context = LocalContext.current
+    val thumbnailsList = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true)) }
+    OptionsColumn(title = context.getString(R.string.optionsMaps)) {
+        PFToolSwitch(
+            title = context.getString(R.string.optionsMapsShowMapThumbnailsList),
+            description = context.getString(R.string.optionsMapsShowMapThumbnailsListDescription),
+            checked = thumbnailsList.value
+        ) {
+            thumbnailsList.value = it
+            config.edit().putBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, it).apply()
         }
     }
 }
