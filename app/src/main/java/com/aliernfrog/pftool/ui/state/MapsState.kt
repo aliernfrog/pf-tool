@@ -39,7 +39,7 @@ class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
             else fileDoesntExist(context)
         } else if (documentFile != null) {
             val mapName = if (documentFile.isFile()) FileUtil.removeExtension(documentFile.name) else documentFile.name
-            if (documentFile.exists()) setChosenMap(PfMap(mapName = mapName, fileName = documentFile.name, filePath = "$mapsDir/${documentFile.name}", isFromUri = true, thumbnailPainterModel = documentFile.findFile("Thumbnail.jpg")?.uri.toString()))
+            if (documentFile.exists()) setChosenMap(PfMap(mapName = mapName, fileName = documentFile.name, filePath = "$mapsDir/${documentFile.name}", isFromUri = true))
             else fileDoesntExist(context)
         } else {
             setChosenMap(null)

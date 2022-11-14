@@ -1,8 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -12,20 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.composable.PFToolButton
+import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
@@ -83,7 +74,24 @@ private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomShe
     val isExported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsExportDir) ?: false
     val isZip = mapsState.chosenMap.value?.filePath?.lowercase()?.endsWith(".zip") ?: false
     MapActionVisibility(visible = mapChosen) {
-        MapGeneralInfo(mapsState, isImported)
+        PFToolColumnRounded(title = context.getString(R.string.manageMapsMapName)) {
+            PFToolTextField(
+                value = mapsState.mapNameEdit.value,
+                placeholder = { Text(mapsState.chosenMap.value!!.mapName) },
+                onValueChange = { mapsState.mapNameEdit.value = it },
+                singleLine = true
+            )
+            MapActionVisibility(visible = isImported && mapsState.getMapNameEdit() != mapsState.chosenMap.value!!.mapName) {
+                PFToolButton(
+                    title = context.getString(R.string.manageMapsRename),
+                    painter = painterResource(id = R.drawable.edit),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    scope.launch { mapsState.renameChosenMap(context) }
+                }
+            }
+        }
     }
     MapActionVisibility(visible = mapChosen && !isImported) {
         PFToolButton(
@@ -120,42 +128,6 @@ private fun MapActions(mapsState: MapsState, deleteMapSheetState: ModalBottomShe
             contentColor = MaterialTheme.colorScheme.onError
         ) {
             scope.launch { deleteMapSheetState.show() }
-        }
-    }
-}
-
-@Composable
-private fun MapGeneralInfo(mapsState: MapsState, isImported: Boolean) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    Column(Modifier.padding(8.dp).clip(PFToolComposableShape).background(MaterialTheme.colorScheme.surfaceVariant)) {
-        AsyncImage(
-            model = mapsState.chosenMap.value?.thumbnailPainterModel,
-            contentDescription = null,
-            modifier = Modifier.fillMaxWidth().shadow(10.dp, PFToolComposableShape).clip(PFToolComposableShape).animateContentSize(),
-            placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
-            error = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
-            fallback = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
-            contentScale = ContentScale.Crop
-        )
-        Column(Modifier.padding(8.dp).fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
-            PFToolTextField(
-                value = mapsState.mapNameEdit.value,
-                label = { Text(context.getString(R.string.manageMapsMapName)) },
-                placeholder = { Text(mapsState.chosenMap.value!!.mapName) },
-                onValueChange = { mapsState.mapNameEdit.value = it },
-                singleLine = true
-            )
-            MapActionVisibility(visible = isImported && mapsState.getMapNameEdit() != mapsState.chosenMap.value!!.mapName) {
-                PFToolButton(
-                    title = context.getString(R.string.manageMapsRename),
-                    painter = painterResource(id = R.drawable.edit),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    scope.launch { mapsState.renameChosenMap(context) }
-                }
-            }
         }
     }
 }
