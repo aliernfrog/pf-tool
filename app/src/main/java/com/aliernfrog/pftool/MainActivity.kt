@@ -11,7 +11,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,12 +18,13 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.screen.MapsScreenRoot
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
+import com.aliernfrog.pftool.state.MapsState
+import com.aliernfrog.pftool.state.OptionsState
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.toptoast.TopToastBase
 import com.aliernfrog.toptoast.TopToastManager
@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
-    private lateinit var configEditor: SharedPreferences.Editor
     private lateinit var topToastManager: TopToastManager
+    private lateinit var optionsState: OptionsState
     private lateinit var pickMapSheetState: ModalBottomSheetState
     private lateinit var deleteMapSheetState: ModalBottomSheetState
     private lateinit var mapsState: MapsState
@@ -44,8 +44,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        configEditor = config.edit()
         topToastManager = TopToastManager()
+        optionsState = OptionsState(config)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         deleteMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
         mapsState = MapsState(topToastManager, config, pickMapSheetState, deleteMapSheetState)
@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     MapsScreenRoot(mapsState)
                 }
                 composable(route = NavRoutes.OPTIONS) {
-                    OptionsScreen(topToastManager, config)
+                    OptionsScreen(config, topToastManager, optionsState)
                 }
             }
         }
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
             mapsState = mapsState,
             topToastManager = topToastManager,
             sheetState = pickMapSheetState,
-            showMapThumbnails = remember { config.getBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true) },
+            showMapThumbnails = optionsState.showMapThumbnailsInList.value,
             onFilePick = { mapsState.getMap(file = it, context = context) },
             onDocumentFilePick = { mapsState.getMap(documentFile = it, context = context) }
         )
@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun getDarkThemePreference(): Boolean {
-        return when(config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)) {
+        return when(optionsState.theme.value) {
             Theme.LIGHT -> false
             Theme.DARK -> true
             else -> isSystemInDarkTheme()
@@ -110,6 +110,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getDynamicColorsPreference(): Boolean {
-        return config.getBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, true)
+        return optionsState.materialYou.value
     }
 }

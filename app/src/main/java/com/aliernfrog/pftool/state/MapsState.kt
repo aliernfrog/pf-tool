@@ -23,12 +23,12 @@ import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class)
 class MapsState(
-    toastManager: TopToastManager,
+    _topToastManager: TopToastManager,
     config: SharedPreferences,
     _pickMapSheetState: ModalBottomSheetState,
     _deleteMapSheetState: ModalBottomSheetState
 ) {
-    private val topToastManager = toastManager
+    private val topToastManager = _topToastManager
     val pickMapSheetState = _pickMapSheetState
     val deleteMapSheetState = _deleteMapSheetState
     val mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR)!!
