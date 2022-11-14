@@ -19,12 +19,12 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
 import com.aliernfrog.pftool.ui.screen.MapsScreenRoot
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
-import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.toptoast.TopToastBase
 import com.aliernfrog.toptoast.TopToastManager

@@ -11,10 +11,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
-import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.util.FileUtil
 import kotlinx.coroutines.launch
 
