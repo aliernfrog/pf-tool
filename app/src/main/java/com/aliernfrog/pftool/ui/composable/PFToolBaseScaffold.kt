@@ -53,7 +53,7 @@ fun PFToolBaseScaffold(navController: NavController, contentScrollState: ScrollS
 private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScrollBehavior, currentScreen: Screen?) {
     val context = LocalContext.current
     LargeTopAppBar(
-        title = { Text(text = currentScreen?.name ?: context.getString(R.string.app_name), fontWeight = FontWeight.SemiBold) },
+        title = { Text(text = currentScreen?.name ?: "", fontWeight = FontWeight.SemiBold) },
         scrollBehavior = scrollBehavior,
         navigationIcon = {
             AnimatedVisibility(visible = navController.previousBackStackEntry != null) {
