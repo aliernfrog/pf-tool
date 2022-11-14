@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
         mapsState = MapsState(topToastManager, config, pickMapSheetState, deleteMapSheetState)
         setContent {
             val darkTheme = getDarkThemePreference()
-            PFToolTheme(darkTheme, getDynamicColorsPreference()) {
+            PFToolTheme(darkTheme, optionsState.materialYou.value) {
                 TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, manager = topToastManager, content = { BaseScaffold() })
                 SystemBars(darkTheme)
             }
@@ -107,9 +107,5 @@ class MainActivity : ComponentActivity() {
             Theme.DARK -> true
             else -> isSystemInDarkTheme()
         }
-    }
-
-    private fun getDynamicColorsPreference(): Boolean {
-        return optionsState.materialYou.value
     }
 }
