@@ -63,8 +63,13 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
         val navController = rememberNavController()
-        PFToolBaseScaffold(navController) {
-            NavHost(navController = navController, startDestination = NavRoutes.MAPS, Modifier.fillMaxSize().padding(it).verticalScroll(rememberScrollState())) {
+        val scrollState = rememberScrollState()
+        PFToolBaseScaffold(navController, scrollState) {
+            NavHost(
+                navController = navController,
+                startDestination = NavRoutes.MAPS,
+                modifier = Modifier.fillMaxSize().padding(it).verticalScroll(scrollState)
+            ) {
                 composable(route = NavRoutes.MAPS) {
                     MapsScreenRoot(mapsState)
                 }
