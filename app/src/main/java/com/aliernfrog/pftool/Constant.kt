@@ -2,7 +2,11 @@ package com.aliernfrog.pftool
 
 import android.os.Environment
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.pftool.data.Screen
 import com.aliernfrog.pftool.data.Social
 
 val PFToolRoundnessSize = 30.dp
@@ -29,6 +33,15 @@ object Link {
 object NavRoutes {
     const val MAPS = "maps"
     const val OPTIONS = "options"
+}
+
+@Composable
+fun getScreens(): List<Screen> {
+    val context = LocalContext.current
+    return listOf(
+        Screen(NavRoutes.MAPS, context.getString(R.string.manageMaps), painterResource(id = R.drawable.map), true),
+        Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options), true)
+    )
 }
 
 object PickMapSheetSegments {

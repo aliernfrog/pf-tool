@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.PickMapSheetSegments
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapsListItem
+import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.composable.*
-import com.aliernfrog.pftool.ui.state.MapsState
 import com.aliernfrog.pftool.util.UriToFileUtil
 import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager

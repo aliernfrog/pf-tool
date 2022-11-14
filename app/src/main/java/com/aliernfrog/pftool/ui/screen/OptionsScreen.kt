@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PrefEditItem
@@ -49,9 +48,9 @@ private val forceShowMaterialYouOption = mutableStateOf(false)
 private const val experimentalRequiredClicks = 10
 
 @Composable
-fun OptionsScreen(navController: NavController, toastManager: TopToastManager, config: SharedPreferences) {
+fun OptionsScreen(toastManager: TopToastManager, config: SharedPreferences) {
     topToastManager = toastManager
-    PFToolBaseScaffold(title = LocalContext.current.getString(R.string.options), navController = navController) {
+    Column {
         ThemeOptions(config)
         MapsOptions(config)
         AboutPFTool()

@@ -1,9 +1,11 @@
-package com.aliernfrog.pftool.ui.state
+package com.aliernfrog.pftool.state
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Environment
 import android.provider.DocumentsContract
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.pftool.ConfigKey
@@ -19,8 +21,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class MapsState(toastManager: TopToastManager, config: SharedPreferences) {
+@OptIn(ExperimentalMaterialApi::class)
+class MapsState(
+    toastManager: TopToastManager,
+    config: SharedPreferences,
+    _pickMapSheetState: ModalBottomSheetState,
+    _deleteMapSheetState: ModalBottomSheetState
+) {
     private val topToastManager = toastManager
+    val pickMapSheetState = _pickMapSheetState
+    val deleteMapSheetState = _deleteMapSheetState
     val mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR)!!
     val mapsExportDir = config.getString(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)!!
     private lateinit var mapsFile: DocumentFileCompat
