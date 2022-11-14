@@ -78,9 +78,11 @@ private fun BottomBar(navController: NavController, screens: List<Screen>, curre
             screens.filter { it.showInNavigationBar }.forEach {
                 NavigationBarItem(
                     selected = it.route == currentScreen?.route,
-                    onClick = { navController.navigate(it.route) { popUpTo(0) } },
                     icon = { Image(it.icon, it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
-                    label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) }
+                    label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) },
+                    onClick = {
+                        if (it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
+                    }
                 )
             }
         }
