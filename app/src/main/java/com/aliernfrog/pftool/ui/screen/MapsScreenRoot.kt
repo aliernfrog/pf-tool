@@ -46,7 +46,7 @@ fun MapsScreenRoot(navController: NavController, toastManager: TopToastManager, 
     hasStoragePerms.value = GeneralUtil.checkStoragePermissions(context)
     hasUriPerms.value = FileUtil.checkUriPermission(mapsState.mapsDir, context)
     Crossfade(targetState = (hasUriPerms.value && hasStoragePerms.value)) {
-        if (it) MapsScreen(navController, toastManager, mapsState)
+        if (it) MapsScreen(navController, toastManager, config, mapsState)
         else PFToolBaseScaffold(title = context.getString(R.string.manageMaps), navController = navController) { PermissionsSetUp(mapsState.mapsDir) }
     }
 }

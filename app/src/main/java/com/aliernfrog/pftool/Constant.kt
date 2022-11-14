@@ -12,6 +12,7 @@ object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
     const val KEY_APP_THEME = "appTheme"
     const val KEY_APP_MATERIAL_YOU = "materialYou"
+    const val KEY_SHOW_MAP_THUMBNAILS_LIST = "showMapThumbnailsList"
     const val KEY_MAPS_DIR = "mapsDir"
     const val KEY_MAPS_EXPORT_DIR = "mapsExportDir"
     val DEFAULT_MAPS_DIR = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"

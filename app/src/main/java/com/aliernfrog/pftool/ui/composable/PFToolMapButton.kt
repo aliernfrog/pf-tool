@@ -32,11 +32,12 @@ fun PFToolMapButton(
     map: MapsListItem,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    showMapThumbnail: Boolean = true,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
     Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(PFToolComposableShape).background(containerColor).clickable { onClick() }) {
-        AsyncImage(
+        if (showMapThumbnail) AsyncImage(
             model = map.thumbnailPainterModel,
             contentDescription = null,
             modifier = Modifier.fillMaxWidth(),
