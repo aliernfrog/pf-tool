@@ -34,94 +34,83 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PrefEditItem
+import com.aliernfrog.pftool.state.OptionsState
 import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.GeneralUtil
-import com.aliernfrog.toptoast.TopToastColorType
 import com.aliernfrog.toptoast.TopToastManager
-
-private lateinit var topToastManager: TopToastManager
-
-private val aboutClickCount = mutableStateOf(0)
-private val forceShowMaterialYouOption = mutableStateOf(false)
 
 private const val experimentalRequiredClicks = 10
 
 @Composable
-fun OptionsScreen(toastManager: TopToastManager, config: SharedPreferences) {
-    topToastManager = toastManager
+fun OptionsScreen(config: SharedPreferences, topToastManager: TopToastManager, optionsState: OptionsState) {
     Column {
-        ThemeOptions(config)
-        MapsOptions(config)
-        AboutPFTool()
-        if (aboutClickCount.value >= experimentalRequiredClicks) ExperimentalOptions(config)
+        ThemeOptions(optionsState)
+        MapsOptions(optionsState)
+        AboutPFTool(topToastManager, optionsState)
+        if (optionsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalOptions(config, optionsState)
     }
 }
 
 @Composable
-private fun ThemeOptions(config: SharedPreferences) {
+private fun ThemeOptions(optionsState: OptionsState) {
     val context = LocalContext.current
     val themeOptions = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
-    val themeChosen = config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM)
-    val dynamicTheme = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, true)) }
     OptionsColumn(title = context.getString(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
-        PFToolRadioButtons(options = themeOptions, initialIndex = themeChosen, onSelect = { option ->
-            config.edit().putInt(ConfigKey.KEY_APP_THEME, option).apply()
-            onThemeUpdate(context)
-        })
-        if (forceShowMaterialYouOption.value || supportsMaterialYou) {
+        PFToolRadioButtons(
+            options = themeOptions,
+            initialIndex = optionsState.theme.value
+        ) {
+            optionsState.setTheme(it)
+        }
+        if (optionsState.forceShowMaterialYouOption.value || supportsMaterialYou) {
             PFToolSwitch(
                 title = context.getString(R.string.optionsThemeMaterialYou),
                 description = context.getString(R.string.optionsThemeMaterialYouDescription),
-                checked = dynamicTheme.value
+                checked = optionsState.materialYou.value
             ) {
-                dynamicTheme.value = it
-                config.edit().putBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, it).apply()
-                onThemeUpdate(context)
+                optionsState.setMaterialYou(it)
             }
         }
     }
 }
 
 @Composable
-private fun MapsOptions(config: SharedPreferences) {
+private fun MapsOptions(optionsState: OptionsState) {
     val context = LocalContext.current
-    val thumbnailsList = remember { mutableStateOf(config.getBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true)) }
     OptionsColumn(title = context.getString(R.string.optionsMaps)) {
         PFToolSwitch(
             title = context.getString(R.string.optionsMapsShowMapThumbnailsList),
             description = context.getString(R.string.optionsMapsShowMapThumbnailsListDescription),
-            checked = thumbnailsList.value
+            checked = optionsState.showMapThumbnailsInList.value
         ) {
-            thumbnailsList.value = it
-            config.edit().putBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, it).apply()
+            optionsState.setShowMapThumbnailsInList(it)
         }
     }
 }
 
 @Composable
-private fun AboutPFTool() {
+private fun AboutPFTool(topToastManager: TopToastManager, optionsState: OptionsState) {
     val context = LocalContext.current
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
     OptionsColumn(title = context.getString(R.string.optionsAbout), bottomDivider = false) {
         OptionsButton(title = context.getString(R.string.optionsAboutVersion), description = version) {
-            aboutClickCount.value++
-            if (aboutClickCount.value == experimentalRequiredClicks) topToastManager.showToast(context.getString(R.string.optionsExperimentalEnabled))
+            optionsState.aboutClickCount.value++
+            if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastManager.showToast(context.getString(R.string.optionsExperimentalEnabled))
         }
-        Links()
+        Links(optionsState)
     }
 }
 
 @Composable
-private fun Links() {
+private fun Links(optionsState: OptionsState) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    val linksVisible = remember { mutableStateOf(false) }
-    OptionsButton(title = context.getString(R.string.optionsAboutLinks), description = context.getString(R.string.optionsAboutLinksDescription), expanded = linksVisible.value) {
-        linksVisible.value = !linksVisible.value
+    OptionsButton(title = context.getString(R.string.optionsAboutLinks), description = context.getString(R.string.optionsAboutLinksDescription), expanded = optionsState.linksExpanded.value) {
+        optionsState.linksExpanded.value = !optionsState.linksExpanded.value
     }
     AnimatedVisibility(
-        visible = linksVisible.value,
+        visible = optionsState.linksExpanded.value,
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut()
     ) {
@@ -139,7 +128,7 @@ private fun Links() {
 }
 
 @Composable
-private fun ExperimentalOptions(config: SharedPreferences) {
+private fun ExperimentalOptions(config: SharedPreferences, optionsState: OptionsState) {
     val context = LocalContext.current
     val configEditor = config.edit()
     val prefEdits = listOf(
@@ -150,9 +139,9 @@ private fun ExperimentalOptions(config: SharedPreferences) {
         Text(context.getString(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
         PFToolSwitch(
             title = context.getString(R.string.optionsExperimentalShowMaterialYouOption),
-            checked = forceShowMaterialYouOption.value,
+            checked = optionsState.forceShowMaterialYouOption.value,
             onCheckedChange = {
-                forceShowMaterialYouOption.value = it
+                optionsState.forceShowMaterialYouOption.value = it
             }
         )
         prefEdits.forEach { prefEdit ->
@@ -199,10 +188,6 @@ private fun OptionsButton(title: String, description: String? = null, painter: P
             Image(Icons.Default.ArrowDropDown, null, modifier = Modifier.rotate(if (it) 180f else 0f), colorFilter = ColorFilter.tint(contentColor))
         }
     }
-}
-
-private fun onThemeUpdate(context: Context) {
-    topToastManager.showToast(context.getString(R.string.optionsThemeChanged), iconDrawableId = R.drawable.check, iconTintColorType = TopToastColorType.PRIMARY) { restartApp(context) }
 }
 
 private fun restartApp(context: Context) {

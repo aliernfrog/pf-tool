@@ -40,7 +40,6 @@
     <string name="optionsThemeDark">Dark</string>
     <string name="optionsThemeMaterialYou">Material You</string>
     <string name="optionsThemeMaterialYouDescription">Theme based on colors of your device</string>
-    <string name="optionsThemeChanged">Theme will be applied after app restart, click to restart now</string>
     <string name="optionsMaps">Maps</string>
     <string name="optionsMapsShowMapThumbnailsList">Show map thumbnails in map list</string>
     <string name="optionsMapsShowMapThumbnailsListDescription">Know which map you are on</string>
