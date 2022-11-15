@@ -41,7 +41,7 @@ jobs:
         run: mv ${{steps.sign_apk.outputs.signedReleaseFile}} pftool.apk
         
       - name: Create release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           draft: ${{ github.event.inputs.draft }}
