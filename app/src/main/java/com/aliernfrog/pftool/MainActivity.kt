@@ -21,8 +21,9 @@ import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.state.OptionsState
 import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
-import com.aliernfrog.pftool.ui.screen.MapsScreenRoot
+import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
+import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
@@ -71,7 +72,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize().padding(it).verticalScroll(scrollState)
             ) {
                 composable(route = NavRoutes.MAPS) {
-                    MapsScreenRoot(mapsState)
+                    PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) }
                 }
                 composable(route = NavRoutes.OPTIONS) {
                     OptionsScreen(config, topToastManager, optionsState)
