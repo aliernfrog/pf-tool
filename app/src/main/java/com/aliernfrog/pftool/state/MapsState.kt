@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Environment
 import android.provider.DocumentsContract
+import androidx.compose.foundation.ScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.MutableState
@@ -29,6 +30,7 @@ class MapsState(
     _deleteMapSheetState: ModalBottomSheetState
 ) {
     private val topToastManager = _topToastManager
+    val scrollState = ScrollState(0)
     val pickMapSheetState = _pickMapSheetState
     val deleteMapSheetState = _deleteMapSheetState
     val mapsDir = config.getString(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR)!!

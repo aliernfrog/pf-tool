@@ -3,7 +3,6 @@ package com.aliernfrog.pftool.ui.composable
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -28,7 +26,7 @@ import com.aliernfrog.pftool.getScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PFToolBaseScaffold(navController: NavController, contentScrollState: ScrollState, content: @Composable (PaddingValues) -> Unit) {
+fun PFToolBaseScaffold(navController: NavController, content: @Composable (PaddingValues) -> Unit) {
     val screens = getScreens()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentScreen = screens.find { it.route == currentRoute }
@@ -39,9 +37,6 @@ fun PFToolBaseScaffold(navController: NavController, contentScrollState: ScrollS
         bottomBar = { BottomBar(navController, screens, currentScreen) }
     ) {
         content(it)
-    }
-    LaunchedEffect(currentRoute) {
-        contentScrollState.animateScrollTo(0)
     }
 }
 

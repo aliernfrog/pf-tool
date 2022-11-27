@@ -2,12 +2,15 @@ package com.aliernfrog.pftool.ui.screen
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.aliernfrog.pftool.R
@@ -22,7 +25,7 @@ import kotlinx.coroutines.launch
 fun MapsScreen(mapsState: MapsState) {
     val context = LocalContext.current
     LaunchedEffect(Unit) { mapsState.getMapsFile(context); mapsState.getImportedMaps(); mapsState.getExportedMaps() }
-    Column {
+    Column(Modifier.fillMaxSize().verticalScroll(mapsState.scrollState)) {
         PickMapFileButton(mapsState)
         MapActions(mapsState)
     }
