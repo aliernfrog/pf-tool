@@ -39,8 +39,8 @@ object NavRoutes {
 fun getScreens(): List<Screen> {
     val context = LocalContext.current
     return listOf(
-        Screen(NavRoutes.MAPS, context.getString(R.string.manageMaps), painterResource(id = R.drawable.map), true),
-        Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options), true)
+        Screen(NavRoutes.MAPS, context.getString(R.string.manageMaps), painterResource(id = R.drawable.map)),
+        Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options))
     )
 }
 

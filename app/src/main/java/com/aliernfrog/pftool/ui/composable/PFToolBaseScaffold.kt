@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -52,11 +53,15 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
             }
         },
         navigationIcon = {
-            AnimatedVisibility(visible = navController.previousBackStackEntry != null) {
+            AnimatedVisibility(
+                visible = navController.previousBackStackEntry != null,
+                enter = slideInHorizontally() + expandHorizontally() + fadeIn(),
+                exit = slideOutHorizontally() + shrinkHorizontally() + fadeOut()
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = context.getString(R.string.action_back),
-                    modifier = Modifier.padding(horizontal = 8.dp).clickable(
+                    modifier = Modifier.padding(8.dp).clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false),
                         onClick = { navController.navigateUp() }
@@ -71,18 +76,18 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
 @Composable
 private fun BottomBar(navController: NavController, screens: List<Screen>, currentScreen: Screen?) {
     AnimatedVisibility(
-        visible = !WindowInsets.isImeVisible,
+        visible = !WindowInsets.isImeVisible && !(currentScreen?.isSubScreen ?: false),
         enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(durationMillis = 100)) + fadeIn(),
         exit = fadeOut(animationSpec = tween(durationMillis = 0))
     ) {
         BottomAppBar {
-            screens.filter { it.showInNavigationBar }.forEach {
+            screens.filter { !it.isSubScreen }.forEach {
                 NavigationBarItem(
                     selected = it.route == currentScreen?.route,
-                    icon = { Image(it.icon, it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
+                    icon = { Image(it.icon ?: painterResource(R.drawable.map), it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
                     label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) },
                     onClick = {
-                        if (it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
+                        if (currentScreen?.isSubScreen != true && it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
                     }
                 )
             }
