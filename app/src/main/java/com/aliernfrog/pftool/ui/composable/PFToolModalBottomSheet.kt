@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.PFToolRoundnessSize
-import com.aliernfrog.pftool.util.GeneralUtil
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -32,7 +31,7 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
         sheetElevation = 0.dp,
         content = {},
         sheetContent = {
-            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth().clip(RoundedCornerShape(topStart = PFToolRoundnessSize, topEnd = PFToolRoundnessSize)).background(MaterialTheme.colorScheme.background), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth().clip(RoundedCornerShape(topStart = PFToolRoundnessSize, topEnd = PFToolRoundnessSize)).background(MaterialTheme.colorScheme.background).navigationBarsPadding().imePadding(), horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(modifier = Modifier
                     .padding(vertical = 8.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, shape = PFToolComposableShape)
@@ -42,7 +41,6 @@ fun PFToolModalBottomSheet(title: String? = null, sheetState: ModalBottomSheetSt
                 Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = PFToolRoundnessSize, topEnd = PFToolRoundnessSize)).verticalScroll(sheetScrollState)) {
                     if (title != null) Text(text = title, fontSize = 30.sp, modifier = Modifier.padding(bottom = 8.dp).align(Alignment.CenterHorizontally))
                     sheetContent()
-                    Spacer(modifier = Modifier.height(GeneralUtil.getNavigationBarHeight()))
                 }
             }
         }
