@@ -13,6 +13,7 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -64,7 +65,7 @@ private fun PickFromDeviceButton(topToastManager: TopToastManager, onFilePick: (
         if (it.data?.data != null) {
             val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
             if (convertedPath != null) onFilePick(File(convertedPath))
-            else topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconDrawableId = R.drawable.exclamation, iconTintColorType = TopToastColorType.ERROR)
+            else topToastManager.showToast(context.getString(R.string.warning_couldntConvertToPath), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColorType = TopToastColorType.ERROR)
         }
     }
     PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = rememberVectorPainter(Icons.Default.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
