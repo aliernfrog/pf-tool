@@ -2,9 +2,14 @@ package com.aliernfrog.pftool
 
 import android.os.Environment
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PinDrop
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.PinDrop
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.data.Screen
 import com.aliernfrog.pftool.data.Social
@@ -37,10 +42,9 @@ object NavRoutes {
 
 @Composable
 fun getScreens(): List<Screen> {
-    val context = LocalContext.current
     return listOf(
-        Screen(NavRoutes.MAPS, context.getString(R.string.manageMaps), painterResource(id = R.drawable.map)),
-        Screen(NavRoutes.OPTIONS, context.getString(R.string.options), painterResource(id = R.drawable.options))
+        Screen(NavRoutes.MAPS, stringResource(R.string.manageMaps), rememberVectorPainter(Icons.Default.PinDrop), rememberVectorPainter(Icons.Outlined.PinDrop)),
+        Screen(NavRoutes.OPTIONS, stringResource(R.string.options), rememberVectorPainter(Icons.Default.Settings), rememberVectorPainter(Icons.Outlined.Settings))
     )
 }
 
