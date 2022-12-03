@@ -83,8 +83,8 @@ private fun BottomBar(navController: NavController, screens: List<Screen>, curre
             screens.filter { !it.isSubScreen }.forEach {
                 NavigationBarItem(
                     selected = it.route == currentScreen?.route,
-                    icon = { Image(it.icon ?: painterResource(R.drawable.map), it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface), modifier = Modifier.size(28.dp)) },
-                    label = { Text(it.name, modifier = Modifier.offset(y = 5.dp)) },
+                    icon = { Image(it.icon ?: painterResource(R.drawable.map), it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)) },
+                    label = { Text(it.name) },
                     onClick = {
                         if (currentScreen?.isSubScreen != true && it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
                     }
