@@ -8,10 +8,12 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -183,7 +185,11 @@ private fun OptionsColumn(title: String, modifier: Modifier = Modifier, bottomDi
 @Composable
 private fun OptionsButton(title: String, description: String? = null, painter: Painter? = null, rounded: Boolean = false, expanded: Boolean? = null, contentColor: Color = MaterialTheme.colorScheme.onSurface, onClick: () -> Unit) {
     val arrowRotation = animateFloatAsState(if (expanded == true) 0f else 180f)
-    Row(Modifier.fillMaxWidth().heightIn(44.dp).clip(if (rounded) PFToolComposableShape else RectangleShape).clickable { onClick() }.padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().heightIn(44.dp).clip(if (rounded) PFToolComposableShape else RectangleShape).clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = rememberRipple(color = contentColor),
+        onClick = onClick
+    ).padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         if (painter != null) Image(painter, title, Modifier.padding(end = 4.dp).size(40.dp).padding(4.dp), colorFilter = ColorFilter.tint(contentColor))
         Column(Modifier.fillMaxWidth().padding(vertical = 4.dp).weight(1f)) {
             Text(text = title, color = contentColor, fontWeight = FontWeight.Bold, fontSize = 16.sp)
