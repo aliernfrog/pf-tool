@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.composable
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -13,10 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -43,12 +40,11 @@ fun PFToolBaseScaffold(navController: NavController, content: @Composable (Paddi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScrollBehavior, currentScreen: Screen?) {
-    val context = LocalContext.current
     LargeTopAppBar(
         scrollBehavior = scrollBehavior,
         title = {
             Crossfade(targetState = currentScreen?.name) {
-                Text(text = it ?: context.getString(R.string.manageMaps))
+                Text(text = it ?: stringResource(R.string.manageMaps))
             }
         },
         navigationIcon = {
@@ -59,7 +55,7 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = context.getString(R.string.action_back),
+                    contentDescription = stringResource(R.string.action_back),
                     modifier = Modifier.padding(8.dp).clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false),
@@ -81,9 +77,16 @@ private fun BottomBar(navController: NavController, screens: List<Screen>, curre
     ) {
         BottomAppBar {
             screens.filter { !it.isSubScreen }.forEach {
+                val selected = it.route == currentScreen?.route
                 NavigationBarItem(
-                    selected = it.route == currentScreen?.route,
-                    icon = { Image(it.icon ?: painterResource(R.drawable.map), it.name, colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)) },
+                    selected = selected,
+                    icon = {
+                        Icon(
+                            painter = if (selected) it.iconFilled!! else it.iconOutlined!!,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
                     label = { Text(it.name) },
                     onClick = {
                         if (currentScreen?.isSubScreen != true && it.route != currentScreen?.route) navController.navigate(it.route) { popUpTo(0) }
