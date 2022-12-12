@@ -27,15 +27,15 @@ import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
-import com.aliernfrog.toptoast.TopToastBase
-import com.aliernfrog.toptoast.TopToastManager
+import com.aliernfrog.toptoast.component.TopToastHost
+import com.aliernfrog.toptoast.state.TopToastState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
-    private lateinit var topToastManager: TopToastManager
+    private lateinit var topToastState: TopToastState
     private lateinit var optionsState: OptionsState
     private lateinit var pickMapSheetState: ModalBottomSheetState
     private lateinit var deleteMapSheetState: ModalBottomSheetState
@@ -45,15 +45,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        topToastManager = TopToastManager()
+        topToastState = TopToastState()
         optionsState = OptionsState(config)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         deleteMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
-        mapsState = MapsState(topToastManager, config, pickMapSheetState, deleteMapSheetState)
+        mapsState = MapsState(topToastState, config, pickMapSheetState, deleteMapSheetState)
         setContent {
             val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme, optionsState.materialYou.value) {
-                TopToastBase(backgroundColor = MaterialTheme.colorScheme.background, manager = topToastManager) { BaseScaffold() }
+                TopToastHost(
+                    state = topToastState,
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+                ) { BaseScaffold() }
                 SystemBars(darkTheme)
             }
         }
@@ -75,13 +78,13 @@ class MainActivity : ComponentActivity() {
                     PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) }
                 }
                 composable(route = NavRoutes.OPTIONS) {
-                    OptionsScreen(config, topToastManager, optionsState)
+                    OptionsScreen(config, topToastState, optionsState)
                 }
             }
         }
         PickMapSheet(
             mapsState = mapsState,
-            topToastManager = topToastManager,
+            topToastState = topToastState,
             sheetState = pickMapSheetState,
             showMapThumbnails = optionsState.showMapThumbnailsInList.value,
             onFilePick = { mapsState.getMap(file = it, context = context) },

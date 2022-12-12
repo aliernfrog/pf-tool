@@ -18,8 +18,8 @@ import com.aliernfrog.pftool.data.MapsListItem
 import com.aliernfrog.pftool.data.PfMap
 import com.aliernfrog.pftool.util.FileUtil
 import com.aliernfrog.pftool.util.ZipUtil
-import com.aliernfrog.toptoast.TopToastColorType
-import com.aliernfrog.toptoast.TopToastManager
+import com.aliernfrog.toptoast.enum.TopToastColor
+import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.filecompat.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,12 +27,12 @@ import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class)
 class MapsState(
-    _topToastManager: TopToastManager,
+    _topToastState: TopToastState,
     config: SharedPreferences,
     _pickMapSheetState: ModalBottomSheetState,
     _deleteMapSheetState: ModalBottomSheetState
 ) {
-    private val topToastManager = _topToastManager
+    private val topToastState = _topToastState
     val scrollState = ScrollState(0)
     val pickMapSheetState = _pickMapSheetState
     val deleteMapSheetState = _deleteMapSheetState
@@ -67,7 +67,7 @@ class MapsState(
         else withContext(Dispatchers.IO) {
             mapsFile.findFile(chosenMap.value!!.fileName)?.renameTo(getMapNameEdit())
             getMap(documentFile = mapsFile.findFile(getMapNameEdit()), context = context)
-            topToastManager.showToast(context.getString(R.string.info_renamedMap), iconImageVector = Icons.Default.Edit, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastState.showToast(context.getString(R.string.info_renamedMap), iconImageVector = Icons.Default.Edit)
             getImportedMaps()
         }
     }
@@ -79,7 +79,7 @@ class MapsState(
             output = mapsFile.createDirectory(getMapNameEdit())
             if (output != null) ZipUtil.unzipMap(chosenMap.value!!.filePath, output!!, context)
             getMap(documentFile = output, context = context)
-            topToastManager.showToast(context.getString(R.string.info_importedMap), iconImageVector = Icons.Default.Download, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastState.showToast(context.getString(R.string.info_importedMap), iconImageVector = Icons.Default.Download)
             getImportedMaps()
         }
     }
@@ -91,7 +91,7 @@ class MapsState(
             if (!output.parentFile?.isDirectory!!) output.parentFile?.mkdirs()
             ZipUtil.zipMap(mapsFile.findFile(chosenMap.value!!.fileName)!!, output.absolutePath, context)
             getMap(file = output, context = context)
-            topToastManager.showToast(context.getString(R.string.info_exportedMap), iconImageVector = Icons.Default.Upload, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastState.showToast(context.getString(R.string.info_exportedMap), iconImageVector = Icons.Default.Upload)
             getExportedMaps()
         }
     }
@@ -106,7 +106,7 @@ class MapsState(
                 getExportedMaps()
             }
             getMap(context = context)
-            topToastManager.showToast(context.getString(R.string.info_deletedMap), iconImageVector = Icons.Default.Delete, iconTintColorType = TopToastColorType.PRIMARY)
+            topToastState.showToast(context.getString(R.string.info_deletedMap), iconImageVector = Icons.Default.Delete)
         }
     }
 
@@ -123,11 +123,11 @@ class MapsState(
     }
 
     private fun fileAlreadyExists(context: Context) {
-        topToastManager.showToast(context.getString(R.string.warning_mapAlreadyExists), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColorType = TopToastColorType.ERROR)
+        topToastState.showToast(context.getString(R.string.warning_mapAlreadyExists), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
     }
 
     private fun fileDoesntExist(context: Context) {
-        topToastManager.showToast(context.getString(R.string.warning_fileDoesntExist), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColorType = TopToastColorType.ERROR)
+        topToastState.showToast(context.getString(R.string.warning_fileDoesntExist), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
     }
 
     fun getMapsFile(context: Context): DocumentFileCompat {

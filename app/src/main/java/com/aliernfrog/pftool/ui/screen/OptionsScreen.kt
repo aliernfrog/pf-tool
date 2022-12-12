@@ -45,16 +45,16 @@ import com.aliernfrog.pftool.ui.composable.PFToolSwitch
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.GeneralUtil
-import com.aliernfrog.toptoast.TopToastManager
+import com.aliernfrog.toptoast.state.TopToastState
 
 private const val experimentalRequiredClicks = 10
 
 @Composable
-fun OptionsScreen(config: SharedPreferences, topToastManager: TopToastManager, optionsState: OptionsState) {
+fun OptionsScreen(config: SharedPreferences, topToastState: TopToastState, optionsState: OptionsState) {
     Column(Modifier.fillMaxSize().verticalScroll(optionsState.scrollState)) {
         ThemeOptions(optionsState)
         MapsOptions(optionsState)
-        AboutPFTool(topToastManager, optionsState)
+        AboutPFTool(topToastState, optionsState)
         if (optionsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalOptions(config, optionsState)
     }
 }
@@ -97,13 +97,13 @@ private fun MapsOptions(optionsState: OptionsState) {
 }
 
 @Composable
-private fun AboutPFTool(topToastManager: TopToastManager, optionsState: OptionsState) {
+private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState) {
     val context = LocalContext.current
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
     OptionsColumn(title = context.getString(R.string.optionsAbout), bottomDivider = false) {
         OptionsButton(title = context.getString(R.string.optionsAboutVersion), description = version) {
             optionsState.aboutClickCount.value++
-            if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastManager.showToast(context.getString(R.string.optionsExperimentalEnabled))
+            if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(context.getString(R.string.optionsExperimentalEnabled))
         }
         Links(optionsState)
     }
