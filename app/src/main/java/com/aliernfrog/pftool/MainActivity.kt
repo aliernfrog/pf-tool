@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
             NavHost(
                 navController = navController,
                 startDestination = NavRoutes.MAPS,
-                modifier = Modifier.fillMaxSize().padding(it).consumedWindowInsets(it).systemBarsPadding()
+                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding()
             ) {
                 composable(route = NavRoutes.MAPS) {
                     PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) }
