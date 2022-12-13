@@ -20,7 +20,7 @@ import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.ZipUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
-import com.lazygeniouz.filecompat.file.DocumentFileCompat
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

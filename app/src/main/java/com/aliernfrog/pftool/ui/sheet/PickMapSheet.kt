@@ -30,7 +30,7 @@ import com.aliernfrog.pftool.ui.composable.*
 import com.aliernfrog.pftool.util.staticutil.UriToFileUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
-import com.lazygeniouz.filecompat.file.DocumentFileCompat
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.launch
 import java.io.File
 

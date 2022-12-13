@@ -1,7 +1,7 @@
 package com.aliernfrog.pftool.util.staticutil
 
 import android.content.Context
-import com.lazygeniouz.filecompat.file.DocumentFileCompat
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.util.*
