@@ -11,7 +11,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
@@ -25,7 +24,6 @@ import com.aliernfrog.pftool.ui.composable.PFToolSheetBackHandler
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
-import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -35,7 +33,6 @@ import com.aliernfrog.pftool.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 class MainActivity : ComponentActivity() {
@@ -43,7 +40,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var topToastState: TopToastState
     private lateinit var optionsState: OptionsState
     private lateinit var pickMapSheetState: ModalBottomSheetState
-    private lateinit var deleteMapSheetState: ModalBottomSheetState
     private lateinit var mapsState: MapsState
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +49,7 @@ class MainActivity : ComponentActivity() {
         topToastState = TopToastState()
         optionsState = OptionsState(config)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-        deleteMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden, isSkipHalfExpanded = true)
-        mapsState = MapsState(topToastState, config, pickMapSheetState, deleteMapSheetState)
+        mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
             val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme, optionsState.materialYou.value) {
@@ -71,7 +66,6 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun BaseScaffold() {
         val context = LocalContext.current
-        val scope = rememberCoroutineScope()
         val navController = rememberNavController()
         val screens = getScreens(navController)
         PFToolBaseScaffold(screens, navController) {
@@ -83,7 +77,7 @@ class MainActivity : ComponentActivity() {
                 composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
                 composable(route = Destination.OPTIONS.route) { OptionsScreen(config, topToastState, optionsState) }
             }
-            PFToolSheetBackHandler(pickMapSheetState, deleteMapSheetState)
+            PFToolSheetBackHandler(pickMapSheetState)
         }
         PickMapSheet(
             mapsState = mapsState,
@@ -93,12 +87,6 @@ class MainActivity : ComponentActivity() {
             onFilePick = { mapsState.getMap(file = it, context = context) },
             onDocumentFilePick = { mapsState.getMap(documentFile = it, context = context) }
         )
-        DeleteMapSheet(
-            mapName = mapsState.lastMapName.value,
-            sheetState = deleteMapSheetState
-        ) {
-            scope.launch { mapsState.deleteChosenMap(context) }
-        }
     }
 
     @Composable

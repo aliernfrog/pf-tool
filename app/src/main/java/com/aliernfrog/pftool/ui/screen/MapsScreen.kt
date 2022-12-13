@@ -22,17 +22,29 @@ import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
+import com.aliernfrog.pftool.ui.dialog.DeleteMapDialog
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 
 @Composable
 fun MapsScreen(mapsState: MapsState) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) { mapsState.getMapsFile(context); mapsState.getImportedMaps(); mapsState.getExportedMaps() }
     Column(Modifier.fillMaxSize().verticalScroll(mapsState.scrollState)) {
         PickMapFileButton(mapsState)
         MapActions(mapsState)
     }
+    if (mapsState.mapDeleteDialogShown.value) DeleteMapDialog(
+        mapName = mapsState.lastMapName.value,
+        onDismissRequest = { mapsState.mapDeleteDialogShown.value = false },
+        onConfirmDelete = {
+            scope.launch {
+                mapsState.deleteChosenMap(context)
+                mapsState.mapDeleteDialogShown.value = false
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -48,7 +60,6 @@ private fun PickMapFileButton(mapsState: MapsState) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MapActions(mapsState: MapsState) {
     val context = LocalContext.current
@@ -108,7 +119,7 @@ private fun MapActions(mapsState: MapsState) {
             painter = rememberVectorPainter(Icons.Default.Delete),
             containerColor = MaterialTheme.colorScheme.error
         ) {
-            scope.launch { mapsState.deleteMapSheetState.show() }
+            mapsState.mapDeleteDialogShown.value = true
         }
     }
 }
