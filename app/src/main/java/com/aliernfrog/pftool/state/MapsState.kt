@@ -8,7 +8,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -66,7 +66,7 @@ class MapsState(
         else withContext(Dispatchers.IO) {
             mapsFile.findFile(chosenMap.value!!.fileName)?.renameTo(getMapNameEdit())
             getMap(documentFile = mapsFile.findFile(getMapNameEdit()), context = context)
-            topToastState.showToast(context.getString(R.string.info_renamedMap), iconImageVector = Icons.Default.Edit)
+            topToastState.showToast(context.getString(R.string.info_renamedMap), iconImageVector = Icons.Rounded.Edit)
             getImportedMaps()
         }
     }
@@ -78,7 +78,7 @@ class MapsState(
             output = mapsFile.createDirectory(getMapNameEdit())
             if (output != null) ZipUtil.unzipMap(chosenMap.value!!.filePath, output!!, context)
             getMap(documentFile = output, context = context)
-            topToastState.showToast(context.getString(R.string.info_importedMap), iconImageVector = Icons.Default.Download)
+            topToastState.showToast(context.getString(R.string.info_importedMap), iconImageVector = Icons.Rounded.Download)
             getImportedMaps()
         }
     }
@@ -90,7 +90,7 @@ class MapsState(
             if (!output.parentFile?.isDirectory!!) output.parentFile?.mkdirs()
             ZipUtil.zipMap(mapsFile.findFile(chosenMap.value!!.fileName)!!, output.absolutePath, context)
             getMap(file = output, context = context)
-            topToastState.showToast(context.getString(R.string.info_exportedMap), iconImageVector = Icons.Default.Upload)
+            topToastState.showToast(context.getString(R.string.info_exportedMap), iconImageVector = Icons.Rounded.Upload)
             getExportedMaps()
         }
     }
@@ -105,7 +105,7 @@ class MapsState(
                 getExportedMaps()
             }
             getMap(context = context)
-            topToastState.showToast(context.getString(R.string.info_deletedMap), iconImageVector = Icons.Default.Delete)
+            topToastState.showToast(context.getString(R.string.info_deletedMap), iconImageVector = Icons.Rounded.Delete)
         }
     }
 

@@ -6,7 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -54,7 +54,7 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
                 exit = slideOutHorizontally() + shrinkHorizontally() + fadeOut()
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.Rounded.ArrowBack,
                     contentDescription = stringResource(R.string.action_back),
                     modifier = Modifier.padding(8.dp).clickable(
                         interactionSource = remember { MutableInteractionSource() },

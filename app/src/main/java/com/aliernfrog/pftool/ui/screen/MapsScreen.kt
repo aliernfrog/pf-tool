@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -53,7 +53,7 @@ private fun PickMapFileButton(mapsState: MapsState) {
     val scope = rememberCoroutineScope()
     PFToolButton(
         title = stringResource(R.string.manageMapsPickMap),
-        painter = rememberVectorPainter(Icons.Default.PinDrop),
+        painter = rememberVectorPainter(Icons.Rounded.PinDrop),
         containerColor = MaterialTheme.colorScheme.primary
     ) {
         scope.launch { mapsState.pickMapSheetState.show() }
@@ -79,7 +79,7 @@ private fun MapActions(mapsState: MapsState) {
             MapActionVisibility(visible = isImported && mapsState.getMapNameEdit() != mapsState.chosenMap.value!!.mapName) {
                 PFToolButton(
                     title = stringResource(R.string.manageMapsRename),
-                    painter = rememberVectorPainter(Icons.Default.Edit),
+                    painter = rememberVectorPainter(Icons.Rounded.Edit),
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
                     scope.launch { mapsState.renameChosenMap(context) }
@@ -90,7 +90,7 @@ private fun MapActions(mapsState: MapsState) {
     MapActionVisibility(visible = mapChosen && !isImported) {
         PFToolButton(
             title = stringResource(R.string.manageMapsImport),
-            painter = rememberVectorPainter(Icons.Default.Download),
+            painter = rememberVectorPainter(Icons.Rounded.Download),
             containerColor = MaterialTheme.colorScheme.primary
         ) {
             scope.launch { mapsState.importChosenMap(context) }
@@ -100,7 +100,7 @@ private fun MapActions(mapsState: MapsState) {
         PFToolButton(
             title = stringResource(R.string.manageMapsExport),
             description = stringResource(R.string.manageMapsExportDescription),
-            painter = rememberVectorPainter(Icons.Default.Upload)
+            painter = rememberVectorPainter(Icons.Rounded.Upload)
         ) {
             scope.launch { mapsState.exportChosenMap(context) }
         }
@@ -116,7 +116,7 @@ private fun MapActions(mapsState: MapsState) {
     MapActionVisibility(visible = mapChosen && (isImported || isExported)) {
         PFToolButton(
             title = stringResource(R.string.manageMapsDelete),
-            painter = rememberVectorPainter(Icons.Default.Delete),
+            painter = rememberVectorPainter(Icons.Rounded.Delete),
             containerColor = MaterialTheme.colorScheme.error
         ) {
             mapsState.mapDeleteDialogShown.value = true

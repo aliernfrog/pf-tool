@@ -12,7 +12,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -195,7 +195,7 @@ private fun OptionsButton(title: String, description: String? = null, painter: P
             Text(text = title, color = contentColor, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             if (description != null) Text(text = description, color = contentColor, fontSize = 14.sp)
         }
-        if (expanded != null) Image(Icons.Default.KeyboardArrowUp, null, modifier = Modifier.rotate(arrowRotation.value), colorFilter = ColorFilter.tint(contentColor))
+        if (expanded != null) Image(Icons.Rounded.KeyboardArrowUp, null, modifier = Modifier.rotate(arrowRotation.value), colorFilter = ColorFilter.tint(contentColor))
     }
 }
 

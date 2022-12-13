@@ -12,7 +12,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
@@ -68,7 +68,7 @@ private fun PickFromDeviceButton(topToastState: TopToastState, onFilePick: (File
             else topToastState.showToast(context.getString(R.string.warning_couldntConvertToPath), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
         }
     }
-    PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = rememberVectorPainter(Icons.Default.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
+    PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = rememberVectorPainter(Icons.Rounded.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
         val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip").putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         launcher.launch(intent)
     }
