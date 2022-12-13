@@ -44,7 +44,7 @@ import com.aliernfrog.pftool.ui.composable.PFToolRadioButtons
 import com.aliernfrog.pftool.ui.composable.PFToolSwitch
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
-import com.aliernfrog.pftool.util.GeneralUtil
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.state.TopToastState
 
 private const val experimentalRequiredClicks = 10

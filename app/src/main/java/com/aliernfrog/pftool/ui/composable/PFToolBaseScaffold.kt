@@ -19,12 +19,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.Screen
-import com.aliernfrog.pftool.getScreens
+import com.aliernfrog.pftool.util.NavigationConstant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PFToolBaseScaffold(navController: NavController, content: @Composable (PaddingValues) -> Unit) {
-    val screens = getScreens()
+fun PFToolBaseScaffold(screens: List<Screen>, navController: NavController, content: @Composable (PaddingValues) -> Unit) {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentScreen = screens.find { it.route == currentRoute }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -45,7 +44,7 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
         scrollBehavior = scrollBehavior,
         title = {
             Crossfade(targetState = currentScreen?.name) {
-                Text(text = it ?: stringResource(R.string.manageMaps))
+                Text(text = it ?: stringResource(NavigationConstant.LABEL_FALLBACK_ID))
             }
         },
         navigationIcon = {
@@ -60,7 +59,7 @@ private fun TopBar(navController: NavController, scrollBehavior: TopAppBarScroll
                     modifier = Modifier.padding(8.dp).clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false),
-                        onClick = { navController.navigateUp() }
+                        onClick = { currentScreen?.onNavigationBack?.invoke() }
                     )
                 )
             }

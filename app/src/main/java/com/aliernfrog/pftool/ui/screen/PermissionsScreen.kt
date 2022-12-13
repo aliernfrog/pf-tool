@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.util.FileUtil
-import com.aliernfrog.pftool.util.GeneralUtil
+import com.aliernfrog.pftool.util.staticutil.FileUtil
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
 @Composable
 fun PermissionsScreen(uriPath: String?, onSuccess: @Composable () -> Unit) {

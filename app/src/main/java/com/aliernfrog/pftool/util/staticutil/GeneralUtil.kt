@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.util
+package com.aliernfrog.pftool.util.staticutil
 
 import android.Manifest
 import android.content.Context

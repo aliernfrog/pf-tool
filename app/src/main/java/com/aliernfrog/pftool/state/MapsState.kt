@@ -16,8 +16,8 @@ import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapsListItem
 import com.aliernfrog.pftool.data.PfMap
-import com.aliernfrog.pftool.util.FileUtil
-import com.aliernfrog.pftool.util.ZipUtil
+import com.aliernfrog.pftool.util.staticutil.FileUtil
+import com.aliernfrog.pftool.util.staticutil.ZipUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.filecompat.file.DocumentFileCompat

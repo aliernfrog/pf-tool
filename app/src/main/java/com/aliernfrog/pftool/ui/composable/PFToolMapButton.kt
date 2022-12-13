@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.aliernfrog.pftool.PFToolComposableShape
 import com.aliernfrog.pftool.data.MapsListItem
-import com.aliernfrog.pftool.util.FileUtil
+import com.aliernfrog.pftool.util.staticutil.FileUtil
 
 @Composable
 fun PFToolMapButton(

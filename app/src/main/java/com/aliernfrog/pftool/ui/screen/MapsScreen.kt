@@ -22,7 +22,7 @@ import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.composable.PFToolButton
 import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
 import com.aliernfrog.pftool.ui.composable.PFToolTextField
-import com.aliernfrog.pftool.util.FileUtil
+import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 
 @Composable

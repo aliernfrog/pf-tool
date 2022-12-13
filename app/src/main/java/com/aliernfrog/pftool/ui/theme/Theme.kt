@@ -86,3 +86,9 @@ fun PFToolTheme(darkTheme: Boolean = isSystemInDarkTheme(), dynamicColors: Boole
         content = content
     )
 }
+
+enum class Theme(val int: Int) {
+    SYSTEM(0),
+    LIGHT(1),
+    DARK(2)
+}

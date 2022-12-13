@@ -27,6 +27,10 @@ import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.DeleteMapSheet
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
+import com.aliernfrog.pftool.ui.theme.Theme
+import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.NavigationConstant
+import com.aliernfrog.pftool.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.state.TopToastState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -68,18 +72,15 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
         val navController = rememberNavController()
-        PFToolBaseScaffold(navController) {
+        val screens = getScreens(navController)
+        PFToolBaseScaffold(screens, navController) {
             NavHost(
                 navController = navController,
-                startDestination = NavRoutes.MAPS,
+                startDestination = NavigationConstant.INITIAL_DESTINATION,
                 modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding()
             ) {
-                composable(route = NavRoutes.MAPS) {
-                    PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) }
-                }
-                composable(route = NavRoutes.OPTIONS) {
-                    OptionsScreen(config, topToastState, optionsState)
-                }
+                composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
+                composable(route = Destination.OPTIONS.route) { OptionsScreen(config, topToastState, optionsState) }
             }
         }
         PickMapSheet(
@@ -108,8 +109,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun getDarkThemePreference(): Boolean {
         return when(optionsState.theme.value) {
-            Theme.LIGHT -> false
-            Theme.DARK -> true
+            Theme.LIGHT.int -> false
+            Theme.DARK.int -> true
             else -> isSystemInDarkTheme()
         }
     }
