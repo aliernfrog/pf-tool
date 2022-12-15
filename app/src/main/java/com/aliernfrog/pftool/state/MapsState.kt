@@ -110,7 +110,7 @@ class MapsState(
     }
 
     fun getMapNameEdit(): String {
-        return mapNameEdit.value.ifBlank { chosenMap.value!!.mapName }
+        return mapNameEdit.value.ifBlank { chosenMap.value?.mapName.toString() }
     }
 
     private fun setChosenMap(map: PfMap?) {
