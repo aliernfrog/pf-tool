@@ -9,7 +9,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.pftool.ConfigKey
