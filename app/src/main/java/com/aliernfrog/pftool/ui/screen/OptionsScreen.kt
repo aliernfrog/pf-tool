@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,9 +62,12 @@ fun OptionsScreen(config: SharedPreferences, topToastState: TopToastState, optio
 
 @Composable
 private fun ThemeOptions(optionsState: OptionsState) {
-    val context = LocalContext.current
-    val themeOptions = listOf(context.getString(R.string.optionsThemeSystem),context.getString(R.string.optionsThemeLight),context.getString(R.string.optionsThemeDark))
-    OptionsColumn(title = context.getString(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
+    val themeOptions = listOf(
+        stringResource(R.string.optionsThemeSystem),
+        stringResource(R.string.optionsThemeLight),
+        stringResource(R.string.optionsThemeDark)
+    )
+    OptionsColumn(title = stringResource(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
         PFToolRadioButtons(
             options = themeOptions,
             initialIndex = optionsState.theme.value
@@ -72,8 +76,8 @@ private fun ThemeOptions(optionsState: OptionsState) {
         }
         if (optionsState.forceShowMaterialYouOption.value || supportsMaterialYou) {
             PFToolSwitch(
-                title = context.getString(R.string.optionsThemeMaterialYou),
-                description = context.getString(R.string.optionsThemeMaterialYouDescription),
+                title = stringResource(R.string.optionsThemeMaterialYou),
+                description = stringResource(R.string.optionsThemeMaterialYouDescription),
                 checked = optionsState.materialYou.value
             ) {
                 optionsState.setMaterialYou(it)
@@ -84,11 +88,10 @@ private fun ThemeOptions(optionsState: OptionsState) {
 
 @Composable
 private fun MapsOptions(optionsState: OptionsState) {
-    val context = LocalContext.current
-    OptionsColumn(title = context.getString(R.string.optionsMaps)) {
+    OptionsColumn(title = stringResource(R.string.optionsMaps)) {
         PFToolSwitch(
-            title = context.getString(R.string.optionsMapsShowMapThumbnailsList),
-            description = context.getString(R.string.optionsMapsShowMapThumbnailsListDescription),
+            title = stringResource(R.string.optionsMapsShowMapThumbnailsList),
+            description = stringResource(R.string.optionsMapsShowMapThumbnailsListDescription),
             checked = optionsState.showMapThumbnailsInList.value
         ) {
             optionsState.setShowMapThumbnailsInList(it)
@@ -100,8 +103,8 @@ private fun MapsOptions(optionsState: OptionsState) {
 private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState) {
     val context = LocalContext.current
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
-    OptionsColumn(title = context.getString(R.string.optionsAbout), bottomDivider = false) {
-        OptionsButton(title = context.getString(R.string.optionsAboutVersion), description = version) {
+    OptionsColumn(title = stringResource(R.string.optionsAbout), bottomDivider = false) {
+        OptionsButton(title = stringResource(R.string.optionsAboutVersion), description = version) {
             optionsState.aboutClickCount.value++
             if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(R.string.optionsExperimentalEnabled)
         }
@@ -111,9 +114,8 @@ private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState
 
 @Composable
 private fun Links(optionsState: OptionsState) {
-    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    OptionsButton(title = context.getString(R.string.optionsAboutLinks), description = context.getString(R.string.optionsAboutLinksDescription), expanded = optionsState.linksExpanded.value) {
+    OptionsButton(title = stringResource(R.string.optionsAboutLinks), description = stringResource(R.string.optionsAboutLinksDescription), expanded = optionsState.linksExpanded.value) {
         optionsState.linksExpanded.value = !optionsState.linksExpanded.value
     }
     AnimatedVisibility(
@@ -142,10 +144,10 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
         PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
         PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
     )
-    OptionsColumn(title = context.getString(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
-        Text(context.getString(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
+    OptionsColumn(title = stringResource(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
+        Text(stringResource(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
         PFToolSwitch(
-            title = context.getString(R.string.optionsExperimentalShowMaterialYouOption),
+            title = stringResource(R.string.optionsExperimentalShowMaterialYouOption),
             checked = optionsState.forceShowMaterialYouOption.value,
             onCheckedChange = {
                 optionsState.forceShowMaterialYouOption.value = it
@@ -164,7 +166,7 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
                 }
             )
         }
-        OptionsButton(title = context.getString(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
+        OptionsButton(title = stringResource(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
             prefEdits.forEach {
                 configEditor.remove(it.key)
                 configEditor.apply()

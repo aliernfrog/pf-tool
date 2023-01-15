@@ -75,7 +75,7 @@ private fun PickFromDeviceButton(topToastState: TopToastState, onFilePick: (File
             }
         }
     }
-    PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = rememberVectorPainter(Icons.Rounded.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
+    PFToolButton(title = stringResource(R.string.manageMapsPickMapFromDevice), painter = rememberVectorPainter(Icons.Rounded.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
         val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
         launcher.launch(intent)
     }
@@ -84,9 +84,11 @@ private fun PickFromDeviceButton(topToastState: TopToastState, onFilePick: (File
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun Maps(mapsState: MapsState, showMapThumbnails: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
-    val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED.ordinal) }
-    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
+    PFToolSegmentedButtons(options = listOf(
+        stringResource(R.string.manageMapsPickMapYourMaps),
+        stringResource(R.string.manageMapsPickMapExportedMaps)
+    )) {
         selectedSegment = it
     }
     AnimatedContent(targetState = selectedSegment) {
@@ -99,7 +101,6 @@ private fun Maps(mapsState: MapsState, showMapThumbnails: Boolean, onFilePick: (
 
 @Composable
 private fun MapsList(maps: List<MapsListItem>, showMapThumbnails: Boolean, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
-    val context = LocalContext.current
     if (maps.isNotEmpty()) {
         maps.forEach { map ->
             PFToolMapButton(map, showMapThumbnail = showMapThumbnails) {
@@ -109,7 +110,13 @@ private fun MapsList(maps: List<MapsListItem>, showMapThumbnails: Boolean, expor
         }
     } else {
         PFToolColumnRounded(color = MaterialTheme.colorScheme.error) {
-            Text(text = context.getString(if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps else R.string.manageMapsPickMapNoImportedMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onError)
+            Text(text = stringResource(
+                if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps
+                else R.string.manageMapsPickMapNoImportedMaps
+            ),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onError
+            )
         }
     }
 }
