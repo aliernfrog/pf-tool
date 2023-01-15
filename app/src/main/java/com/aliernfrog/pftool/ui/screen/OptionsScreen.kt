@@ -5,45 +5,28 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.aliernfrog.pftool.*
+import com.aliernfrog.pftool.ConfigKey
+import com.aliernfrog.pftool.Link
+import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.state.OptionsState
-import com.aliernfrog.pftool.ui.component.ColumnRounded
-import com.aliernfrog.pftool.ui.component.RadioButtons
-import com.aliernfrog.pftool.ui.component.Switch
-import com.aliernfrog.pftool.ui.component.TextField
+import com.aliernfrog.pftool.ui.component.*
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.state.TopToastState
@@ -67,7 +50,7 @@ private fun ThemeOptions(optionsState: OptionsState) {
         stringResource(R.string.optionsThemeLight),
         stringResource(R.string.optionsThemeDark)
     )
-    OptionsColumn(title = stringResource(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
+    ColumnDivider(title = stringResource(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
         RadioButtons(
             options = themeOptions,
             initialIndex = optionsState.theme.value
@@ -88,7 +71,7 @@ private fun ThemeOptions(optionsState: OptionsState) {
 
 @Composable
 private fun MapsOptions(optionsState: OptionsState) {
-    OptionsColumn(title = stringResource(R.string.optionsMaps)) {
+    ColumnDivider(title = stringResource(R.string.optionsMaps)) {
         Switch(
             title = stringResource(R.string.optionsMapsShowMapThumbnailsList),
             description = stringResource(R.string.optionsMapsShowMapThumbnailsListDescription),
@@ -103,8 +86,8 @@ private fun MapsOptions(optionsState: OptionsState) {
 private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState) {
     val context = LocalContext.current
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
-    OptionsColumn(title = stringResource(R.string.optionsAbout), bottomDivider = false) {
-        OptionsButton(title = stringResource(R.string.optionsAboutVersion), description = version) {
+    ColumnDivider(title = stringResource(R.string.optionsAbout), bottomDivider = false) {
+        ButtonShapeless(title = stringResource(R.string.optionsAboutVersion), description = version) {
             optionsState.aboutClickCount.value++
             if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(R.string.optionsExperimentalEnabled)
         }
@@ -115,7 +98,11 @@ private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState
 @Composable
 private fun Links(optionsState: OptionsState) {
     val uriHandler = LocalUriHandler.current
-    OptionsButton(title = stringResource(R.string.optionsAboutLinks), description = stringResource(R.string.optionsAboutLinksDescription), expanded = optionsState.linksExpanded.value) {
+    ButtonShapeless(
+        title = stringResource(R.string.optionsAboutLinks),
+        description = stringResource(R.string.optionsAboutLinksDescription),
+        expanded = optionsState.linksExpanded.value
+    ) {
         optionsState.linksExpanded.value = !optionsState.linksExpanded.value
     }
     AnimatedVisibility(
@@ -130,7 +117,7 @@ private fun Links(optionsState: OptionsState) {
                     "github.com" -> painterResource(id = R.drawable.github)
                     else -> null
                 }
-                OptionsButton(title = it.name, painter = icon, rounded = true, contentColor = MaterialTheme.colorScheme.onSurfaceVariant) { uriHandler.openUri(it.url) }
+                ButtonShapeless(title = it.name, painter = icon, rounded = true, contentColor = MaterialTheme.colorScheme.onSurfaceVariant) { uriHandler.openUri(it.url) }
             }
         }
     }
@@ -144,7 +131,7 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
         PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
         PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
     )
-    OptionsColumn(title = stringResource(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
+    ColumnDivider(title = stringResource(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
         Text(stringResource(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
         Switch(
             title = stringResource(R.string.optionsExperimentalShowMaterialYouOption),
@@ -166,38 +153,13 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
                 }
             )
         }
-        OptionsButton(title = stringResource(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
+        ButtonShapeless(title = stringResource(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
             prefEdits.forEach {
                 configEditor.remove(it.key)
                 configEditor.apply()
             }
             restartApp(context)
         }
-    }
-}
-
-@Composable
-private fun OptionsColumn(title: String, modifier: Modifier = Modifier, bottomDivider: Boolean = true, topDivider: Boolean = false, content: @Composable ColumnScope.() -> Unit) {
-    if (topDivider) Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
-    Text(text = title, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
-    Column(modifier, content = content)
-    if (bottomDivider) Divider(modifier = Modifier.padding(16.dp).alpha(0.7f), thickness = 1.dp, color = MaterialTheme.colorScheme.surfaceVariant)
-}
-
-@Composable
-private fun OptionsButton(title: String, description: String? = null, painter: Painter? = null, rounded: Boolean = false, expanded: Boolean? = null, contentColor: Color = MaterialTheme.colorScheme.onSurface, onClick: () -> Unit) {
-    val arrowRotation = animateFloatAsState(if (expanded == true) 0f else 180f)
-    Row(Modifier.fillMaxWidth().heightIn(44.dp).clip(if (rounded) AppComponentShape else RectangleShape).clickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(color = contentColor),
-        onClick = onClick
-    ).padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-        if (painter != null) Image(painter, title, Modifier.padding(end = 4.dp).size(40.dp).padding(4.dp), colorFilter = ColorFilter.tint(contentColor))
-        Column(Modifier.fillMaxWidth().padding(vertical = 4.dp).weight(1f)) {
-            Text(text = title, color = contentColor, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            if (description != null) Text(text = description, color = contentColor, fontSize = 14.sp)
-        }
-        if (expanded != null) Image(Icons.Rounded.KeyboardArrowUp, null, modifier = Modifier.rotate(arrowRotation.value), colorFilter = ColorFilter.tint(contentColor))
     }
 }
 

@@ -12,7 +12,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.AppComponentShape
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.util.extension.clickableWithColor
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
@@ -73,7 +73,7 @@ private fun PermissionsSetUp(
         visible = !storagePermissions,
         title = stringResource(R.string.warning_missingStoragePermissions),
         content = {
-            Text(text = if (allFilesAccess) stringResource(R.string.info_allFilesPermission) else stringResource(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
+            Text(text = stringResource(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
         }
     ) {
         if (allFilesAccess) {
@@ -96,7 +96,7 @@ private fun PermissionsSetUp(
             visible = !uriPermissions,
             title = stringResource(R.string.warning_missingUriPermissions),
             content = {
-                Text(text = stringResource(R.string.info_mapsFolderPermission), color = MaterialTheme.colorScheme.onError)
+                Text(text = stringResource(R.string.info_uriPermission), color = MaterialTheme.colorScheme.onError)
                 Spacer(Modifier.height(8.dp))
                 Text(uriPath.replaceFirst(Environment.getExternalStorageDirectory().toString(), stringResource(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onError)
             }
@@ -115,7 +115,17 @@ private fun ErrorColumn(visible: Boolean = true, title: String, content: @Compos
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        Column(Modifier.fillMaxWidth().padding(8.dp).clip(AppComponentShape).clickable { onClick() }.background(MaterialTheme.colorScheme.error).padding(vertical = 8.dp, horizontal = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clip(AppComponentShape)
+                .clickableWithColor(MaterialTheme.colorScheme.onError) {
+                    onClick()
+                }
+                .background(MaterialTheme.colorScheme.error)
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+        ) {
             Text(text = title, color = MaterialTheme.colorScheme.onError, fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp))
             content()
             Text(text = stringResource(R.string.info_permissionsHint), color = MaterialTheme.colorScheme.onError, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
