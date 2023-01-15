@@ -59,10 +59,11 @@ class MapsState(
     }
 
     suspend fun renameChosenMap() {
+        val mapFile = chosenMap.value?.documentFile ?: return
         val output = mapsFile.findFile(getMapNameEdit())
         if (output != null && output.exists()) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
-            mapsFile.findFile(chosenMap.value!!.fileName)?.renameTo(getMapNameEdit())
+            mapFile.renameTo(getMapNameEdit())
             getMap(documentFile = mapsFile.findFile(getMapNameEdit()))
             topToastState.showToast(R.string.info_renamedMap, icon = Icons.Rounded.Edit)
             getImportedMaps()
@@ -70,11 +71,12 @@ class MapsState(
     }
 
     suspend fun importChosenMap(context: Context) {
-        var output = mapsFile.findFile(getMapNameEdit())
-        if (output != null && output.exists()) fileAlreadyExists()
+        val mapPath = chosenMap.value?.file?.absolutePath ?: return
+        var output = mapsFile.findFile(getMapNameEdit()) ?: return
+        if (output.exists()) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
-            output = mapsFile.createDirectory(getMapNameEdit())
-            if (output != null) ZipUtil.unzipMap(chosenMap.value!!.file!!.absolutePath, output!!, context)
+            output = mapsFile.createDirectory(getMapNameEdit()) ?: return@withContext
+            ZipUtil.unzipMap(mapPath, output, context)
             getMap(documentFile = output)
             topToastState.showToast(R.string.info_importedMap, icon = Icons.Rounded.Download)
             getImportedMaps()
@@ -82,11 +84,12 @@ class MapsState(
     }
 
     suspend fun exportChosenMap(context: Context) {
+        val mapFile = chosenMap.value?.documentFile ?: return
         val output = File("${mapsExportDir}/${getMapNameEdit()}.zip")
         if (output.exists()) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
-            if (!output.parentFile?.isDirectory!!) output.parentFile?.mkdirs()
-            ZipUtil.zipMap(mapsFile.findFile(chosenMap.value!!.fileName)!!, output.absolutePath, context)
+            if (output.parentFile?.isDirectory != true) output.parentFile?.mkdirs()
+            ZipUtil.zipMap(mapFile, output.absolutePath, context)
             getMap(file = output)
             topToastState.showToast(R.string.info_exportedMap, icon = Icons.Rounded.Upload)
             getExportedMaps()
@@ -94,12 +97,13 @@ class MapsState(
     }
 
     suspend fun deleteChosenMap() {
+        val map = chosenMap.value ?: return
         withContext(Dispatchers.IO) {
-            if (chosenMap.value!!.documentFile != null) {
-                mapsFile.findFile(chosenMap.value!!.fileName)?.delete()
+            if (map.documentFile != null) {
+                map.documentFile.delete()
                 getImportedMaps()
-            } else {
-                chosenMap.value!!.file!!.delete()
+            } else if (map.file != null) {
+                map.file.delete()
                 getExportedMaps()
             }
             getMap()
@@ -108,8 +112,9 @@ class MapsState(
     }
 
     fun getChosenMapPath(): String? {
-        return if (chosenMap.value?.file != null) chosenMap.value!!.file!!.absolutePath
-        else if (chosenMap.value?.documentFile != null) "$mapsDir/${chosenMap.value!!.name}"
+        val map = chosenMap.value ?: return null
+        return if (map.file != null) map.file.absolutePath
+        else if (map.documentFile != null) "$mapsDir/${map.documentFile.name}"
         else null
     }
 
