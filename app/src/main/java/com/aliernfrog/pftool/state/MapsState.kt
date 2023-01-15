@@ -13,8 +13,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.MapsListItem
-import com.aliernfrog.pftool.data.PfMap
+import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.ZipUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -39,20 +38,20 @@ class MapsState(
     private val exportedMapsFile = File(mapsExportDir)
 
     val mapDeleteDialogShown = mutableStateOf(false)
-    val importedMaps = mutableStateOf(emptyList<MapsListItem>())
-    val exportedMaps = mutableStateOf(emptyList<MapsListItem>())
-    val chosenMap: MutableState<PfMap?> = mutableStateOf(null)
+    val importedMaps = mutableStateOf(emptyList<PFMap>())
+    val exportedMaps = mutableStateOf(emptyList<PFMap>())
+    val chosenMap: MutableState<PFMap?> = mutableStateOf(null)
     val mapNameEdit = mutableStateOf("")
     val lastMapName = mutableStateOf("")
 
     fun getMap(file: File? = null, documentFile: DocumentFileCompat? = null) {
         if (file != null) {
             val mapName = if (file.isFile) file.nameWithoutExtension else file.name
-            if (file.exists()) setChosenMap(PfMap(mapName = mapName, fileName = file.name, filePath = file.absolutePath, isFromUri = false))
+            if (file.exists()) setChosenMap(PFMap(name = mapName, fileName = file.name, file = file))
             else fileDoesntExist()
         } else if (documentFile != null) {
             val mapName = if (documentFile.isFile()) FileUtil.removeExtension(documentFile.name) else documentFile.name
-            if (documentFile.exists()) setChosenMap(PfMap(mapName = mapName, fileName = documentFile.name, filePath = "$mapsDir/${documentFile.name}", isFromUri = true))
+            if (documentFile.exists()) setChosenMap(PFMap(name = mapName, fileName = documentFile.name, documentFile = documentFile))
             else fileDoesntExist()
         } else {
             setChosenMap(null)
@@ -75,7 +74,7 @@ class MapsState(
         if (output != null && output.exists()) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
             output = mapsFile.createDirectory(getMapNameEdit())
-            if (output != null) ZipUtil.unzipMap(chosenMap.value!!.filePath, output!!, context)
+            if (output != null) ZipUtil.unzipMap(chosenMap.value!!.file!!.absolutePath, output!!, context)
             getMap(documentFile = output)
             topToastState.showToast(R.string.info_importedMap, icon = Icons.Rounded.Download)
             getImportedMaps()
@@ -96,11 +95,11 @@ class MapsState(
 
     suspend fun deleteChosenMap() {
         withContext(Dispatchers.IO) {
-            if (chosenMap.value!!.isFromUri) {
+            if (chosenMap.value!!.documentFile != null) {
                 mapsFile.findFile(chosenMap.value!!.fileName)?.delete()
                 getImportedMaps()
             } else {
-                File(chosenMap.value!!.filePath).delete()
+                chosenMap.value!!.file!!.delete()
                 getExportedMaps()
             }
             getMap()
@@ -108,15 +107,21 @@ class MapsState(
         }
     }
 
-    fun getMapNameEdit(): String {
-        return mapNameEdit.value.ifBlank { chosenMap.value?.mapName.toString() }
+    fun getChosenMapPath(): String? {
+        return if (chosenMap.value?.file != null) chosenMap.value!!.file!!.absolutePath
+        else if (chosenMap.value?.documentFile != null) "$mapsDir/${chosenMap.value!!.name}"
+        else null
     }
 
-    private fun setChosenMap(map: PfMap?) {
+    fun getMapNameEdit(): String {
+        return mapNameEdit.value.ifBlank { chosenMap.value?.name.toString() }
+    }
+
+    private fun setChosenMap(map: PFMap?) {
         chosenMap.value = map
         if (map != null) {
-            mapNameEdit.value = map.mapName
-            lastMapName.value = map.mapName
+            mapNameEdit.value = map.name
+            lastMapName.value = map.name
         }
     }
 
@@ -139,7 +144,7 @@ class MapsState(
     suspend fun getImportedMaps() {
         withContext(Dispatchers.IO) {
             val files = mapsFile.listFiles().filter { it.isDirectory() }.sortedBy { it.name.lowercase() }
-            val maps = files.map { MapsListItem(it.name, it.name, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
+            val maps = files.map { PFMap(it.name, it.name, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
             importedMaps.value = maps
         }
     }
@@ -147,7 +152,7 @@ class MapsState(
     suspend fun getExportedMaps() {
         withContext(Dispatchers.IO) {
             val files = exportedMapsFile.listFiles()?.filter { it.isFile && it.name.lowercase().endsWith(".zip") }?.sortedBy { it.name.lowercase() }
-            val maps = files?.map { MapsListItem(it.nameWithoutExtension, it.name, it.lastModified(), it, null) }
+            val maps = files?.map { PFMap(it.nameWithoutExtension, it.name, it.lastModified(), it, null) }
             if (maps != null) exportedMaps.value = maps
         }
     }

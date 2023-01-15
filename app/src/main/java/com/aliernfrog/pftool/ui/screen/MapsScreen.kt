@@ -68,17 +68,18 @@ private fun MapActions(mapsState: MapsState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mapChosen = mapsState.chosenMap.value != null
-    val isImported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsDir) ?: false
-    val isExported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsExportDir) ?: false
-    val isZip = mapsState.chosenMap.value?.filePath?.lowercase()?.endsWith(".zip") ?: false
-    val mapNameUpdated = mapsState.getMapNameEdit() != mapsState.chosenMap.value?.mapName
+    val chosenMapPath = mapsState.getChosenMapPath()
+    val isImported = chosenMapPath?.startsWith(mapsState.mapsDir) ?: false
+    val isExported = chosenMapPath?.startsWith(mapsState.mapsExportDir) ?: false
+    val isZip = chosenMapPath?.lowercase()?.endsWith(".zip") ?: false
+    val mapNameUpdated = mapsState.getMapNameEdit() != mapsState.chosenMap.value?.name
     MapActionVisibility(visible = mapChosen) {
         Column {
             TextField(
                 value = mapsState.mapNameEdit.value,
                 onValueChange = { mapsState.mapNameEdit.value = it },
                 label = { Text(stringResource(R.string.manageMapsMapName)) },
-                placeholder = { Text(mapsState.chosenMap.value!!.mapName) },
+                placeholder = { Text(mapsState.chosenMap.value!!.name) },
                 leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
                 singleLine = true,
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -118,7 +119,7 @@ private fun MapActions(mapsState: MapsState) {
             title = stringResource(R.string.manageMapsShare),
             painter = rememberVectorPainter(Icons.Outlined.IosShare)
         ) {
-            FileUtil.shareFile(mapsState.chosenMap.value!!.filePath, "application/zip", context)
+            if (chosenMapPath != null) FileUtil.shareFile(chosenMapPath, "application/zip", context)
         }
     }
     MapActionVisibility(visible = mapChosen && (isImported || isExported)) {

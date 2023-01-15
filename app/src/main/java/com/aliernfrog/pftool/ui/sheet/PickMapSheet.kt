@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.MapsListItem
+import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.PickMapSheetSegments
 import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.ui.component.*
@@ -100,7 +100,7 @@ private fun Maps(mapsState: MapsState, showMapThumbnails: Boolean, onFilePick: (
 }
 
 @Composable
-private fun MapsList(maps: List<MapsListItem>, showMapThumbnails: Boolean, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
+private fun MapsList(maps: List<PFMap>, showMapThumbnails: Boolean, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     if (maps.isNotEmpty()) {
         maps.forEach { map ->
             MapButton(map, showMapThumbnail = showMapThumbnails) {
