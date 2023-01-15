@@ -36,7 +36,7 @@ private const val experimentalRequiredClicks = 10
 @Composable
 fun SettingsScreen(config: SharedPreferences, topToastState: TopToastState, settingsState: SettingsState) {
     Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
-        ThemeOptions(settingsState)
+        AppearanceOptions(settingsState)
         MapsOptions(settingsState)
         AboutPFTool(topToastState, settingsState)
         if (settingsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalSettings(config, settingsState)
@@ -44,27 +44,41 @@ fun SettingsScreen(config: SharedPreferences, topToastState: TopToastState, sett
 }
 
 @Composable
-private fun ThemeOptions(settingsState: SettingsState) {
+private fun AppearanceOptions(settingsState: SettingsState) {
     val themeOptions = listOf(
-        stringResource(R.string.settings_theme_system),
-        stringResource(R.string.settings_theme_light),
-        stringResource(R.string.settings_theme_dark)
+        stringResource(R.string.settings_appearance_theme_system),
+        stringResource(R.string.settings_appearance_theme_light),
+        stringResource(R.string.settings_appearance_theme_dark)
     )
-    ColumnDivider(title = stringResource(R.string.settings_theme), modifier = Modifier.animateContentSize()) {
-        RadioButtons(
-            options = themeOptions,
-            initialIndex = settingsState.theme.value
+    ColumnDivider(title = stringResource(R.string.settings_appearance)) {
+        ButtonShapeless(
+            title = stringResource(R.string.settings_appearance_theme),
+            description = stringResource(R.string.settings_appearance_theme_description),
+            expanded = settingsState.themeOptionsExpanded.value
         ) {
-            settingsState.setTheme(it)
+            settingsState.themeOptionsExpanded.value = !settingsState.themeOptionsExpanded.value
         }
-        if (settingsState.forceShowMaterialYouOption.value || supportsMaterialYou) {
-            Switch(
-                title = stringResource(R.string.settings_theme_materialYou),
-                description = stringResource(R.string.settings_theme_materialYou_description),
-                checked = settingsState.materialYou.value
-            ) {
-                settingsState.setMaterialYou(it)
+        AnimatedVisibility(
+            visible = settingsState.themeOptionsExpanded.value,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
+                RadioButtons(
+                    options = themeOptions,
+                    initialIndex = settingsState.theme.value,
+                    optionsRounded = true
+                ) {
+                    settingsState.setTheme(it)
+                }
             }
+        }
+        if (settingsState.forceShowMaterialYouOption.value || supportsMaterialYou) Switch(
+            title = stringResource(R.string.settings_appearance_materialYou),
+            description = stringResource(R.string.settings_appearance_materialYou_description),
+            checked = settingsState.materialYou.value
+        ) {
+            settingsState.setMaterialYou(it)
         }
     }
 }
