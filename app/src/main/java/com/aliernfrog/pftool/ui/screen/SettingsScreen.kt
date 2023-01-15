@@ -25,7 +25,7 @@ import com.aliernfrog.pftool.Link
 import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PrefEditItem
-import com.aliernfrog.pftool.state.OptionsState
+import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.ui.component.*
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
@@ -34,79 +34,79 @@ import com.aliernfrog.toptoast.state.TopToastState
 private const val experimentalRequiredClicks = 10
 
 @Composable
-fun OptionsScreen(config: SharedPreferences, topToastState: TopToastState, optionsState: OptionsState) {
-    Column(Modifier.fillMaxSize().verticalScroll(optionsState.scrollState)) {
-        ThemeOptions(optionsState)
-        MapsOptions(optionsState)
-        AboutPFTool(topToastState, optionsState)
-        if (optionsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalOptions(config, optionsState)
+fun SettingsScreen(config: SharedPreferences, topToastState: TopToastState, settingsState: SettingsState) {
+    Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
+        ThemeOptions(settingsState)
+        MapsOptions(settingsState)
+        AboutPFTool(topToastState, settingsState)
+        if (settingsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalSettings(config, settingsState)
     }
 }
 
 @Composable
-private fun ThemeOptions(optionsState: OptionsState) {
+private fun ThemeOptions(settingsState: SettingsState) {
     val themeOptions = listOf(
-        stringResource(R.string.optionsThemeSystem),
-        stringResource(R.string.optionsThemeLight),
-        stringResource(R.string.optionsThemeDark)
+        stringResource(R.string.settings_theme_system),
+        stringResource(R.string.settings_theme_light),
+        stringResource(R.string.settings_theme_dark)
     )
-    ColumnDivider(title = stringResource(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
+    ColumnDivider(title = stringResource(R.string.settings_theme), modifier = Modifier.animateContentSize()) {
         RadioButtons(
             options = themeOptions,
-            initialIndex = optionsState.theme.value
+            initialIndex = settingsState.theme.value
         ) {
-            optionsState.setTheme(it)
+            settingsState.setTheme(it)
         }
-        if (optionsState.forceShowMaterialYouOption.value || supportsMaterialYou) {
+        if (settingsState.forceShowMaterialYouOption.value || supportsMaterialYou) {
             Switch(
-                title = stringResource(R.string.optionsThemeMaterialYou),
-                description = stringResource(R.string.optionsThemeMaterialYouDescription),
-                checked = optionsState.materialYou.value
+                title = stringResource(R.string.settings_theme_materialYou),
+                description = stringResource(R.string.settings_theme_materialYou_description),
+                checked = settingsState.materialYou.value
             ) {
-                optionsState.setMaterialYou(it)
+                settingsState.setMaterialYou(it)
             }
         }
     }
 }
 
 @Composable
-private fun MapsOptions(optionsState: OptionsState) {
-    ColumnDivider(title = stringResource(R.string.optionsMaps)) {
+private fun MapsOptions(settingsState: SettingsState) {
+    ColumnDivider(title = stringResource(R.string.settings_maps)) {
         Switch(
-            title = stringResource(R.string.optionsMapsShowMapThumbnailsList),
-            description = stringResource(R.string.optionsMapsShowMapThumbnailsListDescription),
-            checked = optionsState.showMapThumbnailsInList.value
+            title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
+            description = stringResource(R.string.settings_maps_showMapThumbnailsInList_description),
+            checked = settingsState.showMapThumbnailsInList.value
         ) {
-            optionsState.setShowMapThumbnailsInList(it)
+            settingsState.setShowMapThumbnailsInList(it)
         }
     }
 }
 
 @Composable
-private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState) {
+private fun AboutPFTool(topToastState: TopToastState, settingsState: SettingsState) {
     val context = LocalContext.current
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
-    ColumnDivider(title = stringResource(R.string.optionsAbout), bottomDivider = false) {
-        ButtonShapeless(title = stringResource(R.string.optionsAboutVersion), description = version) {
-            optionsState.aboutClickCount.value++
-            if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(R.string.optionsExperimentalEnabled)
+    ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
+        ButtonShapeless(title = stringResource(R.string.settings_about_version), description = version) {
+            settingsState.aboutClickCount.value++
+            if (settingsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(R.string.settings_experimental_enabled)
         }
-        Links(optionsState)
+        Links(settingsState)
     }
 }
 
 @Composable
-private fun Links(optionsState: OptionsState) {
+private fun Links(settingsState: SettingsState) {
     val uriHandler = LocalUriHandler.current
     ButtonShapeless(
-        title = stringResource(R.string.optionsAboutLinks),
-        description = stringResource(R.string.optionsAboutLinksDescription),
-        expanded = optionsState.linksExpanded.value
+        title = stringResource(R.string.settings_about_links),
+        description = stringResource(R.string.settings_about_links_description),
+        expanded = settingsState.linksExpanded.value
     ) {
-        optionsState.linksExpanded.value = !optionsState.linksExpanded.value
+        settingsState.linksExpanded.value = !settingsState.linksExpanded.value
     }
     AnimatedVisibility(
-        visible = optionsState.linksExpanded.value,
+        visible = settingsState.linksExpanded.value,
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut()
     ) {
@@ -124,20 +124,20 @@ private fun Links(optionsState: OptionsState) {
 }
 
 @Composable
-private fun ExperimentalOptions(config: SharedPreferences, optionsState: OptionsState) {
+private fun ExperimentalSettings(config: SharedPreferences, settingsState: SettingsState) {
     val context = LocalContext.current
     val configEditor = config.edit()
     val prefEdits = listOf(
         PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
         PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
     )
-    ColumnDivider(title = stringResource(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
-        Text(stringResource(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
+    ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
+        Text(stringResource(R.string.settings_experimental_description), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
         Switch(
-            title = stringResource(R.string.optionsExperimentalShowMaterialYouOption),
-            checked = optionsState.forceShowMaterialYouOption.value,
+            title = stringResource(R.string.settings_experimental_forceShowMaterialYouOption),
+            checked = settingsState.forceShowMaterialYouOption.value,
             onCheckedChange = {
-                optionsState.forceShowMaterialYouOption.value = it
+                settingsState.forceShowMaterialYouOption.value = it
             }
         )
         prefEdits.forEach { prefEdit ->
@@ -153,7 +153,7 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
                 }
             )
         }
-        ButtonShapeless(title = stringResource(R.string.optionsExperimentalResetPrefs), contentColor = MaterialTheme.colorScheme.error) {
+        ButtonShapeless(title = stringResource(R.string.settings_experimental_resetPrefs), contentColor = MaterialTheme.colorScheme.error) {
             prefEdits.forEach {
                 configEditor.remove(it.key)
                 configEditor.apply()

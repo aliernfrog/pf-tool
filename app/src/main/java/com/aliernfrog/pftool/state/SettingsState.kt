@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.ui.theme.Theme
 
-class OptionsState(_config: SharedPreferences) {
+class SettingsState(_config: SharedPreferences) {
     private val config = _config
     val scrollState = ScrollState(0)
 

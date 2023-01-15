@@ -26,7 +26,7 @@ enum class Destination(
     val isSubScreen: Boolean = false
 ) {
     MAPS("maps", R.string.manageMaps, Icons.Default.PinDrop, Icons.Outlined.PinDrop),
-    OPTIONS("options", R.string.options, Icons.Default.Settings, Icons.Outlined.Settings)
+    SETTINGS("settings", R.string.settings, Icons.Default.Settings, Icons.Outlined.Settings)
 }
 
 @Composable
