@@ -12,7 +12,6 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,10 +52,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme, optionsState.materialYou.value) {
-                TopToastHost(
-                    state = topToastState,
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-                ) { BaseScaffold() }
+                BaseScaffold()
+                TopToastHost(topToastState)
                 SystemBars(darkTheme)
             }
         }
@@ -65,7 +62,6 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
-        val context = LocalContext.current
         val navController = rememberNavController()
         val screens = getScreens(navController)
         PFToolBaseScaffold(screens, navController) {
@@ -84,8 +80,8 @@ class MainActivity : ComponentActivity() {
             topToastState = topToastState,
             sheetState = pickMapSheetState,
             showMapThumbnails = optionsState.showMapThumbnailsInList.value,
-            onFilePick = { mapsState.getMap(file = it, context = context) },
-            onDocumentFilePick = { mapsState.getMap(documentFile = it, context = context) }
+            onFilePick = { mapsState.getMap(file = it) },
+            onDocumentFilePick = { mapsState.getMap(documentFile = it) }
         )
     }
 

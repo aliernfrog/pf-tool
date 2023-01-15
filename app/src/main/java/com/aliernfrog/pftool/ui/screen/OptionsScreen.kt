@@ -103,7 +103,7 @@ private fun AboutPFTool(topToastState: TopToastState, optionsState: OptionsState
     OptionsColumn(title = context.getString(R.string.optionsAbout), bottomDivider = false) {
         OptionsButton(title = context.getString(R.string.optionsAboutVersion), description = version) {
             optionsState.aboutClickCount.value++
-            if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(context.getString(R.string.optionsExperimentalEnabled))
+            if (optionsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(R.string.optionsExperimentalEnabled)
         }
         Links(optionsState)
     }
