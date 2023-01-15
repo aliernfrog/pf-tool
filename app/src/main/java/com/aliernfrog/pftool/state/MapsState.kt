@@ -65,7 +65,7 @@ class MapsState(
         else withContext(Dispatchers.IO) {
             mapFile.renameTo(getMapNameEdit())
             getMap(documentFile = mapsFile.findFile(getMapNameEdit()))
-            topToastState.showToast(R.string.info_renamedMap, icon = Icons.Rounded.Edit)
+            topToastState.showToast(R.string.maps_rename_done, icon = Icons.Rounded.Edit)
             getImportedMaps()
         }
     }
@@ -78,7 +78,7 @@ class MapsState(
             output = mapsFile.createDirectory(getMapNameEdit()) ?: return@withContext
             ZipUtil.unzipMap(mapPath, output, context)
             getMap(documentFile = output)
-            topToastState.showToast(R.string.info_importedMap, icon = Icons.Rounded.Download)
+            topToastState.showToast(R.string.maps_import_done, icon = Icons.Rounded.Download)
             getImportedMaps()
         }
     }
@@ -91,7 +91,7 @@ class MapsState(
             if (output.parentFile?.isDirectory != true) output.parentFile?.mkdirs()
             ZipUtil.zipMap(mapFile, output.absolutePath, context)
             getMap(file = output)
-            topToastState.showToast(R.string.info_exportedMap, icon = Icons.Rounded.Upload)
+            topToastState.showToast(R.string.maps_export_done, icon = Icons.Rounded.Upload)
             getExportedMaps()
         }
     }
@@ -107,7 +107,7 @@ class MapsState(
                 getExportedMaps()
             }
             getMap()
-            topToastState.showToast(R.string.info_deletedMap, icon = Icons.Rounded.Delete)
+            topToastState.showToast(R.string.maps_delete_done, icon = Icons.Rounded.Delete)
         }
     }
 
@@ -131,7 +131,7 @@ class MapsState(
     }
 
     private fun fileAlreadyExists() {
-        topToastState.showToast(R.string.warning_mapAlreadyExists, icon = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
+        topToastState.showToast(R.string.maps_alreadyExists, icon = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
     }
 
     private fun fileDoesntExist() {

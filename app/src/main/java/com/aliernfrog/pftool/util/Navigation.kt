@@ -15,7 +15,7 @@ import com.aliernfrog.pftool.data.Screen
 
 object NavigationConstant {
     val INITIAL_DESTINATION = Destination.MAPS.route
-    const val LABEL_FALLBACK_ID = R.string.manageMaps
+    const val LABEL_FALLBACK_ID = R.string.maps
 }
 
 enum class Destination(
@@ -25,7 +25,7 @@ enum class Destination(
     val vectorSelected: ImageVector? = null,
     val isSubScreen: Boolean = false
 ) {
-    MAPS("maps", R.string.manageMaps, Icons.Default.PinDrop, Icons.Outlined.PinDrop),
+    MAPS("maps", R.string.maps, Icons.Default.PinDrop, Icons.Outlined.PinDrop),
     SETTINGS("settings", R.string.settings, Icons.Default.Settings, Icons.Outlined.Settings)
 }
 
