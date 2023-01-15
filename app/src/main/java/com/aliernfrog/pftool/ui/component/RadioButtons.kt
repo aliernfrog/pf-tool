@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PFToolRadioButtons(
+fun RadioButtons(
     options: List<String>,
     initialIndex: Int = 0,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,

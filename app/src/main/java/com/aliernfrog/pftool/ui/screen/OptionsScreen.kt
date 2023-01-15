@@ -40,10 +40,10 @@ import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.state.OptionsState
-import com.aliernfrog.pftool.ui.composable.PFToolColumnRounded
-import com.aliernfrog.pftool.ui.composable.PFToolRadioButtons
-import com.aliernfrog.pftool.ui.composable.PFToolSwitch
-import com.aliernfrog.pftool.ui.composable.PFToolTextField
+import com.aliernfrog.pftool.ui.component.ColumnRounded
+import com.aliernfrog.pftool.ui.component.RadioButtons
+import com.aliernfrog.pftool.ui.component.Switch
+import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.state.TopToastState
@@ -68,14 +68,14 @@ private fun ThemeOptions(optionsState: OptionsState) {
         stringResource(R.string.optionsThemeDark)
     )
     OptionsColumn(title = stringResource(R.string.optionsTheme), modifier = Modifier.animateContentSize()) {
-        PFToolRadioButtons(
+        RadioButtons(
             options = themeOptions,
             initialIndex = optionsState.theme.value
         ) {
             optionsState.setTheme(it)
         }
         if (optionsState.forceShowMaterialYouOption.value || supportsMaterialYou) {
-            PFToolSwitch(
+            Switch(
                 title = stringResource(R.string.optionsThemeMaterialYou),
                 description = stringResource(R.string.optionsThemeMaterialYouDescription),
                 checked = optionsState.materialYou.value
@@ -89,7 +89,7 @@ private fun ThemeOptions(optionsState: OptionsState) {
 @Composable
 private fun MapsOptions(optionsState: OptionsState) {
     OptionsColumn(title = stringResource(R.string.optionsMaps)) {
-        PFToolSwitch(
+        Switch(
             title = stringResource(R.string.optionsMapsShowMapThumbnailsList),
             description = stringResource(R.string.optionsMapsShowMapThumbnailsListDescription),
             checked = optionsState.showMapThumbnailsInList.value
@@ -123,7 +123,7 @@ private fun Links(optionsState: OptionsState) {
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        PFToolColumnRounded(Modifier.padding(horizontal = 8.dp)) {
+        ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
             Link.socials.forEach {
                 val icon = when(it.url.split("/")[2]) {
                     "discord.gg" -> painterResource(id = R.drawable.discord)
@@ -146,7 +146,7 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
     )
     OptionsColumn(title = stringResource(R.string.optionsExperimental), bottomDivider = false, topDivider = true) {
         Text(stringResource(R.string.optionsExperimentalDescription), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
-        PFToolSwitch(
+        Switch(
             title = stringResource(R.string.optionsExperimentalShowMaterialYouOption),
             checked = optionsState.forceShowMaterialYouOption.value,
             onCheckedChange = {
@@ -155,7 +155,7 @@ private fun ExperimentalOptions(config: SharedPreferences, optionsState: Options
         )
         prefEdits.forEach { prefEdit ->
             val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
-            PFToolTextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
+            TextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 containerColor = MaterialTheme.colorScheme.surface,
                 rounded = false,
@@ -187,7 +187,7 @@ private fun OptionsColumn(title: String, modifier: Modifier = Modifier, bottomDi
 @Composable
 private fun OptionsButton(title: String, description: String? = null, painter: Painter? = null, rounded: Boolean = false, expanded: Boolean? = null, contentColor: Color = MaterialTheme.colorScheme.onSurface, onClick: () -> Unit) {
     val arrowRotation = animateFloatAsState(if (expanded == true) 0f else 180f)
-    Row(Modifier.fillMaxWidth().heightIn(44.dp).clip(if (rounded) PFToolComposableShape else RectangleShape).clickable(
+    Row(Modifier.fillMaxWidth().heightIn(44.dp).clip(if (rounded) AppComponentShape else RectangleShape).clickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = rememberRipple(color = contentColor),
         onClick = onClick

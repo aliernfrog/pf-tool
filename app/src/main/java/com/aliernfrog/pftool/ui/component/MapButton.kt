@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,12 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.aliernfrog.pftool.PFToolComposableShape
+import com.aliernfrog.pftool.AppComponentShape
 import com.aliernfrog.pftool.data.MapsListItem
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 
 @Composable
-fun PFToolMapButton(
+fun MapButton(
     map: MapsListItem,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -39,7 +39,7 @@ fun PFToolMapButton(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(PFToolComposableShape).background(containerColor).clickable(
+    Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(AppComponentShape).background(containerColor).clickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = rememberRipple(color = contentColor),
         onClick = onClick

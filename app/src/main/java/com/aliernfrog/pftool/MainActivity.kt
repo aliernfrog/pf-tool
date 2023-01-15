@@ -18,8 +18,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.state.OptionsState
-import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
-import com.aliernfrog.pftool.ui.composable.PFToolSheetBackHandler
+import com.aliernfrog.pftool.ui.component.BaseScaffold
+import com.aliernfrog.pftool.ui.component.SheetBackHandler
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.OptionsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
     private fun BaseScaffold() {
         val navController = rememberNavController()
         val screens = getScreens(navController)
-        PFToolBaseScaffold(screens, navController) {
+        BaseScaffold(screens, navController) {
             NavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
                 composable(route = Destination.OPTIONS.route) { OptionsScreen(config, topToastState, optionsState) }
             }
-            PFToolSheetBackHandler(pickMapSheetState)
+            SheetBackHandler(pickMapSheetState)
         }
         PickMapSheet(
             mapsState = mapsState,

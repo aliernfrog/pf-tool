@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -22,12 +22,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.PFToolComposableShape
+import com.aliernfrog.pftool.AppComponentShape
 import com.aliernfrog.pftool.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PFToolTextField(
+fun TextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -53,10 +53,10 @@ fun PFToolTextField(
     )
 ) {
     Box(contentAlignment = Alignment.CenterEnd) {
-        TextField(
+        androidx.compose.material3.TextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = modifier.fillMaxWidth().padding(all = 8.dp).clip(if (rounded) PFToolComposableShape else RectangleShape).animateContentSize(),
+            modifier = modifier.fillMaxWidth().padding(all = 8.dp).clip(if (rounded) AppComponentShape else RectangleShape).animateContentSize(),
             label = label,
             placeholder = placeholder,
             leadingIcon = leadingIcon?.let { { Icon(it, null) } },

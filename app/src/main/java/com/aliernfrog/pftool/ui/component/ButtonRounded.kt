@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,10 +10,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.pftool.PFToolComposableShape
+import com.aliernfrog.pftool.AppComponentShape
 
 @Composable
-fun PFToolButton(
+fun ButtonRounded(
     title: String,
     description: String? = null,
     painter: Painter? = null,
@@ -26,7 +26,7 @@ fun PFToolButton(
         onClick = onClick,
         modifier = Modifier.padding(8.dp).fillMaxWidth(),
         enabled = enabled,
-        shape = PFToolComposableShape,
+        shape = AppComponentShape,
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor),
         contentPadding = PaddingValues(8.dp)
     ) {
