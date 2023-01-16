@@ -149,7 +149,7 @@ class MapsState(
     suspend fun getImportedMaps() {
         withContext(Dispatchers.IO) {
             val files = mapsFile.listFiles().filter { it.isDirectory() }.sortedBy { it.name.lowercase() }
-            val maps = files.map { PFMap(it.name, it.name, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
+            val maps = files.map { PFMap(it.name, it.name, it.length, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
             importedMaps.value = maps
         }
     }
@@ -157,7 +157,7 @@ class MapsState(
     suspend fun getExportedMaps() {
         withContext(Dispatchers.IO) {
             val files = exportedMapsFile.listFiles()?.filter { it.isFile && it.name.lowercase().endsWith(".zip") }?.sortedBy { it.name.lowercase() }
-            val maps = files?.map { PFMap(it.nameWithoutExtension, it.name, it.lastModified(), it, null) }
+            val maps = files?.map { PFMap(it.nameWithoutExtension, it.name, it.length(), it.lastModified(), it, null) }
             if (maps != null) exportedMaps.value = maps
         }
     }
