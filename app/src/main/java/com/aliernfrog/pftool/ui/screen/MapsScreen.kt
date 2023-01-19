@@ -23,8 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.state.MapsState
-import com.aliernfrog.pftool.ui.composable.PFToolButton
-import com.aliernfrog.pftool.ui.composable.PFToolTextField
+import com.aliernfrog.pftool.ui.component.ButtonRounded
+import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.dialog.DeleteMapDialog
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ fun MapsScreen(mapsState: MapsState) {
         onDismissRequest = { mapsState.mapDeleteDialogShown.value = false },
         onConfirmDelete = {
             scope.launch {
-                mapsState.deleteChosenMap(context)
+                mapsState.deleteChosenMap()
                 mapsState.mapDeleteDialogShown.value = false
             }
         }
@@ -54,8 +54,8 @@ fun MapsScreen(mapsState: MapsState) {
 @Composable
 private fun PickMapFileButton(mapsState: MapsState) {
     val scope = rememberCoroutineScope()
-    PFToolButton(
-        title = stringResource(R.string.manageMapsPickMap),
+    ButtonRounded(
+        title = stringResource(R.string.maps_pickMap),
         painter = rememberVectorPainter(Icons.Rounded.PinDrop),
         containerColor = MaterialTheme.colorScheme.primary
     ) {
@@ -68,24 +68,25 @@ private fun MapActions(mapsState: MapsState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mapChosen = mapsState.chosenMap.value != null
-    val isImported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsDir) ?: false
-    val isExported = mapsState.chosenMap.value?.filePath?.startsWith(mapsState.mapsExportDir) ?: false
-    val isZip = mapsState.chosenMap.value?.filePath?.lowercase()?.endsWith(".zip") ?: false
-    val mapNameUpdated = mapsState.getMapNameEdit() != mapsState.chosenMap.value?.mapName
+    val chosenMapPath = mapsState.getChosenMapPath()
+    val isImported = chosenMapPath?.startsWith(mapsState.mapsDir) ?: false
+    val isExported = chosenMapPath?.startsWith(mapsState.mapsExportDir) ?: false
+    val isZip = chosenMapPath?.lowercase()?.endsWith(".zip") ?: false
+    val mapNameUpdated = mapsState.getMapNameEdit() != mapsState.chosenMap.value?.name
     MapActionVisibility(visible = mapChosen) {
         Column {
-            PFToolTextField(
+            TextField(
                 value = mapsState.mapNameEdit.value,
                 onValueChange = { mapsState.mapNameEdit.value = it },
-                label = { Text(stringResource(R.string.manageMapsMapName)) },
-                placeholder = { Text(mapsState.chosenMap.value!!.mapName) },
+                label = { Text(stringResource(R.string.maps_mapName)) },
+                placeholder = { Text(mapsState.chosenMap.value!!.name) },
                 leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
                 singleLine = true,
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
                 doneIconShown = isImported && mapNameUpdated,
                 onDone = {
-                    scope.launch { mapsState.renameChosenMap(context) }
+                    scope.launch { mapsState.renameChosenMap() }
                 }
             )
             Divider(
@@ -96,8 +97,8 @@ private fun MapActions(mapsState: MapsState) {
         }
     }
     MapActionVisibility(visible = mapChosen && !isImported) {
-        PFToolButton(
-            title = stringResource(R.string.manageMapsImport),
+        ButtonRounded(
+            title = stringResource(R.string.maps_import),
             painter = rememberVectorPainter(Icons.Rounded.Download),
             containerColor = MaterialTheme.colorScheme.primary
         ) {
@@ -105,25 +106,25 @@ private fun MapActions(mapsState: MapsState) {
         }
     }
     MapActionVisibility(visible = mapChosen && isImported) {
-        PFToolButton(
-            title = stringResource(R.string.manageMapsExport),
-            description = stringResource(R.string.manageMapsExportDescription),
+        ButtonRounded(
+            title = stringResource(R.string.maps_export),
+            description = stringResource(R.string.maps_export_description),
             painter = rememberVectorPainter(Icons.Rounded.Upload)
         ) {
             scope.launch { mapsState.exportChosenMap(context) }
         }
     }
     MapActionVisibility(visible = mapChosen && isZip) {
-        PFToolButton(
-            title = stringResource(R.string.manageMapsShare),
+        ButtonRounded(
+            title = stringResource(R.string.maps_share),
             painter = rememberVectorPainter(Icons.Outlined.IosShare)
         ) {
-            FileUtil.shareFile(mapsState.chosenMap.value!!.filePath, "application/zip", context)
+            if (chosenMapPath != null) FileUtil.shareFile(chosenMapPath, "application/zip", context)
         }
     }
     MapActionVisibility(visible = mapChosen && (isImported || isExported)) {
-        PFToolButton(
-            title = stringResource(R.string.manageMapsDelete),
+        ButtonRounded(
+            title = stringResource(R.string.maps_delete),
             painter = rememberVectorPainter(Icons.Rounded.Delete),
             containerColor = MaterialTheme.colorScheme.error
         ) {

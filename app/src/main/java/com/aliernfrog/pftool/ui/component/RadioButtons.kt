@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -13,16 +13,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.pftool.AppComponentShape
 
 @Composable
-fun PFToolRadioButtons(
+fun RadioButtons(
     options: List<String>,
     initialIndex: Int = 0,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     selectedColor: Color = MaterialTheme.colorScheme.primary,
+    optionsRounded: Boolean = false,
     onSelect: (Int) -> Unit
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
@@ -31,7 +35,7 @@ fun PFToolRadioButtons(
         val onSelected = { onOptionSelect(index); onSelect(index) }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().clickable { onSelected() }.padding(horizontal = 2.dp)
+            modifier = Modifier.fillMaxWidth().clip(if (optionsRounded) AppComponentShape else RectangleShape).clickable { onSelected() }.padding(horizontal = 2.dp)
         ) {
             RadioButton(
                 selected = selected,

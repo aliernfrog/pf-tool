@@ -1,7 +1,8 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -23,12 +24,12 @@ import com.aliernfrog.pftool.util.NavigationConstant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PFToolBaseScaffold(screens: List<Screen>, navController: NavController, content: @Composable (PaddingValues) -> Unit) {
+fun BaseScaffold(screens: List<Screen>, navController: NavController, content: @Composable (PaddingValues) -> Unit) {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentScreen = screens.find { it.route == currentRoute }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).imePadding(),
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface).nestedScroll(scrollBehavior.nestedScrollConnection).imePadding(),
         topBar = { TopBar(navController, scrollBehavior, currentScreen) },
         bottomBar = { BottomBar(navController, screens, currentScreen) },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)

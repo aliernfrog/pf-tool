@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.ExperimentalMaterialApi
@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun PFToolSheetBackHandler(vararg states: ModalBottomSheetState) {
+fun SheetBackHandler(vararg states: ModalBottomSheetState) {
     val scope = rememberCoroutineScope()
     states.forEach { state ->
         BackHandler(state.isVisible) {

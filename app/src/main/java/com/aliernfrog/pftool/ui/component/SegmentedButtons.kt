@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -16,10 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.PFToolComposableShape
+import com.aliernfrog.pftool.AppComponentShape
 
 @Composable
-fun PFToolSegmentedButtons(
+fun SegmentedButtons(
     options: List<String>,
     initialIndex: Int = 0,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
@@ -30,7 +30,7 @@ fun PFToolSegmentedButtons(
 ) {
     val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
     Crossfade(targetState = selectedIndex) {
-        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(PFToolComposableShape).background(backgroundColor).padding(3.dp)) {
+        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(AppComponentShape).background(backgroundColor).padding(3.dp)) {
             options.forEachIndexed { index, option ->
                 val selected = it == index
                 Text(
@@ -38,7 +38,7 @@ fun PFToolSegmentedButtons(
                     color = if (selected) selectedContentColor else contentColor,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().weight(1f).clip(PFToolComposableShape)
+                    modifier = Modifier.fillMaxSize().weight(1f).clip(AppComponentShape)
                         .clickable { onOptionSelect(index); onSelect(index) }
                         .background(if (selected) selectedBackgroundColor else backgroundColor)
                         .padding(8.dp)

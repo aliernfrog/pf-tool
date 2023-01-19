@@ -1,17 +1,13 @@
-package com.aliernfrog.pftool.ui.composable
+package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PinDrop
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -26,24 +22,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.aliernfrog.pftool.PFToolComposableShape
-import com.aliernfrog.pftool.data.MapsListItem
-import com.aliernfrog.pftool.util.staticutil.FileUtil
+import com.aliernfrog.pftool.AppComponentShape
+import com.aliernfrog.pftool.data.PFMap
+import com.aliernfrog.pftool.util.extension.clickableWithColor
+import com.aliernfrog.pftool.util.extension.getDetails
 
 @Composable
-fun PFToolMapButton(
-    map: MapsListItem,
+fun MapButton(
+    map: PFMap,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     showMapThumbnail: Boolean = true,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(PFToolComposableShape).background(containerColor).clickable(
-        interactionSource = remember { MutableInteractionSource() },
-        indication = rememberRipple(color = contentColor),
-        onClick = onClick
-    )) {
+    val mapDetails = map.getDetails(context)
+    Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(AppComponentShape).background(containerColor).clickableWithColor(contentColor) {
+        onClick()
+    }) {
         if (showMapThumbnail) AsyncImage(
             model = map.thumbnailPainterModel,
             contentDescription = null,
@@ -69,7 +65,7 @@ fun PFToolMapButton(
             )
             Column {
                 Text(text = map.name, color = contentColor, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Text(text = FileUtil.lastModifiedFromLong(map.lastModified, context), modifier = Modifier.alpha(0.9f), color = contentColor, fontSize = 12.sp)
+                if (mapDetails != null) Text(text = mapDetails, modifier = Modifier.alpha(0.9f), color = contentColor, fontSize = 12.sp)
             }
         }
     }

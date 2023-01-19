@@ -23,10 +23,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.MapsListItem
+import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.PickMapSheetSegments
 import com.aliernfrog.pftool.state.MapsState
-import com.aliernfrog.pftool.ui.composable.*
+import com.aliernfrog.pftool.ui.component.*
 import com.aliernfrog.pftool.util.staticutil.UriToFileUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
@@ -50,7 +50,7 @@ fun PickMapSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
     val hideSheet = { scope.launch { sheetState.hide() } }
-    PFToolModalBottomSheet(title = stringResource(R.string.manageMapsPickMap), sheetState, scrollState) {
+    ModalBottomSheet(title = stringResource(R.string.maps_pickMap), sheetState, scrollState) {
         PickFromDeviceButton(topToastState) { onFilePick(it); hideSheet() }
         Maps(mapsState, showMapThumbnails, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
     }
@@ -70,12 +70,12 @@ private fun PickFromDeviceButton(topToastState: TopToastState, onFilePick: (File
                 withContext(Dispatchers.IO) {
                     val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
                     if (convertedPath != null) onFilePick(File(convertedPath))
-                    else topToastState.showToast(context.getString(R.string.warning_couldntConvertToPath), iconImageVector = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
+                    else topToastState.showToast(R.string.warning_couldntConvertToPath, icon = Icons.Rounded.PriorityHigh, iconTintColor = TopToastColor.ERROR)
                 }
             }
         }
     }
-    PFToolButton(title = context.getString(R.string.manageMapsPickMapFromDevice), painter = rememberVectorPainter(Icons.Rounded.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
+    ButtonRounded(title = stringResource(R.string.maps_pickMap_device), painter = rememberVectorPainter(Icons.Rounded.Folder), containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
         val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
         launcher.launch(intent)
     }
@@ -84,9 +84,11 @@ private fun PickFromDeviceButton(topToastState: TopToastState, onFilePick: (File
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun Maps(mapsState: MapsState, showMapThumbnails: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
-    val context = LocalContext.current
     var selectedSegment by remember { mutableStateOf(PickMapSheetSegments.IMPORTED.ordinal) }
-    PFToolSegmentedButtons(options = listOf(context.getString(R.string.manageMapsPickMapYourMaps),context.getString(R.string.manageMapsPickMapExportedMaps))) {
+    SegmentedButtons(options = listOf(
+        stringResource(R.string.maps_pickMap_imported),
+        stringResource(R.string.maps_pickMap_exported)
+    )) {
         selectedSegment = it
     }
     AnimatedContent(targetState = selectedSegment) {
@@ -98,18 +100,23 @@ private fun Maps(mapsState: MapsState, showMapThumbnails: Boolean, onFilePick: (
 }
 
 @Composable
-private fun MapsList(maps: List<MapsListItem>, showMapThumbnails: Boolean, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
-    val context = LocalContext.current
+private fun MapsList(maps: List<PFMap>, showMapThumbnails: Boolean, exportedMaps: Boolean, onFilePick: (File) -> Unit, onDocumentFilePick: (DocumentFileCompat) -> Unit) {
     if (maps.isNotEmpty()) {
         maps.forEach { map ->
-            PFToolMapButton(map, showMapThumbnail = showMapThumbnails) {
+            MapButton(map, showMapThumbnail = showMapThumbnails) {
                 if (map.documentFile != null) onDocumentFilePick(map.documentFile)
                 else if (map.file != null) onFilePick(map.file)
             }
         }
     } else {
-        PFToolColumnRounded(color = MaterialTheme.colorScheme.error) {
-            Text(text = context.getString(if (exportedMaps) R.string.manageMapsPickMapNoExportedMaps else R.string.manageMapsPickMapNoImportedMaps), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onError)
+        ColumnRounded(color = MaterialTheme.colorScheme.error) {
+            Text(text = stringResource(
+                if (exportedMaps) R.string.maps_pickMap_noExportedMaps
+                else R.string.maps_pickMap_noImportedMaps
+            ),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onError
+            )
         }
     }
 }

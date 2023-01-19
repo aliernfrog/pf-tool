@@ -12,17 +12,16 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.state.MapsState
-import com.aliernfrog.pftool.state.OptionsState
-import com.aliernfrog.pftool.ui.composable.PFToolBaseScaffold
-import com.aliernfrog.pftool.ui.composable.PFToolSheetBackHandler
+import com.aliernfrog.pftool.state.SettingsState
+import com.aliernfrog.pftool.ui.component.BaseScaffold
+import com.aliernfrog.pftool.ui.component.SheetBackHandler
 import com.aliernfrog.pftool.ui.screen.MapsScreen
-import com.aliernfrog.pftool.ui.screen.OptionsScreen
+import com.aliernfrog.pftool.ui.screen.SettingsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
@@ -38,7 +37,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
     private lateinit var topToastState: TopToastState
-    private lateinit var optionsState: OptionsState
+    private lateinit var settingsState: SettingsState
     private lateinit var pickMapSheetState: ModalBottomSheetState
     private lateinit var mapsState: MapsState
 
@@ -47,16 +46,14 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState()
-        optionsState = OptionsState(config)
+        settingsState = SettingsState(config)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
             val darkTheme = getDarkThemePreference()
-            PFToolTheme(darkTheme, optionsState.materialYou.value) {
-                TopToastHost(
-                    state = topToastState,
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-                ) { BaseScaffold() }
+            PFToolTheme(darkTheme, settingsState.materialYou.value) {
+                BaseScaffold()
+                TopToastHost(topToastState)
                 SystemBars(darkTheme)
             }
         }
@@ -65,27 +62,26 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
-        val context = LocalContext.current
         val navController = rememberNavController()
         val screens = getScreens(navController)
-        PFToolBaseScaffold(screens, navController) {
+        BaseScaffold(screens, navController) {
             NavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
                 modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding()
             ) {
                 composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
-                composable(route = Destination.OPTIONS.route) { OptionsScreen(config, topToastState, optionsState) }
+                composable(route = Destination.SETTINGS.route) { SettingsScreen(config, topToastState, settingsState) }
             }
-            PFToolSheetBackHandler(pickMapSheetState)
+            SheetBackHandler(pickMapSheetState)
         }
         PickMapSheet(
             mapsState = mapsState,
             topToastState = topToastState,
             sheetState = pickMapSheetState,
-            showMapThumbnails = optionsState.showMapThumbnailsInList.value,
-            onFilePick = { mapsState.getMap(file = it, context = context) },
-            onDocumentFilePick = { mapsState.getMap(documentFile = it, context = context) }
+            showMapThumbnails = settingsState.showMapThumbnailsInList.value,
+            onFilePick = { mapsState.getMap(file = it) },
+            onDocumentFilePick = { mapsState.getMap(documentFile = it) }
         )
     }
 
@@ -98,7 +94,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun getDarkThemePreference(): Boolean {
-        return when(optionsState.theme.value) {
+        return when(settingsState.theme.value) {
             Theme.LIGHT.int -> false
             Theme.DARK.int -> true
             else -> isSystemInDarkTheme()

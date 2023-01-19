@@ -12,7 +12,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,12 +21,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.pftool.PFToolComposableShape
+import com.aliernfrog.pftool.AppComponentShape
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.util.extension.clickableWithColor
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
@@ -70,9 +71,9 @@ private fun PermissionsSetUp(
     })
     ErrorColumn(
         visible = !storagePermissions,
-        title = context.getString(R.string.warning_missingStoragePermissions),
+        title = stringResource(R.string.warning_missingStoragePermissions),
         content = {
-            Text(text = if (allFilesAccess) context.getString(R.string.info_allFilesPermission) else context.getString(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
+            Text(text = stringResource(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
         }
     ) {
         if (allFilesAccess) {
@@ -93,11 +94,11 @@ private fun PermissionsSetUp(
         })
         ErrorColumn(
             visible = !uriPermissions,
-            title = context.getString(R.string.warning_missingUriPermissions),
+            title = stringResource(R.string.warning_missingUriPermissions),
             content = {
-                Text(text = context.getString(R.string.info_mapsFolderPermission), color = MaterialTheme.colorScheme.onError)
+                Text(text = stringResource(R.string.info_uriPermission), color = MaterialTheme.colorScheme.onError)
                 Spacer(Modifier.height(8.dp))
-                Text(uriPath.replaceFirst(Environment.getExternalStorageDirectory().toString(), context.getString(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onError)
+                Text(uriPath.replaceFirst(Environment.getExternalStorageDirectory().toString(), stringResource(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onError)
             }
         ) {
             val treeId = uriPath.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
@@ -109,16 +110,25 @@ private fun PermissionsSetUp(
 
 @Composable
 private fun ErrorColumn(visible: Boolean = true, title: String, content: @Composable () -> Unit, onClick: () -> Unit) {
-    val context = LocalContext.current
     AnimatedVisibility(
         visible = visible,
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        Column(Modifier.fillMaxWidth().padding(8.dp).clip(PFToolComposableShape).clickable { onClick() }.background(MaterialTheme.colorScheme.error).padding(vertical = 8.dp, horizontal = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clip(AppComponentShape)
+                .clickableWithColor(MaterialTheme.colorScheme.onError) {
+                    onClick()
+                }
+                .background(MaterialTheme.colorScheme.error)
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+        ) {
             Text(text = title, color = MaterialTheme.colorScheme.onError, fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp))
             content()
-            Text(text = context.getString(R.string.info_permissionsHint), color = MaterialTheme.colorScheme.onError, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
+            Text(text = stringResource(R.string.info_permissionsHint), color = MaterialTheme.colorScheme.onError, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
         }
     }
 }
