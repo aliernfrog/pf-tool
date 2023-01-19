@@ -2,6 +2,7 @@ name: Release in Artifacts
 
 on:
   push:
+    branches:
   
   workflow_dispatch:
 
