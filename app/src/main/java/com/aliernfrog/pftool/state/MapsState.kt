@@ -149,7 +149,7 @@ class MapsState(
     suspend fun getImportedMaps() {
         withContext(Dispatchers.IO) {
             val files = mapsFile.listFiles().filter { it.isDirectory() }.sortedBy { it.name.lowercase() }
-            val maps = files.map { PFMap(it.name, it.name, it.length, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
+            val maps = files.map { PFMap(it.name, it.name, null, it.lastModified, null, it, it.findFile("Thumbnail.jpg")?.uri.toString()) }
             importedMaps.value = maps
         }
     }
