@@ -72,11 +72,11 @@ class MapsState(
 
     suspend fun importChosenMap(context: Context) {
         val mapPath = chosenMap.value?.file?.absolutePath ?: return
-        var output = mapsFile.findFile(getMapNameEdit()) ?: return
-        if (output.exists()) fileAlreadyExists()
+        var output = mapsFile.findFile(getMapNameEdit())
+        if (output != null && output.exists()) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
             output = mapsFile.createDirectory(getMapNameEdit()) ?: return@withContext
-            ZipUtil.unzipMap(mapPath, output, context)
+            ZipUtil.unzipMap(mapPath, output ?: return@withContext, context)
             getMap(documentFile = output)
             topToastState.showToast(R.string.maps_import_done, icon = Icons.Rounded.Download)
             getImportedMaps()
