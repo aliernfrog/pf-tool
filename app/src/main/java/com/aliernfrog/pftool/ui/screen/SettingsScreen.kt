@@ -30,13 +30,11 @@ import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.ui.component.*
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import com.aliernfrog.toptoast.state.TopToastState
 
-private const val experimentalRequiredClicks = 10
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(config: SharedPreferences, topToastState: TopToastState, settingsState: SettingsState) {
+fun SettingsScreen(config: SharedPreferences, settingsState: SettingsState) {
     AppScaffold(
         title = stringResource(R.string.settings),
         topAppBarState = settingsState.topAppBarState
@@ -44,8 +42,8 @@ fun SettingsScreen(config: SharedPreferences, topToastState: TopToastState, sett
         Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
             AppearanceOptions(settingsState)
             MapsOptions(settingsState)
-            AboutPFTool(topToastState, settingsState)
-            if (settingsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalSettings(config, settingsState)
+            AboutPFTool(settingsState)
+            if (settingsState.experimentalSettingsShown) ExperimentalSettings(config, settingsState)
         }
     }
 }
@@ -104,13 +102,12 @@ private fun MapsOptions(settingsState: SettingsState) {
 }
 
 @Composable
-private fun AboutPFTool(topToastState: TopToastState, settingsState: SettingsState) {
+private fun AboutPFTool(settingsState: SettingsState) {
     val context = LocalContext.current
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
     ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
         ButtonShapeless(title = stringResource(R.string.settings_about_version), description = version) {
-            settingsState.aboutClickCount.value++
-            if (settingsState.aboutClickCount.value == experimentalRequiredClicks) topToastState.showToast(R.string.settings_experimental_enabled)
+            settingsState.onAboutClick()
         }
         Links(settingsState)
     }

@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState()
-        settingsState = SettingsState(config)
+        settingsState = SettingsState(topToastState, config)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                 ) }
             ) {
                 composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
-                composable(route = Destination.SETTINGS.route) { SettingsScreen(config, topToastState, settingsState) }
+                composable(route = Destination.SETTINGS.route) { SettingsScreen(config, settingsState) }
             }
             SheetBackHandler(pickMapSheetState)
         }
