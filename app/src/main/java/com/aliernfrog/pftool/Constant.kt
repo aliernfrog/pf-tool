@@ -5,7 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.data.Social
 
-val AppRoundnessSize = 30.dp
+val AppRoundnessSize = 28.dp
 val AppComponentShape = RoundedCornerShape(AppRoundnessSize)
 
 object ConfigKey {
