@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
@@ -13,9 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.ui.component.BaseScaffold
@@ -31,6 +30,9 @@ import com.aliernfrog.pftool.util.NavigationConstant
 import com.aliernfrog.pftool.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.state.TopToastState
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -59,16 +61,35 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalLayoutApi::class)
+    @OptIn(ExperimentalLayoutApi::class, ExperimentalAnimationApi::class)
     @Composable
     private fun BaseScaffold() {
-        val navController = rememberNavController()
+        val navController = rememberAnimatedNavController()
         val screens = getScreens(navController)
         BaseScaffold(screens, navController) {
-            NavHost(
+            AnimatedNavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
-                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding()
+                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding(),
+                enterTransition = { scaleIn(
+                    animationSpec = tween(delayMillis = 100),
+                    initialScale = 0.95f
+                ) + fadeIn(
+                    animationSpec = tween(delayMillis = 100)
+                ) },
+                exitTransition = { fadeOut(tween(100)) },
+                popEnterTransition = { scaleIn(
+                    animationSpec = tween(delayMillis = 100),
+                    initialScale = 1.05f
+                ) + fadeIn(
+                    animationSpec = tween(delayMillis = 100)
+                ) },
+                popExitTransition = { scaleOut(
+                    animationSpec = tween(100),
+                    targetScale = 0.95f
+                ) + fadeOut(
+                    animationSpec = tween(100)
+                ) }
             ) {
                 composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
                 composable(route = Destination.SETTINGS.route) { SettingsScreen(config, topToastState, settingsState) }
