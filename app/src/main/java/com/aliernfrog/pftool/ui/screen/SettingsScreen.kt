@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,13 +34,19 @@ import com.aliernfrog.toptoast.state.TopToastState
 
 private const val experimentalRequiredClicks = 10
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(config: SharedPreferences, topToastState: TopToastState, settingsState: SettingsState) {
-    Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
-        AppearanceOptions(settingsState)
-        MapsOptions(settingsState)
-        AboutPFTool(topToastState, settingsState)
-        if (settingsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalSettings(config, settingsState)
+    AppScaffold(
+        title = stringResource(R.string.settings),
+        topAppBarState = settingsState.topAppBarState
+    ) {
+        Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
+            AppearanceOptions(settingsState)
+            MapsOptions(settingsState)
+            AboutPFTool(topToastState, settingsState)
+            if (settingsState.aboutClickCount.value >= experimentalRequiredClicks) ExperimentalSettings(config, settingsState)
+        }
     }
 }
 

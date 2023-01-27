@@ -20,8 +20,8 @@ import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.component.SheetBackHandler
 import com.aliernfrog.pftool.ui.screen.MapsScreen
-import com.aliernfrog.pftool.ui.screen.SettingsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
+import com.aliernfrog.pftool.ui.screen.SettingsScreen
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -65,12 +65,12 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun BaseScaffold() {
         val navController = rememberAnimatedNavController()
-        val screens = getScreens(navController)
+        val screens = getScreens()
         BaseScaffold(screens, navController) {
             AnimatedNavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
-                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).systemBarsPadding(),
+                modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
                 enterTransition = { scaleIn(
                     animationSpec = tween(delayMillis = 100),
                     initialScale = 0.95f
