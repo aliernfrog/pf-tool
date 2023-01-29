@@ -9,13 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.Screen
 
 object NavigationConstant {
     val INITIAL_DESTINATION = Destination.MAPS.route
-    const val LABEL_FALLBACK_ID = R.string.maps
 }
 
 enum class Destination(
@@ -30,9 +28,7 @@ enum class Destination(
 }
 
 @Composable
-fun getScreens(
-    navController: NavController
-): List<Screen> {
+fun getScreens(): List<Screen> {
     return Destination.values().map { destination ->
         Screen(
             route = destination.route,
@@ -40,8 +36,6 @@ fun getScreens(
             iconFilled = destination.vector?.let { rememberVectorPainter(it) },
             iconOutlined = destination.vectorSelected?.let { rememberVectorPainter(it) },
             isSubScreen = destination.isSubScreen
-        ) {
-            navController.navigateUp()
-        }
+        )
     }
 }

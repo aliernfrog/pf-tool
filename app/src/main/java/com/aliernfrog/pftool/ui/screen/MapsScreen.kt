@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,20 +24,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.state.MapsState
+import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ButtonRounded
 import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.dialog.DeleteMapDialog
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(mapsState: MapsState) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) { mapsState.getMapsFile(context); mapsState.getImportedMaps(); mapsState.getExportedMaps() }
-    Column(Modifier.fillMaxSize().verticalScroll(mapsState.scrollState)) {
-        PickMapFileButton(mapsState)
-        MapActions(mapsState)
+    AppScaffold(
+        title = stringResource(R.string.maps),
+        topAppBarState = mapsState.topAppBarState
+    ) {
+        Column(Modifier.fillMaxSize().verticalScroll(mapsState.scrollState)) {
+            PickMapFileButton(mapsState)
+            MapActions(mapsState)
+        }
     }
     if (mapsState.mapDeleteDialogShown.value) DeleteMapDialog(
         mapName = mapsState.lastMapName.value,
