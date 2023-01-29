@@ -13,9 +13,12 @@ object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
     const val KEY_APP_THEME = "appTheme"
     const val KEY_APP_MATERIAL_YOU = "materialYou"
+    const val KEY_APP_AUTO_UPDATES = "autoUpdates"
+    const val KEY_APP_UPDATES_URL = "updatesUrl"
     const val KEY_SHOW_MAP_THUMBNAILS_LIST = "showMapThumbnailsList"
     const val KEY_MAPS_DIR = "mapsDir"
     const val KEY_MAPS_EXPORT_DIR = "mapsExportDir"
+    const val DEFAULT_UPDATES_URL = "https://aliernfrog.github.io/pftool/latest.json"
     val DEFAULT_MAPS_DIR = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
     val DEFAULT_MAPS_EXPORT_DIR = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
 }

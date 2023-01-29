@@ -28,6 +28,7 @@ class SettingsState(
     val theme = mutableStateOf(config.getInt(ConfigKey.KEY_APP_THEME, Theme.SYSTEM.int))
     val materialYou = mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_MATERIAL_YOU, true))
     val showMapThumbnailsInList = mutableStateOf(config.getBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true))
+    val autoCheckUpdates = mutableStateOf(config.getBoolean(ConfigKey.KEY_APP_AUTO_UPDATES, true))
 
     val themeOptionsExpanded = mutableStateOf(false)
     val linksExpanded = mutableStateOf(false)
@@ -47,6 +48,11 @@ class SettingsState(
     fun setShowMapThumbnailsInList(newPreference: Boolean) {
         config.edit().putBoolean(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, newPreference).apply()
         showMapThumbnailsInList.value = newPreference
+    }
+
+    fun setAutoCheckUpdates(newPreference: Boolean) {
+        config.edit().putBoolean(ConfigKey.KEY_APP_AUTO_UPDATES, newPreference).apply()
+        autoCheckUpdates.value = newPreference
     }
 
     fun onAboutClick() {

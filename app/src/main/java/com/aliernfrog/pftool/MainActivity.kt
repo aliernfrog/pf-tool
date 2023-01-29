@@ -17,8 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.state.SettingsState
+import com.aliernfrog.pftool.state.UpdateState
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.component.SheetBackHandler
+import com.aliernfrog.pftool.ui.dialog.UpdateDialog
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.screen.SettingsScreen
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var config: SharedPreferences
     private lateinit var topToastState: TopToastState
     private lateinit var settingsState: SettingsState
+    private lateinit var updateState: UpdateState
     private lateinit var pickMapSheetState: ModalBottomSheetState
     private lateinit var mapsState: MapsState
 
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
         topToastState = TopToastState()
         settingsState = SettingsState(topToastState, config)
+        updateState = UpdateState(topToastState, config, applicationContext)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
@@ -92,7 +96,7 @@ class MainActivity : ComponentActivity() {
                 ) }
             ) {
                 composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
-                composable(route = Destination.SETTINGS.route) { SettingsScreen(config, settingsState) }
+                composable(route = Destination.SETTINGS.route) { SettingsScreen(config, updateState, settingsState) }
             }
             SheetBackHandler(pickMapSheetState)
         }
@@ -104,6 +108,7 @@ class MainActivity : ComponentActivity() {
             onFilePick = { mapsState.getMap(file = it) },
             onDocumentFilePick = { mapsState.getMap(documentFile = it) }
         )
+        UpdateDialog(updateState)
     }
 
     @Composable

@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -27,14 +29,16 @@ import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.state.SettingsState
+import com.aliernfrog.pftool.state.UpdateState
 import com.aliernfrog.pftool.ui.component.*
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(config: SharedPreferences, settingsState: SettingsState) {
+fun SettingsScreen(config: SharedPreferences, updateState: UpdateState, settingsState: SettingsState) {
     AppScaffold(
         title = stringResource(R.string.settings),
         topAppBarState = settingsState.topAppBarState
@@ -42,8 +46,8 @@ fun SettingsScreen(config: SharedPreferences, settingsState: SettingsState) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
             AppearanceOptions(settingsState)
             MapsOptions(settingsState)
-            AboutPFTool(settingsState)
-            if (settingsState.experimentalSettingsShown) ExperimentalSettings(config, settingsState)
+            AboutApp(updateState, settingsState)
+            if (settingsState.experimentalSettingsShown) ExperimentalSettings(config, updateState, settingsState)
         }
     }
 }
@@ -102,12 +106,30 @@ private fun MapsOptions(settingsState: SettingsState) {
 }
 
 @Composable
-private fun AboutPFTool(settingsState: SettingsState) {
+private fun AboutApp(updateState: UpdateState, settingsState: SettingsState) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
     ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
-        ButtonShapeless(title = stringResource(R.string.settings_about_version), description = version) {
+        ButtonWithComponent(
+            title = stringResource(R.string.settings_about_version),
+            description = version,
+            component = {
+                OutlinedButton(
+                    onClick = { scope.launch { updateState.checkUpdates(manuallyTriggered = true) } }
+                ) {
+                    Text(stringResource(R.string.settings_about_checkUpdates))
+                }
+            }
+        ) {
             settingsState.onAboutClick()
+        }
+        Switch(
+            title = stringResource(R.string.settings_about_autoCheckUpdates),
+            description = stringResource(R.string.settings_about_autoCheckUpdates_description),
+            checked = settingsState.autoCheckUpdates.value
+        ) {
+            settingsState.setAutoCheckUpdates(it)
         }
         Links(settingsState)
     }
@@ -142,10 +164,12 @@ private fun Links(settingsState: SettingsState) {
 }
 
 @Composable
-private fun ExperimentalSettings(config: SharedPreferences, settingsState: SettingsState) {
+private fun ExperimentalSettings(config: SharedPreferences, updateState: UpdateState, settingsState: SettingsState) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val configEditor = config.edit()
     val prefEdits = listOf(
+        PrefEditItem(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL),
         PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
         PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
     )
@@ -158,6 +182,9 @@ private fun ExperimentalSettings(config: SharedPreferences, settingsState: Setti
                 settingsState.forceShowMaterialYouOption.value = it
             }
         )
+        ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdateIgnoreVersion)) {
+            scope.launch { updateState.checkUpdates(manuallyTriggered = true, ignoreVersion = true) }
+        }
         prefEdits.forEach { prefEdit ->
             val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
             TextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
