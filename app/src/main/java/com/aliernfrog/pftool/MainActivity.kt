@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        topToastState = TopToastState()
+        topToastState = TopToastState(window.decorView)
         settingsState = SettingsState(topToastState, config)
         updateState = UpdateState(topToastState, config, applicationContext)
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
