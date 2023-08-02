@@ -15,6 +15,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.state.MapsState
 import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.state.UpdateState
@@ -32,9 +35,6 @@ import com.aliernfrog.pftool.util.NavigationConstant
 import com.aliernfrog.pftool.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.state.TopToastState
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -65,13 +65,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalLayoutApi::class, ExperimentalAnimationApi::class)
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     private fun BaseScaffold() {
-        val navController = rememberAnimatedNavController()
+        val navController = rememberNavController()
         val screens = getScreens()
         BaseScaffold(screens, navController) {
-            AnimatedNavHost(
+            NavHost(
                 navController = navController,
                 startDestination = NavigationConstant.INITIAL_DESTINATION,
                 modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
