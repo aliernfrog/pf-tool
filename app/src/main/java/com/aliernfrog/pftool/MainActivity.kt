@@ -13,6 +13,8 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
@@ -56,11 +58,16 @@ class MainActivity : ComponentActivity() {
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
+            val scope = rememberCoroutineScope()
             val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme, settingsState.materialYou.value) {
                 BaseScaffold()
                 TopToastHost(topToastState)
                 SystemBars(darkTheme)
+            }
+
+            LaunchedEffect(Unit) {
+                updateState.scope = scope
             }
         }
     }
