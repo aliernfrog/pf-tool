@@ -50,7 +50,7 @@ fun PickMapSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
     val hideSheet = { scope.launch { sheetState.hide() } }
-    ModalBottomSheet(title = stringResource(R.string.maps_pickMap), sheetState, scrollState) {
+    AppModalBottomSheet(title = stringResource(R.string.maps_pickMap), sheetState, scrollState) {
         PickFromDeviceButton(topToastState) { onFilePick(it); hideSheet() }
         Maps(mapsState, showMapThumbnails, { onFilePick(it); hideSheet() }, { onDocumentFilePick(it); hideSheet() })
     }

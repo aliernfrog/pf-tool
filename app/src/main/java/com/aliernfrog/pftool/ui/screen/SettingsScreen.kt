@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -163,6 +164,7 @@ private fun Links(settingsState: SettingsState) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ExperimentalSettings(config: SharedPreferences, updateState: UpdateState, settingsState: SettingsState) {
     val context = LocalContext.current
@@ -182,8 +184,16 @@ private fun ExperimentalSettings(config: SharedPreferences, updateState: UpdateS
                 settingsState.forceShowMaterialYouOption.value = it
             }
         )
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdateIgnoreVersion)) {
-            scope.launch { updateState.checkUpdates(manuallyTriggered = true, ignoreVersion = true) }
+        ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdates)) {
+            scope.launch { updateState.checkUpdates(ignoreVersion = true) }
+        }
+        ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateToast)) {
+            updateState.showUpdateToast()
+        }
+        ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateDialog)) {
+            scope.launch {
+                updateState.updateSheetState.show()
+            }
         }
         prefEdits.forEach { prefEdit ->
             val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }

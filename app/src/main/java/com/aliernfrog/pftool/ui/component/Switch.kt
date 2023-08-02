@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.pftool.AppComponentShape
+import com.aliernfrog.pftool.ui.theme.AppComponentShape
 
 @Composable
 fun Switch(

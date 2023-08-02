@@ -23,11 +23,11 @@ import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.state.UpdateState
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.component.SheetBackHandler
-import com.aliernfrog.pftool.ui.dialog.UpdateDialog
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.screen.SettingsScreen
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
+import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.util.Destination
@@ -108,7 +108,10 @@ class MainActivity : ComponentActivity() {
             onFilePick = { mapsState.getMap(file = it) },
             onDocumentFilePick = { mapsState.getMap(documentFile = it) }
         )
-        UpdateDialog(updateState)
+        UpdateSheet(
+            sheetState = updateState.updateSheetState,
+            latestVersionInfo = updateState.latestVersionInfo
+        )
     }
 
     @Composable

@@ -65,4 +65,5 @@ dependencies {
     implementation("com.github.aliernfrog:top-toast-compose:1.3.1")
     implementation("com.lazygeniouz:dfc:1.0.7")
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.github.jeziellago:compose-markdown:0.3.4")
 }

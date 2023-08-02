@@ -1,13 +1,10 @@
 package com.aliernfrog.pftool
 
 import android.os.Environment
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.data.Social
 
-val AppRoundnessSize = 28.dp
-val AppComponentShape = RoundedCornerShape(AppRoundnessSize)
 const val experimentalSettingsRequiredClicks = 10
+const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
@@ -26,6 +23,6 @@ object ConfigKey {
 object Link {
     val socials = listOf(
         Social("Polyfield Discord", "https://discord.gg/X6WzGpCgDJ"),
-        Social("PF Tool GitHub", "https://github.com/aliernfrog/pf-tool")
+        Social("PF Tool GitHub", githubRepoURL)
     )
 }
