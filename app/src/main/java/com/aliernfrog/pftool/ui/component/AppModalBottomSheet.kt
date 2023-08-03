@@ -82,7 +82,7 @@ fun BaseModalBottomSheet(
                 ) {
                     Box(
                         modifier = Modifier
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 22.dp)
                             .size(32.dp, 4.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
