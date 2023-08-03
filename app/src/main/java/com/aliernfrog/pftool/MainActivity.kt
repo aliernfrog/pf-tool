@@ -13,6 +13,8 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
@@ -23,11 +25,11 @@ import com.aliernfrog.pftool.state.SettingsState
 import com.aliernfrog.pftool.state.UpdateState
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.component.SheetBackHandler
-import com.aliernfrog.pftool.ui.dialog.UpdateDialog
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.screen.SettingsScreen
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
+import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.util.Destination
@@ -56,11 +58,16 @@ class MainActivity : ComponentActivity() {
         pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
         mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
+            val scope = rememberCoroutineScope()
             val darkTheme = getDarkThemePreference()
             PFToolTheme(darkTheme, settingsState.materialYou.value) {
                 BaseScaffold()
                 TopToastHost(topToastState)
                 SystemBars(darkTheme)
+            }
+
+            LaunchedEffect(Unit) {
+                updateState.scope = scope
             }
         }
     }
@@ -108,7 +115,10 @@ class MainActivity : ComponentActivity() {
             onFilePick = { mapsState.getMap(file = it) },
             onDocumentFilePick = { mapsState.getMap(documentFile = it) }
         )
-        UpdateDialog(updateState)
+        UpdateSheet(
+            sheetState = updateState.updateSheetState,
+            latestVersionInfo = updateState.latestVersionInfo
+        )
     }
 
     @Composable
