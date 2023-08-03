@@ -12,15 +12,16 @@ import java.io.File
 
 class FileUtil {
     companion object {
-        fun getFileName(path: String): String {
-            val split = path.split("/")
-            return split[split.size-1]
-        }
-
         fun removeExtension(path: String): String {
             val extensionIndex = path.lastIndexOf(".")
             if (extensionIndex == -1) return path
             return path.substring(0, extensionIndex)
+        }
+
+        fun getFileName(path: String, removeExtension: Boolean = false): String {
+            val name = path.split("/").last()
+            return if (removeExtension) removeExtension(name)
+            else name
         }
 
         fun lastModifiedFromLong(lastModified: Long, context: Context): String {

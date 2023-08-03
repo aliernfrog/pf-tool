@@ -1,6 +1,5 @@
-package com.aliernfrog.pftool
+package com.aliernfrog.pftool.ui.activity
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,22 +8,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowCompat
+import androidx.compose.ui.platform.LocalView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.aliernfrog.pftool.state.MapsState
-import com.aliernfrog.pftool.state.SettingsState
-import com.aliernfrog.pftool.state.UpdateState
 import com.aliernfrog.pftool.ui.component.BaseScaffold
-import com.aliernfrog.pftool.ui.component.SheetBackHandler
 import com.aliernfrog.pftool.ui.screen.MapsScreen
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.screen.SettingsScreen
@@ -32,49 +25,52 @@ import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
+import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationConstant
 import com.aliernfrog.pftool.util.getScreens
 import com.aliernfrog.toptoast.component.TopToastHost
-import com.aliernfrog.toptoast.state.TopToastState
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 class MainActivity : ComponentActivity() {
-    private lateinit var config: SharedPreferences
-    private lateinit var topToastState: TopToastState
-    private lateinit var settingsState: SettingsState
-    private lateinit var updateState: UpdateState
-    private lateinit var pickMapSheetState: ModalBottomSheetState
-    private lateinit var mapsState: MapsState
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        config = getSharedPreferences(ConfigKey.PREF_NAME, MODE_PRIVATE)
-        topToastState = TopToastState(window.decorView)
-        settingsState = SettingsState(topToastState, config)
-        updateState = UpdateState(topToastState, config, applicationContext)
-        pickMapSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-        mapsState = MapsState(topToastState, config, pickMapSheetState)
         setContent {
-            val scope = rememberCoroutineScope()
-            val darkTheme = getDarkThemePreference()
-            PFToolTheme(darkTheme, settingsState.materialYou.value) {
-                BaseScaffold()
-                TopToastHost(topToastState)
-                SystemBars(darkTheme)
-            }
+            AppContent()
+        }
+    }
 
-            LaunchedEffect(Unit) {
-                updateState.scope = scope
-            }
+    @Composable
+    private fun AppContent(
+        mainViewModel: MainViewModel = getViewModel()
+    ) {
+        val view = LocalView.current
+        val scope = rememberCoroutineScope()
+        val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme)
+        PFToolTheme(
+            darkTheme = useDarkTheme,
+            dynamicColors = mainViewModel.prefs.materialYou
+        ) {
+            BaseScaffold()
+            TopToastHost(mainViewModel.topToastState)
+        }
+
+        LaunchedEffect(Unit) {
+            mainViewModel.scope = scope
+            mainViewModel.topToastState.setComposeView(view)
+
+            if (mainViewModel.prefs.autoCheckUpdates) mainViewModel.checkUpdates()
         }
     }
 
     @OptIn(ExperimentalLayoutApi::class)
     @Composable
-    private fun BaseScaffold() {
+    private fun BaseScaffold(
+        mainViewModel: MainViewModel = getViewModel(),
+        mapsViewModel: MapsViewModel = getViewModel()
+    ) {
         val navController = rememberNavController()
         val screens = getScreens()
         BaseScaffold(screens, navController) {
@@ -102,35 +98,32 @@ class MainActivity : ComponentActivity() {
                     animationSpec = tween(100)
                 ) }
             ) {
-                composable(route = Destination.MAPS.route) { PermissionsScreen(mapsState.mapsDir) { MapsScreen(mapsState) } }
-                composable(route = Destination.SETTINGS.route) { SettingsScreen(config, updateState, settingsState) }
+                composable(route = Destination.MAPS.route) {
+                    PermissionsScreen(mapsViewModel.mapsDir) {
+                        MapsScreen()
+                    }
+                }
+                composable(route = Destination.SETTINGS.route) {
+                    SettingsScreen()
+                }
             }
-            SheetBackHandler(pickMapSheetState)
         }
         PickMapSheet(
-            mapsState = mapsState,
-            topToastState = topToastState,
-            sheetState = pickMapSheetState,
-            showMapThumbnails = settingsState.showMapThumbnailsInList.value,
-            onFilePick = { mapsState.getMap(file = it) },
-            onDocumentFilePick = { mapsState.getMap(documentFile = it) }
+            sheetState = mapsViewModel.pickMapSheetState,
+            onMapPick = {
+                mapsViewModel.chooseMap(it)
+                true
+            }
         )
         UpdateSheet(
-            sheetState = updateState.updateSheetState,
-            latestVersionInfo = updateState.latestVersionInfo
+            sheetState = mainViewModel.updateSheetState,
+            latestVersionInfo = mainViewModel.latestVersionInfo
         )
     }
 
     @Composable
-    private fun SystemBars(darkTheme: Boolean) {
-        val controller = rememberSystemUiController()
-        controller.systemBarsDarkContentEnabled = !darkTheme
-        controller.isNavigationBarContrastEnforced = false
-    }
-
-    @Composable
-    private fun getDarkThemePreference(): Boolean {
-        return when(settingsState.theme.value) {
+    private fun shouldUseDarkTheme(theme: Int): Boolean {
+        return when(theme) {
             Theme.LIGHT.int -> false
             Theme.DARK.int -> true
             else -> isSystemInDarkTheme()

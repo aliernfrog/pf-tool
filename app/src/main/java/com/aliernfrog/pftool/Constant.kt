@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool
 
 import android.os.Environment
+import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
 
 const val experimentalSettingsRequiredClicks = 10
@@ -20,9 +21,14 @@ object ConfigKey {
     val DEFAULT_MAPS_EXPORT_DIR = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
 }
 
-object Link {
+object SettingsConstant {
     val socials = listOf(
         Social("Polyfield Discord", "https://discord.gg/X6WzGpCgDJ"),
         Social("PF Tool GitHub", githubRepoURL)
+    )
+    val experimentalPrefOptions = listOf(
+        PrefEditItem(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL),
+        PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
+        PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
     )
 }
