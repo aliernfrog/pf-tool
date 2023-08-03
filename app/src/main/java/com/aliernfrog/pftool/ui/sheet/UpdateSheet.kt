@@ -4,10 +4,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -130,8 +132,9 @@ private fun Actions(
             Icon(
                 painter = rememberVectorPainter(Icons.Rounded.Update),
                 contentDescription = null,
-                modifier = Modifier.size(18.dp).padding(end = 8.dp)
+                modifier = Modifier.size(18.dp)
             )
+            Spacer(Modifier.width(8.dp))
             Text(stringResource(R.string.updates_update))
         }
     }
