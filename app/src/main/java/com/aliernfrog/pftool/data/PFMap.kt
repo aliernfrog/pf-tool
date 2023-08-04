@@ -21,5 +21,5 @@ data class PFMap(
         is DocumentFileCompat -> map.isFile()
         else -> false
     },
-    val isZip: Boolean = isFile && fileName.endsWith(".zip")
+    val isZip: Boolean = isFile && fileName.lowercase().endsWith(".zip")
 )
