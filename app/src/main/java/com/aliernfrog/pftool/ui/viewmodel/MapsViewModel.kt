@@ -179,7 +179,8 @@ class MapsViewModel(
                         fileSize = it.length,
                         lastModified = it.lastModified,
                         file = null,
-                        documentFile = it
+                        documentFile = it,
+                        thumbnailModel = it.findFile("Thumbnail.jpg")?.uri.toString()
                     )
                 }
         }

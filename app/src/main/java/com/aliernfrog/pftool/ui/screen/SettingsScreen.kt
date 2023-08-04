@@ -61,6 +61,7 @@ fun SettingsScreen(
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsViewModel.scrollState)) {
 
+            // Appearance options
             ColumnDivider(title = stringResource(R.string.settings_appearance)) {
                 ButtonShapeless(
                     title = stringResource(R.string.settings_appearance_theme),
@@ -97,6 +98,7 @@ fun SettingsScreen(
                 }
             }
 
+            // Maps options
             ColumnDivider(title = stringResource(R.string.settings_maps)) {
                 Switch(
                     title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
@@ -107,6 +109,7 @@ fun SettingsScreen(
                 }
             }
 
+            // About app
             ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
                 ButtonWithComponent(
                     title = stringResource(R.string.settings_about_version),
@@ -162,11 +165,12 @@ fun SettingsScreen(
                 }
             }
 
-            ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
+            // Experimental settings
+            if (settingsViewModel.experimentalSettingsShown) ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
                 Text(stringResource(R.string.settings_experimental_description), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
                 Switch(
                     title = stringResource(R.string.settings_experimental_showMaterialYouOption),
-                    checked = settingsViewModel.experimentalSettingsShown,
+                    checked = settingsViewModel.showMaterialYouOption,
                     onCheckedChange = {
                         settingsViewModel.showMaterialYouOption = it
                     }
