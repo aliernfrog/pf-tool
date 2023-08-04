@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,12 +45,12 @@ fun MapButton(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val mapDetails = map.getDetails(context)
+    val mapDetails = remember { map.getDetails(context) }
     Box(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(AppComponentShape).background(containerColor).clickableWithColor(contentColor) {
         onClick()
     }) {
         if (showMapThumbnail) AsyncImage(
-            model = map.thumbnailPainterModel,
+            model = map.thumbnailModel,
             contentDescription = null,
             modifier = Modifier.fillMaxWidth(),
             placeholder = ColorPainter(containerColor),

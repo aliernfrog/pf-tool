@@ -1,15 +1,17 @@
 package com.aliernfrog.pftool.ui.screen
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -24,202 +26,194 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.ConfigKey
-import com.aliernfrog.pftool.Link
-import com.aliernfrog.pftool.MainActivity
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.PrefEditItem
-import com.aliernfrog.pftool.state.SettingsState
-import com.aliernfrog.pftool.state.UpdateState
-import com.aliernfrog.pftool.ui.component.*
-import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
+import com.aliernfrog.pftool.SettingsConstant
+import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.ButtonShapeless
+import com.aliernfrog.pftool.ui.component.ButtonWithComponent
+import com.aliernfrog.pftool.ui.component.ColumnDivider
+import com.aliernfrog.pftool.ui.component.ColumnRounded
+import com.aliernfrog.pftool.ui.component.RadioButtons
+import com.aliernfrog.pftool.ui.component.Switch
+import com.aliernfrog.pftool.ui.component.TextField
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
+import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun SettingsScreen(config: SharedPreferences, updateState: UpdateState, settingsState: SettingsState) {
+fun SettingsScreen(
+    mainViewModel: MainViewModel = getViewModel(),
+    settingsViewModel: SettingsViewModel = getViewModel()
+) {
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val scope = rememberCoroutineScope()
+    val version = "${mainViewModel.applicationVersionName} (${mainViewModel.applicationVersionCode})"
+
     AppScaffold(
         title = stringResource(R.string.settings),
-        topAppBarState = settingsState.topAppBarState
+        topAppBarState = settingsViewModel.topAppBarState
     ) {
-        Column(Modifier.fillMaxSize().verticalScroll(settingsState.scrollState)) {
-            AppearanceOptions(settingsState)
-            MapsOptions(settingsState)
-            AboutApp(updateState, settingsState)
-            if (settingsState.experimentalSettingsShown) ExperimentalSettings(config, updateState, settingsState)
-        }
-    }
-}
+        Column(Modifier.fillMaxSize().verticalScroll(settingsViewModel.scrollState)) {
 
-@Composable
-private fun AppearanceOptions(settingsState: SettingsState) {
-    val themeOptions = listOf(
-        stringResource(R.string.settings_appearance_theme_system),
-        stringResource(R.string.settings_appearance_theme_light),
-        stringResource(R.string.settings_appearance_theme_dark)
-    )
-    ColumnDivider(title = stringResource(R.string.settings_appearance)) {
-        ButtonShapeless(
-            title = stringResource(R.string.settings_appearance_theme),
-            description = stringResource(R.string.settings_appearance_theme_description),
-            expanded = settingsState.themeOptionsExpanded.value
-        ) {
-            settingsState.themeOptionsExpanded.value = !settingsState.themeOptionsExpanded.value
-        }
-        AnimatedVisibility(
-            visible = settingsState.themeOptionsExpanded.value,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
-        ) {
-            ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-                RadioButtons(
-                    options = themeOptions,
-                    initialIndex = settingsState.theme.value,
-                    optionsRounded = true
+            // Appearance options
+            ColumnDivider(title = stringResource(R.string.settings_appearance)) {
+                ButtonShapeless(
+                    title = stringResource(R.string.settings_appearance_theme),
+                    description = stringResource(R.string.settings_appearance_theme_description),
+                    expanded = settingsViewModel.themeOptionsExpanded
                 ) {
-                    settingsState.setTheme(it)
+                    settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
                 }
-            }
-        }
-        if (settingsState.forceShowMaterialYouOption.value || supportsMaterialYou) Switch(
-            title = stringResource(R.string.settings_appearance_materialYou),
-            description = stringResource(R.string.settings_appearance_materialYou_description),
-            checked = settingsState.materialYou.value
-        ) {
-            settingsState.setMaterialYou(it)
-        }
-    }
-}
-
-@Composable
-private fun MapsOptions(settingsState: SettingsState) {
-    ColumnDivider(title = stringResource(R.string.settings_maps)) {
-        Switch(
-            title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
-            description = stringResource(R.string.settings_maps_showMapThumbnailsInList_description),
-            checked = settingsState.showMapThumbnailsInList.value
-        ) {
-            settingsState.setShowMapThumbnailsInList(it)
-        }
-    }
-}
-
-@Composable
-private fun AboutApp(updateState: UpdateState, settingsState: SettingsState) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val version = "v${GeneralUtil.getAppVersionName(context)} (${GeneralUtil.getAppVersionCode(context)})"
-    ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
-        ButtonWithComponent(
-            title = stringResource(R.string.settings_about_version),
-            description = version,
-            component = {
-                OutlinedButton(
-                    onClick = { scope.launch { updateState.checkUpdates(manuallyTriggered = true) } }
+                AnimatedVisibility(
+                    visible = settingsViewModel.themeOptionsExpanded,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
                 ) {
-                    Text(stringResource(R.string.settings_about_checkUpdates))
+                    ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
+                        RadioButtons(
+                            options = listOf(
+                                stringResource(R.string.settings_appearance_theme_system),
+                                stringResource(R.string.settings_appearance_theme_light),
+                                stringResource(R.string.settings_appearance_theme_dark)
+                            ),
+                            initialIndex = settingsViewModel.prefs.theme,
+                            optionsRounded = true
+                        ) {
+                            settingsViewModel.prefs.theme = it
+                        }
+                    }
+                }
+                if (settingsViewModel.showMaterialYouOption) Switch(
+                    title = stringResource(R.string.settings_appearance_materialYou),
+                    description = stringResource(R.string.settings_appearance_materialYou_description),
+                    checked = settingsViewModel.prefs.materialYou
+                ) {
+                    settingsViewModel.prefs.materialYou = it
                 }
             }
-        ) {
-            settingsState.onAboutClick()
-        }
-        Switch(
-            title = stringResource(R.string.settings_about_autoCheckUpdates),
-            description = stringResource(R.string.settings_about_autoCheckUpdates_description),
-            checked = settingsState.autoCheckUpdates.value
-        ) {
-            settingsState.setAutoCheckUpdates(it)
-        }
-        Links(settingsState)
-    }
-}
 
-@Composable
-private fun Links(settingsState: SettingsState) {
-    val uriHandler = LocalUriHandler.current
-    ButtonShapeless(
-        title = stringResource(R.string.settings_about_links),
-        description = stringResource(R.string.settings_about_links_description),
-        expanded = settingsState.linksExpanded.value
-    ) {
-        settingsState.linksExpanded.value = !settingsState.linksExpanded.value
-    }
-    AnimatedVisibility(
-        visible = settingsState.linksExpanded.value,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut()
-    ) {
-        ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-            Link.socials.forEach {
-                val icon = when(it.url.split("/")[2]) {
-                    "discord.gg" -> painterResource(id = R.drawable.discord)
-                    "github.com" -> painterResource(id = R.drawable.github)
-                    else -> null
+            // Maps options
+            ColumnDivider(title = stringResource(R.string.settings_maps)) {
+                Switch(
+                    title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
+                    description = stringResource(R.string.settings_maps_showMapThumbnailsInList_description),
+                    checked = settingsViewModel.prefs.showMapThumbnailsInList
+                ) {
+                    settingsViewModel.prefs.showMapThumbnailsInList = it
                 }
-                ButtonShapeless(title = it.name, painter = icon, rounded = true, contentColor = MaterialTheme.colorScheme.onSurfaceVariant) { uriHandler.openUri(it.url) }
             }
-        }
-    }
-}
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun ExperimentalSettings(config: SharedPreferences, updateState: UpdateState, settingsState: SettingsState) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val configEditor = config.edit()
-    val prefEdits = listOf(
-        PrefEditItem(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL),
-        PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
-        PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
-    )
-    ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
-        Text(stringResource(R.string.settings_experimental_description), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
-        Switch(
-            title = stringResource(R.string.settings_experimental_forceShowMaterialYouOption),
-            checked = settingsState.forceShowMaterialYouOption.value,
-            onCheckedChange = {
-                settingsState.forceShowMaterialYouOption.value = it
-            }
-        )
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdates)) {
-            scope.launch { updateState.checkUpdates(ignoreVersion = true) }
-        }
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateToast)) {
-            updateState.showUpdateToast()
-        }
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateDialog)) {
-            scope.launch {
-                updateState.updateSheetState.show()
-            }
-        }
-        prefEdits.forEach { prefEdit ->
-            val value = remember { mutableStateOf(config.getString(prefEdit.key, prefEdit.default)!!) }
-            TextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                containerColor = MaterialTheme.colorScheme.surface,
-                rounded = false,
-                onValueChange = {
-                    value.value = it
-                    configEditor.putString(prefEdit.key, it)
-                    configEditor.apply()
+            // About app
+            ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
+                ButtonWithComponent(
+                    title = stringResource(R.string.settings_about_version),
+                    description = version,
+                    component = {
+                        OutlinedButton(
+                            onClick = { scope.launch {
+                                mainViewModel.checkUpdates(manuallyTriggered = true)
+                            } }
+                        ) {
+                            Text(stringResource(R.string.settings_about_checkUpdates))
+                        }
+                    }
+                ) {
+                    settingsViewModel.onAboutClick()
                 }
-            )
-        }
-        ButtonShapeless(title = stringResource(R.string.settings_experimental_resetPrefs), contentColor = MaterialTheme.colorScheme.error) {
-            prefEdits.forEach {
-                configEditor.remove(it.key)
-                configEditor.apply()
+                Switch(
+                    title = stringResource(R.string.settings_about_autoCheckUpdates),
+                    description = stringResource(R.string.settings_about_autoCheckUpdates_description),
+                    checked = settingsViewModel.prefs.autoCheckUpdates
+                ) {
+                    settingsViewModel.prefs.autoCheckUpdates = it
+                }
+                ButtonShapeless(
+                    title = stringResource(R.string.settings_about_links),
+                    description = stringResource(R.string.settings_about_links_description),
+                    expanded = settingsViewModel.linksExpanded
+                ) {
+                    settingsViewModel.linksExpanded = !settingsViewModel.linksExpanded
+                }
+                AnimatedVisibility(
+                    visible = settingsViewModel.linksExpanded,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
+                        SettingsConstant.socials.forEach {
+                            val icon = when(it.url.split("/")[2]) {
+                                "discord.gg" -> painterResource(id = R.drawable.discord)
+                                "github.com" -> painterResource(id = R.drawable.github)
+                                else -> null
+                            }
+                            ButtonShapeless(
+                                title = it.name,
+                                painter = icon,
+                                rounded = true,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            ) {
+                                uriHandler.openUri(it.url)
+                            }
+                        }
+                    }
+                }
             }
-            restartApp(context)
+
+            // Experimental settings
+            if (settingsViewModel.experimentalSettingsShown) ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
+                Text(stringResource(R.string.settings_experimental_description), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
+                Switch(
+                    title = stringResource(R.string.settings_experimental_showMaterialYouOption),
+                    checked = settingsViewModel.showMaterialYouOption,
+                    onCheckedChange = {
+                        settingsViewModel.showMaterialYouOption = it
+                    }
+                )
+                ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdates)) {
+                    scope.launch {
+                        mainViewModel.checkUpdates(ignoreVersion = true)
+                    }
+                }
+                ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateToast)) {
+                    mainViewModel.showUpdateToast()
+                }
+                ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateDialog)) {
+                    scope.launch {
+                        mainViewModel.updateSheetState.show()
+                    }
+                }
+                SettingsConstant.experimentalPrefOptions.forEach { prefEdit ->
+                    val value = remember { mutableStateOf(
+                        settingsViewModel.prefs.getString(prefEdit.key, prefEdit.default)
+                    ) }
+                    TextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        rounded = false,
+                        onValueChange = {
+                            value.value = it
+                            settingsViewModel.prefs.putString(prefEdit.key, it)
+                        }
+                    )
+                }
+                ButtonShapeless(title = stringResource(R.string.settings_experimental_resetPrefs), contentColor = MaterialTheme.colorScheme.error) {
+                    SettingsConstant.experimentalPrefOptions.forEach {
+                        settingsViewModel.prefs.putString(it.key, it.default)
+                    }
+                    settingsViewModel.topToastState.showToast(
+                        text = R.string.settings_experimental_resetPrefsDone,
+                        icon = Icons.Rounded.Done,
+                        type = TopToastType.ANDROID
+                    )
+                    GeneralUtil.restartApp(context)
+                }
+            }
         }
     }
-}
-
-private fun restartApp(context: Context) {
-    val intent = Intent(context, MainActivity::class.java)
-    (context as Activity).finish()
-    context.startActivity(intent)
 }

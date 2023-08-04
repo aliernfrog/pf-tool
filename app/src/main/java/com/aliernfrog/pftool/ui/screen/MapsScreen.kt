@@ -1,6 +1,11 @@
 package com.aliernfrog.pftool.ui.screen
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,7 +13,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.IosShare
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.PinDrop
+import androidx.compose.material.icons.rounded.TextFields
+import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -23,78 +33,90 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.state.MapsState
+import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ButtonRounded
 import com.aliernfrog.pftool.ui.component.TextField
-import com.aliernfrog.pftool.ui.dialog.DeleteMapDialog
+import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
+import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun MapsScreen(mapsState: MapsState) {
+fun MapsScreen(
+    mapsViewModel: MapsViewModel = getViewModel()
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    LaunchedEffect(Unit) { mapsState.getMapsFile(context); mapsState.getImportedMaps(); mapsState.getExportedMaps() }
+    LaunchedEffect(Unit) {
+        mapsViewModel.getMapsFile(context)
+        mapsViewModel.fetchAllMaps()
+    }
     AppScaffold(
         title = stringResource(R.string.maps),
-        topAppBarState = mapsState.topAppBarState
+        topAppBarState = mapsViewModel.topAppBarState
     ) {
-        Column(Modifier.fillMaxSize().verticalScroll(mapsState.scrollState)) {
-            PickMapFileButton(mapsState)
-            MapActions(mapsState)
+        Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
+            PickMapFileButton { scope.launch {
+                mapsViewModel.pickMapSheetState.show()
+            }}
+            MapActions()
         }
     }
-    if (mapsState.mapDeleteDialogShown.value) DeleteMapDialog(
-        mapName = mapsState.lastMapName.value,
-        onDismissRequest = { mapsState.mapDeleteDialogShown.value = false },
-        onConfirmDelete = {
-            scope.launch {
-                mapsState.deleteChosenMap()
-                mapsState.mapDeleteDialogShown.value = false
+    mapsViewModel.pendingMapDelete?.let {
+        DeleteConfirmationDialog(
+            name = it,
+            onDismissRequest = { mapsViewModel.pendingMapDelete = null },
+            onConfirmDelete = {
+                scope.launch {
+                    mapsViewModel.deleteChosenMap()
+                    mapsViewModel.pendingMapDelete = null
+                }
             }
-        }
-    )
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PickMapFileButton(mapsState: MapsState) {
-    val scope = rememberCoroutineScope()
+private fun PickMapFileButton(
+    onClick: () -> Unit
+) {
     ButtonRounded(
         title = stringResource(R.string.maps_pickMap),
         painter = rememberVectorPainter(Icons.Rounded.PinDrop),
-        containerColor = MaterialTheme.colorScheme.primary
-    ) {
-        scope.launch { mapsState.pickMapSheetState.show() }
-    }
+        containerColor = MaterialTheme.colorScheme.primary,
+        onClick = onClick
+    )
 }
 
 @Composable
-private fun MapActions(mapsState: MapsState) {
+private fun MapActions(
+    mapsViewModel: MapsViewModel = getViewModel()
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val mapChosen = mapsState.chosenMap.value != null
-    val chosenMapPath = mapsState.getChosenMapPath()
-    val isImported = chosenMapPath?.startsWith(mapsState.mapsDir) ?: false
-    val isExported = chosenMapPath?.startsWith(mapsState.mapsExportDir) ?: false
-    val isZip = chosenMapPath?.lowercase()?.endsWith(".zip") ?: false
-    val mapNameUpdated = mapsState.getMapNameEdit() != mapsState.chosenMap.value?.name
+    val mapChosen = mapsViewModel.chosenMap != null
+    val isImported = mapsViewModel.chosenMap?.importedState == MapImportedState.IMPORTED
+    val isExported = mapsViewModel.chosenMap?.importedState == MapImportedState.EXPORTED
+    val isZip = mapsViewModel.chosenMap?.isZip == true
+    val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
     MapActionVisibility(visible = mapChosen) {
         Column {
             TextField(
-                value = mapsState.mapNameEdit.value,
-                onValueChange = { mapsState.mapNameEdit.value = it },
+                value = mapsViewModel.mapNameEdit,
+                onValueChange = { mapsViewModel.mapNameEdit = it },
                 label = { Text(stringResource(R.string.maps_mapName)) },
-                placeholder = { Text(mapsState.chosenMap.value!!.name) },
+                placeholder = { Text(mapsViewModel.chosenMap?.name ?: "") },
                 leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
                 singleLine = true,
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
                 doneIconShown = isImported && mapNameUpdated,
                 onDone = {
-                    scope.launch { mapsState.renameChosenMap() }
+                    scope.launch { mapsViewModel.renameChosenMap() }
                 }
             )
             Divider(
@@ -110,7 +132,7 @@ private fun MapActions(mapsState: MapsState) {
             painter = rememberVectorPainter(Icons.Rounded.Download),
             containerColor = MaterialTheme.colorScheme.primary
         ) {
-            scope.launch { mapsState.importChosenMap(context) }
+            scope.launch { mapsViewModel.importChosenMap(context) }
         }
     }
     MapActionVisibility(visible = mapChosen && isImported) {
@@ -119,7 +141,7 @@ private fun MapActions(mapsState: MapsState) {
             description = stringResource(R.string.maps_export_description),
             painter = rememberVectorPainter(Icons.Rounded.Upload)
         ) {
-            scope.launch { mapsState.exportChosenMap(context) }
+            scope.launch { mapsViewModel.exportChosenMap(context) }
         }
     }
     MapActionVisibility(visible = mapChosen && isZip) {
@@ -127,7 +149,9 @@ private fun MapActions(mapsState: MapsState) {
             title = stringResource(R.string.maps_share),
             painter = rememberVectorPainter(Icons.Outlined.IosShare)
         ) {
-            if (chosenMapPath != null) FileUtil.shareFile(chosenMapPath, "application/zip", context)
+            val path = mapsViewModel.chosenMap?.resolvePath(mapsViewModel.mapsDir)
+            if (isZip && path != null)
+                FileUtil.shareFile(path, "application/zip", context)
         }
     }
     MapActionVisibility(visible = mapChosen && (isImported || isExported)) {
@@ -136,7 +160,7 @@ private fun MapActions(mapsState: MapsState) {
             painter = rememberVectorPainter(Icons.Rounded.Delete),
             containerColor = MaterialTheme.colorScheme.error
         ) {
-            mapsState.mapDeleteDialogShown.value = true
+            mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap?.name
         }
     }
 }
