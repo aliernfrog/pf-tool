@@ -101,7 +101,7 @@ private fun MapActions(
     val mapChosen = mapsViewModel.chosenMap != null
     val isImported = mapsViewModel.chosenMap?.importedState == MapImportedState.IMPORTED
     val isExported = mapsViewModel.chosenMap?.importedState == MapImportedState.EXPORTED
-    val isZip = mapsViewModel.chosenMap?.fileName?.lowercase()?.endsWith(".zip") ?: false
+    val isZip = mapsViewModel.chosenMap?.isZip == true
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
     MapActionVisibility(visible = mapChosen) {
         Column {
