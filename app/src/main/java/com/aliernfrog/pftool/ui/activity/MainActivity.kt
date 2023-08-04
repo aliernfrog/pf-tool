@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalView
+import com.aliernfrog.pftool.ui.component.InsetsObserver
 import com.aliernfrog.pftool.ui.screen.MainScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
             darkTheme = useDarkTheme,
             dynamicColors = mainViewModel.prefs.materialYou
         ) {
+            InsetsObserver()
             MainScreen()
             TopToastHost(mainViewModel.topToastState)
         }
