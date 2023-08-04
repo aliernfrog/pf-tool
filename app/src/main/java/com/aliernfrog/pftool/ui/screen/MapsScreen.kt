@@ -101,6 +101,7 @@ private fun MapActions(
     val mapChosen = mapsViewModel.chosenMap != null
     val isImported = mapsViewModel.chosenMap?.importedState == MapImportedState.IMPORTED
     val isExported = mapsViewModel.chosenMap?.importedState == MapImportedState.EXPORTED
+    val isZip = mapsViewModel.chosenMap?.fileName?.lowercase()?.endsWith(".zip") ?: false
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
     MapActionVisibility(visible = mapChosen) {
         Column {
@@ -143,13 +144,13 @@ private fun MapActions(
             scope.launch { mapsViewModel.exportChosenMap(context) }
         }
     }
-    MapActionVisibility(visible = mapChosen && isExported) {
+    MapActionVisibility(visible = mapChosen && isZip) {
         ButtonRounded(
             title = stringResource(R.string.maps_share),
             painter = rememberVectorPainter(Icons.Outlined.IosShare)
         ) {
             val path = mapsViewModel.chosenMap?.resolvePath(mapsViewModel.mapsDir)
-            if (isExported && path != null)
+            if (isZip && path != null)
                 FileUtil.shareFile(path, "application/zip", context)
         }
     }
