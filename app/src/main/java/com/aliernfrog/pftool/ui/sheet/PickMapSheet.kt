@@ -104,7 +104,7 @@ private fun PickFromDeviceButton(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("text/plain")
+        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
         launcher.launch(intent)
     }
 }

@@ -68,7 +68,7 @@ class MapsViewModel(
             }
             is DocumentFileCompat -> {
                 if (map.exists()) mapToChoose = PFMap(
-                    name = FileUtil.removeExtension(map.name),
+                    name = if (map.isFile()) FileUtil.removeExtension(map.name) else map.name,
                     fileName = map.name,
                     documentFile = map
                 ) else fileDoesntExist()
@@ -170,11 +170,11 @@ class MapsViewModel(
     private suspend fun fetchImportedMaps() {
         withContext(Dispatchers.IO) {
             importedMaps = mapsFile.listFiles()
-                .filter { it.isFile() && it.name.lowercase().endsWith(".txt") }
+                .filter { it.isDirectory() }
                 .sortedBy { it.name.lowercase() }
                 .map {
                     PFMap(
-                        name = FileUtil.removeExtension(it.name),
+                        name = it.name,
                         fileName = it.name,
                         fileSize = it.length,
                         lastModified = it.lastModified,
@@ -188,7 +188,7 @@ class MapsViewModel(
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
             exportedMaps = (exportedMapsFile.listFiles() ?: emptyArray())
-                .filter { it.isFile && it.name.lowercase().endsWith(".txt") }
+                .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
                 .sortedBy { it.name.lowercase() }
                 .map {
                     PFMap(
