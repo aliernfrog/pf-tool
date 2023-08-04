@@ -16,5 +16,10 @@ data class PFMap(
     val importedState: MapImportedState = MapImportedState.NONE,
     val thumbnailModel: Any? = null,
     var details: MutableState<String?> = mutableStateOf(null),
-    val isZip: Boolean = fileName.lowercase().endsWith(".zip")
+    val isFile: Boolean = when (val map = file ?: documentFile) {
+        is File -> map.isFile
+        is DocumentFileCompat -> map.isFile()
+        else -> false
+    },
+    val isZip: Boolean = isFile && fileName.endsWith(".zip")
 )
