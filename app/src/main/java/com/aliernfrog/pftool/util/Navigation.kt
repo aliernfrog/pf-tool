@@ -5,12 +5,8 @@ import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.Screen
 
 object NavigationConstant {
     val INITIAL_DESTINATION = Destination.MAPS.route
@@ -19,23 +15,21 @@ object NavigationConstant {
 enum class Destination(
     val route: String,
     val labelId: Int,
-    val vector: ImageVector? = null,
-    val vectorSelected: ImageVector? = null,
+    val vectorFilled: ImageVector? = null,
+    val vectorOutlined: ImageVector? = null,
     val isSubScreen: Boolean = false
 ) {
-    MAPS("maps", R.string.maps, Icons.Default.PinDrop, Icons.Outlined.PinDrop),
-    SETTINGS("settings", R.string.settings, Icons.Default.Settings, Icons.Outlined.Settings)
-}
+    MAPS(
+        route = "maps",
+        labelId = R.string.maps,
+        vectorFilled = Icons.Default.PinDrop,
+        vectorOutlined = Icons.Outlined.PinDrop
+    ),
 
-@Composable
-fun getScreens(): List<Screen> {
-    return Destination.values().map { destination ->
-        Screen(
-            route = destination.route,
-            name = stringResource(destination.labelId),
-            iconFilled = destination.vector?.let { rememberVectorPainter(it) },
-            iconOutlined = destination.vectorSelected?.let { rememberVectorPainter(it) },
-            isSubScreen = destination.isSubScreen
-        )
-    }
+    SETTINGS(
+        route = "settings",
+        labelId = R.string.settings,
+        vectorFilled = Icons.Default.Settings,
+        vectorOutlined = Icons.Outlined.Settings
+    )
 }
