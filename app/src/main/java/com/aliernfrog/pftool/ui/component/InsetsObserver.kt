@@ -32,7 +32,7 @@ fun InsetsObserver(
 
     )
 
-    // IME (Ignored on Android 10 and below) & navigation bar
+    // Navigation bar
     Spacer(
         modifier = Modifier
             .onSizeChanged {
