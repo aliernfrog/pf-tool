@@ -14,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aliernfrog.pftool.ui.theme.AppBottomSheetShape
 import com.aliernfrog.pftool.ui.viewmodel.InsetsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -37,6 +39,7 @@ fun AppModalBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(AppBottomSheetShape)
                 .verticalScroll(sheetScrollState)
                 .padding(bottom = bottomPadding)
         ) {
