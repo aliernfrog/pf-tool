@@ -5,14 +5,19 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -20,14 +25,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
+import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ButtonShapeless
 import com.aliernfrog.pftool.ui.component.ButtonWithComponent
@@ -36,6 +44,7 @@ import com.aliernfrog.pftool.ui.component.ColumnRounded
 import com.aliernfrog.pftool.ui.component.RadioButtons
 import com.aliernfrog.pftool.ui.component.Switch
 import com.aliernfrog.pftool.ui.component.TextField
+import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
@@ -44,7 +53,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     mainViewModel: MainViewModel = getViewModel(),
@@ -60,7 +69,14 @@ fun SettingsScreen(
         topAppBarState = settingsViewModel.topAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsViewModel.scrollState)) {
-
+            UpdateNotification(
+                isShown = mainViewModel.updateAvailable,
+                versionInfo = mainViewModel.latestVersionInfo,
+                onClick = { scope.launch {
+                    mainViewModel.updateSheetState.show()
+                } }
+            )
+            
             // Appearance options
             ColumnDivider(title = stringResource(R.string.settings_appearance)) {
                 ButtonShapeless(
@@ -212,6 +228,48 @@ fun SettingsScreen(
                         type = TopToastType.ANDROID
                     )
                     GeneralUtil.restartApp(context)
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UpdateNotification(
+    isShown: Boolean,
+    versionInfo: ReleaseInfo,
+    onClick: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = isShown,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
+        Card(
+            onClick = onClick,
+            shape = AppComponentShape,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Update, contentDescription = null)
+                Column {
+                    Text(
+                        text = stringResource(R.string.settings_updateNotification_updateAvailable)
+                            .replace("{VERSION}", versionInfo.versionName),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_updateNotification_description),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }

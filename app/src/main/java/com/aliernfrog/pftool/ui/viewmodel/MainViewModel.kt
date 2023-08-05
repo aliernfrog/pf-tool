@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.githubRepoURL
+import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -50,6 +51,9 @@ class MainViewModel(
     ))
         private set
 
+    var updateAvailable by mutableStateOf(false)
+        private set
+
     suspend fun checkUpdates(
         manuallyTriggered: Boolean = false,
         ignoreVersion: Boolean = false
@@ -66,8 +70,8 @@ class MainViewModel(
                 val latestBody = if (json.has("bodyMarkdown")) json.getString("bodyMarkdown") else json.getString("body")
                 val latestHtmlUrl = json.getString("htmlUrl")
                 val latestDownload = json.getString("downloadUrl")
-                val isUpToDate = !ignoreVersion && latestVersionCode <= applicationVersionCode
-                if (!isUpToDate) {
+                updateAvailable = ignoreVersion || latestVersionCode > applicationVersionCode
+                if (updateAvailable) {
                     latestVersionInfo = ReleaseInfo(
                         versionName = latestVersionName,
                         preRelease = latestIsPreRelease,
@@ -75,9 +79,11 @@ class MainViewModel(
                         htmlUrl = latestHtmlUrl,
                         downloadLink = latestDownload
                     )
-                    if (!manuallyTriggered) showUpdateToast()
-                    else coroutineScope {
-                        updateSheetState.show()
+                    if (manuallyTriggered) coroutineScope {
+                        //updateSheetState.show()
+                    } else {
+                        showUpdateToast()
+                        Destination.SETTINGS.hasNotification.value = true
                     }
                 } else {
                     if (manuallyTriggered) topToastState.showToast(
