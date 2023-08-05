@@ -8,4 +8,6 @@ val viewModelModule = module {
     singleOf(::MainViewModel)
     singleOf(::SettingsViewModel)
     singleOf(::MapsViewModel)
+
+    singleOf(::InsetsViewModel)
 }

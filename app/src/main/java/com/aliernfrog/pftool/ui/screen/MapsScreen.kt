@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.rounded.Delete
@@ -38,13 +37,14 @@ import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ButtonRounded
 import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
+import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(
     mapsViewModel: MapsViewModel = getViewModel()
@@ -66,6 +66,7 @@ fun MapsScreen(
             MapActions()
         }
     }
+
     mapsViewModel.pendingMapDelete?.let {
         DeleteConfirmationDialog(
             name = it,
@@ -78,6 +79,14 @@ fun MapsScreen(
             }
         )
     }
+
+    PickMapSheet(
+        sheetState = mapsViewModel.pickMapSheetState,
+        onMapPick = {
+            mapsViewModel.chooseMap(it)
+            true
+        }
+    )
 }
 
 @Composable
