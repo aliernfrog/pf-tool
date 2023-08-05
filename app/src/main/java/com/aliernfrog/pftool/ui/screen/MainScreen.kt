@@ -17,7 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.component.BaseScaffold
-import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -25,9 +24,10 @@ import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationConstant
 import org.koin.androidx.compose.getViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    mainViewModel: MainViewModel = getViewModel(),
     mapsViewModel: MapsViewModel = getViewModel()
 ) {
     val navController = rememberNavController()
@@ -68,22 +68,7 @@ fun MainScreen(
             }
         }
     }
-    ModalBottomSheets()
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ModalBottomSheets(
-    mainViewModel: MainViewModel = getViewModel(),
-    mapsViewModel: MapsViewModel = getViewModel()
-) {
-    PickMapSheet(
-        sheetState = mapsViewModel.pickMapSheetState,
-        onMapPick = {
-            mapsViewModel.chooseMap(it)
-            true
-        }
-    )
     UpdateSheet(
         sheetState = mainViewModel.updateSheetState,
         latestVersionInfo = mainViewModel.latestVersionInfo
