@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
 
@@ -17,7 +19,8 @@ enum class Destination(
     val labelId: Int,
     val vectorFilled: ImageVector? = null,
     val vectorOutlined: ImageVector? = null,
-    val isSubScreen: Boolean = false
+    val isSubScreen: Boolean = false,
+    var hasNotification: MutableState<Boolean> = mutableStateOf(false)
 ) {
     MAPS(
         route = "maps",

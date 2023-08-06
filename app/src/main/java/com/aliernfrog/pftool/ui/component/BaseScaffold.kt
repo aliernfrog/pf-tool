@@ -11,16 +11,19 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -54,8 +57,14 @@ fun BaseScaffold(navController: NavController, content: @Composable (PaddingValu
         )
         content(paddingValues)
     }
+
+    LaunchedEffect(currentDestination) {
+        if (currentDestination?.hasNotification?.value == true)
+            currentDestination.hasNotification.value = false
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomBar(
     navController: NavController,
@@ -73,11 +82,16 @@ private fun BottomBar(
                 NavigationBarItem(
                     selected = selected,
                     icon = {
-                        Icon(
-                            painter = rememberVectorPainter(if (selected) it.vectorFilled!! else it.vectorOutlined!!),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
+                        BadgedBox(
+                            badge = {
+                                if (it.hasNotification.value) Badge()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (selected) it.vectorFilled!! else it.vectorOutlined!!,
+                                contentDescription = null
+                            )
+                        }
                     },
                     label = { Text(stringResource(it.labelId)) },
                     onClick = {
