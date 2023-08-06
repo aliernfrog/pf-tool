@@ -80,7 +80,7 @@ class MainViewModel(
                         downloadLink = latestDownload
                     )
                     if (manuallyTriggered) coroutineScope {
-                        //updateSheetState.show()
+                        updateSheetState.show()
                     } else {
                         showUpdateToast()
                         Destination.SETTINGS.hasNotification.value = true
