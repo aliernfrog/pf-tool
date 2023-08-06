@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -27,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -37,6 +40,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.ButtonShapeless
 import com.aliernfrog.pftool.ui.component.ButtonWithComponent
 import com.aliernfrog.pftool.ui.component.ColumnDivider
@@ -131,13 +135,12 @@ fun SettingsScreen(
                     title = stringResource(R.string.settings_about_version),
                     description = version,
                     component = {
-                        OutlinedButton(
-                            onClick = { scope.launch {
-                                mainViewModel.checkUpdates(manuallyTriggered = true)
-                            } }
-                        ) {
-                            Text(stringResource(R.string.settings_about_checkUpdates))
-                        }
+                        UpdateButton(
+                            updateAvailable = mainViewModel.updateAvailable
+                        ) { updateAvailable -> scope.launch {
+                            if (updateAvailable) mainViewModel.updateSheetState.show()
+                            else mainViewModel.checkUpdates(manuallyTriggered = true)
+                        } }
                     }
                 ) {
                     settingsViewModel.onAboutClick()
@@ -272,6 +275,28 @@ fun UpdateNotification(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun UpdateButton(
+    updateAvailable: Boolean,
+    onClick: (updateAvailable: Boolean) -> Unit
+) {
+    AnimatedContent(updateAvailable) {
+        if (it) FilledTonalButton(
+            onClick = { onClick(true) }
+        ) {
+            ButtonIcon(
+                rememberVectorPainter(Icons.Default.Update)
+            )
+            Text(stringResource(R.string.settings_about_update))
+        }
+        else OutlinedButton(
+            onClick = { onClick(false) }
+        ) {
+            Text(stringResource(R.string.settings_about_checkUpdates))
         }
     }
 }

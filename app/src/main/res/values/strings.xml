@@ -51,6 +51,7 @@
     <string name="settings_maps_showMapThumbnailsInList_description">Know which map you are on</string>
     <string name="settings_about">About</string>
     <string name="settings_about_version">PF Tool version</string>
+    <string name="settings_about_update">Update</string>
     <string name="settings_about_checkUpdates">Check for updates</string>
     <string name="settings_about_autoCheckUpdates">Check for updates automatically</string>
     <string name="settings_about_autoCheckUpdates_description">Check for PF Tool updates automatically on launch</string>

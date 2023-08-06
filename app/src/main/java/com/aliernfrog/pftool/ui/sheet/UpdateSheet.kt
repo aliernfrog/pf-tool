@@ -5,16 +5,14 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Update
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
+import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
@@ -140,12 +139,9 @@ private fun Actions(
         Button(
             onClick = onUpdateClick
         ) {
-            Icon(
-                painter = rememberVectorPainter(Icons.Rounded.Update),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp)
+            ButtonIcon(
+                painter = rememberVectorPainter(Icons.Default.Update)
             )
-            Spacer(Modifier.width(8.dp))
             Text(stringResource(R.string.updates_update))
         }
     }
