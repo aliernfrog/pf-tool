@@ -54,6 +54,7 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
@@ -62,7 +63,6 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.navigation:navigation-compose:2.7.0-rc01")
     implementation("io.insert-koin:koin-androidx-compose:3.4.6")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.6-rc")
     implementation("com.github.aliernfrog:top-toast-compose:1.3.4")
     implementation("com.lazygeniouz:dfc:1.0.7")
     implementation("io.coil-kt:coil-compose:2.4.0")
