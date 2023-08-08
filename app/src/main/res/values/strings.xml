@@ -23,7 +23,7 @@
     <string name="maps_pickMap_imported">Your maps</string>
     <string name="maps_pickMap_exported">Exported maps</string>
     <string name="maps_pickMap_noImportedMaps">You do not have any maps</string>
-    <string name="maps_pickMap_noExportedMaps">You haven\'t exported any maps</string>
+    <string name="maps_pickMap_noExportedMaps">You haven not exported any maps</string>
     <string name="maps_mapName">Map name</string>
     <string name="maps_rename">Rename this map</string>
     <string name="maps_rename_done">Renamed the map!</string>

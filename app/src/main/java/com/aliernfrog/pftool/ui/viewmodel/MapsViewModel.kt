@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
+import com.aliernfrog.pftool.enum.PickMapSheetSegments
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -51,6 +52,7 @@ class MapsViewModel(
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
     var mapNameEdit by mutableStateOf("")
     var pendingMapDelete by mutableStateOf<String?>(null)
+    var pickMapSheetSelectedSegment by mutableStateOf(PickMapSheetSegments.IMPORTED)
 
     var chosenMap by mutableStateOf<PFMap?>(null)
 

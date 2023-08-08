@@ -18,8 +18,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PinDrop
 import androidx.compose.material.icons.rounded.TextFields
 import androidx.compose.material.icons.rounded.Upload
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.ButtonRounded
 import com.aliernfrog.pftool.ui.component.TextField
+import com.aliernfrog.pftool.ui.component.form.RoundedButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -93,7 +93,7 @@ fun MapsScreen(
 private fun PickMapFileButton(
     onClick: () -> Unit
 ) {
-    ButtonRounded(
+    RoundedButtonRow(
         title = stringResource(R.string.maps_pickMap),
         painter = rememberVectorPainter(Icons.Rounded.PinDrop),
         containerColor = MaterialTheme.colorScheme.primary,
@@ -128,7 +128,7 @@ private fun MapActions(
                     scope.launch { mapsViewModel.renameChosenMap() }
                 }
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).alpha(0.7f),
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.surfaceVariant
@@ -136,7 +136,7 @@ private fun MapActions(
         }
     }
     MapActionVisibility(visible = mapChosen && !isImported) {
-        ButtonRounded(
+        RoundedButtonRow(
             title = stringResource(R.string.maps_import),
             painter = rememberVectorPainter(Icons.Rounded.Download),
             containerColor = MaterialTheme.colorScheme.primary
@@ -145,7 +145,7 @@ private fun MapActions(
         }
     }
     MapActionVisibility(visible = mapChosen && isImported) {
-        ButtonRounded(
+        RoundedButtonRow(
             title = stringResource(R.string.maps_export),
             description = stringResource(R.string.maps_export_description),
             painter = rememberVectorPainter(Icons.Rounded.Upload)
@@ -154,7 +154,7 @@ private fun MapActions(
         }
     }
     MapActionVisibility(visible = mapChosen && isZip) {
-        ButtonRounded(
+        RoundedButtonRow(
             title = stringResource(R.string.maps_share),
             painter = rememberVectorPainter(Icons.Outlined.IosShare)
         ) {
@@ -164,7 +164,7 @@ private fun MapActions(
         }
     }
     MapActionVisibility(visible = mapChosen && (isImported || isExported)) {
-        ButtonRounded(
+        RoundedButtonRow(
             title = stringResource(R.string.maps_delete),
             painter = rememberVectorPainter(Icons.Rounded.Delete),
             containerColor = MaterialTheme.colorScheme.error
