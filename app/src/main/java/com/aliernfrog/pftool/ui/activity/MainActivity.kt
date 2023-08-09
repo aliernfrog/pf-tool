@@ -67,11 +67,11 @@ class MainActivity : ComponentActivity() {
         content: @Composable BoxScope.() -> Unit
     ) {
         val config = LocalConfiguration.current
-        var modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .displayCutoutPadding()
+        var modifier = Modifier.background(MaterialTheme.colorScheme.surface)
         if (config.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            modifier = modifier.navigationBarsPadding()
+            modifier = modifier
+                .displayCutoutPadding()
+                .navigationBarsPadding()
 
         Box(
             modifier = modifier,
