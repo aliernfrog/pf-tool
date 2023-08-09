@@ -216,7 +216,9 @@ fun SettingsScreen(
                         label = {
                             Text("Prefs: ${prefEdit.key}")
                         },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
                 ButtonRow(
