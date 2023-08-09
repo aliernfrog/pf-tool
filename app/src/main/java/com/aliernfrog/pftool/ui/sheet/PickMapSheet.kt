@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Folder
+import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -24,7 +25,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.PickMapSheetSegments
 import com.aliernfrog.pftool.ui.component.*
-import com.aliernfrog.pftool.ui.component.form.RoundedButtonRow
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriToFileUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -108,14 +108,17 @@ private fun PickFromDeviceButton(
             }
         }
     }
-    RoundedButtonRow(
-        title = stringResource(R.string.maps_pickMap_device),
-        painter = rememberVectorPainter(Icons.Rounded.Folder),
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary
+    Button(
+        onClick = {
+            val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+            launcher.launch(intent)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-        launcher.launch(intent)
+        ButtonIcon(rememberVectorPainter(Icons.Outlined.FolderZip))
+        Text(stringResource(R.string.maps_pickMap_device))
     }
 }
 
