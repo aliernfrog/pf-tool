@@ -96,7 +96,7 @@ private fun Actions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -131,7 +131,8 @@ private fun Actions(
         IconButton(onClick = onGithubClick) {
             Icon(
                 painter = painterResource(R.drawable.github),
-                contentDescription = stringResource(R.string.updates_openInGithub)
+                contentDescription = stringResource(R.string.updates_openInGithub),
+                modifier = Modifier.padding(6.dp)
             )
         }
         Button(
