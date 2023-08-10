@@ -1,9 +1,9 @@
-name: Release in Releases
+name: Release
 
 on:
   push:
     tags:
-      - "v*"
+      - "v**"
 
 jobs:
   build:
@@ -24,17 +24,17 @@ jobs:
 
       - name: Sign APK
         id: sign_apk
-        uses: r0adkll/sign-android-release@v1
+        uses: ilharp/sign-android-release@v1
         with:
-          releaseDirectory: ./app/build/outputs/apk/release/
-          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
-          alias: ${{ secrets.KEYSTORE_ALIAS }}
+          releaseDir: ./app/build/outputs/apk/release/
+          signingKey: ${{ secrets.KEYSTORE_BASE64 }}
+          keyAlias: ${{ secrets.KEYSTORE_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-          
+
       - name: Rename signed APK
-        run: mv ${{steps.sign_apk.outputs.signedReleaseFile}} pftool.apk
-        
+        run: mv ${{steps.sign_apk.outputs.signedFile}} pftool.apk
+
       - name: Create release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
