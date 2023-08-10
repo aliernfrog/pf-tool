@@ -11,26 +11,29 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.FadeVisibility
+import com.aliernfrog.pftool.ui.dialog.MapsAccessDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.util.extension.clickableWithColor
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
@@ -76,21 +79,30 @@ private fun PermissionsSetUp(
     val allFilesPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(), onResult = {
         onStorageResult(GeneralUtil.checkStoragePermissions(context))
     })
-    ErrorColumn(
+    PermissionCard(
         visible = !storagePermissions,
-        title = stringResource(R.string.warning_missingStoragePermissions),
-        content = {
-            Text(text = stringResource(R.string.info_storagePermission), color = MaterialTheme.colorScheme.onError)
+        title = stringResource(R.string.permissions_storage),
+        buttons = {
+            Button(
+                onClick = {
+                    if (allFilesAccess) {
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                        intent.data = Uri.fromParts("package", context.packageName, null)
+                        allFilesPermsLauncher.launch(intent)
+                    } else storagePermsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            ) {
+                Text(stringResource(R.string.permissions_allowAccess))
+            }
         }
     ) {
-        if (allFilesAccess) {
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-            intent.data = Uri.fromParts("package", context.packageName, null)
-            allFilesPermsLauncher.launch(intent)
-        } else storagePermsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        Text(stringResource(R.string.permissions_storage_description))
     }
 
     if (uriPath != null) {
+        var uriDialogShown by rememberSaveable {
+            mutableStateOf(false)
+        }
         val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
             if (it != null) {
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -99,43 +111,81 @@ private fun PermissionsSetUp(
                 onUriResult(FileUtil.checkUriPermission(uriPath, context))
             }
         })
-        ErrorColumn(
+
+        PermissionCard(
             visible = !uriPermissions,
-            title = stringResource(R.string.warning_missingUriPermissions),
-            content = {
-                Text(text = stringResource(R.string.info_uriPermission), color = MaterialTheme.colorScheme.onError)
-                Spacer(Modifier.height(8.dp))
-                Text(uriPath.replaceFirst(Environment.getExternalStorageDirectory().toString(), stringResource(R.string.internalStorage)), fontFamily = FontFamily.Monospace, fontSize = 14.sp, color = MaterialTheme.colorScheme.onError)
+            title = stringResource(R.string.permissions_maps),
+            buttons = {
+                Button(
+                    onClick = {
+                        uriDialogShown = true
+                    }
+                ) {
+                    Text(stringResource(R.string.permissions_allowAccess))
+                }
             }
         ) {
-            val treeId = uriPath.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-            val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
-            uriPermsLauncher.launch(uri)
+            Text(stringResource(R.string.permissions_maps_description))
         }
+
+        if (uriDialogShown) MapsAccessDialog(
+            mapsPath = uriPath,
+            onDismissRequest = { uriDialogShown = false },
+            onConfirm = {
+                val treeId = uriPath.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
+                val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
+                uriPermsLauncher.launch(uri)
+                uriDialogShown = false
+            }
+        )
     }
 }
 
 @Composable
-private fun ErrorColumn(visible: Boolean = true, title: String, content: @Composable () -> Unit, onClick: () -> Unit) {
-    AnimatedVisibility(
+private fun PermissionCard(
+    visible: Boolean = true,
+    title: String,
+    buttons: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+    FadeVisibility(
         visible = visible,
-        enter = expandVertically() + fadeIn(),
-        exit = shrinkVertically() + fadeOut()
+        modifier = Modifier.padding(
+            horizontal = 16.dp,
+            vertical = 8.dp
+        )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .clip(AppComponentShape)
-                .clickableWithColor(MaterialTheme.colorScheme.onError) {
-                    onClick()
-                }
-                .background(MaterialTheme.colorScheme.error)
-                .padding(vertical = 8.dp, horizontal = 16.dp)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = AppComponentShape
         ) {
-            Text(text = title, color = MaterialTheme.colorScheme.onError, fontSize = 25.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp))
-            content()
-            Text(text = stringResource(R.string.info_permissionsHint), color = MaterialTheme.colorScheme.onError, fontSize = 14.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 10.dp))
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Warning,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                content()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+                ) {
+                    buttons()
+                }
+            }
         }
     }
 }
