@@ -7,19 +7,19 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Folder
+import androidx.compose.material.icons.outlined.FolderZip
+import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
@@ -40,7 +40,11 @@ import java.io.File
 fun PickMapSheet(
     mapsViewModel: MapsViewModel = getViewModel(),
     sheetState: SheetState = mapsViewModel.pickMapSheetState,
+    selectedSegment: PickMapSheetSegments = mapsViewModel.pickMapSheetSelectedSegment,
     getShowMapThumbnails: () -> Boolean = { mapsViewModel.prefs.showMapThumbnailsInList },
+    onSelectedSegmentChange: (PickMapSheetSegments) -> Unit = {
+        mapsViewModel.pickMapSheetSelectedSegment = it
+    },
     onMapPick: (map: Any) -> Boolean
 ) {
     val scope = rememberCoroutineScope()
@@ -73,6 +77,8 @@ fun PickMapSheet(
             importedMaps = mapsViewModel.importedMaps,
             exportedMaps = mapsViewModel.exportedMaps,
             showMapThumbnails = mapThumbnailsShown,
+            selectedSegment = selectedSegment,
+            onSelectedSegmentChange = onSelectedSegmentChange,
             onMapPick = {
                 pickMap(it)
             }
@@ -102,14 +108,17 @@ private fun PickFromDeviceButton(
             }
         }
     }
-    ButtonRounded(
-        title = stringResource(R.string.maps_pickMap_device),
-        painter = rememberVectorPainter(Icons.Rounded.Folder),
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary
+    Button(
+        onClick = {
+            val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+            launcher.launch(intent)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ) {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-        launcher.launch(intent)
+        ButtonIcon(rememberVectorPainter(Icons.Outlined.FolderZip))
+        Text(stringResource(R.string.maps_pickMap_device))
     }
 }
 
@@ -118,22 +127,23 @@ private fun Maps(
     importedMaps: List<PFMap>,
     exportedMaps: List<PFMap>,
     showMapThumbnails: Boolean,
+    selectedSegment: PickMapSheetSegments,
+    onSelectedSegmentChange: (PickMapSheetSegments) -> Unit,
     onMapPick: (Any) -> Unit
 ) {
-    var selectedSegment by remember { mutableIntStateOf(PickMapSheetSegments.IMPORTED.ordinal) }
     SegmentedButtons(
         options = listOf(
             stringResource(R.string.maps_pickMap_imported),
             stringResource(R.string.maps_pickMap_exported)
         ),
-        selectedIndex = selectedSegment,
+        selectedIndex = selectedSegment.ordinal,
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        selectedSegment = it
+        onSelectedSegmentChange(PickMapSheetSegments.values()[it])
     }
-    AnimatedContent(targetState = selectedSegment) {
+    AnimatedContent(targetState = selectedSegment.ordinal) {
         Column {
             val maps = if (it == PickMapSheetSegments.IMPORTED.ordinal) importedMaps else exportedMaps
             MapsList(
@@ -160,15 +170,9 @@ private fun MapsList(
             }
         }
     } else {
-        ColumnRounded(color = MaterialTheme.colorScheme.error) {
-            Text(
-                text = stringResource(
-                    if (isShowingExportedMaps) R.string.maps_pickMap_noExportedMaps
-                    else R.string.maps_pickMap_noImportedMaps
-                ),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onError
-            )
-        }
+        ErrorWithIcon(
+            error = stringResource(if (isShowingExportedMaps) R.string.maps_pickMap_noExportedMaps else R.string.maps_pickMap_noImportedMaps),
+            painter = rememberVectorPainter(Icons.Rounded.LocationOff)
+        )
     }
 }

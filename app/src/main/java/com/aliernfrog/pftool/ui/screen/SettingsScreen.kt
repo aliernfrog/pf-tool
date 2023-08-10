@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,16 +18,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -41,13 +45,11 @@ import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ButtonIcon
-import com.aliernfrog.pftool.ui.component.ButtonShapeless
-import com.aliernfrog.pftool.ui.component.ButtonWithComponent
-import com.aliernfrog.pftool.ui.component.ColumnDivider
-import com.aliernfrog.pftool.ui.component.ColumnRounded
 import com.aliernfrog.pftool.ui.component.RadioButtons
-import com.aliernfrog.pftool.ui.component.Switch
-import com.aliernfrog.pftool.ui.component.TextField
+import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.form.ExpandableRow
+import com.aliernfrog.pftool.ui.component.form.FormSection
+import com.aliernfrog.pftool.ui.component.form.SwitchRow
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -82,34 +84,27 @@ fun SettingsScreen(
             )
             
             // Appearance options
-            ColumnDivider(title = stringResource(R.string.settings_appearance)) {
-                ButtonShapeless(
+            FormSection(title = stringResource(R.string.settings_appearance)) {
+                ExpandableRow(
+                    expanded = settingsViewModel.themeOptionsExpanded,
                     title = stringResource(R.string.settings_appearance_theme),
                     description = stringResource(R.string.settings_appearance_theme_description),
-                    expanded = settingsViewModel.themeOptionsExpanded
+                    onClickHeader = {
+                        settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
+                    }
                 ) {
-                    settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
-                }
-                AnimatedVisibility(
-                    visible = settingsViewModel.themeOptionsExpanded,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
-                ) {
-                    ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-                        RadioButtons(
-                            options = listOf(
-                                stringResource(R.string.settings_appearance_theme_system),
-                                stringResource(R.string.settings_appearance_theme_light),
-                                stringResource(R.string.settings_appearance_theme_dark)
-                            ),
-                            initialIndex = settingsViewModel.prefs.theme,
-                            optionsRounded = true
-                        ) {
-                            settingsViewModel.prefs.theme = it
-                        }
+                    RadioButtons(
+                        options = listOf(
+                            stringResource(R.string.settings_appearance_theme_system),
+                            stringResource(R.string.settings_appearance_theme_light),
+                            stringResource(R.string.settings_appearance_theme_dark)
+                        ),
+                        selectedOptionIndex = settingsViewModel.prefs.theme
+                    ) {
+                        settingsViewModel.prefs.theme = it
                     }
                 }
-                if (settingsViewModel.showMaterialYouOption) Switch(
+                if (settingsViewModel.showMaterialYouOption) SwitchRow(
                     title = stringResource(R.string.settings_appearance_materialYou),
                     description = stringResource(R.string.settings_appearance_materialYou_description),
                     checked = settingsViewModel.prefs.materialYou
@@ -119,8 +114,8 @@ fun SettingsScreen(
             }
 
             // Maps options
-            ColumnDivider(title = stringResource(R.string.settings_maps)) {
-                Switch(
+            FormSection(title = stringResource(R.string.settings_maps)) {
+                SwitchRow(
                     title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
                     description = stringResource(R.string.settings_maps_showMapThumbnailsInList_description),
                     checked = settingsViewModel.prefs.showMapThumbnailsInList
@@ -130,11 +125,11 @@ fun SettingsScreen(
             }
 
             // About app
-            ColumnDivider(title = stringResource(R.string.settings_about), bottomDivider = false) {
-                ButtonWithComponent(
+            FormSection(title = stringResource(R.string.settings_about), bottomDivider = false) {
+                ButtonRow(
                     title = stringResource(R.string.settings_about_version),
                     description = version,
-                    component = {
+                    trailingComponent = {
                         UpdateButton(
                             updateAvailable = mainViewModel.updateAvailable
                         ) { updateAvailable -> scope.launch {
@@ -145,83 +140,91 @@ fun SettingsScreen(
                 ) {
                     settingsViewModel.onAboutClick()
                 }
-                Switch(
+                SwitchRow(
                     title = stringResource(R.string.settings_about_autoCheckUpdates),
                     description = stringResource(R.string.settings_about_autoCheckUpdates_description),
                     checked = settingsViewModel.prefs.autoCheckUpdates
                 ) {
                     settingsViewModel.prefs.autoCheckUpdates = it
                 }
-                ButtonShapeless(
+                ExpandableRow(
+                    expanded = settingsViewModel.linksExpanded,
                     title = stringResource(R.string.settings_about_links),
                     description = stringResource(R.string.settings_about_links_description),
-                    expanded = settingsViewModel.linksExpanded
+                    onClickHeader = {
+                        settingsViewModel.linksExpanded = !settingsViewModel.linksExpanded
+                    }
                 ) {
-                    settingsViewModel.linksExpanded = !settingsViewModel.linksExpanded
-                }
-                AnimatedVisibility(
-                    visible = settingsViewModel.linksExpanded,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
-                ) {
-                    ColumnRounded(Modifier.padding(horizontal = 8.dp)) {
-                        SettingsConstant.socials.forEach {
-                            val icon = when(it.url.split("/")[2]) {
-                                "discord.gg" -> painterResource(id = R.drawable.discord)
-                                "github.com" -> painterResource(id = R.drawable.github)
-                                else -> null
-                            }
-                            ButtonShapeless(
-                                title = it.name,
-                                painter = icon,
-                                rounded = true,
-                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                            ) {
-                                uriHandler.openUri(it.url)
-                            }
+                    SettingsConstant.socials.forEach {
+                        val icon = when(it.url.split("/")[2]) {
+                            "discord.gg" -> painterResource(id = R.drawable.discord)
+                            "github.com" -> painterResource(id = R.drawable.github)
+                            else -> null
+                        }
+                        ButtonRow(
+                            title = it.name,
+                            description = it.url,
+                            painter = icon,
+                            contentPadding = PaddingValues(horizontal = 8.dp),
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ) {
+                            uriHandler.openUri(it.url)
                         }
                     }
                 }
             }
 
             // Experimental settings
-            if (settingsViewModel.experimentalSettingsShown) ColumnDivider(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
+            if (settingsViewModel.experimentalSettingsShown) FormSection(title = stringResource(R.string.settings_experimental), bottomDivider = false, topDivider = true) {
                 Text(stringResource(R.string.settings_experimental_description), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
-                Switch(
+                SwitchRow(
                     title = stringResource(R.string.settings_experimental_showMaterialYouOption),
                     checked = settingsViewModel.showMaterialYouOption,
                     onCheckedChange = {
                         settingsViewModel.showMaterialYouOption = it
                     }
                 )
-                ButtonShapeless(title = stringResource(R.string.settings_experimental_checkUpdates)) {
+                ButtonRow(
+                    title = stringResource(R.string.settings_experimental_checkUpdates)
+                ) {
                     scope.launch {
                         mainViewModel.checkUpdates(ignoreVersion = true)
                     }
                 }
-                ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateToast)) {
+                ButtonRow(
+                    title = stringResource(R.string.settings_experimental_showUpdateToast)
+                ) {
                     mainViewModel.showUpdateToast()
                 }
-                ButtonShapeless(title = stringResource(R.string.settings_experimental_showUpdateDialog)) {
+                ButtonRow(
+                    title = stringResource(R.string.settings_experimental_showUpdateDialog)
+                ) {
                     scope.launch {
                         mainViewModel.updateSheetState.show()
                     }
                 }
                 SettingsConstant.experimentalPrefOptions.forEach { prefEdit ->
-                    val value = remember { mutableStateOf(
+                    var value by remember { mutableStateOf(
                         settingsViewModel.prefs.getString(prefEdit.key, prefEdit.default)
                     ) }
-                    TextField(label = { Text(text = "Prefs: ${prefEdit.key}") }, value = value.value, modifier = Modifier.padding(horizontal = 8.dp),
-                        contentColor = MaterialTheme.colorScheme.onSurface,
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        rounded = false,
+                    OutlinedTextField(
+                        value = value,
                         onValueChange = {
-                            value.value = it
-                            settingsViewModel.prefs.putString(prefEdit.key, it)
-                        }
+                            value = it
+                            settingsViewModel.prefs.putString(prefEdit.key, value)
+                        },
+                        label = {
+                            Text("Prefs: ${prefEdit.key}")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
-                ButtonShapeless(title = stringResource(R.string.settings_experimental_resetPrefs), contentColor = MaterialTheme.colorScheme.error) {
+                ButtonRow(
+                    title = stringResource(R.string.settings_experimental_resetPrefs),
+                    contentColor = MaterialTheme.colorScheme.error
+                ) {
                     SettingsConstant.experimentalPrefOptions.forEach {
                         settingsViewModel.prefs.putString(it.key, it.default)
                     }
@@ -285,7 +288,7 @@ fun UpdateButton(
     onClick: (updateAvailable: Boolean) -> Unit
 ) {
     AnimatedContent(updateAvailable) {
-        if (it) FilledTonalButton(
+        if (it) ElevatedButton(
             onClick = { onClick(true) }
         ) {
             ButtonIcon(

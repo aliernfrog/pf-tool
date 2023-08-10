@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -38,6 +37,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
 import com.aliernfrog.pftool.ui.component.ButtonIcon
+import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
 
@@ -66,10 +66,8 @@ fun UpdateSheet(
             onGithubClick = { uriHandler.openUri(latestVersionInfo.htmlUrl) },
             onUpdateClick = { uriHandler.openUri(latestVersionInfo.downloadLink) }
         )
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        DividerRow(
+            alpha = 0.3f
         )
         MarkdownText(
             modifier = Modifier
@@ -98,7 +96,7 @@ private fun Actions(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -133,7 +131,8 @@ private fun Actions(
         IconButton(onClick = onGithubClick) {
             Icon(
                 painter = painterResource(R.drawable.github),
-                contentDescription = stringResource(R.string.updates_openInGithub)
+                contentDescription = stringResource(R.string.updates_openInGithub),
+                modifier = Modifier.padding(6.dp)
             )
         }
         Button(

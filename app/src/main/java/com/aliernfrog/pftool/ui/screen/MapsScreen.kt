@@ -1,11 +1,5 @@
 package com.aliernfrog.pftool.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,8 +12,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PinDrop
 import androidx.compose.material.icons.rounded.TextFields
 import androidx.compose.material.icons.rounded.Upload
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +28,12 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.ButtonRounded
+import com.aliernfrog.pftool.ui.component.FadeVisibility
+import com.aliernfrog.pftool.ui.component.FadeVisibilityColumn
 import com.aliernfrog.pftool.ui.component.TextField
+import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
+import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.form.RoundedButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -93,7 +91,7 @@ fun MapsScreen(
 private fun PickMapFileButton(
     onClick: () -> Unit
 ) {
-    ButtonRounded(
+    RoundedButtonRow(
         title = stringResource(R.string.maps_pickMap),
         painter = rememberVectorPainter(Icons.Rounded.PinDrop),
         containerColor = MaterialTheme.colorScheme.primary,
@@ -112,74 +110,76 @@ private fun MapActions(
     val isExported = mapsViewModel.chosenMap?.importedState == MapImportedState.EXPORTED
     val isZip = mapsViewModel.chosenMap?.isZip == true
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
-    MapActionVisibility(visible = mapChosen) {
-        Column {
-            TextField(
-                value = mapsViewModel.mapNameEdit,
-                onValueChange = { mapsViewModel.mapNameEdit = it },
-                label = { Text(stringResource(R.string.maps_mapName)) },
-                placeholder = { Text(mapsViewModel.chosenMap?.name ?: "") },
-                leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
-                singleLine = true,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
-                doneIconShown = isImported && mapNameUpdated,
-                onDone = {
-                    scope.launch { mapsViewModel.renameChosenMap() }
+    FadeVisibilityColumn(visible = mapChosen) {
+        TextField(
+            value = mapsViewModel.mapNameEdit,
+            onValueChange = { mapsViewModel.mapNameEdit = it },
+            label = { Text(stringResource(R.string.maps_mapName)) },
+            placeholder = { Text(mapsViewModel.chosenMap?.name ?: "") },
+            leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
+            singleLine = true,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
+            doneIconShown = isImported && mapNameUpdated,
+            onDone = {
+                scope.launch { mapsViewModel.renameChosenMap() }
+            }
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).alpha(0.7f),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
+    VerticalSegmentedButtons(
+        {
+            FadeVisibility(visible = mapChosen && !isImported) {
+                ButtonRow(
+                    title = stringResource(R.string.maps_import),
+                    painter = rememberVectorPainter(Icons.Rounded.Download),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                ) {
+                    scope.launch { mapsViewModel.importChosenMap(context) }
                 }
-            )
-            Divider(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).alpha(0.7f),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.surfaceVariant
-            )
-        }
-    }
-    MapActionVisibility(visible = mapChosen && !isImported) {
-        ButtonRounded(
-            title = stringResource(R.string.maps_import),
-            painter = rememberVectorPainter(Icons.Rounded.Download),
-            containerColor = MaterialTheme.colorScheme.primary
-        ) {
-            scope.launch { mapsViewModel.importChosenMap(context) }
-        }
-    }
-    MapActionVisibility(visible = mapChosen && isImported) {
-        ButtonRounded(
-            title = stringResource(R.string.maps_export),
-            description = stringResource(R.string.maps_export_description),
-            painter = rememberVectorPainter(Icons.Rounded.Upload)
-        ) {
-            scope.launch { mapsViewModel.exportChosenMap(context) }
-        }
-    }
-    MapActionVisibility(visible = mapChosen && isZip) {
-        ButtonRounded(
-            title = stringResource(R.string.maps_share),
-            painter = rememberVectorPainter(Icons.Outlined.IosShare)
-        ) {
-            val path = mapsViewModel.chosenMap?.resolvePath(mapsViewModel.mapsDir)
-            if (isZip && path != null)
-                FileUtil.shareFile(path, "application/zip", context)
-        }
-    }
-    MapActionVisibility(visible = mapChosen && (isImported || isExported)) {
-        ButtonRounded(
-            title = stringResource(R.string.maps_delete),
-            painter = rememberVectorPainter(Icons.Rounded.Delete),
-            containerColor = MaterialTheme.colorScheme.error
-        ) {
-            mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap?.name
-        }
-    }
-}
-
-@Composable
-private fun MapActionVisibility(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
-    return AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically(),
-        content = content
+            }
+        },
+        {
+            FadeVisibility(visible = mapChosen && isImported) {
+                ButtonRow(
+                    title = stringResource(R.string.maps_export),
+                    description = stringResource(R.string.maps_export_description),
+                    painter = rememberVectorPainter(Icons.Rounded.Upload),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                ) {
+                    scope.launch { mapsViewModel.exportChosenMap(context) }
+                }
+            }
+        },
+        {
+            FadeVisibility(visible = mapChosen && isZip) {
+                ButtonRow(
+                    title = stringResource(R.string.maps_share),
+                    painter = rememberVectorPainter(Icons.Outlined.IosShare),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                ) {
+                    val path = mapsViewModel.chosenMap?.resolvePath(mapsViewModel.mapsDir)
+                    if (isZip && path != null)
+                        FileUtil.shareFile(path, "application/zip", context)
+                }
+            }
+        },
+        {
+            FadeVisibility(visible = mapChosen && (isImported || isExported)) {
+                ButtonRow(
+                    title = stringResource(R.string.maps_delete),
+                    painter = rememberVectorPainter(Icons.Rounded.Delete),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    contentColor = MaterialTheme.colorScheme.error
+                ) {
+                    mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap?.name
+                }
+            }
+        },
+        modifier = Modifier.padding(8.dp)
     )
 }
