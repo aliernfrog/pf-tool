@@ -137,7 +137,7 @@ private fun MapActions(
                 ButtonRow(
                     title = stringResource(R.string.maps_import),
                     painter = rememberVectorPainter(Icons.Rounded.Download),
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
                     scope.launch { mapsViewModel.importChosenMap(context) }
                 }
@@ -173,7 +173,8 @@ private fun MapActions(
                 ButtonRow(
                     title = stringResource(R.string.maps_delete),
                     painter = rememberVectorPainter(Icons.Rounded.Delete),
-                    containerColor = MaterialTheme.colorScheme.error
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    contentColor = MaterialTheme.colorScheme.error
                 ) {
                     mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap?.name
                 }
