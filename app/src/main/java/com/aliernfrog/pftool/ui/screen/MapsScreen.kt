@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PinDrop
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFields
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +37,6 @@ import com.aliernfrog.pftool.ui.component.form.RoundedButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -159,12 +158,14 @@ private fun MapActions(
             FadeVisibility(visible = mapChosen && isZip) {
                 ButtonRow(
                     title = stringResource(R.string.maps_share),
-                    painter = rememberVectorPainter(Icons.Outlined.IosShare),
+                    painter = rememberVectorPainter(Icons.Rounded.Share),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
-                    val path = mapsViewModel.chosenMap?.resolvePath(mapsViewModel.mapsDir)
-                    if (isZip && path != null)
-                        FileUtil.shareFile(path, "application/zip", context)
+                    val map = mapsViewModel.chosenMap
+                    val file = map?.file ?: map?.documentFile
+                    if (isZip && file != null) scope.launch {
+                        FileUtil.shareFile(file, context)
+                    }
                 }
             }
         },
