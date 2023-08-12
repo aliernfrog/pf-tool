@@ -168,8 +168,7 @@ private fun PermissionCard(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = null
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
