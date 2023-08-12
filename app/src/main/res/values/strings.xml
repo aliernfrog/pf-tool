@@ -18,7 +18,7 @@
     <string name="permissions_maps_description">Access to the Polyfield maps folder is needed to access &amp; manage maps</string>
     <string name="permissions_maps_help_description">Access to the folder below is needed to access &amp; manage maps.</string>
     <string name="permissions_maps_help_proceed">A new screen will appear after clicking \"Allow access\".\nIn that screen; make sure you are at the folder mentioned above, then click \"USE THIS FOLDER\" button.</string>
-    <string name="permissions_maps_help_folderDoesntExist">If the folder mentioned above doesn\'t exist you can either create it manually or start Polyfield once (It should create the folder automatically).</string>
+    <string name="permissions_maps_help_folderDoesntExist">If the folder mentioned above doesn\'t exist, you can either create it manually or start Polyfield once (It should create the folder automatically).</string>
     <string name="permissions_maps_help_manualNavigation">Since you are using Android 7 or below, you might have to navigate to the folder manually.</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
