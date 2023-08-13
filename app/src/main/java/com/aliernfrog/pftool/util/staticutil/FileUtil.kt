@@ -60,10 +60,15 @@ class FileUtil {
             return File(targetFile.absolutePath)
         }
 
-        fun checkUriPermission(path: String, context: Context): Boolean {
+        fun hasUriPermission(path: String, context: Context): Boolean {
             val treeId = path.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
             val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
-            return context.checkUriPermission(treeUri, android.os.Process.myPid(), android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
+            return context.checkUriPermission(
+                treeUri,
+                android.os.Process.myPid(),
+                android.os.Process.myUid(),
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 }

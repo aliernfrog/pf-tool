@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.screen
+package com.aliernfrog.pftool.ui.screen.maps
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

@@ -44,7 +44,7 @@ class MapsViewModel(
     val scrollState = ScrollState(0)
 
     val mapsDir = prefs.pfMapsDir
-    private val exportedMapsDir = prefs.exportedMapsDir
+    val exportedMapsDir = prefs.exportedMapsDir
     private lateinit var mapsFile: DocumentFileCompat
     private val exportedMapsFile = File(exportedMapsDir)
 

@@ -17,9 +17,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.component.BaseScaffold
+import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
-import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationConstant
 import org.koin.androidx.compose.getViewModel
@@ -27,8 +27,7 @@ import org.koin.androidx.compose.getViewModel
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = getViewModel(),
-    mapsViewModel: MapsViewModel = getViewModel()
+    mainViewModel: MainViewModel = getViewModel()
 ) {
     val navController = rememberNavController()
     BaseScaffold(
@@ -59,9 +58,7 @@ fun MainScreen(
             ) }
         ) {
             composable(route = Destination.MAPS.route) {
-                PermissionsScreen(mapsViewModel.mapsDir) {
-                    MapsScreen()
-                }
+                MapsPermissionsScreen()
             }
             composable(route = Destination.SETTINGS.route) {
                 SettingsScreen()

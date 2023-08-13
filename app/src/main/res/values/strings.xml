@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">PF Tool</string>
     <string name="action_back">Back</string>
+    <string name="action_ok">Okay</string>
     <string name="action_done">Done</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_dismiss">Dismiss</string>
@@ -10,15 +11,16 @@
     <string name="info_deleteQuestion">Are you sure you want to delete %NAME%?\nThis can NOT be undone!</string>
     <string name="internalStorage">Internal storage</string>
     <string name="permissions">Permissions</string>
-    <string name="permissions_allowAccess">Allow access</string>
-    <string name="permissions_storage">Storage permissions</string>
-    <string name="permissions_storage_description">Storage permissions are needed to access files you pick</string>
-    <string name="permissions_maps">Polyfield maps access</string>
-    <string name="permissions_maps_description">Access to the Polyfield maps folder is needed to access &amp; manage maps</string>
-    <string name="permissions_maps_help_description">Access to the folder below is needed to access &amp; manage maps.</string>
-    <string name="permissions_maps_help_proceed">A new screen will appear after clicking \"Allow access\".\nIn that screen; make sure you are at the folder mentioned above, then click \"USE THIS FOLDER\" button.</string>
-    <string name="permissions_maps_help_folderDoesntExist">If the folder mentioned above doesn\'t exist, you can either create it manually or start Polyfield once (It should create the folder automatically).</string>
-    <string name="permissions_maps_help_manualNavigation">Since you are using Android 7 or below, you might have to navigate to the folder manually.</string>
+    <string name="permissions_chooseFolder">Choose folder</string>
+    <string name="permissions_maps">Polyfield maps folder</string>
+    <string name="permissions_maps_description">You need to choose the folder where your Polyfield maps are stored</string>
+    <string name="permissions_maps_byDefault">By default, maps folder is following:</string>
+    <string name="permissions_maps_modified">Do not choose a different folder unless you are sure that your maps are located somewhere else</string>
+    <string name="permissions_maps_a8Hint">After clicking \"Okay\", folder mentioned above will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>
+    <string name="permissions_maps_a7Hint">After clicking \"Okay\", navigate to the folder mentioned above and click \"USE THIS FOLDER\"</string>
+    <string name="permissions_maps_manuallyCreate">If the folder mentioned above doesn\'t exist, you can either create it manually or start Polyfield once to make it create folders automatically</string>
+    <string name="permissions_exportedMaps">Exported maps folder</string>
+    <string name="permissions_exportedMaps_description">You need to select the folder where you want to save your exported maps</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
     <string name="maps_pickMap">Pick a map</string>

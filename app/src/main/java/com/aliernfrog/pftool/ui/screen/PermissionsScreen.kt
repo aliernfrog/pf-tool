@@ -1,19 +1,14 @@
 package com.aliernfrog.pftool.ui.screen
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
@@ -23,47 +18,109 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.FadeVisibility
-import com.aliernfrog.pftool.ui.dialog.MapsAccessDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.staticutil.FileUtil
-import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PermissionsScreen(uriPath: String?, onSuccess: @Composable () -> Unit) {
+fun PermissionsScreen(
+    vararg permissionsData: PermissionData,
+    content: @Composable () -> Unit
+) {
     val context = LocalContext.current
-    var storagePermissions by remember { mutableStateOf(GeneralUtil.checkStoragePermissions(context)) }
-    var uriPermissions by remember { mutableStateOf(if (uriPath != null) FileUtil.checkUriPermission(uriPath, context) else true) }
-    Crossfade(targetState = (storagePermissions && uriPermissions)) { hasPermissions ->
-        if (hasPermissions) onSuccess()
+    fun getMissingPermissions(): List<PermissionData> {
+        return permissionsData.filter {
+            !FileUtil.hasUriPermission(it.uri, context)
+        }
+    }
+
+    var missingPermissions by remember { mutableStateOf(
+        getMissingPermissions()
+    ) }
+
+    Crossfade(targetState = missingPermissions.isEmpty()) { hasPermissions ->
+        if (hasPermissions) content()
         else AppScaffold(
             title = stringResource(R.string.permissions)
         ) {
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                PermissionsSetUp(
-                    uriPath = uriPath,
-                    storagePermissions = storagePermissions,
-                    uriPermissions = uriPermissions,
-                    onStorageResult =  { storagePermissions = it },
-                    onUriResult = { uriPermissions = it }
-                )
-            }
+            PermissionsList(
+                missingPermissions = missingPermissions,
+                onUpdateState = {
+                    missingPermissions = getMissingPermissions()
+                }
+            )
         }
     }
 }
 
-@SuppressLint("InlinedApi")
 @Composable
-private fun PermissionsSetUp(
+private fun PermissionsList(
+    missingPermissions: List<PermissionData>,
+    onUpdateState: () -> Unit
+) {
+    val context = LocalContext.current
+    val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
+        if (it != null) {
+            // TODO ensure correct folder picked, show dialog if not
+            val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            context.grantUriPermission(context.packageName, it, takeFlags)
+            context.contentResolver.takePersistableUriPermission(it, takeFlags)
+            onUpdateState()
+        }
+    })
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(missingPermissions) { cardData ->
+            fun requestUriPermission() {
+                // TODO? always use uri
+                val treeId = "primary:"+cardData.uri.removePrefix("${Environment.getExternalStorageDirectory()}/")
+                val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
+                uriPermsLauncher.launch(uri)
+            }
+
+            var introDialogShown by remember { mutableStateOf(false) }
+            cardData.introDialog?.let { it(
+                shown = introDialogShown,
+                onDismissRequest = {
+                    introDialogShown = false
+                },
+                onConfirm = {
+                    requestUriPermission()
+                    introDialogShown = false
+                }
+            ) }
+
+            PermissionCard(
+                title = stringResource(cardData.titleId),
+                buttons = {
+                    Button(
+                        onClick = {
+                            if (cardData.introDialog != null) introDialogShown = true
+                            else requestUriPermission()
+                        }
+                    ) {
+                        Text(stringResource(R.string.permissions_chooseFolder))
+                    }
+                },
+                content = cardData.content
+            )
+        }
+    }
+}
+
+/*@SuppressLint("InlinedApi")
+@Composable
+private fun PermissiodnsSetUp(
     uriPath: String?,
     storagePermissions: Boolean,
     uriPermissions: Boolean,
@@ -108,7 +165,7 @@ private fun PermissionsSetUp(
                 val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 context.grantUriPermission(context.packageName, it, takeFlags)
                 context.contentResolver.takePersistableUriPermission(it, takeFlags)
-                onUriResult(FileUtil.checkUriPermission(uriPath, context))
+                onUriResult(FileUtil.hasUriPermission(uriPath, context))
             }
         })
 
@@ -139,51 +196,47 @@ private fun PermissionsSetUp(
             }
         )
     }
-}
+}*/
 
 @Composable
 private fun PermissionCard(
-    visible: Boolean = true,
     title: String,
     buttons: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
-    FadeVisibility(
-        visible = visible,
-        modifier = Modifier.padding(
-            horizontal = 16.dp,
-            vertical = 8.dp
-        )
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
+        shape = AppComponentShape
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = AppComponentShape
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Warning,
-                        contentDescription = null
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                content()
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
-                ) {
-                    buttons()
-                }
+                Icon(
+                    imageVector = Icons.Outlined.Warning,
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            content()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+            ) {
+                buttons()
             }
         }
     }
