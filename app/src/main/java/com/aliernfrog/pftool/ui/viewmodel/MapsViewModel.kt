@@ -1,8 +1,7 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
-import android.os.Environment
-import android.provider.DocumentsContract
+import android.net.Uri
 import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
@@ -22,6 +21,9 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.enum.PickMapSheetSegments
+import com.aliernfrog.pftool.util.extension.cacheFile
+import com.aliernfrog.pftool.util.extension.nameWithoutExtension
+import com.aliernfrog.pftool.util.extension.resolveFile
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -46,7 +48,7 @@ class MapsViewModel(
     val mapsDir = prefs.pfMapsDir
     val exportedMapsDir = prefs.exportedMapsDir
     private lateinit var mapsFile: DocumentFileCompat
-    private val exportedMapsFile = File(exportedMapsDir)
+    private lateinit var exportedMapsFile: DocumentFileCompat
 
     var importedMaps by mutableStateOf(emptyList<PFMap>())
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
@@ -78,7 +80,7 @@ class MapsViewModel(
             }
         }
 
-        val mapPath = mapToChoose?.resolvePath(mapsDir) ?: ""
+        val mapPath = mapToChoose?.resolvePath() ?: ""
         chosenMap = mapToChoose?.copy(
             importedState = getMapImportedState(mapPath)
         )
@@ -103,13 +105,17 @@ class MapsViewModel(
     }
 
     suspend fun importChosenMap(context: Context) {
-        val mapPath = chosenMap?.file?.absolutePath ?: return
+        val zipPath = when (val file = chosenMap?.resolveFile() ?: return) {
+            is File -> file.absolutePath
+            is DocumentFileCompat -> file.uri.cacheFile(context)?.absolutePath
+            else -> null
+        } ?: return
         val mapName = resolveMapNameInput()
         var output = mapsFile.findFile(mapName)
         if (output != null && output.exists()) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
             output = mapsFile.createDirectory(mapName) ?: return@withContext
-            ZipUtil.unzipMap(mapPath, output ?: return@withContext, context)
+            ZipUtil.unzipMap(zipPath, output ?: return@withContext, context)
             chooseMap(output)
             topToastState.showToast(R.string.maps_import_done, Icons.Rounded.Download)
             fetchImportedMaps()
@@ -156,10 +162,16 @@ class MapsViewModel(
 
     fun getMapsFile(context: Context): DocumentFileCompat {
         if (::mapsFile.isInitialized) return mapsFile
-        val treeId = mapsDir.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-        val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
+        val treeUri = Uri.parse(mapsDir)
         mapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
         return mapsFile
+    }
+
+    fun getExportedMapsFile(context: Context): DocumentFileCompat {
+        if (::exportedMapsFile.isInitialized) return exportedMapsFile
+        val treeUri = Uri.parse(exportedMapsDir)
+        exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
+        return exportedMapsFile
     }
 
     suspend fun fetchAllMaps() {
@@ -188,17 +200,17 @@ class MapsViewModel(
 
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
-            exportedMaps = (exportedMapsFile.listFiles() ?: emptyArray())
-                .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
+            exportedMaps = exportedMapsFile.listFiles()
+                .filter { it.isFile() && it.name.lowercase().endsWith(".zip") }
                 .sortedBy { it.name.lowercase() }
                 .map {
                     PFMap(
                         name = it.nameWithoutExtension,
                         fileName = it.name,
-                        fileSize = it.length(),
-                        lastModified = it.lastModified(),
-                        file = it,
-                        documentFile = null
+                        fileSize = it.length,
+                        lastModified = it.lastModified,
+                        file = null,
+                        documentFile = it
                     )
                 }
         }

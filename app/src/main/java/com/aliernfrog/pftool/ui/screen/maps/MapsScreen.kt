@@ -50,6 +50,7 @@ fun MapsScreen(
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         mapsViewModel.getMapsFile(context)
+        mapsViewModel.getExportedMapsFile(context)
         mapsViewModel.fetchAllMaps()
     }
     AppScaffold(

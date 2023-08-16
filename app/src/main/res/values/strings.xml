@@ -12,10 +12,10 @@
     <string name="internalStorage">Internal storage</string>
     <string name="permissions">Permissions</string>
     <string name="permissions_chooseFolder">Choose folder</string>
+    <string name="permissions_unrecommendedPath_description">You have selected a folder other than the recommended one, do you want to select this folder anyway?</string>
     <string name="permissions_maps">Polyfield maps folder</string>
     <string name="permissions_maps_description">You need to choose the folder where your Polyfield maps are stored</string>
-    <string name="permissions_maps_byDefault">By default, maps folder is following:</string>
-    <string name="permissions_maps_modified">Do not choose a different folder unless you are sure that your maps are located somewhere else</string>
+    <string name="permissions_maps_recommended">Polyfield maps are located in the following folder:</string>
     <string name="permissions_maps_a8Hint">After clicking \"Okay\", folder mentioned above will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>
     <string name="permissions_maps_a7Hint">After clicking \"Okay\", navigate to the folder mentioned above and click \"USE THIS FOLDER\"</string>
     <string name="permissions_maps_manuallyCreate">If the folder mentioned above doesn\'t exist, you can either create it manually or start Polyfield once to make it create folders automatically</string>

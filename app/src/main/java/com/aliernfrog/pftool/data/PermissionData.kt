@@ -1,10 +1,13 @@
 package com.aliernfrog.pftool.data
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 
 data class PermissionData(
     val titleId: Int,
-    val uri: String,
+    val recommendedPath: String?,
+    val getUri: () -> String,
+    val onUriUpdate: (Uri) -> Unit,
     val introDialog: (@Composable (
         shown: Boolean,
         onDismissRequest: () -> Unit,

@@ -1,6 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
-import android.content.Intent
+import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,8 +26,11 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.dialog.SimpleAlertDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.util.staticutil.FileUtil
+import com.aliernfrog.pftool.util.extension.appHasPermissions
+import com.aliernfrog.pftool.util.extension.resolvePath
+import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +41,7 @@ fun PermissionsScreen(
     val context = LocalContext.current
     fun getMissingPermissions(): List<PermissionData> {
         return permissionsData.filter {
-            !FileUtil.hasUriPermission(it.uri, context)
+            !Uri.parse(it.getUri()).appHasPermissions(context)
         }
     }
 
@@ -67,13 +70,24 @@ private fun PermissionsList(
     onUpdateState: () -> Unit
 ) {
     val context = LocalContext.current
+    var activePermissionData by remember { mutableStateOf<PermissionData?>(null) }
+    var unrecommendedPathWarningUri by remember { mutableStateOf<Uri?>(null) }
+
+    fun takePersistableUriPermissions(uri: Uri) {
+        uri.takePersistablePermissions(context)
+        activePermissionData?.onUriUpdate?.invoke(uri)
+        onUpdateState()
+    }
     val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
-        if (it != null) {
-            // TODO ensure correct folder picked, show dialog if not
-            val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            context.grantUriPermission(context.packageName, it, takeFlags)
-            context.contentResolver.takePersistableUriPermission(it, takeFlags)
-            onUpdateState()
+        if (it == null) return@rememberLauncherForActivityResult
+        val recommendedPath = activePermissionData?.recommendedPath
+        if (recommendedPath != null) {
+            val resolvedPath = it.resolvePath()
+            val isRecommendedPath = resolvedPath == recommendedPath
+            if (!isRecommendedPath) unrecommendedPathWarningUri = it
+            else takePersistableUriPermissions(it)
+        } else {
+            takePersistableUriPermissions(it)
         }
     })
 
@@ -82,10 +96,10 @@ private fun PermissionsList(
     ) {
         items(missingPermissions) { cardData ->
             fun requestUriPermission() {
-                // TODO? always use uri
-                val treeId = "primary:"+cardData.uri.removePrefix("${Environment.getExternalStorageDirectory()}/")
+                val treeId = "primary:"+cardData.recommendedPath?.removePrefix("${Environment.getExternalStorageDirectory()}/")
                 val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
                 uriPermsLauncher.launch(uri)
+                activePermissionData = cardData
             }
 
             var introDialogShown by remember { mutableStateOf(false) }
@@ -116,87 +130,23 @@ private fun PermissionsList(
             )
         }
     }
-}
 
-/*@SuppressLint("InlinedApi")
-@Composable
-private fun PermissiodnsSetUp(
-    uriPath: String?,
-    storagePermissions: Boolean,
-    uriPermissions: Boolean,
-    onStorageResult: (Boolean) -> Unit,
-    onUriResult: (Boolean) -> Unit
-) {
-    val context = LocalContext.current
-    val allFilesAccess = Build.VERSION.SDK_INT >= 30
-
-    val storagePermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(), onResult = {
-        onStorageResult(GeneralUtil.checkStoragePermissions(context))
-    })
-    val allFilesPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(), onResult = {
-        onStorageResult(GeneralUtil.checkStoragePermissions(context))
-    })
-    PermissionCard(
-        visible = !storagePermissions,
-        title = stringResource(R.string.permissions_storage),
-        buttons = {
-            Button(
-                onClick = {
-                    if (allFilesAccess) {
-                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                        intent.data = Uri.fromParts("package", context.packageName, null)
-                        allFilesPermsLauncher.launch(intent)
-                    } else storagePermsLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            ) {
-                Text(stringResource(R.string.permissions_allowAccess))
-            }
-        }
-    ) {
-        Text(stringResource(R.string.permissions_storage_description))
-    }
-
-    if (uriPath != null) {
-        var uriDialogShown by rememberSaveable {
-            mutableStateOf(false)
-        }
-        val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
-            if (it != null) {
-                val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                context.grantUriPermission(context.packageName, it, takeFlags)
-                context.contentResolver.takePersistableUriPermission(it, takeFlags)
-                onUriResult(FileUtil.hasUriPermission(uriPath, context))
-            }
-        })
-
-        PermissionCard(
-            visible = !uriPermissions,
-            title = stringResource(R.string.permissions_maps),
-            buttons = {
-                Button(
-                    onClick = {
-                        uriDialogShown = true
-                    }
-                ) {
-                    Text(stringResource(R.string.permissions_allowAccess))
-                }
+    if (activePermissionData?.recommendedPath != null) unrecommendedPathWarningUri?.let {
+        // TODO make better and more informative
+        SimpleAlertDialog(
+            shown = true,
+            onConfirm = {
+                takePersistableUriPermissions(it)
+                unrecommendedPathWarningUri = null
+            },
+            onDismissRequest = {
+                unrecommendedPathWarningUri = null
             }
         ) {
-            Text(stringResource(R.string.permissions_maps_description))
+            Text(stringResource(R.string.permissions_unrecommendedPath_description))
         }
-
-        if (uriDialogShown) MapsAccessDialog(
-            mapsPath = uriPath,
-            onDismissRequest = { uriDialogShown = false },
-            onConfirm = {
-                val treeId = uriPath.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-                val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
-                uriPermsLauncher.launch(uri)
-                uriDialogShown = false
-            }
-        )
     }
-}*/
+}
 
 @Composable
 private fun PermissionCard(

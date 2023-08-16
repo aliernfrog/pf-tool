@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.dialog.SimpleAlertDialog
@@ -24,17 +25,21 @@ fun MapsPermissionsScreen(
     val permissions = remember { arrayOf(
         PermissionData(
             titleId = R.string.permissions_maps,
-            uri = mapsViewModel.mapsDir,
+            recommendedPath = ConfigKey.DEFAULT_MAPS_DIR,
+            getUri = { mapsViewModel.mapsDir },
+            onUriUpdate = {
+                mapsViewModel.prefs.pfMapsDir = it.toString()
+            },
             introDialog = { shown, onDismissRequest, onConfirm ->
                 SimpleAlertDialog(
                     shown = shown,
                     onConfirm = onConfirm,
                     onDismissRequest = onDismissRequest
                 ) {
-                    Text(stringResource(R.string.permissions_maps_byDefault))
+                    Text(stringResource(R.string.permissions_maps_recommended))
                     Card {
                         Text(
-                            text = mapsViewModel.mapsDir.removePrefix(
+                            text = ConfigKey.DEFAULT_MAPS_DIR.removePrefix(
                                 Environment.getExternalStorageDirectory().toString() + "/"
                             ),
                             modifier = Modifier.padding(4.dp)
@@ -54,7 +59,11 @@ fun MapsPermissionsScreen(
         ),
         PermissionData(
             titleId = R.string.permissions_exportedMaps,
-            uri = mapsViewModel.exportedMapsDir,
+            recommendedPath = ConfigKey.DEFAULT_MAPS_EXPORT_DIR,
+            getUri = { mapsViewModel.exportedMapsDir },
+            onUriUpdate = {
+                mapsViewModel.prefs.exportedMapsDir = it.toString()
+            },
             content = {
                 Text(stringResource(R.string.permissions_exportedMaps_description))
             }

@@ -2,9 +2,6 @@ package com.aliernfrog.pftool.util.staticutil
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Environment
-import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
@@ -58,17 +55,6 @@ class FileUtil {
             inputStream?.close()
             output.close()
             return File(targetFile.absolutePath)
-        }
-
-        fun hasUriPermission(path: String, context: Context): Boolean {
-            val treeId = path.replace("${Environment.getExternalStorageDirectory()}/", "primary:")
-            val treeUri = DocumentsContract.buildTreeDocumentUri("com.android.externalstorage.documents", treeId)
-            return context.checkUriPermission(
-                treeUri,
-                android.os.Process.myPid(),
-                android.os.Process.myUid(),
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 }
