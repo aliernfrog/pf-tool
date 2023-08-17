@@ -31,7 +31,7 @@ fun FolderConfiguration(
     val context = LocalContext.current
     val folders = remember { SettingsConstant.folders }
     var activePref: PrefEditItem? = remember { null }
-    val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
+    val openFolderLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
         if (it == null) return@rememberLauncherForActivityResult
         val pref = activePref ?: return@rememberLauncherForActivityResult
         it.takePersistablePermissions(context)
@@ -40,6 +40,11 @@ fun FolderConfiguration(
     })
 
     folders.forEach { folder ->
+        fun launchOpenFolder(uri: Uri?) {
+            activePref = folder
+            openFolderLauncher.launch(uri)
+        }
+
         ButtonRow(
             title = stringResource(folder.labelResourceId!!),
             description = getFolderDescription(folder),
@@ -48,7 +53,7 @@ fun FolderConfiguration(
                     onClick = {
                         val treeId = "primary:"+folder.default.removePrefix("${Environment.getExternalStorageDirectory()}/")
                         val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
-                        uriPermsLauncher.launch(uri)
+                        launchOpenFolder(uri)
                     }
                 ) {
                     Icon(
@@ -58,8 +63,7 @@ fun FolderConfiguration(
                 }
             }
         ) {
-            activePref = folder
-            uriPermsLauncher.launch(null)
+            launchOpenFolder(null)
         }
 
         LaunchedEffect(Unit) {
