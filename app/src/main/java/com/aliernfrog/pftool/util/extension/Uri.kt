@@ -7,16 +7,20 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import com.aliernfrog.pftool.util.staticutil.UriUtil
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
 
 fun Uri.appHasPermissions(context: Context): Boolean {
-    return context.checkUriPermission(
+    val hasPermissions = context.checkUriPermission(
         this,
         android.os.Process.myPid(),
         android.os.Process.myUid(),
         Intent.FLAG_GRANT_READ_URI_PERMISSION
     ) == PackageManager.PERMISSION_GRANTED
+    if (!hasPermissions) return false
+    val file = DocumentFileCompat.fromTreeUri(context, this)
+    return file?.exists() == true
 }
 
 fun Uri.cacheFile(context: Context): File? {
