@@ -139,15 +139,11 @@ class MapsViewModel(
     suspend fun deleteChosenMap() {
         val map = chosenMap ?: return
         withContext(Dispatchers.IO) {
-            if (map.documentFile != null) {
-                map.documentFile.delete()
-                fetchImportedMaps()
-            } else if (map.file != null) {
-                map.file.delete()
-                fetchExportedMaps()
-            }
+            map.file?.delete()
+            map.documentFile?.delete()
             chooseMap(null)
             topToastState.showToast(R.string.maps_delete_done, icon = Icons.Rounded.Delete)
+            fetchAllMaps()
         }
     }
 
