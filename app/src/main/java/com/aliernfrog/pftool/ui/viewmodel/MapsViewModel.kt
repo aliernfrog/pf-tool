@@ -124,11 +124,12 @@ class MapsViewModel(
 
     suspend fun exportChosenMap(context: Context) {
         val mapFile = chosenMap?.documentFile ?: return
-        val output = File("${exportedMapsDir}/${resolveMapNameInput()}.zip")
-        if (output.exists()) fileAlreadyExists()
+        val zipFileName = "${resolveMapNameInput()}.zip"
+        var output = exportedMapsFile.findFile(zipFileName)
+        if (output?.exists() == true) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
-            if (output.parentFile?.isDirectory != true) output.parentFile?.mkdirs()
-            ZipUtil.zipMap(mapFile, output.absolutePath, context)
+            output = exportedMapsFile.createFile("", zipFileName) ?: return@withContext
+            ZipUtil.zipMap(mapFile, output ?: return@withContext, context)
             chooseMap(output)
             topToastState.showToast(R.string.maps_export_done, icon = Icons.Rounded.Upload)
             fetchExportedMaps()
