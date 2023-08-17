@@ -50,6 +50,7 @@ import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.component.form.SwitchRow
+import com.aliernfrog.pftool.ui.component.settings.FolderConfiguration
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -113,14 +114,24 @@ fun SettingsScreen(
                 }
             }
 
-            // Maps options
-            FormSection(title = stringResource(R.string.settings_maps)) {
+            // General options
+            FormSection(title = stringResource(R.string.settings_general)) {
                 SwitchRow(
-                    title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
-                    description = stringResource(R.string.settings_maps_showMapThumbnailsInList_description),
+                    title = stringResource(R.string.settings_general_showMapThumbnailsInList),
+                    description = stringResource(R.string.settings_general_showMapThumbnailsInList_description),
                     checked = settingsViewModel.prefs.showMapThumbnailsInList
                 ) {
                     settingsViewModel.prefs.showMapThumbnailsInList = it
+                }
+                ExpandableRow(
+                    expanded = settingsViewModel.folderOptionsExpanded,
+                    title = stringResource(R.string.settings_general_folders),
+                    description = stringResource(R.string.settings_general_folders_description),
+                    onClickHeader = {
+                        settingsViewModel.folderOptionsExpanded = !settingsViewModel.folderOptionsExpanded
+                    }
+                ) {
+                    FolderConfiguration()
                 }
             }
 

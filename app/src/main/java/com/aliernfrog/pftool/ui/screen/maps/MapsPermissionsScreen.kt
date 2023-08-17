@@ -25,7 +25,7 @@ fun MapsPermissionsScreen(
     val permissions = remember { arrayOf(
         PermissionData(
             titleId = R.string.permissions_maps,
-            recommendedPath = ConfigKey.DEFAULT_MAPS_DIR,
+            recommendedPath = ConfigKey.RECOMMENDED_MAPS_DIR,
             getUri = { mapsViewModel.mapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.pfMapsDir = it.toString()
@@ -39,7 +39,7 @@ fun MapsPermissionsScreen(
                     Text(stringResource(R.string.permissions_maps_recommended))
                     Card {
                         Text(
-                            text = ConfigKey.DEFAULT_MAPS_DIR.removePrefix(
+                            text = ConfigKey.RECOMMENDED_MAPS_DIR.removePrefix(
                                 Environment.getExternalStorageDirectory().toString() + "/"
                             ),
                             modifier = Modifier.padding(4.dp)
@@ -59,7 +59,7 @@ fun MapsPermissionsScreen(
         ),
         PermissionData(
             titleId = R.string.permissions_exportedMaps,
-            recommendedPath = ConfigKey.DEFAULT_MAPS_EXPORT_DIR,
+            recommendedPath = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
             getUri = { mapsViewModel.exportedMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.exportedMapsDir = it.toString()

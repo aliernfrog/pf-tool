@@ -5,6 +5,7 @@ import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
 
 const val experimentalSettingsRequiredClicks = 10
+val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 
 object ConfigKey {
@@ -15,10 +16,10 @@ object ConfigKey {
     const val KEY_APP_UPDATES_URL = "updatesUrl"
     const val KEY_SHOW_MAP_THUMBNAILS_LIST = "showMapThumbnailsList"
     const val KEY_MAPS_DIR = "mapsDir"
-    const val KEY_MAPS_EXPORT_DIR = "mapsExportDir"
+    const val KEY_EXPORTED_MAPS_DIR = "mapsExportDir"
     const val DEFAULT_UPDATES_URL = "https://aliernfrog.github.io/pftool/latest.json"
-    val DEFAULT_MAPS_DIR = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
-    val DEFAULT_MAPS_EXPORT_DIR = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
+    val RECOMMENDED_MAPS_DIR = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
+    val RECOMMENDED_EXPORTED_MAPS_DIR = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
 }
 
 object SettingsConstant {
@@ -26,9 +27,21 @@ object SettingsConstant {
         Social("Polyfield Discord", "https://discord.gg/X6WzGpCgDJ"),
         Social("PF Tool GitHub", githubRepoURL)
     )
+    val folders = listOf(
+        PrefEditItem(
+            key = ConfigKey.KEY_MAPS_DIR,
+            default = ConfigKey.RECOMMENDED_MAPS_DIR,
+            labelResourceId = R.string.settings_general_folders_maps
+        ),
+        PrefEditItem(
+            key = ConfigKey.KEY_EXPORTED_MAPS_DIR,
+            default = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
+            labelResourceId = R.string.settings_general_folders_exportedMaps
+        )
+    )
     val experimentalPrefOptions = listOf(
         PrefEditItem(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL),
-        PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.DEFAULT_MAPS_DIR),
-        PrefEditItem(ConfigKey.KEY_MAPS_EXPORT_DIR, ConfigKey.DEFAULT_MAPS_EXPORT_DIR)
+        PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.RECOMMENDED_MAPS_DIR),
+        PrefEditItem(ConfigKey.KEY_EXPORTED_MAPS_DIR, ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR)
     )
 }
