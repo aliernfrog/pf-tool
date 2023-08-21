@@ -25,7 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
+import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.SimpleAlertDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.appHasPermissions
@@ -94,39 +96,38 @@ private fun PermissionsList(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(missingPermissions) { cardData ->
+        items(missingPermissions) { permissionData ->
             fun requestUriPermission() {
-                val treeId = "primary:"+cardData.recommendedPath?.removePrefix("${Environment.getExternalStorageDirectory()}/")
+                val treeId = "primary:"+permissionData.recommendedPath?.removePrefix("${Environment.getExternalStorageDirectory()}/")
                 val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
                 uriPermsLauncher.launch(uri)
-                activePermissionData = cardData
+                activePermissionData = permissionData
             }
 
             var introDialogShown by remember { mutableStateOf(false) }
-            cardData.introDialog?.let { it(
-                shown = introDialogShown,
-                onDismissRequest = {
-                    introDialogShown = false
-                },
+            if (introDialogShown) ChooseFolderIntroDialog(
+                permissionData = permissionData,
+                onDismissRequest = { introDialogShown = false },
                 onConfirm = {
                     requestUriPermission()
                     introDialogShown = false
                 }
-            ) }
+            )
 
             PermissionCard(
-                title = stringResource(cardData.titleId),
+                title = stringResource(permissionData.titleId),
                 buttons = {
                     Button(
                         onClick = {
-                            if (cardData.introDialog != null) introDialogShown = true
+                            if (permissionData.recommendedPath != null && permissionData.recommendedPathDescriptionId != null)
+                                introDialogShown = true
                             else requestUriPermission()
                         }
                     ) {
                         Text(stringResource(R.string.permissions_chooseFolder))
                     }
                 },
-                content = cardData.content
+                content = permissionData.content
             )
         }
     }
@@ -144,6 +145,14 @@ private fun PermissionsList(
             }
         ) {
             Text(stringResource(R.string.permissions_unrecommendedPath_description))
+            Card {
+                Text(
+                    text = activePermissionData?.recommendedPath?.removePrefix(externalStorageRoot)
+                        ?: "",
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
+            Text(stringResource(R.string.permissions_unrecommendedPath_manuallyCreate))
         }
     }
 }
