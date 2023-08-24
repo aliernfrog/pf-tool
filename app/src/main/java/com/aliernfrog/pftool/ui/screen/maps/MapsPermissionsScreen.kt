@@ -21,7 +21,7 @@ fun MapsPermissionsScreen(
             recommendedPath = ConfigKey.RECOMMENDED_MAPS_DIR,
             recommendedPathDescriptionId = R.string.permissions_maps_recommended,
             doesntExistHintId = R.string.permissions_recommendedFolder_openPFToCreate,
-            getUri = { mapsViewModel.mapsDir },
+            getUri = { mapsViewModel.prefs.pfMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.pfMapsDir = it.toString()
             },
@@ -33,7 +33,7 @@ fun MapsPermissionsScreen(
             titleId = R.string.permissions_exportedMaps,
             recommendedPath = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
             recommendedPathDescriptionId = R.string.permissions_exportedMaps_recommended,
-            getUri = { mapsViewModel.exportedMapsDir },
+            getUri = { mapsViewModel.prefs.exportedMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.exportedMapsDir = it.toString()
             },
