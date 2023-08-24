@@ -25,10 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
-import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
-import com.aliernfrog.pftool.ui.dialog.SimpleAlertDialog
+import com.aliernfrog.pftool.ui.dialog.NotRecommendedFolderDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.extension.resolvePath
@@ -93,6 +92,15 @@ private fun PermissionsList(
         }
     })
 
+    fun openFolderPicker(permissionData: PermissionData) {
+        val starterUri = if (permissionData.recommendedPath != null) DocumentsContract.buildDocumentUri(
+            "com.android.externalstorage.documents",
+            "primary:"+permissionData.recommendedPath.removePrefix("${Environment.getExternalStorageDirectory()}/")
+        ) else null
+        uriPermsLauncher.launch(starterUri)
+        activePermissionData = permissionData
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -132,28 +140,19 @@ private fun PermissionsList(
         }
     }
 
-    if (activePermissionData?.recommendedPath != null) unrecommendedPathWarningUri?.let {
-        // TODO make better and more informative
-        SimpleAlertDialog(
-            shown = true,
-            onConfirm = {
-                takePersistableUriPermissions(it)
+    unrecommendedPathWarningUri?.let { uri ->
+        NotRecommendedFolderDialog(
+            permissionData = activePermissionData!!,
+            onDismissRequest = { unrecommendedPathWarningUri = null },
+            onUseUnrecommendedFolderRequest = {
+                takePersistableUriPermissions(uri)
                 unrecommendedPathWarningUri = null
             },
-            onDismissRequest = {
+            onChooseFolderRequest = {
+                activePermissionData?.let { openFolderPicker(it) }
                 unrecommendedPathWarningUri = null
             }
-        ) {
-            Text(stringResource(R.string.permissions_unrecommendedPath_description))
-            Card {
-                Text(
-                    text = activePermissionData?.recommendedPath?.removePrefix(externalStorageRoot)
-                        ?: "",
-                    modifier = Modifier.padding(4.dp)
-                )
-            }
-            Text(stringResource(R.string.permissions_unrecommendedPath_manuallyCreate))
-        }
+        )
     }
 }
 
