@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
@@ -32,20 +31,20 @@ fun Uri.cacheFile(context: Context): File? {
 }
 
 fun Uri.resolvePath(): String? {
-    val storageRoot = Environment.getExternalStorageDirectory().toString()
     val pathSplit = pathSegments.last().split(":", limit = 2)
     val root = pathSplit.first()
     val filePath = pathSplit.last()
-    //TODO remove log
     val resolvedPath = when (root) {
-        "primary" -> "$storageRoot/$filePath"
+        "primary" -> {
+            val storageRoot = Environment.getExternalStorageDirectory().toString()
+            "$storageRoot/$filePath"
+        }
         "home" -> {
             val documentsRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
             "$documentsRoot/$filePath"
         }
         else -> null
     }
-    Log.d("uriPathResolver", "uri: $this, path: $resolvedPath")
     return resolvedPath
 }
 

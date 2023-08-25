@@ -29,19 +29,31 @@ object SettingsConstant {
     )
     val folders = listOf(
         PrefEditItem(
-            key = ConfigKey.KEY_MAPS_DIR,
-            default = ConfigKey.RECOMMENDED_MAPS_DIR,
-            labelResourceId = R.string.settings_general_folders_maps
+            labelResourceId = R.string.settings_general_folders_maps,
+            getValue = { it.pfMapsDir },
+            setValue = { newValue, prefs ->
+                prefs.pfMapsDir = newValue
+            },
+            default = ConfigKey.RECOMMENDED_MAPS_DIR
         ),
         PrefEditItem(
-            key = ConfigKey.KEY_EXPORTED_MAPS_DIR,
-            default = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
-            labelResourceId = R.string.settings_general_folders_exportedMaps
+            labelResourceId = R.string.settings_general_folders_exportedMaps,
+            getValue = { it.exportedMapsDir },
+            setValue = { newValue, prefs ->
+                prefs.exportedMapsDir = newValue
+            },
+            default = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR
         )
     )
     val experimentalPrefOptions = listOf(
-        PrefEditItem(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL),
-        PrefEditItem(ConfigKey.KEY_MAPS_DIR, ConfigKey.RECOMMENDED_MAPS_DIR),
-        PrefEditItem(ConfigKey.KEY_EXPORTED_MAPS_DIR, ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR)
+        PrefEditItem(
+            labelResourceId = R.string.settings_experimental_updatesURL,
+            getValue = { it.updatesURL },
+            setValue = { newValue, prefs ->
+                prefs.updatesURL = newValue
+            },
+            default = ConfigKey.DEFAULT_UPDATES_URL
+        ),
+        *folders.toTypedArray()
     )
 }

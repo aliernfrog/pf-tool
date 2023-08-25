@@ -48,11 +48,13 @@ fun MapsScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         mapsViewModel.getMapsFile(context)
         mapsViewModel.getExportedMapsFile(context)
         mapsViewModel.fetchAllMaps()
     }
+
     AppScaffold(
         title = stringResource(R.string.maps),
         topAppBarState = mapsViewModel.topAppBarState

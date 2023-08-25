@@ -26,11 +26,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -215,17 +211,13 @@ fun SettingsScreen(
                     }
                 }
                 SettingsConstant.experimentalPrefOptions.forEach { prefEdit ->
-                    var value by remember { mutableStateOf(
-                        settingsViewModel.prefs.getString(prefEdit.key, prefEdit.default)
-                    ) }
                     OutlinedTextField(
-                        value = value,
+                        value = prefEdit.getValue(settingsViewModel.prefs),
                         onValueChange = {
-                            value = it
-                            settingsViewModel.prefs.putString(prefEdit.key, value)
+                            prefEdit.setValue(it, settingsViewModel.prefs)
                         },
                         label = {
-                            Text("Prefs: ${prefEdit.key}")
+                            Text(stringResource(prefEdit.labelResourceId))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -237,7 +229,7 @@ fun SettingsScreen(
                     contentColor = MaterialTheme.colorScheme.error
                 ) {
                     SettingsConstant.experimentalPrefOptions.forEach {
-                        settingsViewModel.prefs.putString(it.key, it.default)
+                        it.setValue(it.default, settingsViewModel.prefs)
                     }
                     settingsViewModel.topToastState.showToast(
                         text = R.string.settings_experimental_resetPrefsDone,

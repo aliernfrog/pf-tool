@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -35,8 +34,7 @@ fun FolderConfiguration(
         if (it == null) return@rememberLauncherForActivityResult
         val pref = activePref ?: return@rememberLauncherForActivityResult
         it.takePersistablePermissions(context)
-        settingsViewModel.prefs.putString(pref.key, it.toString())
-        pref.mutableValue.value = it.toString()
+        pref.setValue(it.toString(), settingsViewModel.prefs)
     })
 
     folders.forEach { folder ->
@@ -46,7 +44,7 @@ fun FolderConfiguration(
         }
 
         ButtonRow(
-            title = stringResource(folder.labelResourceId!!),
+            title = stringResource(folder.labelResourceId),
             description = getFolderDescription(folder),
             trailingComponent = {
                 IconButton(
@@ -65,16 +63,15 @@ fun FolderConfiguration(
         ) {
             launchOpenFolder(null)
         }
-
-        LaunchedEffect(Unit) {
-            folder.mutableValue.value = settingsViewModel.prefs.getString(folder.key, "")
-        }
     }
 }
 
 @Composable
-private fun getFolderDescription(folder: PrefEditItem): String {
-    var text = folder.mutableValue.value
+private fun getFolderDescription(
+    folder: PrefEditItem,
+    settingsViewModel: SettingsViewModel = getViewModel()
+): String {
+    var text = folder.getValue(settingsViewModel.prefs)
     if (text.isNotEmpty()) try {
         text = Uri.parse(text).resolvePath()?.removePrefix(externalStorageRoot)
             ?: text

@@ -84,7 +84,7 @@ private fun PermissionsList(
         val recommendedPath = activePermissionData?.recommendedPath
         if (recommendedPath != null) {
             val resolvedPath = it.resolvePath()
-            val isRecommendedPath = resolvedPath == recommendedPath
+            val isRecommendedPath = resolvedPath?.lowercase() == recommendedPath.lowercase()
             if (!isRecommendedPath) unrecommendedPathWarningUri = it
             else takePersistableUriPermissions(it)
         } else {

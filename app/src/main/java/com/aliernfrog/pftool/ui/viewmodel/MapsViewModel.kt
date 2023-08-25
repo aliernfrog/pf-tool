@@ -45,8 +45,8 @@ class MapsViewModel(
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
-    val mapsDir = prefs.pfMapsDir
-    val exportedMapsDir = prefs.exportedMapsDir
+    private val mapsDir: String get() { return prefs.pfMapsDir }
+    private val exportedMapsDir: String get() { return prefs.exportedMapsDir }
     private lateinit var mapsFile: DocumentFileCompat
     private lateinit var exportedMapsFile: DocumentFileCompat
 
@@ -158,14 +158,26 @@ class MapsViewModel(
     }
 
     fun getMapsFile(context: Context): DocumentFileCompat {
-        if (::mapsFile.isInitialized) return mapsFile
+        val isUpToDate = if (!::mapsFile.isInitialized) false
+        else {
+            val updatedPath = mapsFile.uri.resolvePath()
+            val existingPath = Uri.parse(mapsDir).resolvePath()
+            updatedPath == existingPath
+        }
+        if (isUpToDate) return mapsFile
         val treeUri = Uri.parse(mapsDir)
         mapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
         return mapsFile
     }
 
     fun getExportedMapsFile(context: Context): DocumentFileCompat {
-        if (::exportedMapsFile.isInitialized) return exportedMapsFile
+        val isUpToDate = if (!::exportedMapsFile.isInitialized) false
+        else {
+            val updatedPath = exportedMapsFile.uri.resolvePath()
+            val existingPath = Uri.parse(exportedMapsDir).resolvePath()
+            updatedPath == existingPath
+        }
+        if (isUpToDate) return exportedMapsFile
         val treeUri = Uri.parse(exportedMapsDir)
         exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
         return exportedMapsFile
