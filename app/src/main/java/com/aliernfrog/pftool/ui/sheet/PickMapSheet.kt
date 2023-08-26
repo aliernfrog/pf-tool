@@ -26,7 +26,7 @@ import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.PickMapSheetSegments
 import com.aliernfrog.pftool.ui.component.*
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import com.aliernfrog.pftool.util.staticutil.UriToFileUtil
+import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.Dispatchers
@@ -61,9 +61,9 @@ fun PickMapSheet(
         sheetState = sheetState
     ) {
         PickFromDeviceButton(
-            onPathConversionFail = {
+            onFail = {
                 mapsViewModel.topToastState.showToast(
-                    text = R.string.warning_couldntConvertToPath,
+                    text = R.string.maps_pickMap_failed,
                     icon = Icons.Rounded.PriorityHigh,
                     iconTintColor = TopToastColor.ERROR,
                     type = TopToastType.ANDROID
@@ -92,19 +92,21 @@ fun PickMapSheet(
 
 @Composable
 private fun PickFromDeviceButton(
-    onPathConversionFail: () -> Unit,
+    onFail: () -> Unit,
     onFilePick: (File) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.data?.data != null) {
-            scope.launch {
-                withContext(Dispatchers.IO) {
-                    val convertedPath = UriToFileUtil.getRealFilePath(it.data?.data!!, context)
-                    if (convertedPath != null) onFilePick(File(convertedPath))
-                    else onPathConversionFail()
-                }
+        if (it.data?.data != null) scope.launch {
+            withContext(Dispatchers.IO) {
+                val cachedFile = UriUtil.cacheFile(
+                    uri = it.data?.data!!,
+                    parentName = "maps",
+                    context = context
+                )
+                if (cachedFile != null) onFilePick(cachedFile)
+                else onFail()
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.aliernfrog.pftool.ui.component.form
 
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 fun DividerRow(
     modifier: Modifier = Modifier,
     thickness: Dp = 1.dp,
-    color: Color = MaterialTheme.colorScheme.surfaceVariant,
+    color: Color = DividerDefaults.color,
     alpha: Float = 0.7f
 ) {
     HorizontalDivider(

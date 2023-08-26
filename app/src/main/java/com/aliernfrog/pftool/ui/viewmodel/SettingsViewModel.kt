@@ -26,6 +26,7 @@ class SettingsViewModel(
     val scrollState = ScrollState(0)
 
     var themeOptionsExpanded by mutableStateOf(false)
+    var foldersDialogShown by mutableStateOf(false)
     var linksExpanded by mutableStateOf(false)
     var experimentalSettingsShown by mutableStateOf(false)
     var showMaterialYouOption by mutableStateOf(supportsMaterialYou)

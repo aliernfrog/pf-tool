@@ -10,11 +10,10 @@ fun PFMap.resolveFile(): Any {
     return this.documentFile ?: this.file!!
 }
 
-fun PFMap.resolvePath(mapsDir: String): String? {
+fun PFMap.resolvePath(): String? {
     return when (val file = this.resolveFile()) {
         is File -> file.absolutePath
-        // Right now, only imported maps can be DocumentFileCompat
-        is DocumentFileCompat -> "$mapsDir/${this.fileName}"
+        is DocumentFileCompat -> file.uri.toString()
         else -> null
     }
 }

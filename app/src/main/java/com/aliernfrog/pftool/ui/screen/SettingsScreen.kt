@@ -26,11 +26,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -50,6 +46,7 @@ import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.component.form.SwitchRow
+import com.aliernfrog.pftool.ui.dialog.FolderConfigurationDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -113,14 +110,22 @@ fun SettingsScreen(
                 }
             }
 
-            // Maps options
-            FormSection(title = stringResource(R.string.settings_maps)) {
+            // General options
+            FormSection(title = stringResource(R.string.settings_general)) {
                 SwitchRow(
-                    title = stringResource(R.string.settings_maps_showMapThumbnailsInList),
-                    description = stringResource(R.string.settings_maps_showMapThumbnailsInList_description),
+                    title = stringResource(R.string.settings_general_showMapThumbnailsInList),
+                    description = stringResource(R.string.settings_general_showMapThumbnailsInList_description),
                     checked = settingsViewModel.prefs.showMapThumbnailsInList
                 ) {
                     settingsViewModel.prefs.showMapThumbnailsInList = it
+                }
+                ButtonRow(
+                    title = stringResource(R.string.settings_general_folders),
+                    description = stringResource(R.string.settings_general_folders_description),
+                    expanded = true,
+                    arrowRotation = 90f
+                ) {
+                    settingsViewModel.foldersDialogShown = true
                 }
             }
 
@@ -204,17 +209,13 @@ fun SettingsScreen(
                     }
                 }
                 SettingsConstant.experimentalPrefOptions.forEach { prefEdit ->
-                    var value by remember { mutableStateOf(
-                        settingsViewModel.prefs.getString(prefEdit.key, prefEdit.default)
-                    ) }
                     OutlinedTextField(
-                        value = value,
+                        value = prefEdit.getValue(settingsViewModel.prefs),
                         onValueChange = {
-                            value = it
-                            settingsViewModel.prefs.putString(prefEdit.key, value)
+                            prefEdit.setValue(it, settingsViewModel.prefs)
                         },
                         label = {
-                            Text("Prefs: ${prefEdit.key}")
+                            Text(stringResource(prefEdit.labelResourceId))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -226,7 +227,7 @@ fun SettingsScreen(
                     contentColor = MaterialTheme.colorScheme.error
                 ) {
                     SettingsConstant.experimentalPrefOptions.forEach {
-                        settingsViewModel.prefs.putString(it.key, it.default)
+                        it.setValue(it.default, settingsViewModel.prefs)
                     }
                     settingsViewModel.topToastState.showToast(
                         text = R.string.settings_experimental_resetPrefsDone,
@@ -238,6 +239,10 @@ fun SettingsScreen(
             }
         }
     }
+
+    if (settingsViewModel.foldersDialogShown) FolderConfigurationDialog(
+        onDismissRequest = { settingsViewModel.foldersDialogShown = false }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
