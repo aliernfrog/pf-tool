@@ -1,6 +1,5 @@
 package com.aliernfrog.pftool.ui.dialog
 
-import android.os.Build
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.externalStorageRoot
+import com.aliernfrog.pftool.folderPickerSupportsInitialUri
 
 @Composable
 fun ChooseFolderIntroDialog(
@@ -70,7 +70,7 @@ fun ChooseFolderIntroDialog(
                 Text(
                     text = stringResource(
                         //? Folder picker on Android 7 or below doesn't support automatically navigating
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) R.string.permissions_recommendedFolder_a8Hint
+                        if (folderPickerSupportsInitialUri) R.string.permissions_recommendedFolder_a8Hint
                         else R.string.permissions_recommendedFolder_a7Hint
                     ),
                     fontSize = 13.5.sp

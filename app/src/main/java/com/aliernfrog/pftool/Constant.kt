@@ -1,12 +1,15 @@
 package com.aliernfrog.pftool
 
+import android.os.Build
 import android.os.Environment
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
 
 const val experimentalSettingsRequiredClicks = 10
-val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
+
+val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
+val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"

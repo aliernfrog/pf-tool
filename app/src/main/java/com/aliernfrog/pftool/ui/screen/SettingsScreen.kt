@@ -46,7 +46,7 @@ import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.component.form.SwitchRow
-import com.aliernfrog.pftool.ui.component.settings.FolderConfiguration
+import com.aliernfrog.pftool.ui.dialog.FolderConfigurationDialog
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -119,15 +119,13 @@ fun SettingsScreen(
                 ) {
                     settingsViewModel.prefs.showMapThumbnailsInList = it
                 }
-                ExpandableRow(
-                    expanded = settingsViewModel.folderOptionsExpanded,
+                ButtonRow(
                     title = stringResource(R.string.settings_general_folders),
                     description = stringResource(R.string.settings_general_folders_description),
-                    onClickHeader = {
-                        settingsViewModel.folderOptionsExpanded = !settingsViewModel.folderOptionsExpanded
-                    }
+                    expanded = true,
+                    arrowRotation = 90f
                 ) {
-                    FolderConfiguration()
+                    settingsViewModel.foldersDialogShown = true
                 }
             }
 
@@ -241,6 +239,10 @@ fun SettingsScreen(
             }
         }
     }
+
+    if (settingsViewModel.foldersDialogShown) FolderConfigurationDialog(
+        onDismissRequest = { settingsViewModel.foldersDialogShown = false }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

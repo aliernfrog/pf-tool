@@ -63,9 +63,12 @@
     <string name="settings_general_showMapThumbnailsInList">Show map thumbnails in map list</string>
     <string name="settings_general_showMapThumbnailsInList_description">Know which map you are on</string>
     <string name="settings_general_folders">Folder configuration</string>
-    <string name="settings_general_folders_notSet">Not configured</string>
-    <string name="settings_general_folders_reset">Reset</string>
     <string name="settings_general_folders_description">Configure folders used in PF Tool</string>
+    <string name="settings_general_folders_notSet">Not configured</string>
+    <string name="settings_general_folders_recommendedFolder">Recommended folder</string>
+    <string name="settings_general_folders_choose">Choose folder</string>
+    <string name="settings_general_folders_openRecommended">Open recommended folder</string>
+    <string name="settings_general_folders_openAndroidData">Open Android/data folder</string>
     <string name="settings_general_folders_maps">Maps folder</string>
     <string name="settings_general_folders_exportedMaps">Exported maps folder</string>
     <string name="settings_about">About</string>
