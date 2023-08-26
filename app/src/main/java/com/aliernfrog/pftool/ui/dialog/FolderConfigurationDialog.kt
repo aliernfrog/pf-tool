@@ -99,7 +99,7 @@ fun FolderCard(
     val buttonsScrollState = rememberScrollState()
     val recommendedPath = remember { pref.default.removePrefix(externalStorageRoot) }
     val dataFolderPath = remember { externalStorageRoot+"Android/data" }
-    val usingRecommendedPath = path == recommendedPath
+    val usingRecommendedPath = path.equals(recommendedPath, ignoreCase = true)
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
