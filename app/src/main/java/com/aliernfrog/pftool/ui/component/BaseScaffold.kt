@@ -124,7 +124,7 @@ private fun BottomBar(
     onNavigateRequest: (Destination) -> Unit
 ) {
     AnimatedVisibility(
-        visible = !(currentDestination?.isSubScreen ?: false),
+        visible = currentDestination?.isSubScreen != true,
         enter = slideInVertically(animationSpec = tween(durationMillis = 150), initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(animationSpec = tween(durationMillis = 150), targetOffsetY = { it }) + fadeOut()
     ) {
@@ -164,7 +164,7 @@ private fun SideBarRail(
             .onSizeChanged { onWidthChange(it.width) }
     ) {
         AppIcon()
-        destinations.filter { !it.isSubScreen }.forEach {
+        destinations.forEach {
             val selected = it.route == currentDestination?.route
             NavigationRailItem(
                 selected = selected,
