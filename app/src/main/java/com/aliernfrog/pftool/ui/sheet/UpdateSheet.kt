@@ -27,10 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
@@ -71,6 +73,7 @@ fun UpdateSheet(
         )
         MarkdownText(
             modifier = Modifier
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = bottomPadding)
                 .padding(16.dp),
@@ -103,7 +106,11 @@ private fun Actions(
             Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .horizontalFadingEdge(versionNameScrollState, MaterialTheme.colorScheme.surface)
+                .horizontalFadingEdge(
+                    scrollState = versionNameScrollState,
+                    edgeColor = MaterialTheme.colorScheme.surface,
+                    isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
+                )
         ) {
             Row(
                 modifier = Modifier

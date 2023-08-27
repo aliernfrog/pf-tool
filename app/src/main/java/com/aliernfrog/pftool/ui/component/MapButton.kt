@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.aliernfrog.pftool.data.PFMap
@@ -38,7 +40,13 @@ fun MapButton(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
+    val isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
     val mapDetails = remember { map.getDetails(context) }
+
+    fun invertIfRTL(list: List<Color>): List<Color> {
+        return if (isRTL) list.reversed() else list
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -67,10 +75,11 @@ fun MapButton(
             painter = rememberVectorPainter(Icons.Outlined.PinDrop),
             modifier = Modifier
                 .fillMaxSize()
-                .background(Brush.horizontalGradient(listOf(
-                    containerColor,
-                    Color.Transparent
-                )))
+                .background(Brush.horizontalGradient(
+                    invertIfRTL(
+                        listOf(containerColor, Color.Transparent)
+                    )
+                ))
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
