@@ -87,7 +87,7 @@ fun BaseExpandableRow(
         if (expanded) expandedPadding else 0.dp
     )
     val elevation by animateDpAsState(
-        if (expanded) 6.dp else 0.dp
+        if (expanded) 2.dp else 0.dp
     )
     val containerColor by animateColorAsState(
         if (expanded) expandedContainerColor else Color.Transparent

@@ -3,7 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val composeVersion = "1.6.0-alpha02"
+val composeVersion = "1.6.0-alpha04"
+val material3Version = "1.2.0-alpha06"
 val composeCompilerVersion = "1.5.1"
 
 android {
@@ -58,10 +59,11 @@ dependencies {
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha04")
+    implementation("androidx.compose.material3:material3:$material3Version")
+    implementation("androidx.compose.material3:material3-window-size-class:$material3Version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.navigation:navigation-compose:2.7.0-rc01")
+    implementation("androidx.navigation:navigation-compose:2.7.1")
     implementation("io.insert-koin:koin-androidx-compose:3.4.6")
     implementation("com.github.aliernfrog:top-toast-compose:1.3.4")
     implementation("com.lazygeniouz:dfc:1.0.7")
