@@ -71,6 +71,7 @@ fun UpdateSheet(
         )
         MarkdownText(
             modifier = Modifier
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = bottomPadding)
                 .padding(16.dp),
