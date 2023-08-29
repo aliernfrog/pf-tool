@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.PinDrop
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFields
 import androidx.compose.material.icons.rounded.Upload
@@ -30,10 +29,10 @@ import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.FadeVisibilityColumn
+import com.aliernfrog.pftool.ui.component.PickMapButton
 import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
-import com.aliernfrog.pftool.ui.component.form.RoundedButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -60,9 +59,12 @@ fun MapsScreen(
         topAppBarState = mapsViewModel.topAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
-            PickMapFileButton { scope.launch {
-                mapsViewModel.pickMapSheetState.show()
-            }}
+            PickMapButton(
+                chosenMap = mapsViewModel.chosenMap,
+                showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail
+            ) {
+                scope.launch { mapsViewModel.pickMapSheetState.show() }
+            }
             MapActions()
         }
     }
@@ -86,18 +88,6 @@ fun MapsScreen(
             mapsViewModel.chooseMap(it)
             true
         }
-    )
-}
-
-@Composable
-private fun PickMapFileButton(
-    onClick: () -> Unit
-) {
-    RoundedButtonRow(
-        title = stringResource(R.string.maps_pickMap),
-        painter = rememberVectorPainter(Icons.Rounded.PinDrop),
-        containerColor = MaterialTheme.colorScheme.primary,
-        onClick = onClick
     )
 }
 

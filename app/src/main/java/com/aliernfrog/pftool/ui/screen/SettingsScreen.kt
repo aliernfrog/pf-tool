@@ -113,6 +113,13 @@ fun SettingsScreen(
             // General options
             FormSection(title = stringResource(R.string.settings_general)) {
                 SwitchRow(
+                    title = stringResource(R.string.settings_general_showChosenMapThumbnail),
+                    description = stringResource(R.string.settings_general_showChosenMapThumbnail_description),
+                    checked = settingsViewModel.prefs.showChosenMapThumbnail
+                ) {
+                    settingsViewModel.prefs.showChosenMapThumbnail = it
+                }
+                SwitchRow(
                     title = stringResource(R.string.settings_general_showMapThumbnailsInList),
                     description = stringResource(R.string.settings_general_showMapThumbnailsInList_description),
                     checked = settingsViewModel.prefs.showMapThumbnailsInList

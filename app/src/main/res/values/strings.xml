@@ -30,7 +30,9 @@
     <string name="permissions_exportedMaps_recommended">PF Tool used this folder in older versions, choose this folder if you want to access maps you have exported before</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
+    <string name="maps_noMapChosen">No map chosen</string>
     <string name="maps_pickMap">Pick a map</string>
+    <string name="maps_pickMap_description">Click to pick a map</string>
     <string name="maps_pickMap_device">Pick from device</string>
     <string name="maps_pickMap_failed">Failed to pick map</string>
     <string name="maps_pickMap_imported">Your maps</string>
@@ -60,8 +62,10 @@
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Theme based on colors of your device</string>
     <string name="settings_general">General</string>
+    <string name="settings_general_showChosenMapThumbnail">Show thumbnail of selected map</string>
+    <string name="settings_general_showChosenMapThumbnail_description">Know which map you are on</string>
     <string name="settings_general_showMapThumbnailsInList">Show map thumbnails in map list</string>
-    <string name="settings_general_showMapThumbnailsInList_description">Know which map you are on</string>
+    <string name="settings_general_showMapThumbnailsInList_description">Easily identify the maps you have</string>
     <string name="settings_general_folders">Folder configuration</string>
     <string name="settings_general_folders_description">Configure folders used in PF Tool</string>
     <string name="settings_general_folders_notSet">Not configured</string>

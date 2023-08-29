@@ -41,14 +41,13 @@ fun PickMapSheet(
     mapsViewModel: MapsViewModel = getViewModel(),
     sheetState: SheetState = mapsViewModel.pickMapSheetState,
     selectedSegment: PickMapSheetSegments = mapsViewModel.pickMapSheetSelectedSegment,
-    getShowMapThumbnails: () -> Boolean = { mapsViewModel.prefs.showMapThumbnailsInList },
+    showMapThumbnails: Boolean = mapsViewModel.prefs.showMapThumbnailsInList,
     onSelectedSegmentChange: (PickMapSheetSegments) -> Unit = {
         mapsViewModel.pickMapSheetSelectedSegment = it
     },
     onMapPick: (map: Any) -> Boolean
 ) {
     val scope = rememberCoroutineScope()
-    var mapThumbnailsShown by remember { mutableStateOf(getShowMapThumbnails()) }
 
     fun pickMap(map: Any) {
         if (onMapPick(map)) scope.launch {
@@ -76,17 +75,13 @@ fun PickMapSheet(
         Maps(
             importedMaps = mapsViewModel.importedMaps,
             exportedMaps = mapsViewModel.exportedMaps,
-            showMapThumbnails = mapThumbnailsShown,
+            showMapThumbnails = showMapThumbnails,
             selectedSegment = selectedSegment,
             onSelectedSegmentChange = onSelectedSegmentChange,
             onMapPick = {
                 pickMap(it)
             }
         )
-    }
-
-    LaunchedEffect(sheetState.isVisible) {
-        if (sheetState.isVisible) mapThumbnailsShown = getShowMapThumbnails()
     }
 }
 
