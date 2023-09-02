@@ -1,6 +1,6 @@
 package com.aliernfrog.pftool.enum
 
-enum class PickMapSheetSegments {
+enum class MapType {
     IMPORTED,
     EXPORTED
 }

@@ -10,17 +10,15 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
-import com.aliernfrog.pftool.enum.PickMapSheetSegments
+import com.aliernfrog.pftool.enum.MapType
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
@@ -37,12 +35,11 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
-    context: Context,
     val topToastState: TopToastState,
     val prefs: PreferenceManager
 ) : ViewModel() {
-    val pickMapSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
-    val topAppBarState = TopAppBarState(0F, 0F, 0F)
+    val actionsTopAppBarState = TopAppBarState(0F, 0F, 0F)
+    val listTopAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
     private val mapsDir: String get() { return prefs.pfMapsDir }
@@ -54,7 +51,9 @@ class MapsViewModel(
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
     var mapNameEdit by mutableStateOf("")
     var pendingMapDelete by mutableStateOf<String?>(null)
-    var pickMapSheetSelectedSegment by mutableStateOf(PickMapSheetSegments.IMPORTED)
+    var mapsListBackButtonShown by mutableStateOf(false)
+    var mapsListShown by mutableStateOf(true)
+    var mapsListSelectedSegment by mutableStateOf(MapType.IMPORTED)
 
     var chosenMap by mutableStateOf<PFMap?>(null)
 

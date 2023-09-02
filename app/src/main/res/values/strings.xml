@@ -33,7 +33,12 @@
     <string name="maps_noMapChosen">No map chosen</string>
     <string name="maps_pickMap">Pick a map</string>
     <string name="maps_pickMap_description">Click to pick a map</string>
-    <string name="maps_pickMap_device">Pick from device</string>
+    <string name="maps_pickMap_search">Search maps..</string>
+    <string name="maps_pickMap_sorting">Sorting</string>
+    <string name="maps_pickMap_sorting_alphabetical">Alphabetical</string>
+    <string name="maps_pickMap_sorting_date">Date</string>
+    <string name="maps_pickMap_reverse">Reversed</string>
+    <string name="maps_pickMap_storage">Storage</string>
     <string name="maps_pickMap_failed">Failed to pick map</string>
     <string name="maps_pickMap_imported">Your maps</string>
     <string name="maps_pickMap_exported">Exported maps</string>

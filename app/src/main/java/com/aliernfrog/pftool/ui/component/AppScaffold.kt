@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,8 +56,7 @@ private fun AppTopBar(
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = stringResource(R.string.action_back),
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        contentDescription = stringResource(R.string.action_back)
                     )
                 }
             }

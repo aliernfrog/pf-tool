@@ -34,7 +34,6 @@ import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
-import com.aliernfrog.pftool.ui.sheet.PickMapSheet
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
@@ -45,25 +44,22 @@ import org.koin.androidx.compose.getViewModel
 fun MapsScreen(
     mapsViewModel: MapsViewModel = getViewModel()
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        mapsViewModel.getMapsFile(context)
-        mapsViewModel.getExportedMapsFile(context)
-        mapsViewModel.fetchAllMaps()
+        mapsViewModel.mapsListBackButtonShown = true
     }
 
     AppScaffold(
         title = stringResource(R.string.maps),
-        topAppBarState = mapsViewModel.topAppBarState
+        topAppBarState = mapsViewModel.actionsTopAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
             PickMapButton(
                 chosenMap = mapsViewModel.chosenMap,
                 showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail
             ) {
-                scope.launch { mapsViewModel.pickMapSheetState.show() }
+                mapsViewModel.mapsListShown = true
             }
             MapActions()
         }
@@ -81,14 +77,6 @@ fun MapsScreen(
             }
         )
     }
-
-    PickMapSheet(
-        sheetState = mapsViewModel.pickMapSheetState,
-        onMapPick = {
-            mapsViewModel.chooseMap(it)
-            true
-        }
-    )
 }
 
 @Composable

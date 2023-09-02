@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -34,18 +34,18 @@ import com.aliernfrog.pftool.util.extension.getDetails
 fun MapButton(
     map: PFMap,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    contentColor: Color = contentColorFor(containerColor),
     showMapThumbnail: Boolean = true,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
     val isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val mapDetails = remember { map.getDetails(context) }
-
     fun invertIfRTL(list: List<Color>): List<Color> {
         return if (isRTL) list.reversed() else list
     }
+
+    if (map.details.value.isNullOrBlank()) map.getDetails(context)
 
     Box(
         modifier = modifier
@@ -71,7 +71,7 @@ fun MapButton(
         )
         FormHeader(
             title = map.name,
-            description = mapDetails,
+            description = map.details.value ?: "",
             painter = rememberVectorPainter(Icons.Outlined.PinDrop),
             modifier = Modifier
                 .fillMaxSize()
