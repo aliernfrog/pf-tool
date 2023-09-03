@@ -83,7 +83,7 @@ fun MapsScreen(
             onDismissRequest = { mapsViewModel.pendingMapDelete = null },
             onConfirmDelete = {
                 scope.launch {
-                    mapsViewModel.deleteMap(unselectChosenMap = true)
+                    mapsViewModel.deleteMap()
                     mapsViewModel.pendingMapDelete = null
                 }
             }

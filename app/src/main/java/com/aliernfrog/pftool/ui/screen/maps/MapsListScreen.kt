@@ -159,10 +159,7 @@ fun MapsListScreen(
                     showMapThumbnail = mapsListViewModel.prefs.showMapThumbnailsInList,
                     modifier = Modifier.animateItemPlacement(),
                     onDeleteRequest = { scope.launch {
-                        mapsViewModel.deleteMap(
-                            map,
-                            unselectChosenMap = false
-                        )
+                        mapsViewModel.deleteMap(map)
                     } }
                 ) {
                     pickFile(map)

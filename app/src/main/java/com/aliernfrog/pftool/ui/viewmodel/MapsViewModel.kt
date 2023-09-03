@@ -154,6 +154,7 @@ class MapsViewModel(
 
     /**
      * Deletes given [maps] and produces a TopToast based on result.
+     * @param [maps] maps to delete, defaults to chosen map.
      */
     suspend fun deleteMap(
         vararg maps: PFMap = mapsArray
