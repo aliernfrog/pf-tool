@@ -44,7 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.MapType
+import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.SortingOption
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
@@ -132,9 +132,9 @@ fun MapsListScreen(
                     onReversedChange = { mapsListViewModel.reverseList = it }
                 )
                 Filter(
-                    selectedSegment = mapsListViewModel.mapTypeFilter,
+                    selectedSegment = mapsListViewModel.chosenSegment,
                     onSelectedSegmentChange = {
-                        mapsListViewModel.mapTypeFilter = it
+                        mapsListViewModel.chosenSegment = it
                     }
                 )
             }
@@ -143,10 +143,7 @@ fun MapsListScreen(
                 if (mapsToShow.isEmpty()) ErrorWithIcon(
                     error = stringResource(
                         if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
-                        else when (mapsListViewModel.mapTypeFilter) {
-                            MapType.IMPORTED -> R.string.mapsList_noImportedMaps
-                            MapType.EXPORTED -> R.string.mapsList_noExportedMaps
-                        }
+                        else mapsListViewModel.chosenSegment.noMapsFoundTextId
                     ),
                     painter = rememberVectorPainter(Icons.Rounded.LocationOff)
                 ) else Text(
@@ -274,19 +271,18 @@ private fun Search(
 
 @Composable
 private fun Filter(
-    selectedSegment: MapType,
-    onSelectedSegmentChange: (MapType) -> Unit
+    selectedSegment: MapsListSegment,
+    onSelectedSegmentChange: (MapsListSegment) -> Unit
 ) {
     SegmentedButtons(
-        options = listOf(
-            stringResource(R.string.mapsList_imported),
-            stringResource(R.string.mapsList_exported)
-        ),
+        options = MapsListSegment.values().map {
+            stringResource(it.labelId)
+        },
         selectedIndex = selectedSegment.ordinal,
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        onSelectedSegmentChange(MapType.values()[it])
+        onSelectedSegmentChange(MapsListSegment.values()[it])
     }
 }

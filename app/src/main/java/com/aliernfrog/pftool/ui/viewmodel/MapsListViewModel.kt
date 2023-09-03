@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.data.PFMap
-import com.aliernfrog.pftool.enum.MapType
+import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.SortingOption
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationController
@@ -33,7 +33,7 @@ class MapsListViewModel(
         private set
 
     var searchQuery by mutableStateOf("")
-    var mapTypeFilter by mutableStateOf(MapType.IMPORTED)
+    var chosenSegment by mutableStateOf(MapsListSegment.IMPORTED)
     var sorting by mutableStateOf(SortingOption.ALPHABETICAL)
     var reverseList by mutableStateOf(false)
 
@@ -49,9 +49,9 @@ class MapsListViewModel(
 
     val mapsToShow: List<PFMap>
         get() {
-            val list = when (mapTypeFilter) {
-                MapType.IMPORTED -> mapsViewModel.importedMaps
-                MapType.EXPORTED -> mapsViewModel.exportedMaps
+            val list = when (chosenSegment) {
+                MapsListSegment.IMPORTED -> mapsViewModel.importedMaps
+                MapsListSegment.EXPORTED -> mapsViewModel.exportedMaps
             }.filter {
                 it.name.contains(searchQuery, ignoreCase = true)
             }.sortedWith(when (sorting) {
