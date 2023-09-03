@@ -5,7 +5,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -74,8 +76,12 @@ fun BaseScaffold(
     val showNavigationRail = currentDestination?.showNavigationBar != false && windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
     var sideBarWidth by remember { mutableStateOf(0.dp) }
 
+    fun isDestinationSelected(destination: Destination): Boolean {
+        return destination.route == currentDestination?.rootRoute
+    }
+
     fun changeDestination(destination: Destination) {
-        if (destination.route != currentDestination?.rootRoute && currentDestination?.showNavigationBar != false)
+        if (!isDestinationSelected(destination) && currentDestination?.showNavigationBar != false)
             navController.set(destination)
     }
 
@@ -95,6 +101,7 @@ fun BaseScaffold(
             if (!showNavigationRail) BottomBar(
                 destinations = mainDestinations,
                 currentDestination = currentDestination,
+                isDestinationSelected = ::isDestinationSelected,
                 onNavigateRequest = { changeDestination(it) }
             )
         },
@@ -116,6 +123,7 @@ fun BaseScaffold(
     if (showNavigationRail) SideBarRail(
         destinations = mainDestinations,
         currentDestination = currentDestination,
+        isDestinationSelected = ::isDestinationSelected,
         onWidthChange = { sideBarWidth = toDp(it) },
         onNavigateRequest = { changeDestination(it) }
     )
@@ -130,6 +138,7 @@ fun BaseScaffold(
 private fun BottomBar(
     destinations: List<Destination>,
     currentDestination: Destination?,
+    isDestinationSelected: (Destination) -> Boolean,
     onNavigateRequest: (Destination) -> Unit
 ) {
     AnimatedVisibility(
@@ -139,7 +148,7 @@ private fun BottomBar(
     ) {
         BottomAppBar {
             destinations.forEach {
-                val selected = it.route == currentDestination?.rootRoute
+                val selected = isDestinationSelected(it)
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
@@ -164,31 +173,38 @@ private fun BottomBar(
 private fun SideBarRail(
     destinations: List<Destination>,
     currentDestination: Destination?,
+    isDestinationSelected: (Destination) -> Boolean,
     onWidthChange: (Int) -> Unit,
     onNavigateRequest: (Destination) -> Unit
 ) {
-    NavigationRail(
-        modifier = Modifier
-            .onSizeChanged { onWidthChange(it.width) }
+    AnimatedVisibility(
+        visible = currentDestination?.showNavigationBar != false,
+        enter = slideInHorizontally(animationSpec = tween(durationMillis = 150), initialOffsetX = { -it }) + fadeIn(),
+        exit = slideOutHorizontally(animationSpec = tween(durationMillis = 150), targetOffsetX = { -it }) + fadeOut()
     ) {
-        AppIcon()
-        destinations.forEach {
-            val selected = it.route == currentDestination?.rootRoute
-            NavigationRailItem(
-                selected = selected,
-                onClick = {
-                    onNavigateRequest(it)
-                },
-                icon = {
-                    NavigationItemIcon(
-                        destination = it,
-                        selected = selected
-                    )
-                },
-                label = {
-                    Text(stringResource(it.labelId))
-                }
-            )
+        NavigationRail(
+            modifier = Modifier
+                .onSizeChanged { onWidthChange(it.width) }
+        ) {
+            AppIcon()
+            destinations.forEach {
+                val selected = isDestinationSelected(it)
+                NavigationRailItem(
+                    selected = selected,
+                    onClick = {
+                        onNavigateRequest(it)
+                    },
+                    icon = {
+                        NavigationItemIcon(
+                            destination = it,
+                            selected = selected
+                        )
+                    },
+                    label = {
+                        Text(stringResource(it.labelId))
+                    }
+                )
+            }
         }
     }
 }
