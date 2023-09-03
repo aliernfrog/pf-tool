@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapType
-import com.aliernfrog.pftool.enum.SortingOptions
+import com.aliernfrog.pftool.enum.SortingOption
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationController
 import com.aliernfrog.pftool.util.extension.navigate
@@ -34,7 +34,7 @@ class MapsListViewModel(
 
     var searchQuery by mutableStateOf("")
     var mapTypeFilter by mutableStateOf(MapType.IMPORTED)
-    var sorting by mutableStateOf(SortingOptions.ALPHABETICAL)
+    var sorting by mutableStateOf(SortingOption.ALPHABETICAL)
     var reverseList by mutableStateOf(false)
 
     init {
@@ -55,8 +55,8 @@ class MapsListViewModel(
             }.filter {
                 it.name.contains(searchQuery, ignoreCase = true)
             }.sortedWith(when (sorting) {
-                SortingOptions.ALPHABETICAL -> compareBy(PFMap::name)
-                SortingOptions.DATE -> compareByDescending(PFMap::lastModified)
+                SortingOption.ALPHABETICAL -> compareBy(PFMap::name)
+                SortingOption.DATE -> compareByDescending(PFMap::lastModified)
             })
             return if (reverseList) list.reversed() else list
         }

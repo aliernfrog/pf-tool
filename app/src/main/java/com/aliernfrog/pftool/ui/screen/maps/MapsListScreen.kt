@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.outlined.FolderZip
@@ -43,7 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapType
-import com.aliernfrog.pftool.enum.SortingOptions
+import com.aliernfrog.pftool.enum.SortingOption
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
 import com.aliernfrog.pftool.ui.component.MapButton
@@ -119,80 +120,13 @@ fun MapsListScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             item {
-                SearchBar(
-                    query = mapsListViewModel.searchQuery,
-                    onQueryChange = { mapsListViewModel.searchQuery = it },
-                    onSearch = {},
-                    active = false,
-                    onActiveChange = {},
-                    leadingIcon = {
-                      Icon(
-                          imageVector = Icons.Outlined.Search,
-                          contentDescription = null
-                      )
-                    },
-                    trailingIcon = {
-                        var sortingOptionsShown by rememberSaveable { mutableStateOf(false) }
-                        IconButton(
-                            onClick = { sortingOptionsShown = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Sort,
-                                contentDescription = stringResource(R.string.maps_pickMap_sorting)
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = sortingOptionsShown,
-                            onDismissRequest = { sortingOptionsShown = false }
-                        ) {
-                            SortingOptions.values().forEach { option ->
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(option.labelId)) },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = option.iconVector,
-                                            contentDescription = null
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        RadioButton(
-                                            selected = option == mapsListViewModel.sorting,
-                                            onClick = { mapsListViewModel.sorting = option }
-                                        )
-                                    },
-                                    onClick = { mapsListViewModel.sorting = option }
-                                )
-                            }
-                            DividerRow(Modifier.padding(vertical = 4.dp))
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.maps_pickMap_reverse)) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.SwapVert,
-                                        contentDescription = null
-                                    )
-                                },
-                                trailingIcon = {
-                                    Checkbox(
-                                        checked = mapsListViewModel.reverseList,
-                                        onCheckedChange = { mapsListViewModel.reverseList = it }
-                                    )
-                                },
-                                onClick = { mapsListViewModel.reverseList = !mapsListViewModel.reverseList }
-                            )
-                        }
-                    },
-                    placeholder = {
-                        Text(stringResource(R.string.maps_pickMap_search))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset(y = (-12).dp)
-                        .padding(
-                            start = 8.dp,
-                            end = 8.dp
-                        ),
-                    content = {}
+                Search(
+                    searchQuery = mapsListViewModel.searchQuery,
+                    onSearchQueryChange = { mapsListViewModel.searchQuery = it },
+                    sorting = mapsListViewModel.sorting,
+                    onSortingChange = { mapsListViewModel.sorting = it },
+                    reversed = mapsListViewModel.reverseList,
+                    onReversedChange = { mapsListViewModel.reverseList = it }
                 )
                 Filter(
                     selectedSegment = mapsListViewModel.mapTypeFilter,
@@ -204,11 +138,18 @@ fun MapsListScreen(
 
             item {
                 if (mapsToShow.isEmpty()) ErrorWithIcon(
-                    error = stringResource(when (mapsListViewModel.mapTypeFilter) {
-                        MapType.IMPORTED -> R.string.maps_pickMap_noImportedMaps
-                        MapType.EXPORTED -> R.string.maps_pickMap_noExportedMaps
-                    }),
+                    error = stringResource(
+                        if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.maps_pickMap_noMapsWithQuery
+                        else when (mapsListViewModel.mapTypeFilter) {
+                            MapType.IMPORTED -> R.string.maps_pickMap_noImportedMaps
+                            MapType.EXPORTED -> R.string.maps_pickMap_noExportedMaps
+                        }
+                    ),
                     painter = rememberVectorPainter(Icons.Rounded.LocationOff)
+                ) else Text(
+                    text = stringResource(R.string.maps_pickMap_count)
+                        .replace("{COUNT}", mapsToShow.size.toString()),
+                    modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
 
@@ -223,6 +164,100 @@ fun MapsListScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Search(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    sorting: SortingOption,
+    onSortingChange: (SortingOption) -> Unit,
+    reversed: Boolean,
+    onReversedChange: (Boolean) -> Unit
+) {
+    SearchBar(
+        query = searchQuery,
+        onQueryChange = onSearchQueryChange,
+        onSearch = {},
+        active = false,
+        onActiveChange = {},
+        leadingIcon = {
+            if (searchQuery.isNotEmpty()) IconButton(
+                onClick = { onSearchQueryChange("") }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = stringResource(R.string.maps_pickMap_search_clear)
+                )
+            } else Icon(
+                imageVector = Icons.Outlined.Search,
+                contentDescription = null
+            )
+        },
+        trailingIcon = {
+            var sortingOptionsShown by rememberSaveable { mutableStateOf(false) }
+            IconButton(
+                onClick = { sortingOptionsShown = true }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Sort,
+                    contentDescription = stringResource(R.string.maps_pickMap_sorting)
+                )
+            }
+            DropdownMenu(
+                expanded = sortingOptionsShown,
+                onDismissRequest = { sortingOptionsShown = false }
+            ) {
+                SortingOption.values().forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(stringResource(option.labelId)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = option.iconVector,
+                                contentDescription = null
+                            )
+                        },
+                        trailingIcon = {
+                            RadioButton(
+                                selected = option == sorting,
+                                onClick = { onSortingChange(option) }
+                            )
+                        },
+                        onClick = { onSortingChange(option) }
+                    )
+                }
+                DividerRow(Modifier.padding(vertical = 4.dp))
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.maps_pickMap_reverse)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.SwapVert,
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        Checkbox(
+                            checked = reversed,
+                            onCheckedChange = { onReversedChange(it) }
+                        )
+                    },
+                    onClick = { onReversedChange(!reversed) }
+                )
+            }
+        },
+        placeholder = {
+            Text(stringResource(R.string.maps_pickMap_search))
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .offset(y = (-12).dp)
+            .padding(
+                start = 8.dp,
+                end = 8.dp
+            ),
+        content = {}
+    )
 }
 
 @Composable

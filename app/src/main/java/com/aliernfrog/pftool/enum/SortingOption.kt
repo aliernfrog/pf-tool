@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
 
-enum class SortingOptions(
+enum class SortingOption(
     val labelId: Int,
     val iconVector: ImageVector
 ) {
