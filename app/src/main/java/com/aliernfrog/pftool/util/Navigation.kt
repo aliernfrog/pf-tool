@@ -38,7 +38,7 @@ enum class Destination(
 
     MAPS_LIST(
         route = "mapsList",
-        labelId = R.string.maps_pickMap,
+        labelId = R.string.mapsList_pickMap,
         showInNavigationBar = false,
         showNavigationBar = true,
         root = mutableStateOf(MAPS)

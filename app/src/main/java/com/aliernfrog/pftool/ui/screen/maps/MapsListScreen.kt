@@ -86,7 +86,7 @@ fun MapsListScreen(
                 )
                 if (cachedFile != null) pickFile(cachedFile)
                 else mapsListViewModel.topToastState.showToast(
-                    text = R.string.maps_pickMap_failed,
+                    text = R.string.mapsList_pickMap_failed,
                     icon = Icons.Rounded.PriorityHigh,
                     iconTintColor = TopToastColor.ERROR
                 )
@@ -95,7 +95,7 @@ fun MapsListScreen(
     }
 
     AppScaffold(
-        title = stringResource(R.string.maps_pickMap),
+        title = stringResource(R.string.mapsList_pickMap),
         topAppBarState = rememberTopAppBarState(),
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -110,7 +110,7 @@ fun MapsListScreen(
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp)
                 )
-                Text(stringResource(R.string.maps_pickMap_storage))
+                Text(stringResource(R.string.mapsList_storage))
             }
         },
         onBackClick = if (!hasBackStack) null else { {
@@ -141,15 +141,15 @@ fun MapsListScreen(
             item {
                 if (mapsToShow.isEmpty()) ErrorWithIcon(
                     error = stringResource(
-                        if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.maps_pickMap_noMapsWithQuery
+                        if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
                         else when (mapsListViewModel.mapTypeFilter) {
-                            MapType.IMPORTED -> R.string.maps_pickMap_noImportedMaps
-                            MapType.EXPORTED -> R.string.maps_pickMap_noExportedMaps
+                            MapType.IMPORTED -> R.string.mapsList_noImportedMaps
+                            MapType.EXPORTED -> R.string.mapsList_noExportedMaps
                         }
                     ),
                     painter = rememberVectorPainter(Icons.Rounded.LocationOff)
                 ) else Text(
-                    text = stringResource(R.string.maps_pickMap_count)
+                    text = stringResource(R.string.mapsList_count)
                         .replace("{COUNT}", mapsToShow.size.toString()),
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
@@ -193,7 +193,7 @@ private fun Search(
             ) {
                 Icon(
                     imageVector = Icons.Default.Clear,
-                    contentDescription = stringResource(R.string.maps_pickMap_search_clear)
+                    contentDescription = stringResource(R.string.mapsList_search_clear)
                 )
             } else Icon(
                 imageVector = Icons.Outlined.Search,
@@ -207,7 +207,7 @@ private fun Search(
             ) {
                 Icon(
                     imageVector = Icons.Default.Sort,
-                    contentDescription = stringResource(R.string.maps_pickMap_sorting)
+                    contentDescription = stringResource(R.string.mapsList_sorting)
                 )
             }
             DropdownMenu(
@@ -234,7 +234,7 @@ private fun Search(
                 }
                 DividerRow(Modifier.padding(vertical = 4.dp))
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.maps_pickMap_reverse)) },
+                    text = { Text(stringResource(R.string.mapsList_sorting_reverse)) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.SwapVert,
@@ -252,7 +252,7 @@ private fun Search(
             }
         },
         placeholder = {
-            Text(stringResource(R.string.maps_pickMap_search))
+            Text(stringResource(R.string.mapsList_search))
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -272,8 +272,8 @@ private fun Filter(
 ) {
     SegmentedButtons(
         options = listOf(
-            stringResource(R.string.maps_pickMap_imported),
-            stringResource(R.string.maps_pickMap_exported)
+            stringResource(R.string.mapsList_imported),
+            stringResource(R.string.mapsList_exported)
         ),
         selectedIndex = selectedSegment.ordinal,
         modifier = Modifier

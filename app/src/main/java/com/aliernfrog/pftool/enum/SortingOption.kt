@@ -11,12 +11,12 @@ enum class SortingOption(
     val iconVector: ImageVector
 ) {
     ALPHABETICAL(
-        labelId = R.string.maps_pickMap_sorting_alphabetical,
+        labelId = R.string.mapsList_sorting_alphabetical,
         iconVector = Icons.Default.SortByAlpha
     ),
 
     DATE(
-        labelId = R.string.maps_pickMap_sorting_date,
+        labelId = R.string.mapsList_sorting_date,
         iconVector = Icons.Default.CalendarMonth
     )
 }

@@ -128,7 +128,7 @@ fun MapButton(
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreHoriz,
-                        contentDescription = stringResource(R.string.maps_pickMap_quickActions),
+                        contentDescription = stringResource(R.string.mapsList_qa),
                         tint = contentColor
                     )
                 }
