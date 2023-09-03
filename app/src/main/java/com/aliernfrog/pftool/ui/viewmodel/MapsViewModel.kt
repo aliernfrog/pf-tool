@@ -22,6 +22,7 @@ import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
 import com.aliernfrog.pftool.util.extension.resolvePath
+import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.ZipUtil
@@ -35,6 +36,7 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
+    private val contextUtils: ContextUtils,
     val prefs: PreferenceManager
 ) : ViewModel() {
     val actionsTopAppBarState = TopAppBarState(0F, 0F, 0F)
@@ -50,6 +52,12 @@ class MapsViewModel(
     var mapNameEdit by mutableStateOf("")
     var pendingMapDelete by mutableStateOf<String?>(null)
     var chosenMap by mutableStateOf<PFMap?>(null)
+
+    private val mapsArray get() = run {
+        val chosen = chosenMap
+        if (chosen == null) emptyArray()
+        else arrayOf(chosen)
+    }
 
     fun chooseMap(map: Any?) {
         var mapToChoose: PFMap? = null
@@ -92,7 +100,10 @@ class MapsViewModel(
         else withContext(Dispatchers.IO) {
             mapFile.renameTo(newName)
             chooseMap(mapsFile.findFile(newName))
-            topToastState.showToast(R.string.maps_rename_done, Icons.Rounded.Edit)
+            topToastState.showToast(
+                text = contextUtils.getString(R.string.maps_rename_done).replace("{NAME}", newName),
+                icon = Icons.Rounded.Edit
+            )
             fetchImportedMaps()
         }
     }
@@ -110,32 +121,45 @@ class MapsViewModel(
             output = mapsFile.createDirectory(mapName) ?: return@withContext
             ZipUtil.unzipMap(zipPath, output ?: return@withContext, context)
             chooseMap(output)
-            topToastState.showToast(R.string.maps_import_done, Icons.Rounded.Download)
+            topToastState.showToast(
+                text = contextUtils.getString(R.string.maps_import_done).replace("{NAME}", mapName),
+                icon = Icons.Rounded.Download
+            )
             fetchImportedMaps()
         }
     }
 
     suspend fun exportChosenMap(context: Context) {
         val mapFile = chosenMap?.documentFile ?: return
-        val zipFileName = "${resolveMapNameInput()}.zip"
+        val mapName = resolveMapNameInput()
+        val zipFileName = "$mapName.zip"
         var output = exportedMapsFile.findFile(zipFileName)
         if (output?.exists() == true) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
             output = exportedMapsFile.createFile("", zipFileName) ?: return@withContext
             ZipUtil.zipMap(mapFile, output ?: return@withContext, context)
             chooseMap(output)
-            topToastState.showToast(R.string.maps_export_done, icon = Icons.Rounded.Upload)
+            topToastState.showToast(
+                text = contextUtils.getString(R.string.maps_export_done).replace("{NAME}", mapName),
+                icon = Icons.Rounded.Upload
+            )
             fetchExportedMaps()
         }
     }
 
-    suspend fun deleteChosenMap() {
-        val map = chosenMap ?: return
+    suspend fun deleteMap(vararg maps: PFMap = mapsArray) {
+        val isSingle = maps.size == 1
         withContext(Dispatchers.IO) {
-            map.file?.delete()
-            map.documentFile?.delete()
-            chooseMap(null)
-            topToastState.showToast(R.string.maps_delete_done, icon = Icons.Rounded.Delete)
+            maps.forEach {
+                it.file?.delete()
+                it.documentFile?.delete()
+            }
+            if (maps.size == 1) chooseMap(null)
+            topToastState.showToast(
+                text = if (isSingle) contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", maps.first().name)
+                    else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),
+                icon = Icons.Rounded.Delete
+            )
             fetchAllMaps()
         }
     }

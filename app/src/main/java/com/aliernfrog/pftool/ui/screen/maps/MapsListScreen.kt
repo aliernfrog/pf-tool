@@ -51,6 +51,7 @@ import com.aliernfrog.pftool.ui.component.MapButton
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
+import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +63,8 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun MapsListScreen(
     hasBackStack: Boolean,
-    mapsListViewModel: MapsListViewModel = getViewModel()
+    mapsListViewModel: MapsListViewModel = getViewModel(),
+    mapsViewModel: MapsViewModel = getViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -157,7 +159,10 @@ fun MapsListScreen(
                 MapButton(
                     map = map,
                     showMapThumbnail = mapsListViewModel.prefs.showMapThumbnailsInList,
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItemPlacement(),
+                    onDeleteRequest = { scope.launch {
+                        mapsViewModel.deleteMap(map)
+                    } }
                 ) {
                     pickFile(map)
                 }
