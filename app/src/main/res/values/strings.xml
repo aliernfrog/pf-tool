@@ -47,9 +47,10 @@
     <string name="mapsList_search">Search maps..</string>
     <string name="mapsList_search_clear">Clear search</string>
     <string name="mapsList_count">{COUNT} maps</string>
-    <string name="mapsList_sorting">Sorting</string>
-    <string name="mapsList_sorting_alphabetical">Alphabetical</string>
-    <string name="mapsList_sorting_date">Date</string>
+    <string name="mapsList_sorting">Sort</string>
+    <string name="mapsList_sorting_name">By name</string>
+    <string name="mapsList_sorting_date">By date</string>
+    <string name="mapsList_sorting_size">By size</string>
     <string name="mapsList_sorting_reverse">Reversed</string>
     <string name="mapsList_storage">Storage</string>
     <string name="mapsList_imported">Your maps</string>

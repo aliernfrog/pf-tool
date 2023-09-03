@@ -22,6 +22,7 @@ import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
 import com.aliernfrog.pftool.util.extension.resolvePath
+import com.aliernfrog.pftool.util.extension.size
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -220,7 +221,7 @@ class MapsViewModel(
                     PFMap(
                         name = it.name,
                         fileName = it.name,
-                        fileSize = it.length,
+                        fileSize = it.size,
                         lastModified = it.lastModified,
                         file = null,
                         documentFile = it,
@@ -239,7 +240,7 @@ class MapsViewModel(
                     PFMap(
                         name = it.nameWithoutExtension,
                         fileName = it.name,
-                        fileSize = it.length,
+                        fileSize = it.size,
                         lastModified = it.lastModified,
                         file = null,
                         documentFile = it

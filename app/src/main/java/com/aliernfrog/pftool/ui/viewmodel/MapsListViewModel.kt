@@ -57,6 +57,7 @@ class MapsListViewModel(
             }.sortedWith(when (sorting) {
                 SortingOption.ALPHABETICAL -> compareBy(PFMap::name)
                 SortingOption.DATE -> compareByDescending(PFMap::lastModified)
+                SortingOption.SIZE -> compareByDescending(PFMap::fileSize)
             })
             return if (reverseList) list.reversed() else list
         }
