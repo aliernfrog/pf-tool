@@ -60,7 +60,7 @@ fun MapsScreen(
 
     AppScaffold(
         title = stringResource(R.string.maps),
-        topAppBarState = mapsViewModel.actionsTopAppBarState
+        topAppBarState = mapsViewModel.topAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
             PickMapButton(

@@ -40,7 +40,7 @@ class MapsViewModel(
     private val contextUtils: ContextUtils,
     val prefs: PreferenceManager
 ) : ViewModel() {
-    val actionsTopAppBarState = TopAppBarState(0F, 0F, 0F)
+    val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
     private val mapsDir: String get() { return prefs.pfMapsDir }
