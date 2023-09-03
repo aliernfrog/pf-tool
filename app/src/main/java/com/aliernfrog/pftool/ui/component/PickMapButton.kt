@@ -22,10 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.ui.component.form.FormHeader
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
@@ -39,8 +37,9 @@ fun PickMapButton(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    LaunchedEffect(chosenMap?.details?.value) {
-        if (chosenMap?.details?.value.isNullOrEmpty()) chosenMap?.getDetails(context)
+    LaunchedEffect(chosenMap) {
+        if (chosenMap != null && chosenMap.details.value.isNullOrEmpty())
+            chosenMap.getDetails(context)
     }
 
     Box(
@@ -77,9 +76,8 @@ fun PickMapButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             FormHeader(
-                title = chosenMap?.name ?: stringResource(R.string.maps_noMapChosen),
-                description = if (chosenMap != null) chosenMap.getDetails(context)
-                    else stringResource(R.string.maps_pickMap_description),
+                title = chosenMap?.name ?: "",
+                description = chosenMap?.details?.value,
                 painter = rememberVectorPainter(Icons.Rounded.LocationOn),
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier

@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -27,7 +28,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.FadeVisibility
-import com.aliernfrog.pftool.ui.component.FadeVisibilityColumn
 import com.aliernfrog.pftool.ui.component.PickMapButton
 import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
@@ -35,6 +35,8 @@ import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.extension.set
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -47,6 +49,15 @@ fun MapsScreen(
 ) {
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(mapsViewModel.chosenMap) {
+        if (mapsViewModel.chosenMap == null) mapsListViewModel.showMapList(
+            fallbackDestinationOnPick = Destination.MAPS,
+            navigate = { it.set(Destination.MAPS_LIST) }
+        ) {
+            mapsViewModel.chooseMap(it)
+        }
+    }
+
     AppScaffold(
         title = stringResource(R.string.maps),
         topAppBarState = mapsViewModel.actionsTopAppBarState
@@ -56,7 +67,9 @@ fun MapsScreen(
                 chosenMap = mapsViewModel.chosenMap,
                 showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail
             ) {
-                mapsListViewModel.showMapList {
+                mapsListViewModel.showMapList(
+                    fallbackDestinationOnPick = Destination.MAPS
+                ) {
                     mapsViewModel.chooseMap(it)
                 }
             }
@@ -84,35 +97,32 @@ private fun MapActions(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val mapChosen = mapsViewModel.chosenMap != null
     val isImported = mapsViewModel.chosenMap?.importedState == MapImportedState.IMPORTED
     val isExported = mapsViewModel.chosenMap?.importedState == MapImportedState.EXPORTED
     val isZip = mapsViewModel.chosenMap?.isZip == true
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
-    FadeVisibilityColumn(visible = mapChosen) {
-        TextField(
-            value = mapsViewModel.mapNameEdit,
-            onValueChange = { mapsViewModel.mapNameEdit = it },
-            label = { Text(stringResource(R.string.maps_mapName)) },
-            placeholder = { Text(mapsViewModel.chosenMap?.name ?: "") },
-            leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
-            singleLine = true,
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
-            doneIconShown = isImported && mapNameUpdated,
-            onDone = {
-                scope.launch { mapsViewModel.renameChosenMap() }
-            }
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).alpha(0.7f),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant
-        )
-    }
+    TextField(
+        value = mapsViewModel.mapNameEdit,
+        onValueChange = { mapsViewModel.mapNameEdit = it },
+        label = { Text(stringResource(R.string.maps_mapName)) },
+        placeholder = { Text(mapsViewModel.chosenMap?.name ?: "") },
+        leadingIcon = rememberVectorPainter(Icons.Rounded.TextFields),
+        singleLine = true,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
+        doneIconShown = isImported && mapNameUpdated,
+        onDone = {
+            scope.launch { mapsViewModel.renameChosenMap() }
+        }
+    )
+    HorizontalDivider(
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).alpha(0.7f),
+        thickness = 1.dp,
+        color = MaterialTheme.colorScheme.surfaceVariant
+    )
     VerticalSegmentedButtons(
         {
-            FadeVisibility(visible = mapChosen && !isImported) {
+            FadeVisibility(visible = !isImported) {
                 ButtonRow(
                     title = stringResource(R.string.maps_import),
                     painter = rememberVectorPainter(Icons.Rounded.Download),
@@ -123,7 +133,7 @@ private fun MapActions(
             }
         },
         {
-            FadeVisibility(visible = mapChosen && isImported) {
+            FadeVisibility(visible = isImported) {
                 ButtonRow(
                     title = stringResource(R.string.maps_export),
                     description = stringResource(R.string.maps_export_description),
@@ -135,7 +145,7 @@ private fun MapActions(
             }
         },
         {
-            FadeVisibility(visible = mapChosen && isZip) {
+            FadeVisibility(visible = isZip) {
                 ButtonRow(
                     title = stringResource(R.string.maps_share),
                     painter = rememberVectorPainter(Icons.Rounded.Share),
@@ -150,7 +160,7 @@ private fun MapActions(
             }
         },
         {
-            FadeVisibility(visible = mapChosen && (isImported || isExported)) {
+            FadeVisibility(visible = (isImported || isExported)) {
                 ButtonRow(
                     title = stringResource(R.string.maps_delete),
                     painter = rememberVectorPainter(Icons.Rounded.Delete),

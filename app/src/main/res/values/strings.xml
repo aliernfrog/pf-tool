@@ -30,9 +30,7 @@
     <string name="permissions_exportedMaps_recommended">PF Tool used this folder in older versions, choose this folder if you want to access maps you have exported before</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
-    <string name="maps_noMapChosen">No map chosen</string>
     <string name="maps_pickMap">Pick a map</string>
-    <string name="maps_pickMap_description">Click to pick a map</string>
     <string name="maps_pickMap_search">Search maps..</string>
     <string name="maps_pickMap_sorting">Sorting</string>
     <string name="maps_pickMap_sorting_alphabetical">Alphabetical</string>

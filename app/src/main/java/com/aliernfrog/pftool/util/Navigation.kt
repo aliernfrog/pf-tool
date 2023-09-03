@@ -26,7 +26,6 @@ enum class Destination(
     val vectorOutlined: ImageVector? = null,
     val showInNavigationBar: Boolean = true,
     val showNavigationBar: Boolean = showInNavigationBar,
-    var subScreen: Destination? = null,
     val root: MutableState<Destination?> = mutableStateOf(null),
     val hasNotification: MutableState<Boolean> = mutableStateOf(false)
 ) {
@@ -52,9 +51,6 @@ enum class Destination(
         vectorOutlined = Icons.Outlined.Settings
     )
 }
-
-val Destination.currentDestination
-    get() = subScreen ?: this
 
 val Destination.rootRoute
     get() = root.value?.route ?: route

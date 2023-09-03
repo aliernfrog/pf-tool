@@ -13,7 +13,8 @@ import com.aliernfrog.pftool.enum.SortingOptions
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationController
 import com.aliernfrog.pftool.util.extension.navigate
-import com.aliernfrog.pftool.util.extension.setSubScreen
+import com.aliernfrog.pftool.util.extension.popBackStackSafe
+import com.aliernfrog.pftool.util.extension.set
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ class MapsListViewModel(
             mapsViewModel.loadMaps(context)
             onMapPick = {
                 mapsViewModel.chooseMap(it)
-                navController.navigate(Destination.MAPS)
+                navController.set(Destination.MAPS)
             }
         }
     }
@@ -61,14 +62,17 @@ class MapsListViewModel(
         }
 
     fun showMapList(
+        fallbackDestinationOnPick: Destination,
         navigate: (NavController) -> Unit = {
-            it.setSubScreen(Destination.MAPS_LIST)
+            it.navigate(Destination.MAPS_LIST)
         },
         onMapPick: (Any) -> Unit
     ) {
         this.onMapPick = {
             onMapPick(it)
-            navController.popBackStack()
+            navController.popBackStackSafe(
+                fallback = fallbackDestinationOnPick
+            )
         }
         navigate(navController)
     }
