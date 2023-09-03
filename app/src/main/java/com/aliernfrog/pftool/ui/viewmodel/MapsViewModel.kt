@@ -54,6 +54,9 @@ class MapsViewModel(
     var pendingMapDelete by mutableStateOf<String?>(null)
     var chosenMap by mutableStateOf<PFMap?>(null)
 
+    /**
+     * Maps array which can be used as default of a vararg argument, such as the one in [deleteMap].
+     */
     private val mapsArray get() = run {
         val chosen = chosenMap
         if (chosen == null) emptyArray()
@@ -148,14 +151,21 @@ class MapsViewModel(
         }
     }
 
-    suspend fun deleteMap(vararg maps: PFMap = mapsArray) {
+    /**
+     * Deletes given [maps] and produces a TopToast based on result.
+     * @param unselectChosenMap whether to unselect chosen map after finishing.
+     */
+    suspend fun deleteMap(
+        vararg maps: PFMap = mapsArray,
+        unselectChosenMap: Boolean = maps.size == 1
+    ) {
         val isSingle = maps.size == 1
         withContext(Dispatchers.IO) {
             maps.forEach {
                 it.file?.delete()
                 it.documentFile?.delete()
             }
-            if (maps.size == 1) chooseMap(null)
+            if (unselectChosenMap) chooseMap(null)
             topToastState.showToast(
                 text = if (isSingle) contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", maps.first().name)
                     else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),

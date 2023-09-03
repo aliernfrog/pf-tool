@@ -52,5 +52,8 @@ enum class Destination(
     )
 }
 
+/**
+ * Returns the route of destination root, returns route of destination if it has no root.
+ */
 val Destination.rootRoute
     get() = root.value?.route ?: route

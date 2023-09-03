@@ -47,6 +47,9 @@ class MapsListViewModel(
         }
     }
 
+    /**
+     * Map list with filters and sorting options applied.
+     */
     val mapsToShow: List<PFMap>
         get() {
             val list = when (chosenSegment) {
