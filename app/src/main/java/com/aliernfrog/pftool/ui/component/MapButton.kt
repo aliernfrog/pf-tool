@@ -34,7 +34,7 @@ import com.aliernfrog.pftool.util.extension.getDetails
 fun MapButton(
     map: PFMap,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentColor: Color = contentColorFor(containerColor),
     showMapThumbnail: Boolean = true,
     onClick: () -> Unit
