@@ -16,7 +16,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,6 +33,7 @@ import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
+import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
@@ -42,13 +42,10 @@ import org.koin.androidx.compose.getViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(
-    mapsViewModel: MapsViewModel = getViewModel()
+    mapsViewModel: MapsViewModel = getViewModel(),
+    mapsListViewModel: MapsListViewModel = getViewModel()
 ) {
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        mapsViewModel.mapsListBackButtonShown = true
-    }
 
     AppScaffold(
         title = stringResource(R.string.maps),
@@ -59,7 +56,9 @@ fun MapsScreen(
                 chosenMap = mapsViewModel.chosenMap,
                 showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail
             ) {
-                mapsViewModel.mapsListShown = true
+                mapsListViewModel.showMapList {
+                    mapsViewModel.chooseMap(it)
+                }
             }
             MapActions()
         }

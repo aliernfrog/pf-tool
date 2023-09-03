@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
-import com.aliernfrog.pftool.enum.MapType
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
@@ -35,11 +34,10 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
-    val topToastState: TopToastState,
+    private val topToastState: TopToastState,
     val prefs: PreferenceManager
 ) : ViewModel() {
     val actionsTopAppBarState = TopAppBarState(0F, 0F, 0F)
-    val listTopAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
     private val mapsDir: String get() { return prefs.pfMapsDir }
@@ -51,10 +49,6 @@ class MapsViewModel(
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
     var mapNameEdit by mutableStateOf("")
     var pendingMapDelete by mutableStateOf<String?>(null)
-    var mapsListBackButtonShown by mutableStateOf(false)
-    var mapsListShown by mutableStateOf(true)
-    var mapsListSelectedSegment by mutableStateOf(MapType.IMPORTED)
-
     var chosenMap by mutableStateOf<PFMap?>(null)
 
     fun chooseMap(map: Any?) {
@@ -156,7 +150,7 @@ class MapsViewModel(
         else MapImportedState.NONE
     }
 
-    fun getMapsFile(context: Context): DocumentFileCompat {
+    private fun getMapsFile(context: Context): DocumentFileCompat {
         val isUpToDate = if (!::mapsFile.isInitialized) false
         else {
             val updatedPath = mapsFile.uri.resolvePath()
@@ -169,7 +163,7 @@ class MapsViewModel(
         return mapsFile
     }
 
-    fun getExportedMapsFile(context: Context): DocumentFileCompat {
+    private fun getExportedMapsFile(context: Context): DocumentFileCompat {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
         else {
             val updatedPath = exportedMapsFile.uri.resolvePath()
@@ -182,7 +176,13 @@ class MapsViewModel(
         return exportedMapsFile
     }
 
-    suspend fun fetchAllMaps() {
+    suspend fun loadMaps(context: Context) {
+        getMapsFile(context)
+        getExportedMapsFile(context)
+        fetchAllMaps()
+    }
+
+    private suspend fun fetchAllMaps() {
         fetchImportedMaps()
         fetchExportedMaps()
     }

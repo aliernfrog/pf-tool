@@ -49,24 +49,34 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.extension.set
+import com.aliernfrog.pftool.util.rootRoute
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun BaseScaffold(navController: NavController, content: @Composable (PaddingValues) -> Unit) {
+fun BaseScaffold(
+    navController: NavController,
+    content: @Composable (
+        hasBackStack: Boolean,
+        paddingValues: PaddingValues
+    ) -> Unit
+) {
     val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val windowSizeClass = calculateWindowSizeClass(context as Activity)
-    val showNavigationRail = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
-    var sideBarWidth by remember { mutableStateOf(0.dp) }
 
     val destinations = remember { Destination.values().toList() }
-    val mainDestinations = remember { destinations.filter { !it.isSubScreen } }
+    val mainDestinations = remember { destinations.filter { it.showInNavigationBar } }
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentDestination = destinations.find { it.route == currentRoute }
 
+    val windowSizeClass = calculateWindowSizeClass(context as Activity)
+    val showNavigationRail = currentDestination?.showNavigationBar != false && windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+    var sideBarWidth by remember { mutableStateOf(0.dp) }
+
     fun changeDestination(destination: Destination) {
-        navController.navigate(destination.route) { popUpTo(0) }
+        if (destination.route != currentDestination?.rootRoute && currentDestination?.showNavigationBar != false)
+            navController.set(destination)
     }
 
     fun toDp(pxs: Int): Dp {
@@ -90,14 +100,17 @@ fun BaseScaffold(navController: NavController, content: @Composable (PaddingValu
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        val paddingValues = if (showNavigationRail || currentDestination?.isSubScreen != true) it
+        val paddingValues = if (showNavigationRail || currentDestination?.showNavigationBar != false) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),
             top = it.calculateTopPadding(),
             end = it.calculateEndPadding(layoutDirection),
             bottom = 0.dp
         )
-        content(paddingValues)
+        content(
+            hasBackStack = navController.previousBackStackEntry != null,
+            paddingValues = paddingValues
+        )
     }
 
     if (showNavigationRail) SideBarRail(
@@ -120,18 +133,17 @@ private fun BottomBar(
     onNavigateRequest: (Destination) -> Unit
 ) {
     AnimatedVisibility(
-        visible = currentDestination?.isSubScreen != true,
+        visible = currentDestination?.showNavigationBar != false,
         enter = slideInVertically(animationSpec = tween(durationMillis = 150), initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(animationSpec = tween(durationMillis = 150), targetOffsetY = { it }) + fadeOut()
     ) {
         BottomAppBar {
             destinations.forEach {
-                val selected = it.route == currentDestination?.route
+                val selected = it.route == currentDestination?.rootRoute
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
-                        if (!selected && currentDestination?.isSubScreen != true)
-                            onNavigateRequest(it)
+                        onNavigateRequest(it)
                     },
                     icon = {
                         NavigationItemIcon(
@@ -161,12 +173,11 @@ private fun SideBarRail(
     ) {
         AppIcon()
         destinations.forEach {
-            val selected = it.route == currentDestination?.route
+            val selected = it.route == currentDestination?.rootRoute
             NavigationRailItem(
                 selected = selected,
                 onClick = {
-                    if (!selected && currentDestination?.isSubScreen != true)
-                        onNavigateRequest(it)
+                    onNavigateRequest(it)
                 },
                 icon = {
                     NavigationItemIcon(

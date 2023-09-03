@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.component.BaseScaffold
+import com.aliernfrog.pftool.ui.screen.maps.MapsListScreen
 import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
@@ -28,14 +30,18 @@ import org.koin.androidx.compose.getViewModel
 fun MainScreen(
     mainViewModel: MainViewModel = getViewModel()
 ) {
-    val navController = rememberNavController()
+    mainViewModel.navController = rememberNavController()
     BaseScaffold(
-        navController = navController
-    ) {
+        navController = mainViewModel.navController
+    ) { hasBackStack, paddingValues ->
         NavHost(
-            navController = navController,
+            navController = mainViewModel.navController as NavHostController,
             startDestination = NavigationConstant.INITIAL_DESTINATION,
-            modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .imePadding(),
             enterTransition = { scaleIn(
                 animationSpec = tween(delayMillis = 100),
                 initialScale = 0.95f
@@ -58,6 +64,9 @@ fun MainScreen(
         ) {
             composable(route = Destination.MAPS.route) {
                 MapsPermissionsScreen()
+            }
+            composable(route = Destination.MAPS_LIST.route) {
+                MapsListScreen(hasBackStack = hasBackStack)
             }
             composable(route = Destination.SETTINGS.route) {
                 SettingsScreen()

@@ -1,11 +1,8 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
@@ -18,8 +15,6 @@ import org.koin.androidx.compose.getViewModel
 fun MapsPermissionsScreen(
     mapsViewModel: MapsViewModel = getViewModel()
 ) {
-    val context = LocalContext.current
-
     val permissions = remember { arrayOf(
         PermissionData(
             titleId = R.string.permissions_maps,
@@ -49,15 +44,6 @@ fun MapsPermissionsScreen(
     ) }
 
     PermissionsScreen(*permissions) {
-        LaunchedEffect(Unit) {
-            mapsViewModel.getMapsFile(context)
-            mapsViewModel.getExportedMapsFile(context)
-            mapsViewModel.fetchAllMaps()
-        }
-
-        AnimatedContent(mapsViewModel.mapsListShown) {
-            if (it) MapsListScreen()
-            else MapsScreen()
-        }
+        MapsScreen()
     }
 }

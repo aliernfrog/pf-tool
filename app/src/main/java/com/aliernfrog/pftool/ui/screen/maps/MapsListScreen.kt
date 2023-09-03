@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
 import android.content.Intent
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -30,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +42,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapType
 import com.aliernfrog.pftool.enum.SortingOptions
 import com.aliernfrog.pftool.ui.component.AppScaffold
@@ -50,7 +49,7 @@ import com.aliernfrog.pftool.ui.component.ErrorWithIcon
 import com.aliernfrog.pftool.ui.component.MapButton
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.DividerRow
-import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
@@ -61,17 +60,17 @@ import org.koin.androidx.compose.getViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MapsListScreen(
-    mapsViewModel: MapsViewModel = getViewModel()
+    hasBackStack: Boolean,
+    mapsListViewModel: MapsListViewModel = getViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var searchQuery by rememberSaveable { mutableStateOf("") }
-    var sorting by rememberSaveable { mutableStateOf(SortingOptions.ALPHABETICAL) }
-    var reverseList by rememberSaveable { mutableStateOf(false) }
+    val mapsToShow = mapsListViewModel.mapsToShow
 
     fun pickFile(file: Any) {
-        mapsViewModel.chooseMap(file)
-        mapsViewModel.mapsListShown = false
+        scope.launch {
+            mapsListViewModel.onMapPick(file)
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -83,7 +82,7 @@ fun MapsListScreen(
                     context = context
                 )
                 if (cachedFile != null) pickFile(cachedFile)
-                else mapsViewModel.topToastState.showToast(
+                else mapsListViewModel.topToastState.showToast(
                     text = R.string.maps_pickMap_failed,
                     icon = Icons.Rounded.PriorityHigh,
                     iconTintColor = TopToastColor.ERROR
@@ -92,29 +91,9 @@ fun MapsListScreen(
         }
     }
 
-    var mapsToShow = when (mapsViewModel.mapsListSelectedSegment) {
-        MapType.IMPORTED -> mapsViewModel.importedMaps
-        MapType.EXPORTED -> mapsViewModel.exportedMaps
-    }.filter {
-        it.name.lowercase().contains(searchQuery.lowercase())
-    }.sortedWith(when (sorting) {
-        SortingOptions.ALPHABETICAL -> compareBy(PFMap::name)
-        SortingOptions.DATE -> compareByDescending(PFMap::lastModified)
-    })
-    if (reverseList) mapsToShow = mapsToShow.reversed()
-
-    val noMapsFoundText = stringResource(when (mapsViewModel.mapsListSelectedSegment) {
-        MapType.IMPORTED -> R.string.maps_pickMap_noImportedMaps
-        MapType.EXPORTED -> R.string.maps_pickMap_noExportedMaps
-    })
-
-    BackHandler(mapsViewModel.mapsListBackButtonShown) {
-        mapsViewModel.mapsListShown = false
-    }
-
     AppScaffold(
         title = stringResource(R.string.maps_pickMap),
-        topAppBarState = mapsViewModel.listTopAppBarState,
+        topAppBarState = rememberTopAppBarState(),
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 shape = RoundedCornerShape(16.dp),
@@ -131,8 +110,8 @@ fun MapsListScreen(
                 Text(stringResource(R.string.maps_pickMap_storage))
             }
         },
-        onBackClick = if (!mapsViewModel.mapsListBackButtonShown) null else { {
-            mapsViewModel.mapsListShown = false
+        onBackClick = if (!hasBackStack) null else { {
+            mapsListViewModel.navController.popBackStack()
         } }
     ) {
         LazyColumn(
@@ -141,8 +120,8 @@ fun MapsListScreen(
         ) {
             item {
                 SearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
+                    query = mapsListViewModel.searchQuery,
+                    onQueryChange = { mapsListViewModel.searchQuery = it },
                     onSearch = {},
                     active = false,
                     onActiveChange = {},
@@ -177,11 +156,11 @@ fun MapsListScreen(
                                     },
                                     trailingIcon = {
                                         RadioButton(
-                                            selected = option == sorting,
-                                            onClick = { sorting = option }
+                                            selected = option == mapsListViewModel.sorting,
+                                            onClick = { mapsListViewModel.sorting = option }
                                         )
                                     },
-                                    onClick = { sorting = option }
+                                    onClick = { mapsListViewModel.sorting = option }
                                 )
                             }
                             DividerRow(Modifier.padding(vertical = 4.dp))
@@ -195,11 +174,11 @@ fun MapsListScreen(
                                 },
                                 trailingIcon = {
                                     Checkbox(
-                                        checked = reverseList,
-                                        onCheckedChange = { reverseList = it }
+                                        checked = mapsListViewModel.reverseList,
+                                        onCheckedChange = { mapsListViewModel.reverseList = it }
                                     )
                                 },
-                                onClick = { reverseList = !reverseList }
+                                onClick = { mapsListViewModel.reverseList = !mapsListViewModel.reverseList }
                             )
                         }
                     },
@@ -216,16 +195,19 @@ fun MapsListScreen(
                     content = {}
                 )
                 Filter(
-                    selectedSegment = mapsViewModel.mapsListSelectedSegment,
+                    selectedSegment = mapsListViewModel.mapTypeFilter,
                     onSelectedSegmentChange = {
-                        mapsViewModel.mapsListSelectedSegment = it
+                        mapsListViewModel.mapTypeFilter = it
                     }
                 )
             }
 
             item {
                 if (mapsToShow.isEmpty()) ErrorWithIcon(
-                    error = noMapsFoundText,
+                    error = stringResource(when (mapsListViewModel.mapTypeFilter) {
+                        MapType.IMPORTED -> R.string.maps_pickMap_noImportedMaps
+                        MapType.EXPORTED -> R.string.maps_pickMap_noExportedMaps
+                    }),
                     painter = rememberVectorPainter(Icons.Rounded.LocationOff)
                 )
             }
@@ -233,7 +215,7 @@ fun MapsListScreen(
             items(mapsToShow) { map ->
                 MapButton(
                     map = map,
-                    showMapThumbnail = mapsViewModel.prefs.showMapThumbnailsInList,
+                    showMapThumbnail = mapsListViewModel.prefs.showMapThumbnailsInList,
                     modifier = Modifier.animateItemPlacement()
                 ) {
                     pickFile(map)

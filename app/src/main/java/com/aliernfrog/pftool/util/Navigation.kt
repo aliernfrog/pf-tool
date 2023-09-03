@@ -8,10 +8,15 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 
 object NavigationConstant {
-    val INITIAL_DESTINATION = Destination.MAPS.route
+    val INITIAL_DESTINATION = Destination.MAPS_LIST.route
+}
+
+class NavigationController {
+    lateinit var controller: NavController
 }
 
 enum class Destination(
@@ -19,14 +24,25 @@ enum class Destination(
     val labelId: Int,
     val vectorFilled: ImageVector? = null,
     val vectorOutlined: ImageVector? = null,
-    val isSubScreen: Boolean = false,
-    var hasNotification: MutableState<Boolean> = mutableStateOf(false)
+    val showInNavigationBar: Boolean = true,
+    val showNavigationBar: Boolean = showInNavigationBar,
+    var subScreen: Destination? = null,
+    val root: MutableState<Destination?> = mutableStateOf(null),
+    val hasNotification: MutableState<Boolean> = mutableStateOf(false)
 ) {
     MAPS(
         route = "maps",
         labelId = R.string.maps,
         vectorFilled = Icons.Default.PinDrop,
         vectorOutlined = Icons.Outlined.PinDrop
+    ),
+
+    MAPS_LIST(
+        route = "mapsList",
+        labelId = R.string.maps_pickMap,
+        showInNavigationBar = false,
+        showNavigationBar = true,
+        root = mutableStateOf(MAPS)
     ),
 
     SETTINGS(
@@ -36,3 +52,9 @@ enum class Destination(
         vectorOutlined = Icons.Outlined.Settings
     )
 }
+
+val Destination.currentDestination
+    get() = subScreen ?: this
+
+val Destination.rootRoute
+    get() = root.value?.route ?: route

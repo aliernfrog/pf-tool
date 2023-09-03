@@ -1,0 +1,75 @@
+package com.aliernfrog.pftool.ui.viewmodel
+
+import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.aliernfrog.pftool.data.PFMap
+import com.aliernfrog.pftool.enum.MapType
+import com.aliernfrog.pftool.enum.SortingOptions
+import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.NavigationController
+import com.aliernfrog.pftool.util.extension.navigate
+import com.aliernfrog.pftool.util.extension.setSubScreen
+import com.aliernfrog.pftool.util.manager.PreferenceManager
+import com.aliernfrog.toptoast.state.TopToastState
+import kotlinx.coroutines.launch
+
+class MapsListViewModel(
+    val topToastState: TopToastState,
+    val prefs: PreferenceManager,
+    private val navigationController: NavigationController,
+    private val mapsViewModel: MapsViewModel,
+    context: Context
+) : ViewModel() {
+    val navController
+        get() = navigationController.controller
+
+    var onMapPick: (Any) -> Unit = {}
+        private set
+
+    var searchQuery by mutableStateOf("")
+    var mapTypeFilter by mutableStateOf(MapType.IMPORTED)
+    var sorting by mutableStateOf(SortingOptions.ALPHABETICAL)
+    var reverseList by mutableStateOf(false)
+
+    init {
+        viewModelScope.launch {
+            mapsViewModel.loadMaps(context)
+            onMapPick = {
+                mapsViewModel.chooseMap(it)
+                navController.navigate(Destination.MAPS)
+            }
+        }
+    }
+
+    val mapsToShow: List<PFMap>
+        get() {
+            val list = when (mapTypeFilter) {
+                MapType.IMPORTED -> mapsViewModel.importedMaps
+                MapType.EXPORTED -> mapsViewModel.exportedMaps
+            }.filter {
+                it.name.contains(searchQuery, ignoreCase = true)
+            }.sortedWith(when (sorting) {
+                SortingOptions.ALPHABETICAL -> compareBy(PFMap::name)
+                SortingOptions.DATE -> compareByDescending(PFMap::lastModified)
+            })
+            return if (reverseList) list.reversed() else list
+        }
+
+    fun showMapList(
+        navigate: (NavController) -> Unit = {
+            it.setSubScreen(Destination.MAPS_LIST)
+        },
+        onMapPick: (Any) -> Unit
+    ) {
+        this.onMapPick = {
+            onMapPick(it)
+            navController.popBackStack()
+        }
+        navigate(navController)
+    }
+}

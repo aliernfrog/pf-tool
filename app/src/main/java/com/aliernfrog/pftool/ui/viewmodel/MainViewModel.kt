@@ -16,6 +16,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.githubRepoURL
 import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.NavigationController
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -33,7 +34,8 @@ import java.net.URL
 class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
-    val topToastState: TopToastState
+    val topToastState: TopToastState,
+    private val navigationController: NavigationController
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -41,6 +43,10 @@ class MainViewModel(
     val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
     val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
     private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
+
+    var navController
+        get() = navigationController.controller
+        set(value) { navigationController.controller = value }
 
     var latestVersionInfo by mutableStateOf(ReleaseInfo(
         versionName = applicationVersionName,
