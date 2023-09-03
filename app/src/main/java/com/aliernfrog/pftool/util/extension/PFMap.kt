@@ -30,3 +30,7 @@ fun PFMap.getDetails(context: Context): String? {
     this.details.value = result
     return result
 }
+
+fun PFMap.equalsMap(compare: PFMap): Boolean {
+    return resolveFile() == compare.resolveFile()
+}

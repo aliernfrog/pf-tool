@@ -19,6 +19,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.util.extension.cacheFile
+import com.aliernfrog.pftool.util.extension.equalsMap
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
 import com.aliernfrog.pftool.util.extension.resolvePath
@@ -153,19 +154,20 @@ class MapsViewModel(
 
     /**
      * Deletes given [maps] and produces a TopToast based on result.
-     * @param unselectChosenMap whether to unselect chosen map after finishing.
      */
     suspend fun deleteMap(
-        vararg maps: PFMap = mapsArray,
-        unselectChosenMap: Boolean = maps.size == 1
+        vararg maps: PFMap = mapsArray
     ) {
         val isSingle = maps.size == 1
+        val unchoose = maps.any {
+            chosenMap?.equalsMap(it) == true
+        }
         withContext(Dispatchers.IO) {
             maps.forEach {
                 it.file?.delete()
                 it.documentFile?.delete()
             }
-            if (unselectChosenMap) chooseMap(null)
+            if (unchoose) chooseMap(null)
             topToastState.showToast(
                 text = if (isSingle) contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", maps.first().name)
                     else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),
