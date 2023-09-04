@@ -4,17 +4,21 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.outlined.FolderZip
@@ -22,6 +26,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
@@ -119,6 +125,23 @@ fun MapsListScreen(
                 Text(stringResource(R.string.mapsList_storage))
             }
         },
+        topBarActions = {
+            Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
+                if (showLoading) CircularProgressIndicator(
+                    modifier = Modifier.size(48.dp).padding(8.dp)
+                )
+                else IconButton(
+                    onClick = { scope.launch {
+                        mapsViewModel.loadMaps(context)
+                    } }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(R.string.mapsList_reload)
+                    )
+                }
+            }
+        },
         onBackClick = onBackClick
     ) {
         LazyColumn(
@@ -143,13 +166,22 @@ fun MapsListScreen(
             }
 
             item {
-                if (mapsToShow.isEmpty()) ErrorWithIcon(
-                    error = stringResource(
-                        if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
-                        else mapsListViewModel.chosenSegment.noMapsFoundTextId
-                    ),
-                    painter = rememberVectorPainter(Icons.Rounded.LocationOff)
-                ) else Text(
+                if (mapsToShow.isEmpty()) {
+                    if (mapsViewModel.isLoadingMaps) Column(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(strokeWidth = 3.dp)
+                    }
+
+                    else ErrorWithIcon(
+                        error = stringResource(
+                            if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
+                            else mapsListViewModel.chosenSegment.noMapsFoundTextId
+                        ),
+                        painter = rememberVectorPainter(Icons.Rounded.LocationOff)
+                    )
+                } else Text(
                     text = stringResource(R.string.mapsList_count)
                         .replace("{COUNT}", mapsToShow.size.toString()),
                     modifier = Modifier.padding(horizontal = 20.dp)

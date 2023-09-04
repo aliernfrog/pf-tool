@@ -50,6 +50,7 @@ class MapsViewModel(
     private lateinit var mapsFile: DocumentFileCompat
     private lateinit var exportedMapsFile: DocumentFileCompat
 
+    var isLoadingMaps by mutableStateOf(true)
     var importedMaps by mutableStateOf(emptyList<PFMap>())
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
     var chosenMap by mutableStateOf<PFMap?>(null)
@@ -177,13 +178,22 @@ class MapsViewModel(
         else MapImportedState.NONE
     }
 
+    /**
+     * Loads all imported and exported maps. [isLoadingMaps] will be true while this is in action.
+     */
     suspend fun loadMaps(context: Context) {
+        isLoadingMaps = true
         getMapsFile(context)
         getExportedMapsFile(context)
         fetchImportedMaps()
         fetchExportedMaps()
+        isLoadingMaps = false
     }
 
+    /**
+     * Gets [DocumentFileCompat] to imported maps folder.
+     * Use this before accessing [mapsFile], otherwise the app will crash.
+     */
     private fun getMapsFile(context: Context): DocumentFileCompat {
         val isUpToDate = if (!::mapsFile.isInitialized) false
         else {
@@ -197,6 +207,10 @@ class MapsViewModel(
         return mapsFile
     }
 
+    /**
+     * Gets [DocumentFileCompat] to exported maps folder.
+     * Use this before accessing [exportedMapsFile], otherwise the app will crash.
+     */
     private fun getExportedMapsFile(context: Context): DocumentFileCompat {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
         else {
@@ -210,6 +224,9 @@ class MapsViewModel(
         return exportedMapsFile
     }
 
+    /**
+     * Fetches imported maps from [mapsFile].
+     */
     private suspend fun fetchImportedMaps() {
         withContext(Dispatchers.IO) {
             importedMaps = mapsFile.listFiles()
@@ -233,6 +250,9 @@ class MapsViewModel(
         }
     }
 
+    /**
+     * Fetches exported maps from [exportedMapsFile].
+     */
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
             exportedMaps = exportedMapsFile.listFiles()

@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,7 @@ fun AppScaffold(
     title: String,
     topAppBarState: TopAppBarState = TopAppBarState(0F,0F,0F),
     floatingActionButton: @Composable () -> Unit = {},
+    topBarActions: @Composable RowScope.() -> Unit = {},
     onBackClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -28,7 +30,8 @@ fun AppScaffold(
             AppTopBar(
                 title = title,
                 scrollBehavior = scrollBehavior,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                actions = topBarActions
             )
         },
         floatingActionButton = floatingActionButton,
@@ -46,6 +49,7 @@ fun AppScaffold(
 private fun AppTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
+    actions: @Composable RowScope.() -> Unit = {},
     onBackClick: (() -> Unit)? = null
 ) {
     LargeTopAppBar(
@@ -60,6 +64,7 @@ private fun AppTopBar(
                     )
                 }
             }
-        }
+        },
+        actions = actions
     )
 }

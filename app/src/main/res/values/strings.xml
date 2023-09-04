@@ -44,6 +44,7 @@
     <string name="maps_delete_multiple">Deleted {COUNT} maps</string>
     <string name="mapsList_pickMap">Pick a map</string>
     <string name="mapsList_pickMap_failed">Failed to pick map</string>
+    <string name="mapsList_reload">Reload maps</string>
     <string name="mapsList_search">Search maps..</string>
     <string name="mapsList_search_clear">Clear search</string>
     <string name="mapsList_count">{COUNT} maps</string>
