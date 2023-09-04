@@ -37,9 +37,9 @@ fun PickMapButton(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
+
     LaunchedEffect(chosenMap) {
-        if (chosenMap != null && chosenMap.details.value.isNullOrEmpty())
-            chosenMap.getDetails(context)
+        chosenMap?.getDetails(context)
     }
 
     Box(

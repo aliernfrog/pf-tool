@@ -33,10 +33,7 @@ import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
-import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import com.aliernfrog.pftool.util.Destination
-import com.aliernfrog.pftool.util.extension.set
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -44,18 +41,12 @@ import org.koin.androidx.compose.getViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(
-    mapsViewModel: MapsViewModel = getViewModel(),
-    mapsListViewModel: MapsListViewModel = getViewModel()
+    mapsViewModel: MapsViewModel = getViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(mapsViewModel.chosenMap) {
-        if (mapsViewModel.chosenMap == null) mapsListViewModel.showMapList(
-            fallbackDestinationOnPick = Destination.MAPS,
-            navigate = { it.set(Destination.MAPS_LIST) }
-        ) {
-            mapsViewModel.chooseMap(it)
-        }
+        if (mapsViewModel.chosenMap == null) mapsViewModel.mapListShown = true
     }
 
     AppScaffold(
@@ -67,11 +58,7 @@ fun MapsScreen(
                 chosenMap = mapsViewModel.chosenMap,
                 showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail
             ) {
-                mapsListViewModel.showMapList(
-                    fallbackDestinationOnPick = Destination.MAPS
-                ) {
-                    mapsViewModel.chooseMap(it)
-                }
+                mapsViewModel.mapListShown = true
             }
             MapActions()
         }

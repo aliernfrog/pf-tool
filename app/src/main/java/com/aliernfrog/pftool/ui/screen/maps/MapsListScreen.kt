@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -64,23 +65,14 @@ import org.koin.androidx.compose.getViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MapsListScreen(
-    hasBackStack: Boolean,
     mapsListViewModel: MapsListViewModel = getViewModel(),
-    mapsViewModel: MapsViewModel = getViewModel()
+    mapsViewModel: MapsViewModel = getViewModel(),
+    onBackClick: (() -> Unit)?,
+    onMapPick: (Any) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mapsToShow = mapsListViewModel.mapsToShow
-    
-    LaunchedEffect(Unit) {
-        mapsViewModel.loadMaps(context)
-    }
-
-    fun pickFile(file: Any) {
-        scope.launch {
-            mapsListViewModel.onMapPick(file)
-        }
-    }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -90,7 +82,7 @@ fun MapsListScreen(
                     parentName = "maps",
                     context = context
                 )
-                if (cachedFile != null) pickFile(cachedFile)
+                if (cachedFile != null) onMapPick(cachedFile)
                 else mapsListViewModel.topToastState.showToast(
                     text = R.string.mapsList_pickMap_failed,
                     icon = Icons.Rounded.PriorityHigh,
@@ -98,6 +90,14 @@ fun MapsListScreen(
                 )
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        mapsViewModel.loadMaps(context)
+    }
+
+    onBackClick?.let {
+        BackHandler(onBack = it)
     }
 
     AppScaffold(
@@ -119,9 +119,7 @@ fun MapsListScreen(
                 Text(stringResource(R.string.mapsList_storage))
             }
         },
-        onBackClick = if (!hasBackStack) null else { {
-            mapsListViewModel.navController.popBackStack()
-        } }
+        onBackClick = onBackClick
     ) {
         LazyColumn(
             contentPadding = PaddingValues(bottom = 80.dp),
@@ -167,7 +165,7 @@ fun MapsListScreen(
                         mapsViewModel.deleteMap(map)
                     } }
                 ) {
-                    pickFile(map)
+                    onMapPick(map)
                 }
             }
         }

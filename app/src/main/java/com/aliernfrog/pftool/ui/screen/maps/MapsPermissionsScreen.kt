@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -44,6 +45,17 @@ fun MapsPermissionsScreen(
     ) }
 
     PermissionsScreen(*permissions) {
-        MapsScreen()
+        AnimatedContent(mapsViewModel.mapListShown) { showMapList ->
+            if (showMapList) MapsListScreen(
+                onBackClick = if (mapsViewModel.mapListBackButtonShown) {
+                    { mapsViewModel.mapListShown = false }
+                } else null,
+                onMapPick = {
+                    mapsViewModel.chooseMap(it)
+                    mapsViewModel.mapListShown = false
+                }
+            )
+            else MapsScreen()
+        }
     }
 }

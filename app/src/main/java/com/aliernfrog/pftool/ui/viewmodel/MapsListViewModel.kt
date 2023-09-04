@@ -4,42 +4,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.SortingOption
-import com.aliernfrog.pftool.util.Destination
-import com.aliernfrog.pftool.util.NavigationController
-import com.aliernfrog.pftool.util.extension.navigate
-import com.aliernfrog.pftool.util.extension.popBackStackSafe
-import com.aliernfrog.pftool.util.extension.set
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
-import kotlinx.coroutines.launch
 
 class MapsListViewModel(
     val topToastState: TopToastState,
     val prefs: PreferenceManager,
-    private val navigationController: NavigationController,
     private val mapsViewModel: MapsViewModel
 ) : ViewModel() {
-    val navController
-        get() = navigationController.controller
-
-    var onMapPick: (Any) -> Unit = {}
-        private set
 
     var searchQuery by mutableStateOf("")
     var chosenSegment by mutableStateOf(MapsListSegment.IMPORTED)
     var sorting by mutableStateOf(SortingOption.ALPHABETICAL)
     var reverseList by mutableStateOf(false)
-
-    init {
-        onMapPick = {
-            mapsViewModel.chooseMap(it)
-            navController.set(Destination.MAPS)
-        }
-    }
 
     /**
      * Map list with filters and sorting options applied.
@@ -58,20 +38,4 @@ class MapsListViewModel(
             })
             return if (reverseList) list.reversed() else list
         }
-
-    fun showMapList(
-        fallbackDestinationOnPick: Destination,
-        navigate: (NavController) -> Unit = {
-            it.navigate(Destination.MAPS_LIST)
-        },
-        onMapPick: (Any) -> Unit
-    ) {
-        this.onMapPick = {
-            onMapPick(it)
-            navController.popBackStackSafe(
-                fallback = fallbackDestinationOnPick
-            )
-        }
-        navigate(navController)
-    }
 }

@@ -52,14 +52,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.set
-import com.aliernfrog.pftool.util.rootRoute
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun BaseScaffold(
     navController: NavController,
     content: @Composable (
-        hasBackStack: Boolean,
         paddingValues: PaddingValues
     ) -> Unit
 ) {
@@ -77,7 +75,7 @@ fun BaseScaffold(
     var sideBarWidth by remember { mutableStateOf(0.dp) }
 
     fun isDestinationSelected(destination: Destination): Boolean {
-        return destination.route == currentDestination?.rootRoute
+        return destination.route == currentDestination?.route
     }
 
     fun changeDestination(destination: Destination) {
@@ -115,7 +113,6 @@ fun BaseScaffold(
             bottom = 0.dp
         )
         content(
-            hasBackStack = navController.previousBackStackEntry != null,
             paddingValues = paddingValues
         )
     }

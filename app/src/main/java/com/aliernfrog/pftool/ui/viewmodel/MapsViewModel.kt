@@ -20,6 +20,7 @@ import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.equalsMap
+import com.aliernfrog.pftool.util.extension.getDetails
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
 import com.aliernfrog.pftool.util.extension.resolvePath
@@ -51,9 +52,12 @@ class MapsViewModel(
 
     var importedMaps by mutableStateOf(emptyList<PFMap>())
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
-    var mapNameEdit by mutableStateOf("")
-    var pendingMapDelete by mutableStateOf<PFMap?>(null)
     var chosenMap by mutableStateOf<PFMap?>(null)
+    var pendingMapDelete by mutableStateOf<PFMap?>(null)
+    var mapNameEdit by mutableStateOf("")
+    var mapListShown by mutableStateOf(true)
+    val mapListBackButtonShown
+        get() = chosenMap != null
 
     fun chooseMap(map: Any?) {
         var mapToChoose: PFMap? = null
@@ -219,16 +223,20 @@ class MapsViewModel(
             importedMaps = mapsFile.listFiles()
                 .filter { it.isDirectory() }
                 .sortedBy { it.name.lowercase() }
-                .map {
-                    PFMap(
-                        name = it.name,
-                        fileName = it.name,
-                        fileSize = it.size,
-                        lastModified = it.lastModified,
+                .map { file ->
+                    val map = PFMap(
+                        name = file.name,
+                        fileName = file.name,
+                        fileSize = file.size,
+                        lastModified = file.lastModified,
                         file = null,
-                        documentFile = it,
-                        thumbnailModel = it.findFile("Thumbnail.jpg")?.uri.toString()
+                        documentFile = file,
+                        thumbnailModel = file.findFile("Thumbnail.jpg")?.uri.toString()
                     )
+                    contextUtils.run { ctx ->
+                        map.getDetails(ctx)
+                    }
+                    map
                 }
         }
     }
@@ -238,15 +246,19 @@ class MapsViewModel(
             exportedMaps = exportedMapsFile.listFiles()
                 .filter { it.isFile() && it.name.lowercase().endsWith(".zip") }
                 .sortedBy { it.name.lowercase() }
-                .map {
-                    PFMap(
-                        name = it.nameWithoutExtension,
-                        fileName = it.name,
-                        fileSize = it.size,
-                        lastModified = it.lastModified,
+                .map { file ->
+                    val map = PFMap(
+                        name = file.nameWithoutExtension,
+                        fileName = file.name,
+                        fileSize = file.size,
+                        lastModified = file.lastModified,
                         file = null,
-                        documentFile = it
+                        documentFile = file
                     )
+                    contextUtils.run { ctx ->
+                        map.getDetails(ctx)
+                    }
+                    map
                 }
         }
     }
