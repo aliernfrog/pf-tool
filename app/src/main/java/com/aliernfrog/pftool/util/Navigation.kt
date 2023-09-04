@@ -19,8 +19,9 @@ enum class Destination(
     val labelId: Int,
     val vectorFilled: ImageVector? = null,
     val vectorOutlined: ImageVector? = null,
-    val isSubScreen: Boolean = false,
-    var hasNotification: MutableState<Boolean> = mutableStateOf(false)
+    val showInNavigationBar: Boolean = true,
+    val showNavigationBar: Boolean = showInNavigationBar,
+    val hasNotification: MutableState<Boolean> = mutableStateOf(false)
 ) {
     MAPS(
         route = "maps",

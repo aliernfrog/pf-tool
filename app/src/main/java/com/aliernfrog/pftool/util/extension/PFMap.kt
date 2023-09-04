@@ -23,9 +23,14 @@ fun PFMap.getDetails(context: Context): String? {
     if (this.fileSize != null) details.add(
         "${this.fileSize/1024} KB"
     )
-    if (this.lastModified != null) details.add(
+    details.add(
         FileUtil.lastModifiedFromLong(this.lastModified, context)
     )
-    return if (details.isEmpty()) null
-    else details.joinToString(" | ")
+    val result = if (details.isEmpty()) null else details.joinToString(" | ")
+    this.details.value = result
+    return result
+}
+
+fun PFMap.equalsMap(compare: PFMap): Boolean {
+    return resolvePath() == compare.resolvePath()
 }

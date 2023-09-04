@@ -5,7 +5,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,24 +51,36 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.extension.set
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun BaseScaffold(navController: NavController, content: @Composable (PaddingValues) -> Unit) {
+fun BaseScaffold(
+    navController: NavController,
+    content: @Composable (
+        paddingValues: PaddingValues
+    ) -> Unit
+) {
     val context = LocalContext.current
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
-    val windowSizeClass = calculateWindowSizeClass(context as Activity)
-    val showNavigationRail = windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
-    var sideBarWidth by remember { mutableStateOf(0.dp) }
 
     val destinations = remember { Destination.values().toList() }
-    val mainDestinations = remember { destinations.filter { !it.isSubScreen } }
+    val mainDestinations = remember { destinations.filter { it.showInNavigationBar } }
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val currentDestination = destinations.find { it.route == currentRoute }
 
+    val windowSizeClass = calculateWindowSizeClass(context as Activity)
+    val showNavigationRail = currentDestination?.showNavigationBar != false && windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
+    var sideBarWidth by remember { mutableStateOf(0.dp) }
+
+    fun isDestinationSelected(destination: Destination): Boolean {
+        return destination.route == currentDestination?.route
+    }
+
     fun changeDestination(destination: Destination) {
-        navController.navigate(destination.route) { popUpTo(0) }
+        if (!isDestinationSelected(destination) && currentDestination?.showNavigationBar != false)
+            navController.set(destination)
     }
 
     fun toDp(pxs: Int): Dp {
@@ -85,24 +99,28 @@ fun BaseScaffold(navController: NavController, content: @Composable (PaddingValu
             if (!showNavigationRail) BottomBar(
                 destinations = mainDestinations,
                 currentDestination = currentDestination,
+                isDestinationSelected = ::isDestinationSelected,
                 onNavigateRequest = { changeDestination(it) }
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        val paddingValues = if (showNavigationRail || currentDestination?.isSubScreen != true) it
+        val paddingValues = if (showNavigationRail || currentDestination?.showNavigationBar != false) it
         else PaddingValues(
             start = it.calculateStartPadding(layoutDirection),
             top = it.calculateTopPadding(),
             end = it.calculateEndPadding(layoutDirection),
             bottom = 0.dp
         )
-        content(paddingValues)
+        content(
+            paddingValues = paddingValues
+        )
     }
 
     if (showNavigationRail) SideBarRail(
         destinations = mainDestinations,
         currentDestination = currentDestination,
+        isDestinationSelected = ::isDestinationSelected,
         onWidthChange = { sideBarWidth = toDp(it) },
         onNavigateRequest = { changeDestination(it) }
     )
@@ -117,21 +135,21 @@ fun BaseScaffold(navController: NavController, content: @Composable (PaddingValu
 private fun BottomBar(
     destinations: List<Destination>,
     currentDestination: Destination?,
+    isDestinationSelected: (Destination) -> Boolean,
     onNavigateRequest: (Destination) -> Unit
 ) {
     AnimatedVisibility(
-        visible = currentDestination?.isSubScreen != true,
+        visible = currentDestination?.showNavigationBar != false,
         enter = slideInVertically(animationSpec = tween(durationMillis = 150), initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(animationSpec = tween(durationMillis = 150), targetOffsetY = { it }) + fadeOut()
     ) {
         BottomAppBar {
             destinations.forEach {
-                val selected = it.route == currentDestination?.route
+                val selected = isDestinationSelected(it)
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
-                        if (!selected && currentDestination?.isSubScreen != true)
-                            onNavigateRequest(it)
+                        onNavigateRequest(it)
                     },
                     icon = {
                         NavigationItemIcon(
@@ -152,32 +170,38 @@ private fun BottomBar(
 private fun SideBarRail(
     destinations: List<Destination>,
     currentDestination: Destination?,
+    isDestinationSelected: (Destination) -> Boolean,
     onWidthChange: (Int) -> Unit,
     onNavigateRequest: (Destination) -> Unit
 ) {
-    NavigationRail(
-        modifier = Modifier
-            .onSizeChanged { onWidthChange(it.width) }
+    AnimatedVisibility(
+        visible = currentDestination?.showNavigationBar != false,
+        enter = slideInHorizontally(animationSpec = tween(durationMillis = 150), initialOffsetX = { -it }) + fadeIn(),
+        exit = slideOutHorizontally(animationSpec = tween(durationMillis = 150), targetOffsetX = { -it }) + fadeOut()
     ) {
-        AppIcon()
-        destinations.forEach {
-            val selected = it.route == currentDestination?.route
-            NavigationRailItem(
-                selected = selected,
-                onClick = {
-                    if (!selected && currentDestination?.isSubScreen != true)
+        NavigationRail(
+            modifier = Modifier
+                .onSizeChanged { onWidthChange(it.width) }
+        ) {
+            AppIcon()
+            destinations.forEach {
+                val selected = isDestinationSelected(it)
+                NavigationRailItem(
+                    selected = selected,
+                    onClick = {
                         onNavigateRequest(it)
-                },
-                icon = {
-                    NavigationItemIcon(
-                        destination = it,
-                        selected = selected
-                    )
-                },
-                label = {
-                    Text(stringResource(it.labelId))
-                }
-            )
+                    },
+                    icon = {
+                        NavigationItemIcon(
+                            destination = it,
+                            selected = selected
+                        )
+                    },
+                    label = {
+                        Text(stringResource(it.labelId))
+                    }
+                )
+            }
         }
     }
 }

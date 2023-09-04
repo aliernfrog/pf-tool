@@ -31,11 +31,15 @@ fun MainScreen(
     val navController = rememberNavController()
     BaseScaffold(
         navController = navController
-    ) {
+    ) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = NavigationConstant.INITIAL_DESTINATION,
-            modifier = Modifier.fillMaxSize().padding(it).consumeWindowInsets(it).imePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .imePadding(),
             enterTransition = { scaleIn(
                 animationSpec = tween(delayMillis = 100),
                 initialScale = 0.95f

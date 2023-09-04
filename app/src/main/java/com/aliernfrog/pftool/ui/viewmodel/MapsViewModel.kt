@@ -10,21 +10,22 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapImportedState
-import com.aliernfrog.pftool.enum.PickMapSheetSegments
 import com.aliernfrog.pftool.util.extension.cacheFile
+import com.aliernfrog.pftool.util.extension.equalsMap
+import com.aliernfrog.pftool.util.extension.getDetails
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.resolveFile
 import com.aliernfrog.pftool.util.extension.resolvePath
+import com.aliernfrog.pftool.util.extension.size
+import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.ZipUtil
@@ -37,11 +38,10 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
-    context: Context,
-    val topToastState: TopToastState,
+    private val topToastState: TopToastState,
+    private val contextUtils: ContextUtils,
     val prefs: PreferenceManager
 ) : ViewModel() {
-    val pickMapSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
     val scrollState = ScrollState(0)
 
@@ -50,13 +50,15 @@ class MapsViewModel(
     private lateinit var mapsFile: DocumentFileCompat
     private lateinit var exportedMapsFile: DocumentFileCompat
 
+    var isLoadingMaps by mutableStateOf(true)
     var importedMaps by mutableStateOf(emptyList<PFMap>())
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
-    var mapNameEdit by mutableStateOf("")
-    var pendingMapDelete by mutableStateOf<String?>(null)
-    var pickMapSheetSelectedSegment by mutableStateOf(PickMapSheetSegments.IMPORTED)
-
     var chosenMap by mutableStateOf<PFMap?>(null)
+    var pendingMapDelete by mutableStateOf<PFMap?>(null)
+    var mapNameEdit by mutableStateOf("")
+    var mapListShown by mutableStateOf(true)
+    val mapListBackButtonShown
+        get() = chosenMap != null
 
     fun chooseMap(map: Any?) {
         var mapToChoose: PFMap? = null
@@ -99,8 +101,10 @@ class MapsViewModel(
         else withContext(Dispatchers.IO) {
             mapFile.renameTo(newName)
             chooseMap(mapsFile.findFile(newName))
-            topToastState.showToast(R.string.maps_rename_done, Icons.Rounded.Edit)
-            fetchImportedMaps()
+            topToastState.showToast(
+                text = contextUtils.getString(R.string.maps_rename_done).replace("{NAME}", newName),
+                icon = Icons.Rounded.Edit
+            )
         }
     }
 
@@ -117,33 +121,50 @@ class MapsViewModel(
             output = mapsFile.createDirectory(mapName) ?: return@withContext
             ZipUtil.unzipMap(zipPath, output ?: return@withContext, context)
             chooseMap(output)
-            topToastState.showToast(R.string.maps_import_done, Icons.Rounded.Download)
-            fetchImportedMaps()
+            topToastState.showToast(
+                text = contextUtils.getString(R.string.maps_import_done).replace("{NAME}", mapName),
+                icon = Icons.Rounded.Download
+            )
         }
     }
 
     suspend fun exportChosenMap(context: Context) {
         val mapFile = chosenMap?.documentFile ?: return
-        val zipFileName = "${resolveMapNameInput()}.zip"
+        val mapName = resolveMapNameInput()
+        val zipFileName = "$mapName.zip"
         var output = exportedMapsFile.findFile(zipFileName)
         if (output?.exists() == true) fileAlreadyExists()
         else withContext(Dispatchers.IO) {
             output = exportedMapsFile.createFile("", zipFileName) ?: return@withContext
             ZipUtil.zipMap(mapFile, output ?: return@withContext, context)
             chooseMap(output)
-            topToastState.showToast(R.string.maps_export_done, icon = Icons.Rounded.Upload)
-            fetchExportedMaps()
+            topToastState.showToast(
+                text = contextUtils.getString(R.string.maps_export_done).replace("{NAME}", mapName),
+                icon = Icons.Rounded.Upload
+            )
         }
     }
 
-    suspend fun deleteChosenMap() {
-        val map = chosenMap ?: return
+    /**
+     * Deletes given [maps] and produces a TopToast based on result.
+     * @param [maps] maps to delete.
+     */
+    suspend fun deleteMap(vararg maps: PFMap) {
+        val isSingle = maps.size == 1
+        val unchoose = maps.any {
+            chosenMap?.equalsMap(it) == true
+        }
         withContext(Dispatchers.IO) {
-            map.file?.delete()
-            map.documentFile?.delete()
-            chooseMap(null)
-            topToastState.showToast(R.string.maps_delete_done, icon = Icons.Rounded.Delete)
-            fetchAllMaps()
+            maps.forEach {
+                it.file?.delete()
+                it.documentFile?.delete()
+            }
+            if (unchoose) chooseMap(null)
+            topToastState.showToast(
+                text = if (isSingle) contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", maps.first().name)
+                    else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),
+                icon = Icons.Rounded.Delete
+            )
         }
     }
 
@@ -157,7 +178,23 @@ class MapsViewModel(
         else MapImportedState.NONE
     }
 
-    fun getMapsFile(context: Context): DocumentFileCompat {
+    /**
+     * Loads all imported and exported maps. [isLoadingMaps] will be true while this is in action.
+     */
+    suspend fun loadMaps(context: Context) {
+        isLoadingMaps = true
+        getMapsFile(context)
+        getExportedMapsFile(context)
+        fetchImportedMaps()
+        fetchExportedMaps()
+        isLoadingMaps = false
+    }
+
+    /**
+     * Gets [DocumentFileCompat] to imported maps folder.
+     * Use this before accessing [mapsFile], otherwise the app will crash.
+     */
+    private fun getMapsFile(context: Context): DocumentFileCompat {
         val isUpToDate = if (!::mapsFile.isInitialized) false
         else {
             val updatedPath = mapsFile.uri.resolvePath()
@@ -170,7 +207,11 @@ class MapsViewModel(
         return mapsFile
     }
 
-    fun getExportedMapsFile(context: Context): DocumentFileCompat {
+    /**
+     * Gets [DocumentFileCompat] to exported maps folder.
+     * Use this before accessing [exportedMapsFile], otherwise the app will crash.
+     */
+    private fun getExportedMapsFile(context: Context): DocumentFileCompat {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
         else {
             val updatedPath = exportedMapsFile.uri.resolvePath()
@@ -183,44 +224,53 @@ class MapsViewModel(
         return exportedMapsFile
     }
 
-    suspend fun fetchAllMaps() {
-        fetchImportedMaps()
-        fetchExportedMaps()
-    }
-
+    /**
+     * Fetches imported maps from [mapsFile].
+     */
     private suspend fun fetchImportedMaps() {
         withContext(Dispatchers.IO) {
             importedMaps = mapsFile.listFiles()
                 .filter { it.isDirectory() }
                 .sortedBy { it.name.lowercase() }
-                .map {
-                    PFMap(
-                        name = it.name,
-                        fileName = it.name,
-                        fileSize = it.length,
-                        lastModified = it.lastModified,
+                .map { file ->
+                    val map = PFMap(
+                        name = file.name,
+                        fileName = file.name,
+                        fileSize = file.size,
+                        lastModified = file.lastModified,
                         file = null,
-                        documentFile = it,
-                        thumbnailModel = it.findFile("Thumbnail.jpg")?.uri.toString()
+                        documentFile = file,
+                        thumbnailModel = file.findFile("Thumbnail.jpg")?.uri.toString()
                     )
+                    contextUtils.run { ctx ->
+                        map.getDetails(ctx)
+                    }
+                    map
                 }
         }
     }
 
+    /**
+     * Fetches exported maps from [exportedMapsFile].
+     */
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
             exportedMaps = exportedMapsFile.listFiles()
                 .filter { it.isFile() && it.name.lowercase().endsWith(".zip") }
                 .sortedBy { it.name.lowercase() }
-                .map {
-                    PFMap(
-                        name = it.nameWithoutExtension,
-                        fileName = it.name,
-                        fileSize = it.length,
-                        lastModified = it.lastModified,
+                .map { file ->
+                    val map = PFMap(
+                        name = file.nameWithoutExtension,
+                        fileName = file.name,
+                        fileSize = file.size,
+                        lastModified = file.lastModified,
                         file = null,
-                        documentFile = it
+                        documentFile = file
                     )
+                    contextUtils.run { ctx ->
+                        map.getDetails(ctx)
+                    }
+                    map
                 }
         }
     }
