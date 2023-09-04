@@ -32,5 +32,5 @@ fun PFMap.getDetails(context: Context): String? {
 }
 
 fun PFMap.equalsMap(compare: PFMap): Boolean {
-    return resolveFile() == compare.resolveFile()
+    return resolvePath() == compare.resolvePath()
 }
