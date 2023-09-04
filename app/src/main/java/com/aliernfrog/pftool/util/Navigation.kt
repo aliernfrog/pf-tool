@@ -12,7 +12,7 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.R
 
 object NavigationConstant {
-    val INITIAL_DESTINATION = Destination.MAPS_LIST.route
+    val INITIAL_DESTINATION = Destination.MAPS.route
 }
 
 class NavigationController {
