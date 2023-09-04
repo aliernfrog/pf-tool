@@ -52,7 +52,7 @@ class MapsViewModel(
     var importedMaps by mutableStateOf(emptyList<PFMap>())
     var exportedMaps by mutableStateOf(emptyList<PFMap>())
     var mapNameEdit by mutableStateOf("")
-    var pendingMapDelete by mutableStateOf<String?>(null)
+    var pendingMapDelete by mutableStateOf<PFMap?>(null)
     var chosenMap by mutableStateOf<PFMap?>(null)
 
     /**
@@ -167,14 +167,18 @@ class MapsViewModel(
             maps.forEach {
                 it.file?.delete()
                 it.documentFile?.delete()
+                topToastState.showToast(
+                    text = "Deleted ${it.name}"
+                ) // TODO debug
             }
             if (unchoose) chooseMap(null)
-            topToastState.showToast(
+            /*topToastState.showToast(
                 text = if (isSingle) contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", maps.first().name)
                     else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),
                 icon = Icons.Rounded.Delete
-            )
+            )*/
             fetchAllMaps()
+            topToastState.showToast("Fetched all maps") // TODO debug
         }
     }
 

@@ -33,6 +33,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,6 +71,10 @@ fun MapsListScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mapsToShow = mapsListViewModel.mapsToShow
+    
+    LaunchedEffect(Unit) {
+        mapsViewModel.loadMaps(context)
+    }
 
     fun pickFile(file: Any) {
         scope.launch {

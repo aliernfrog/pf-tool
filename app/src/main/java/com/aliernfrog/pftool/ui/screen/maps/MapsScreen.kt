@@ -79,11 +79,11 @@ fun MapsScreen(
 
     mapsViewModel.pendingMapDelete?.let {
         DeleteConfirmationDialog(
-            name = it,
+            name = it.name,
             onDismissRequest = { mapsViewModel.pendingMapDelete = null },
             onConfirmDelete = {
                 scope.launch {
-                    mapsViewModel.deleteMap()
+                    mapsViewModel.deleteMap(it)
                     mapsViewModel.pendingMapDelete = null
                 }
             }
@@ -167,7 +167,7 @@ private fun MapActions(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     contentColor = MaterialTheme.colorScheme.error
                 ) {
-                    mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap?.name
+                    mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap
                 }
             }
         },

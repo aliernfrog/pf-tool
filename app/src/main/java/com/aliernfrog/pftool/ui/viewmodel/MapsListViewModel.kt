@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.enum.MapsListSegment
@@ -23,8 +22,7 @@ class MapsListViewModel(
     val topToastState: TopToastState,
     val prefs: PreferenceManager,
     private val navigationController: NavigationController,
-    private val mapsViewModel: MapsViewModel,
-    context: Context
+    private val mapsViewModel: MapsViewModel
 ) : ViewModel() {
     val navController
         get() = navigationController.controller
@@ -38,12 +36,9 @@ class MapsListViewModel(
     var reverseList by mutableStateOf(false)
 
     init {
-        viewModelScope.launch {
-            mapsViewModel.loadMaps(context)
-            onMapPick = {
-                mapsViewModel.chooseMap(it)
-                navController.set(Destination.MAPS)
-            }
+        onMapPick = {
+            mapsViewModel.chooseMap(it)
+            navController.set(Destination.MAPS)
         }
     }
 
