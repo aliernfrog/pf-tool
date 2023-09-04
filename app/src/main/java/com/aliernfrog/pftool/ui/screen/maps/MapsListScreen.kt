@@ -163,6 +163,7 @@ fun MapsListScreen(
                     modifier = Modifier.animateItemPlacement(),
                     onDeleteRequest = { scope.launch {
                         mapsViewModel.deleteMap(map)
+                        mapsViewModel.loadMaps(context)
                     } }
                 ) {
                     onMapPick(map)

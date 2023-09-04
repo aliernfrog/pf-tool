@@ -104,7 +104,6 @@ class MapsViewModel(
                 text = contextUtils.getString(R.string.maps_rename_done).replace("{NAME}", newName),
                 icon = Icons.Rounded.Edit
             )
-            fetchImportedMaps()
         }
     }
 
@@ -125,7 +124,6 @@ class MapsViewModel(
                 text = contextUtils.getString(R.string.maps_import_done).replace("{NAME}", mapName),
                 icon = Icons.Rounded.Download
             )
-            fetchImportedMaps()
         }
     }
 
@@ -143,7 +141,6 @@ class MapsViewModel(
                 text = contextUtils.getString(R.string.maps_export_done).replace("{NAME}", mapName),
                 icon = Icons.Rounded.Upload
             )
-            fetchExportedMaps()
         }
     }
 
@@ -167,7 +164,6 @@ class MapsViewModel(
                     else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),
                 icon = Icons.Rounded.Delete
             )
-            fetchAllMaps()
         }
     }
 
@@ -179,6 +175,13 @@ class MapsViewModel(
         return if (path.startsWith(mapsDir)) MapImportedState.IMPORTED
         else if (path.startsWith(exportedMapsDir)) MapImportedState.EXPORTED
         else MapImportedState.NONE
+    }
+
+    suspend fun loadMaps(context: Context) {
+        getMapsFile(context)
+        getExportedMapsFile(context)
+        fetchImportedMaps()
+        fetchExportedMaps()
     }
 
     private fun getMapsFile(context: Context): DocumentFileCompat {
@@ -205,17 +208,6 @@ class MapsViewModel(
         val treeUri = Uri.parse(exportedMapsDir)
         exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
         return exportedMapsFile
-    }
-
-    suspend fun loadMaps(context: Context) {
-        getMapsFile(context)
-        getExportedMapsFile(context)
-        fetchAllMaps()
-    }
-
-    private suspend fun fetchAllMaps() {
-        fetchImportedMaps()
-        fetchExportedMaps()
     }
 
     private suspend fun fetchImportedMaps() {
