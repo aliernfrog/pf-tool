@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
@@ -12,10 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.githubRepoURL
 import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -33,7 +36,8 @@ import java.net.URL
 class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
-    val topToastState: TopToastState
+    val topToastState: TopToastState,
+    private val mapsViewModel: MapsViewModel
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -115,5 +119,13 @@ class MainViewModel(
                 scope.launch { updateSheetState.show() }
             }
         )
+    }
+
+    fun handleIntent(intent: Intent, context: Context) {
+        val uri = intent.data ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            val file = uri.cacheFile(context)
+            mapsViewModel.chooseMap(file)
+        }
     }
 }
