@@ -24,21 +24,11 @@
             <!-- Open map from a .zip file -->
             <intent-filter android:label="@string/intent_openMap">
                 <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data
-                    android:scheme="file"
-                    android:host="*"
-                    android:pathPattern=".*\\.zip"/>
-            </intent-filter>
-
-            <!-- Open map from a .zip URL -->
-            <intent-filter android:label="@string/intent_downloadMap">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="http"
-                    android:host="*"
-                    android:pathPattern=".*\\.zip"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="content"/>
+                <data android:host="*"/>
+                <data android:mimeType="application/zip"/>
             </intent-filter>
         </activity>
 
