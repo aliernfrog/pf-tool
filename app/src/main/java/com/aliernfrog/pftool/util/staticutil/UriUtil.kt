@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.webkit.URLUtil
 import java.io.File
+import java.io.InputStream
+import java.net.URL
 
 class UriUtil {
     companion object {
@@ -16,25 +19,47 @@ class UriUtil {
         fun cacheFile(
             uri: Uri,
             parentName: String?,
-            context: Context)
-        : File? {
+            context: Context
+        ): File? {
             return try {
-                val fileName = getFileName(uri, context)
-                val outputFile = File("${context.cacheDir.absolutePath}${
-                    if (parentName != null) "/$parentName" else ""
-                }/$fileName")
-                outputFile.parentFile?.mkdirs()
-                if (outputFile.exists()) outputFile.delete()
-                val input = context.contentResolver.openInputStream(uri)
-                val output = outputFile.outputStream()
-                input?.copyTo(output)
-                input?.close()
-                output.close()
-                outputFile
+                val isHTTP = uri.scheme == "http" || uri.scheme == "https"
+                val inputStream = (
+                        if (isHTTP) URL(uri.toString()).openStream()
+                        else context.contentResolver.openInputStream(uri)
+                        ) ?: return null
+                val fileName = (
+                        if (isHTTP) URLUtil.guessFileName(uri.toString(), null, null)
+                        else getFileName(uri, context)
+                        ) ?: "unknown"
+                val file = writeToCache(
+                    fileName = fileName,
+                    inputStream = inputStream,
+                    parentName = parentName,
+                    context = context
+                )
+                inputStream.close()
+                file
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
             }
+        }
+
+        private fun writeToCache(
+            fileName: String,
+            inputStream: InputStream,
+            parentName: String?,
+            context: Context
+        ): File {
+            val outputFile = File("${context.cacheDir.absolutePath}${
+                if (parentName != null) "/$parentName" else ""
+            }/$fileName")
+            outputFile.parentFile?.mkdirs()
+            if (outputFile.exists()) outputFile.delete()
+            val output = outputFile.outputStream()
+            inputStream.copyTo(output)
+            output.close()
+            return outputFile
         }
 
         @SuppressLint("Range")
