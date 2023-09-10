@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- Open map from a .zip file -->
+            <!-- Open map from .zip files -->
             <intent-filter android:label="@string/intent_openMap">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
@@ -32,7 +32,9 @@
                 <data android:mimeType="application/zip"/>
             </intent-filter>
 
+            <!-- Download map from .zip URLs -->
             <intent-filter android:label="@string/intent_downloadMap">
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="http"/>
