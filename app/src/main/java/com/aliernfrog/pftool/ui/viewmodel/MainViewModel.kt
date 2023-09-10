@@ -126,6 +126,7 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val file = uri.cacheFile(context)
             mapsViewModel.chooseMap(file)
+            mapsViewModel.mapListShown = false
         }
     }
 }
