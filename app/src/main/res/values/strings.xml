@@ -10,7 +10,7 @@
     <string name="intent_openMap">Open map</string>
     <string name="intent_downloadMap">Download map</string>
     <string name="warning_fileDoesntExist">File does not exist</string>
-    <string name="info_deleteQuestion">Are you sure you want to delete %NAME%?\nThis can NOT be undone!</string>
+    <string name="info_deleteQuestion">Are you sure you want to delete {NAME}?\nThis can NOT be undone!</string>
     <string name="internalStorage">Internal storage</string>
     <string name="permissions">Permissions</string>
     <string name="permissions_chooseFolder">Choose folder</string>
