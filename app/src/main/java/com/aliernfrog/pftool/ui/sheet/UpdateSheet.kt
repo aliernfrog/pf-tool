@@ -79,6 +79,7 @@ fun UpdateSheet(
                 .padding(16.dp),
             markdown = latestVersionInfo.body,
             color = LocalContentColor.current,
+            linkColor = MaterialTheme.colorScheme.primary,
             style = LocalTextStyle.current,
             onLinkClicked = {
                 uriHandler.openUri(it)
