@@ -31,8 +31,8 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Rename signed APK
-        run: mv ${{steps.sign_apk.outputs.signedFile}} pftool.apk
+      - name: Copy signed APK
+        run: cp ${{steps.sign_apk.outputs.signedFile}} pftool.apk
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
