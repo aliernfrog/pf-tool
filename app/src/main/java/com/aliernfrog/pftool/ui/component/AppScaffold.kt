@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -10,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -19,6 +19,7 @@ fun AppScaffold(
     title: String,
     topAppBarState: TopAppBarState = TopAppBarState(0F,0F,0F),
     floatingActionButton: @Composable () -> Unit = {},
+    topBarActions: @Composable RowScope.() -> Unit = {},
     onBackClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -29,7 +30,8 @@ fun AppScaffold(
             AppTopBar(
                 title = title,
                 scrollBehavior = scrollBehavior,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                actions = topBarActions
             )
         },
         floatingActionButton = floatingActionButton,
@@ -47,6 +49,7 @@ fun AppScaffold(
 private fun AppTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
+    actions: @Composable RowScope.() -> Unit = {},
     onBackClick: (() -> Unit)? = null
 ) {
     LargeTopAppBar(
@@ -57,11 +60,11 @@ private fun AppTopBar(
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = stringResource(R.string.action_back),
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        contentDescription = stringResource(R.string.action_back)
                     )
                 }
             }
-        }
+        },
+        actions = actions
     )
 }

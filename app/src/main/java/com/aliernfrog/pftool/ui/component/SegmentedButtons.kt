@@ -1,49 +1,41 @@
 package com.aliernfrog.pftool.ui.component
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.AppComponentShape
+import com.aliernfrog.pftool.ui.theme.AppRoundnessSize
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SegmentedButtons(
     options: List<String>,
-    initialIndex: Int = 0,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    selectedBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
-    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    selectedContentColor: Color = MaterialTheme.colorScheme.onSecondary,
+    selectedIndex: Int,
+    modifier: Modifier = Modifier,
     onSelect: (Int) -> Unit
 ) {
-    val (selectedIndex, onOptionSelect) = remember { mutableStateOf(initialIndex) }
-    Crossfade(targetState = selectedIndex) {
-        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max).padding(8.dp).clip(AppComponentShape).background(backgroundColor).padding(3.dp)) {
-            options.forEachIndexed { index, option ->
-                val selected = it == index
-                Text(
-                    text = option,
-                    color = if (selected) selectedContentColor else contentColor,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxSize().weight(1f).clip(AppComponentShape)
-                        .clickable { onOptionSelect(index); onSelect(index) }
-                        .background(if (selected) selectedBackgroundColor else backgroundColor)
-                        .padding(8.dp)
-                        .alpha(if (selected) 1f else 0.6f)
+    SingleChoiceSegmentedButtonRow(
+        modifier = modifier
+    ) {
+        options.forEachIndexed { index, option ->
+            val selected = selectedIndex == index
+            val isStart = index == 0
+            val isEnd = index+1 == options.size
+            SegmentedButton(
+                selected = selected,
+                onClick = { onSelect(index) },
+                shape = RoundedCornerShape(
+                    topStart = if (isStart) AppRoundnessSize else 0.dp,
+                    bottomStart = if (isStart) AppRoundnessSize else 0.dp,
+                    topEnd = if (isEnd) AppRoundnessSize else 0.dp,
+                    bottomEnd = if (isEnd) AppRoundnessSize else 0.dp
                 )
+            ) {
+                Text(option)
             }
         }
     }
