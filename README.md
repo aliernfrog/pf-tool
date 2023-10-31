@@ -1,3 +1,10 @@
+> [!WARNING]
+> App may not work on devices using **October 2023 or newer security patches**, as those security patches prevent apps from requesting access to files inside `Android/data` folder.
+> 
+> If you are affected by this, please use the following methods until a solution is found:
+> - Connect your device to a PC with USB or use wireless debugging, you'll be able to manually manage map files inside `Android/data/com.MA.Polyfield/files/editor`
+> - Download maps using in-game map list
+
 <div align="center">
 
   <img alt="PF Tool icon" src="images/icon.png" width="120px"/>
