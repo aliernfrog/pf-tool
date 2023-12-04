@@ -26,11 +26,13 @@ import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        Shizuku.isPreV11()
 
         setContent {
             AppContent()
