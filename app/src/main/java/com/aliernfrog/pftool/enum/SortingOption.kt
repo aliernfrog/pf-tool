@@ -1,8 +1,8 @@
 package com.aliernfrog.pftool.enum
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Note
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
@@ -23,6 +23,6 @@ enum class SortingOption(
 
     SIZE(
         labelId = R.string.mapsList_sorting_size,
-        iconVector = Icons.Default.Note
+        iconVector = Icons.AutoMirrored.Filled.Note
     )
 }
