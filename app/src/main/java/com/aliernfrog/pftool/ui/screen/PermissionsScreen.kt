@@ -5,33 +5,32 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.canRequestAndroidDataAccess
 import com.aliernfrog.pftool.data.PermissionData
+import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
+import com.aliernfrog.pftool.ui.component.screen.permissions.PermissionCard
+import com.aliernfrog.pftool.ui.component.screen.permissions.ShizukuWarning
 import com.aliernfrog.pftool.ui.dialog.NotRecommendedFolderDialog
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,12 +49,19 @@ fun PermissionsScreen(
         getMissingPermissions()
     ) }
 
+    val shizukuRequired = remember {
+        missingPermissions.any { data ->
+            data.recommendedPath?.startsWith("${externalStorageRoot}Android/data") == true
+        } && !canRequestAndroidDataAccess
+    }
+
     Crossfade(targetState = missingPermissions.isEmpty()) { hasPermissions ->
         if (hasPermissions) content()
         else AppScaffold(
             title = stringResource(R.string.permissions)
         ) {
-            PermissionsList(
+            Permissions(
+                shizukuRequired = shizukuRequired,
                 missingPermissions = missingPermissions,
                 onUpdateState = {
                     missingPermissions = getMissingPermissions()
@@ -66,7 +72,9 @@ fun PermissionsScreen(
 }
 
 @Composable
-private fun PermissionsList(
+private fun Permissions(
+    mainViewModel: MainViewModel = getViewModel(),
+    shizukuRequired: Boolean,
     missingPermissions: List<PermissionData>,
     onUpdateState: () -> Unit
 ) {
@@ -79,6 +87,7 @@ private fun PermissionsList(
         activePermissionData?.onUriUpdate?.invoke(uri)
         onUpdateState()
     }
+
     val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
         if (it == null) return@rememberLauncherForActivityResult
         val recommendedPath = activePermissionData?.recommendedPath
@@ -104,38 +113,20 @@ private fun PermissionsList(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(missingPermissions) { permissionData ->
-            fun requestUriPermission() {
-                val treeId = "primary:"+permissionData.recommendedPath?.removePrefix("${Environment.getExternalStorageDirectory()}/")
-                val uri = DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
-                uriPermsLauncher.launch(uri)
-                activePermissionData = permissionData
-            }
-
-            var introDialogShown by remember { mutableStateOf(false) }
-            if (introDialogShown) ChooseFolderIntroDialog(
-                permissionData = permissionData,
-                onDismissRequest = { introDialogShown = false },
-                onConfirm = {
-                    requestUriPermission()
-                    introDialogShown = false
+        if (shizukuRequired) item {
+            ShizukuWarning(
+                onClickGetStarted = {
+                    mainViewModel.topToastState.showToast("Soon™")
                 }
             )
+        }
 
+        items(missingPermissions) { permissionData ->
             PermissionCard(
-                title = stringResource(permissionData.titleId),
-                buttons = {
-                    Button(
-                        onClick = {
-                            if (permissionData.recommendedPath != null && permissionData.recommendedPathDescriptionId != null)
-                                introDialogShown = true
-                            else requestUriPermission()
-                        }
-                    ) {
-                        Text(stringResource(R.string.permissions_chooseFolder))
-                    }
-                },
-                content = permissionData.content
+                permissionData = permissionData,
+                onFolderPickRequest = {
+                    openFolderPicker(permissionData)
+                }
             )
         }
     }
@@ -153,49 +144,5 @@ private fun PermissionsList(
                 unrecommendedPathWarningUri = null
             }
         )
-    }
-}
-
-@Composable
-private fun PermissionCard(
-    title: String,
-    buttons: @Composable () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            ),
-        shape = AppComponentShape
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Warning,
-                    contentDescription = null
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            content()
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
-            ) {
-                buttons()
-            }
-        }
     }
 }
