@@ -15,7 +15,8 @@
     <string name="permissions">Permissions</string>
     <string name="permissions_shizuku_title">Shizuku may be required</string>
     <string name="permissions_shizuku_description">Your device seems to have Android October 2023 security patches, which prevents PF Tool from requesting access to Polyfield files.\nShizuku lets PF Tool access them using wireless debugging (also known as ADB).</string>
-    <string name="permissions_shizuku_setup">Set-up Shizuku</string>
+    <string name="permissions_shizuku_download">Download Shizuku</string>
+    <string name="permissions_shizuku_grant">Grant permission</string>
     <string name="permissions_chooseFolder">Choose folder</string>
     <string name="permissions_recommendedFolder">Recommended folder</string>
     <string name="permissions_recommendedFolder_a8Hint">After clicking \"Okay\", this folder will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>

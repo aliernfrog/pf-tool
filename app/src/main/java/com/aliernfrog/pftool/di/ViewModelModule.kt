@@ -6,9 +6,10 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     singleOf(::MainViewModel)
+    singleOf(::InsetsViewModel)
+    singleOf(::ShizukuViewModel)
+
     singleOf(::SettingsViewModel)
     singleOf(::MapsViewModel)
     singleOf(::MapsListViewModel)
-
-    singleOf(::InsetsViewModel)
 }
