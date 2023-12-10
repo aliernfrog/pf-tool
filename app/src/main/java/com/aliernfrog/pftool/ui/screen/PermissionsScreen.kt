@@ -70,6 +70,10 @@ private fun PermissionsList(
     var activePermissionData by remember { mutableStateOf<PermissionData?>(null) }
     var unrecommendedPathWarningUri by remember { mutableStateOf<Uri?>(null) }
 
+    val showFilesAppWarning = filesAppMightBlockAndroidData && missingPermissions.any {
+        it.recommendedPath?.startsWith("${Environment.getExternalStorageDirectory()}/Android/data") == true
+    }
+
     fun takePersistableUriPermissions(uri: Uri) {
         uri.takePersistablePermissions(context)
         activePermissionData?.onUriUpdate?.invoke(uri)
@@ -101,7 +105,7 @@ private fun PermissionsList(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (filesAppMightBlockAndroidData) item {
+        if (showFilesAppWarning) item {
             FilesDowngradeNotice(
                 Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
