@@ -10,6 +10,7 @@ const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 
 val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
 val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+val filesAppMightBlockAndroidData = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"

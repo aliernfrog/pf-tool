@@ -31,7 +31,9 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.externalStorageRoot
+import com.aliernfrog.pftool.filesAppMightBlockAndroidData
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
+import com.aliernfrog.pftool.ui.component.FilesDowngradeNotice
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
@@ -72,6 +74,7 @@ fun FolderConfigurationDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (filesAppMightBlockAndroidData) FilesDowngradeNotice()
                 folders.forEachIndexed { index, pref ->
                     FolderCard(
                         pref = pref,

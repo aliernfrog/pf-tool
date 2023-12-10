@@ -1,9 +1,7 @@
 > [!WARNING]
-> App may not work on devices using **October 2023 or newer security patches**, as those security patches prevent apps from requesting access to files inside `Android/data` folder.
+> On Android 12 and above, September 2023 update of the Files app prevents other apps from requesting access to files in Android/data.
 > 
-> If you are affected by this, please use the following methods until a solution is found:
-> - Connect your device to a PC with USB or use wireless debugging, you'll be able to manually manage map files inside `Android/data/com.MA.Polyfield/files/editor`
-> - Download maps using in-game map list
+> Check [this page](https://aliernfrog.github.io/android-data-access) for more info, workarounds and the new fix which is currently being implemented in [this pull request](https://github.com/aliernfrog/pf-tool/pull/29).
 
 <div align="center">
 
@@ -11,7 +9,7 @@
   
   # PF Tool
   Easily import and share <a href="https://play.google.com/store/apps/details?id=com.MA.Polyfield">Polyfield</a> maps
-
+  
   <br>
 
   [![Download](https://img.shields.io/github/v/tag/aliernfrog/pf-tool?style=for-the-badge&label=Download)](https://github.com/aliernfrog/pf-tool/releases/latest/download/pftool.apk)
