@@ -17,9 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material.icons.outlined.Search
@@ -192,11 +192,7 @@ fun MapsListScreen(
                 MapButton(
                     map = map,
                     showMapThumbnail = mapsListViewModel.prefs.showMapThumbnailsInList,
-                    modifier = Modifier.animateItemPlacement(),
-                    onDeleteRequest = { scope.launch {
-                        mapsViewModel.deleteMap(map)
-                        mapsViewModel.loadMaps(context)
-                    } }
+                    modifier = Modifier.animateItemPlacement()
                 ) {
                     onMapPick(map)
                 }
@@ -240,7 +236,7 @@ private fun Search(
                 onClick = { sortingOptionsShown = true }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Sort,
+                    imageVector = Icons.AutoMirrored.Filled.Sort,
                     contentDescription = stringResource(R.string.mapsList_sorting)
                 )
             }
