@@ -192,11 +192,7 @@ fun MapsListScreen(
                 MapButton(
                     map = map,
                     showMapThumbnail = mapsListViewModel.prefs.showMapThumbnailsInList,
-                    modifier = Modifier.animateItemPlacement(),
-                    onDeleteRequest = { scope.launch {
-                        mapsViewModel.deleteMap(map)
-                        mapsViewModel.loadMaps(context)
-                    } }
+                    modifier = Modifier.animateItemPlacement()
                 ) {
                     onMapPick(map)
                 }

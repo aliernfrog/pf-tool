@@ -112,9 +112,7 @@ fun BaseScaffold(
             end = it.calculateEndPadding(layoutDirection),
             bottom = 0.dp
         )
-        content(
-            paddingValues = paddingValues
-        )
+        content(paddingValues)
     }
 
     if (showNavigationRail) SideBarRail(
