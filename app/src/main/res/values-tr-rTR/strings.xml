@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_back">Back</string>
+    <string name="action_back">Geri</string>
     <string name="action_ok">Tamam</string>
     <string name="action_done">Bitti</string>
     <string name="action_cancel">İptal</string>
@@ -15,16 +15,16 @@
     <string name="permissions_filesApp">Dosyalar uygulaması güncellemeleri</string>
     <string name="permissions_filesApp_description">Dosyalar uygulaması, Eylül 2023\'te diğer uygulamaların Android/data klasörü içindeki dosyalara erişim izni istemesini engelleyen bir güncelleme aldı.\nEğer bu güncellemeye sahipseniz, onu kaldırmanız gerekebilir. Daha fazla bilgi için aşağıdaki tuşa tıklayın.</string>
     <string name="permissions_filesApp_moreInfo">Daha fazla bilgi</string>
-    <string name="permissions_filesApp_moreInfo_text">        ## Bundan etkileniyor muyum?\n
-        Polyfield\'i en az bir kere başlattığınızdan emin olun ve PF Tool\'dan Polyfield klasörünü seçmeyi deneyin. Eğer bunu sıkıntısız bir şekilde yapabiliyorsanız, bundan etkilenmiyorsunuz.\n\n
-        ## Bundan etkileniyorsam ne yapmalıyım?\n
-        **Dosyalar** uygulamasının güncellemelerini kaldırmanız gerekiyor. Aşağıdaki adımları takip edin, adımlar cihazınıza göre değişiklik gösterebilir:\n\n
-        Cihaz ayarları &gt; Uygulamalar &gt; Tüm uygulamalar / Uygulamarı yönet &gt; Dosyalar (uygulama adı cihaz diline bağlıdır) &gt; Güncellemeleri kaldır\n\n
-        ## Listede Dosyalar uygulaması yok mu?\n
-        Listedeki sistem uygulamalarını gizleyen bir seçenek bulmaya çalışın, bu seçenek üç nokta menüsünde de olabilir.\n\n
-        ## Güncellemeleri kaldır seçeneği kapalı mı?\n
-        PF Tool\'dan Polyfield klasörünü seçmeyi bir daha deneyin. Eğer çalışmıyorsa, maalesef şu an için yapabileceğiniz fazla bir şey yok.\n\n
-        Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme için [bu sayfa]({MORE_INFO_URL})yı kontrol edin.
+    <string name="permissions_filesApp_moreInfo_text">## Bundan etkileniyor muyum?\n
+Polyfield\'i en az bir kere başlattığınızdan emin olun ve PF Tool\'dan Polyfield klasörünü seçmeyi deneyin. Eğer bunu sıkıntısız bir şekilde yapabiliyorsanız, bundan etkilenmiyorsunuz.\n\n
+## Bundan etkileniyorsam ne yapmalıyım?\n
+**Dosyalar** uygulamasının güncellemelerini kaldırmanız gerekiyor. Aşağıdaki adımları takip edin, adımlar cihazınıza göre değişiklik gösterebilir:\n\n
+Cihaz ayarları &gt; Uygulamalar &gt; Tüm uygulamalar / Uygulamarı yönet &gt; Dosyalar (uygulama adı cihaz diline bağlıdır) &gt; Güncellemeleri kaldır\n\n
+## Listede Dosyalar uygulaması yok mu?\n
+Listedeki sistem uygulamalarını gizleyen bir seçenek bulmaya çalışın, bu seçenek üç nokta menüsünde de olabilir.\n\n
+## Güncellemeleri kaldır seçeneği kapalı mı?\n
+PF Tool\'dan Polyfield klasörünü seçmeyi bir daha deneyin. Eğer çalışmıyorsa, maalesef şu an için yapabileceğiniz fazla bir şey yok.\n\n
+Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme için [bu sayfa]({MORE_INFO_URL})yı kontrol edin.
     </string>
     <string name="permissions_chooseFolder">Klasör seç</string>
     <string name="permissions_recommendedFolder">Önerilen klasör</string>
