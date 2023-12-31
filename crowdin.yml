@@ -1,7 +1,8 @@
 pull_request_title: "feat(l10n): update translations"
-commit_message: "feat(l10n): update %original_file_name% translations [skip ci]"
+commit_message: "feat(l10n): update %locale_with_underscore% translations [skip ci]"
 append_commit_message: false
 
+preserve-hierarchy: true
 files:
-  - source: /app/src/main/res/values/strings.xml
-    translation: /app/src/main/res/values-%android_code%/strings.xml
+  - source: app/src/main/res/values/strings.xml
+    translation: app/src/main/res/values-%android_code%/strings.xml
