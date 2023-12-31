@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_back">Back</string>
+    <string name="action_ok">Tamam</string>
+    <string name="action_done">Bitti</string>
+    <string name="action_cancel">İptal</string>
+    <string name="action_dismiss">Kapat</string>
+    <string name="action_share">Paylaş</string>
+    <string name="action_delete">Sil</string>
+    <string name="intent_openMap">Harita aç</string>
+    <string name="intent_downloadMap">Harita indir</string>
+    <string name="warning_fileDoesntExist">Dosya mevcut değil</string>
+    <string name="info_deleteQuestion">{NAME}\'yi silmek istediğinden emin misin?\nBu işlem geri alınamaz!</string>
+    <string name="permissions">İzinler</string>
+    <string name="permissions_filesApp">Dosyalar uygulaması güncellemeleri</string>
+    <string name="permissions_filesApp_description">Dosyalar uygulaması, Eylül 2023\'te diğer uygulamaların Android/data klasörü içindeki dosyalara erişim izni istemesini engelleyen bir güncelleme aldı.\nEğer bu güncellemeye sahipseniz, onu kaldırmanız gerekebilir. Daha fazla bilgi için aşağıdaki tuşa tıklayın.</string>
+    <string name="permissions_filesApp_moreInfo">Daha fazla bilgi</string>
+    <string name="permissions_filesApp_moreInfo_text">        ## Bundan etkileniyor muyum?\n
+        Polyfield\'i en az bir kere başlattığınızdan emin olun ve PF Tool\'dan Polyfield klasörünü seçmeyi deneyin. Eğer bunu sıkıntısız bir şekilde yapabiliyorsanız, bundan etkilenmiyorsunuz.\n\n
+        ## Bundan etkileniyorsam ne yapmalıyım?\n
+        **Dosyalar** uygulamasının güncellemelerini kaldırmanız gerekiyor. Aşağıdaki adımları takip edin, adımlar cihazınıza göre değişiklik gösterebilir:\n\n
+        Cihaz ayarları &gt; Uygulamalar &gt; Tüm uygulamalar / Uygulamarı yönet &gt; Dosyalar (uygulama adı cihaz diline bağlıdır) &gt; Güncellemeleri kaldır\n\n
+        ## Listede Dosyalar uygulaması yok mu?\n
+        Listedeki sistem uygulamalarını gizleyen bir seçenek bulmaya çalışın, bu seçenek üç nokta menüsünde de olabilir.\n\n
+        ## Güncellemeleri kaldır seçeneği kapalı mı?\n
+        PF Tool\'dan Polyfield klasörünü seçmeyi bir daha deneyin. Eğer çalışmıyorsa, maalesef şu an için yapabileceğiniz fazla bir şey yok.\n\n
+        Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme için [bu sayfa]({MORE_INFO_URL})yı kontrol edin.
+    </string>
+    <string name="permissions_chooseFolder">Klasör seç</string>
+    <string name="permissions_recommendedFolder">Önerilen klasör</string>
+    <string name="permissions_recommendedFolder_a8Hint">\"Tamam\"a tıkladıktan sonra, bu klasör yeni bir pencerede açılacak. Doğru klasörden emin olun ve \"BU KLASÖRÜ KULLAN\" tuşuna tıklayın</string>
+    <string name="permissions_recommendedFolder_a7Hint">\"Tamam\"a tıkladıktan sonra, bu klasöre gidin ve \"BU KLASÖRÜ KULLAN\" tuşuna tıklayın</string>
+    <string name="permissions_recommendedFolder_doesNotExist">Böyle bir klasör yok mu?</string>
+    <string name="permissions_recommendedFolder_manuallyCreate">* Eğer bu klasör yoksa, kendiniz oluşturabilirsiniz</string>
+    <string name="permissions_recommendedFolder_openPFToCreate">* Eğer bu klasör yoksa, kendiniz oluşturabilir veya Polyfield\'i bir defa başlatarak klasörü oluşturmasını sağlayabilirsiniz</string>
+    <string name="permissions_notRecommendedFolder_description">Aşağıdaki klasör önerilir:</string>
+    <string name="permissions_notRecommendedFolder_question">Geri gidip önerilen klasörü seçmek mi istersiniz, yoksa önerilmeyen klasörü kullanmak mı?</string>
+    <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Önerilen klasörü seç</string>
+    <string name="permissions_notRecommendedFolder_useUnrecommendedFolder">Önerilmeyen klasörü kullan</string>
+    <string name="permissions_maps">Polyfield haritalar klasörü</string>
+    <string name="permissions_maps_description">Polyfield haritalarınızın saklandığı klasörü seçmeniz gerekiyor</string>
+    <string name="permissions_maps_recommended">Polyfield haritaları bu klasörde saklanır</string>
+    <string name="permissions_exportedMaps">Dışa aktarılan haritalar klasörü</string>
+    <string name="permissions_exportedMaps_description">Dışa aktarılan haritaları saklamak istediğiniz klasörü seçmeniz gerekiyor</string>
+    <string name="permissions_exportedMaps_recommended">PF Tool eski sürümlerde bu klasörü kullandı, eğer daha önce dışa aktardığınız haritalara erişmek istiyorsanız bu klasörü seçin</string>
+    <string name="maps">Haritalar</string>
+    <string name="maps_alreadyExists">Bu isimle zaten bir harita var, başka bir isim seçin</string>
+    <string name="maps_mapName">Harita ismi</string>
+    <string name="maps_rename_done">{NAME} olarak isimlendirildi</string>
+    <string name="maps_import">Bu haritayı içe aktar</string>
+    <string name="maps_import_done">{NAME} olarak içe aktarıldı</string>
+    <string name="maps_export">Bu haritayı dışa aktar</string>
+    <string name="maps_export_description">Haritanızı dışa aktarın ve isterseniz paylaşın</string>
+    <string name="maps_export_done">{NAME} olarak dışa aktarıldı</string>
+    <string name="maps_share">Bu haritayı paylaş</string>
+    <string name="maps_delete">Bu haritayı sil</string>
+    <string name="maps_delete_done">{NAME} silindi</string>
+    <string name="maps_delete_multiple">{COUNT} tane harita silindi</string>
+    <string name="mapsList_pickMap">Harita seç</string>
+    <string name="mapsList_pickMap_failed">Harita seçilemedi</string>
+    <string name="mapsList_reload">Haritaları yeniden yükle</string>
+    <string name="mapsList_search">Haritaları arayın..</string>
+    <string name="mapsList_search_clear">Aramayı temizle</string>
+    <string name="mapsList_count">{COUNT} harita</string>
+    <string name="mapsList_sorting">Sıralama</string>
+    <string name="mapsList_sorting_name">İsme göre</string>
+    <string name="mapsList_sorting_date">Tarihe göre</string>
+    <string name="mapsList_sorting_size">Boyuta göre</string>
+    <string name="mapsList_sorting_reverse">Ters</string>
+    <string name="mapsList_storage">Depolama</string>
+    <string name="mapsList_imported">Haritalarınız</string>
+    <string name="mapsList_exported">Dışa aktarılan</string>
+    <string name="mapsList_noImportedMaps">Hiç haritanız yok</string>
+    <string name="mapsList_noExportedMaps">Hiç harita dışa aktarmadınız</string>
+    <string name="mapsList_searchNoMatches">Eşleşen harita bulunamadı</string>
+    <string name="settings">Ayarlar</string>
+    <string name="settings_updateNotification_updateAvailable">Güncelleme mevcut: {VERSION}</string>
+    <string name="settings_updateNotification_description">Daha fazla detay ve işlem için tıklayın</string>
+    <string name="settings_appearance">Görünüm</string>
+    <string name="settings_appearance_theme">Tema</string>
+    <string name="settings_appearance_theme_description">Karanlık mod tercihi</string>
+    <string name="settings_appearance_theme_system">Sistem teması</string>
+    <string name="settings_appearance_theme_light">Açık</string>
+    <string name="settings_appearance_theme_dark">Karanlık</string>
+    <string name="settings_appearance_materialYou">Material You</string>
+    <string name="settings_appearance_materialYou_description">Cihazınızdaki renklere göre bir tema</string>
+    <string name="settings_general">Genel</string>
+    <string name="settings_general_showChosenMapThumbnail">Seçilen haritanın resmini göster</string>
+    <string name="settings_general_showChosenMapThumbnail_description">Hangi haritada olduğunuzu bilin</string>
+    <string name="settings_general_showMapThumbnailsInList">Harita listesinde resimleri göster</string>
+    <string name="settings_general_showMapThumbnailsInList_description">Haritalarınızı kolayca ayırt edin</string>
+    <string name="settings_general_folders">Klasör yapılandırması</string>
+    <string name="settings_general_folders_description">PF Tool\'da kullanılan klasörleri yapılandırın</string>
+    <string name="settings_general_folders_notSet">Ayarlanmadı</string>
+    <string name="settings_general_folders_recommendedFolder">Önerilen klasör</string>
+    <string name="settings_general_folders_choose">Klasör seç</string>
+    <string name="settings_general_folders_openRecommended">Önerilen klasörü aç</string>
+    <string name="settings_general_folders_openAndroidData">Android/data klasörünü aç</string>
+    <string name="settings_general_folders_maps">Haritalar klasörü</string>
+    <string name="settings_general_folders_exportedMaps">Dışa aktarılan haritalar klasörü</string>
+    <string name="settings_about">Hakkında</string>
+    <string name="settings_about_version">PF Tool sürümü</string>
+    <string name="settings_about_update">Güncelle</string>
+    <string name="settings_about_checkUpdates">Güncellemeleri denetle</string>
+    <string name="settings_about_autoCheckUpdates">Güncellemeleri otomatik olarak denetle</string>
+    <string name="settings_about_autoCheckUpdates_description">PF Tool başlatıldığında güncellemeleri kontrol et</string>
+    <string name="settings_about_links">İlgili bağlantılar</string>
+    <string name="settings_about_links_description">İlgili bağlantıları görmek için tıklayın</string>
+    <string name="settings_experimental">Deneysel ayarlar</string>
+    <string name="settings_experimental_enabled">Deneysel ayarlar açıldı!</string>
+    <string name="settings_experimental_description">Bu ayarlar normal kullanım için değildir ve yanlış kullanıldığında PF Tool\'u bozabilir</string>
+    <string name="settings_experimental_showMaterialYouOption">Material You seçeneğini göster</string>
+    <string name="settings_experimental_checkUpdates">Güncellemeleri denetle (sürümü yoksay)</string>
+    <string name="settings_experimental_showUpdateToast">Güncelleme mesajını göster</string>
+    <string name="settings_experimental_showUpdateDialog">Güncelleme diyaloğunu göster</string>
+    <string name="settings_experimental_updatesURL">Güncellemeler için URL</string>
+    <string name="settings_experimental_resetPrefs">Tercihleri sıfırla</string>
+    <string name="settings_experimental_resetPrefsDone">Deneysel tercihlerin varsayılan değerleri geri yüklendi</string>
+    <string name="updates_updateAvailable">PF Tool güncellemesi mevcut! Daha fazla detay için tıklayın</string>
+    <string name="updates_noUpdates">Güncelleme yok</string>
+    <string name="updates_error">Güncellemeleri denetlerken bir şeyler ters gitti</string>
+    <string name="updates_stable">Stabil</string>
+    <string name="updates_preRelease">Ön sürüm</string>
+    <string name="updates_openInGithub">GitHub\'da görüntüle</string>
+    <string name="updates_update">Güncelle</string>
+</resources>
