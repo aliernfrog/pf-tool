@@ -2,11 +2,14 @@ package com.aliernfrog.pftool
 
 import android.os.Build
 import android.os.Environment
+import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
+import java.util.Locale
 
 const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
+const val crowdinURL = "https://crowdin.com/project/pf-tool"
 
 val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
 val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
@@ -30,7 +33,8 @@ object ConfigKey {
 object SettingsConstant {
     val socials = listOf(
         Social("Polyfield Discord", "https://discord.gg/X6WzGpCgDJ"),
-        Social("PF Tool GitHub", githubRepoURL)
+        Social("PF Tool GitHub", githubRepoURL),
+        Social("PF Tool Crowdin", crowdinURL)
     )
     val folders = listOf(
         PrefEditItem(
@@ -60,5 +64,19 @@ object SettingsConstant {
             default = ConfigKey.DEFAULT_UPDATES_URL
         ),
         *folders.toTypedArray()
+    )
+}
+
+val languages = BuildConfig.LANGUAGES.map { langCode ->
+    val split = langCode.split("-")
+    val languageCode = split[0]
+    val countryCode = split.getOrNull(1)
+    val locale = if (countryCode != null) Locale(languageCode, countryCode)
+    else Locale(languageCode)
+    Language(
+        languageCode = languageCode,
+        countryCode = countryCode,
+        fullCode = langCode,
+        label = locale.getDisplayName(locale)
     )
 }

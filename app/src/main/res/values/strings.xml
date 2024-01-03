@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name">PF Tool</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name" translatable="false">PF Tool</string>
     <string name="action_back">Back</string>
     <string name="action_ok">Okay</string>
     <string name="action_done">Done</string>
@@ -78,6 +78,15 @@
     <string name="settings_updateNotification_updateAvailable">Update available: {VERSION}</string>
     <string name="settings_updateNotification_description">Click to view more details and actions</string>
     <string name="settings_appearance">Appearance</string>
+    <string name="settings_appearance_language">Language</string>
+    <string name="settings_appearance_language_description">Select the language of PF Tool</string>
+    <string name="settings_appearance_language_select">Select language</string>
+    <string name="settings_appearance_language_device">Device language</string>
+    <string name="settings_appearance_language_help">Help translation of PF Tool</string>
+    <string name="settings_appearance_language_help_deviceNotAvailable">The language of your device is not yet available</string>
+    <string name="settings_appearance_language_help_description">You can contribute to translations on Crowdin by clicking this</string>
+    <string name="settings_appearance_language_help_translate">Translate</string>
+    <string name="settings_appearance_language_selected">Selected</string>
     <string name="settings_appearance_theme">Theme</string>
     <string name="settings_appearance_theme_description">Dark mode preference</string>
     <string name="settings_appearance_theme_system">Follow system</string>

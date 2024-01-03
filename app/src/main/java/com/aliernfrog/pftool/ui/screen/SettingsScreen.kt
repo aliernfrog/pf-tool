@@ -49,6 +49,7 @@ import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.component.form.SwitchRow
 import com.aliernfrog.pftool.ui.dialog.FolderConfigurationDialog
+import com.aliernfrog.pftool.ui.sheet.LanguageSheet
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -84,6 +85,13 @@ fun SettingsScreen(
             
             // Appearance options
             FormSection(title = stringResource(R.string.settings_appearance)) {
+                ButtonRow(
+                    title = stringResource(R.string.settings_appearance_language),
+                    description = stringResource(R.string.settings_appearance_language_description),
+                    expanded = false
+                ) { scope.launch {
+                    settingsViewModel.languageSheetState.show()
+                } }
                 ExpandableRow(
                     expanded = settingsViewModel.themeOptionsExpanded,
                     title = stringResource(R.string.settings_appearance_theme),
@@ -248,6 +256,10 @@ fun SettingsScreen(
             }
         }
     }
+
+    LanguageSheet(
+        sheetState = settingsViewModel.languageSheetState
+    )
 
     if (settingsViewModel.foldersDialogShown) FolderConfigurationDialog(
         onDismissRequest = { settingsViewModel.foldersDialogShown = false }
