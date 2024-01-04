@@ -20,6 +20,10 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true

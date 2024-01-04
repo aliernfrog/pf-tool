@@ -22,6 +22,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.githubRepoURL
+import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
@@ -84,7 +85,7 @@ class MainViewModel(
         private set
 
     init {
-        if (prefs.language.isNotBlank()) runBlocking {
+        if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
             appLanguage = GeneralUtil.getLanguageFromCode(prefs.language)?.getAvailableLanguage()
         }
     }
