@@ -81,11 +81,11 @@
     <string name="settings_appearance_language">Language</string>
     <string name="settings_appearance_language_description">Select the language of PF Tool</string>
     <string name="settings_appearance_language_select">Select language</string>
-    <string name="settings_appearance_language_device">Device language</string>
     <string name="settings_appearance_language_help">Help translation of PF Tool</string>
     <string name="settings_appearance_language_help_deviceNotAvailable">The language of your device is not yet available</string>
     <string name="settings_appearance_language_help_description">You can contribute to translations on Crowdin by clicking this</string>
-    <string name="settings_appearance_language_help_translate">Translate</string>
+    <string name="settings_appearance_language_system">Follow system</string>
+    <string name="settings_appearance_language_system_notAvailable">{SYSTEM_LANGUAGE} is not available</string>
     <string name="settings_appearance_language_selected">Selected</string>
     <string name="settings_appearance_theme">Theme</string>
     <string name="settings_appearance_theme_description">Dark mode preference</string>

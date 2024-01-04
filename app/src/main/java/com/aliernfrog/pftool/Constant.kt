@@ -2,10 +2,9 @@ package com.aliernfrog.pftool
 
 import android.os.Build
 import android.os.Environment
-import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
-import java.util.Locale
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
 const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
@@ -17,6 +16,7 @@ val filesAppMightBlockAndroidData = Build.VERSION.SDK_INT >= Build.VERSION_CODES
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
+    const val KEY_APP_LANGUAGE = "appLanguage"
     const val KEY_APP_THEME = "appTheme"
     const val KEY_APP_MATERIAL_YOU = "materialYou"
     const val KEY_APP_AUTO_UPDATES = "autoUpdates"
@@ -68,15 +68,5 @@ object SettingsConstant {
 }
 
 val languages = BuildConfig.LANGUAGES.map { langCode ->
-    val split = langCode.split("-")
-    val languageCode = split[0]
-    val countryCode = split.getOrNull(1)
-    val locale = if (countryCode != null) Locale(languageCode, countryCode)
-    else Locale(languageCode)
-    Language(
-        languageCode = languageCode,
-        countryCode = countryCode,
-        fullCode = langCode,
-        label = locale.getDisplayName(locale)
-    )
+    GeneralUtil.getLanguageFromCode(langCode)!!
 }

@@ -21,9 +21,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -39,39 +39,43 @@ import com.aliernfrog.pftool.ui.component.SmallDragHandle
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import java.util.Locale
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
+import com.aliernfrog.pftool.util.extension.getAvailableLanguage
+import com.aliernfrog.pftool.util.extension.getNameIn
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageSheet(
+    mainViewModel: MainViewModel = getViewModel(),
     sheetState: SheetState
 ) {
-    val deviceLanguageCode = androidx.compose.ui.text.intl.Locale.current.let {
-        "${it.language}-${it.region}"
-    }
-    val appLanguageCode = remember { Locale.getDefault().let {
-        "${it.language}-${it.country}"
-    } }
-    val deviceLanguage = languages.find { it.fullCode == deviceLanguageCode }
+    val currentLanguage = mainViewModel.prefs.language
+    val availableDeviceLanguage = mainViewModel.deviceLanguage.getAvailableLanguage()
 
     @Composable
-    fun LanguageButton(language: Language) {
-        val isDeviceLanguage = language.fullCode == deviceLanguageCode
+    fun LanguageButton(
+        language: Language? = null,
+        title: String = language?.localizedName.toString(),
+        description: String = language?.fullCode.toString(),
+        painter: Painter = rememberVectorPainter(Icons.Default.Translate),
+        selected: Boolean = language?.fullCode == currentLanguage,
+        onClick: () -> Unit = {
+            mainViewModel.appLanguage = language
+        }
+    ) {
         ButtonRow(
-            title = if (isDeviceLanguage) stringResource(R.string.settings_appearance_language_device) else language.label,
-            description = if (isDeviceLanguage) language.label else language.fullCode,
-            painter = rememberVectorPainter(
-                if (isDeviceLanguage) Icons.Default.PhoneAndroid else Icons.Default.Translate
-            ),
-            trailingComponent = if (language.fullCode == appLanguageCode) { {
+            title = title,
+            description = description,
+            painter = painter,
+            trailingComponent = if (selected) { {
                 Icon(
                     painter = rememberVectorPainter(Icons.Default.CheckCircle),
                     contentDescription = stringResource(R.string.settings_appearance_language_selected)
                 )
-            } } else null
-        ) {
-            /* TODO */
-        }
+            } } else null,
+            onClick = onClick
+        )
     }
 
     BaseModalBottomSheet(
@@ -89,15 +93,27 @@ fun LanguageSheet(
         )
         LazyColumn {
             item {
-                TranslationHelp(isDeviceLanguageAvailable = deviceLanguage != null)
+                TranslationHelp(isDeviceLanguageAvailable = availableDeviceLanguage != null)
             }
 
-            if (deviceLanguage != null) item {
-                LanguageButton(deviceLanguage)
+            item {
+                LanguageButton(
+                    title = stringResource(R.string.settings_appearance_language_system),
+                    description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_appearance_language_system_notAvailable)
+                        .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
+                            mainViewModel.deviceLanguage.getNameIn(it.languageCode, it.countryCode)
+                        } ?: ""),
+                    painter = rememberVectorPainter(Icons.Default.PhoneAndroid),
+                    selected = currentLanguage.isBlank(),
+                    onClick = {
+                        mainViewModel.appLanguage = null
+                    }
+                )
+                DividerRow()
             }
 
-            items(languages.filter { it != deviceLanguage }) {
-                LanguageButton(it)
+            items(languages) {
+                LanguageButton(language = it)
             }
 
             item {
