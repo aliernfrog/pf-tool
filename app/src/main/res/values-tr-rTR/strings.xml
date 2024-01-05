@@ -10,7 +10,7 @@
     <string name="intent_openMap">Harita aç</string>
     <string name="intent_downloadMap">Harita indir</string>
     <string name="warning_fileDoesntExist">Dosya mevcut değil</string>
-    <string name="info_deleteQuestion">{NAME}\'yi silmek istediğinden emin misin?\nBu işlem geri alınamaz!</string>
+    <string name="info_deleteQuestion">{NAME}\'yi silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz!</string>
     <string name="permissions">İzinler</string>
     <string name="permissions_filesApp">Dosyalar uygulaması güncellemeleri</string>
     <string name="permissions_filesApp_description">Dosyalar uygulaması, Eylül 2023\'te diğer uygulamaların Android/data klasörü içindeki dosyalara erişim izni istemesini engelleyen bir güncelleme aldı.\nEğer bu güncellemeye sahipseniz, onu kaldırmanız gerekebilir. Daha fazla bilgi için aşağıdaki tuşa tıklayın.</string>
@@ -69,7 +69,7 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="mapsList_sorting_reverse">Ters</string>
     <string name="mapsList_storage">Depolama</string>
     <string name="mapsList_imported">Haritalarınız</string>
-    <string name="mapsList_exported">Dışa aktarılan</string>
+    <string name="mapsList_exported">Dışa aktarılanlar</string>
     <string name="mapsList_noImportedMaps">Hiç haritanız yok</string>
     <string name="mapsList_noExportedMaps">Hiç harita dışa aktarmadınız</string>
     <string name="mapsList_searchNoMatches">Eşleşen harita bulunamadı</string>
@@ -77,6 +77,15 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="settings_updateNotification_updateAvailable">Güncelleme mevcut: {VERSION}</string>
     <string name="settings_updateNotification_description">Daha fazla detay ve işlem için tıklayın</string>
     <string name="settings_appearance">Görünüm</string>
+    <string name="settings_appearance_language">Dil</string>
+    <string name="settings_appearance_language_description">PF Tool\'un dilini seçin</string>
+    <string name="settings_appearance_language_select">Dil seçin</string>
+    <string name="settings_appearance_language_help">PF Tool çevirilerine yardım edin</string>
+    <string name="settings_appearance_language_help_deviceNotAvailable">Cihazınızdaki dil şu an mevcut değil</string>
+    <string name="settings_appearance_language_help_description">Buraya tıklayarak Crowdin\'de çevirilere katkıda bulunabilirsiniz</string>
+    <string name="settings_appearance_language_system">Sistemi takip et</string>
+    <string name="settings_appearance_language_system_notAvailable">{SYSTEM_LANGUAGE} mevcut değil</string>
+    <string name="settings_appearance_language_selected">Seçili</string>
     <string name="settings_appearance_theme">Tema</string>
     <string name="settings_appearance_theme_description">Karanlık mod tercihi</string>
     <string name="settings_appearance_theme_system">Sistem teması</string>
