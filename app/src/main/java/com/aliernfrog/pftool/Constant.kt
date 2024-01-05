@@ -68,6 +68,6 @@ object SettingsConstant {
     )
 }
 
-val languages = BuildConfig.LANGUAGES.map { langCode ->
+val languages = BuildConfig.LANGUAGES.sorted().map { langCode ->
     GeneralUtil.getLanguageFromCode(langCode)!!
 }
