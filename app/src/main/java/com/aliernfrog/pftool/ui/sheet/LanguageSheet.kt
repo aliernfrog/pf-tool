@@ -154,7 +154,10 @@ fun TranslationHelp(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-            Text(stringResource(R.string.settings_appearance_language_help_description))
+            Text(
+                text = stringResource(R.string.settings_appearance_language_help_description),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
