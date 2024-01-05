@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Card
@@ -181,6 +182,7 @@ fun SettingsScreen(
                         val icon = when(it.url.split("/")[2]) {
                             "discord.gg" -> painterResource(id = R.drawable.discord)
                             "github.com" -> painterResource(id = R.drawable.github)
+                            "crowdin.com" -> rememberVectorPainter(Icons.Default.Translate)
                             else -> null
                         }
                         ButtonRow(
