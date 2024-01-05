@@ -2,8 +2,8 @@ package com.aliernfrog.pftool.ui.activity
 
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,7 @@ import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
