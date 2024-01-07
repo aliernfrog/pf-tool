@@ -6,23 +6,29 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.impl.MapFile
 
-enum class SortingOption(
+@Suppress("unused")
+enum class MapsListSortingType(
     val labelId: Int,
-    val iconVector: ImageVector
+    val iconVector: ImageVector,
+    val comparator: Comparator<MapFile>
 ) {
     ALPHABETICAL(
         labelId = R.string.mapsList_sorting_name,
-        iconVector = Icons.Default.SortByAlpha
+        iconVector = Icons.Default.SortByAlpha,
+        comparator = compareBy(MapFile::name)
     ),
 
     DATE(
         labelId = R.string.mapsList_sorting_date,
-        iconVector = Icons.Default.CalendarMonth
+        iconVector = Icons.Default.CalendarMonth,
+        comparator = compareByDescending(MapFile::lastModified)
     ),
 
     SIZE(
         labelId = R.string.mapsList_sorting_size,
-        iconVector = Icons.AutoMirrored.Filled.Note
+        iconVector = Icons.AutoMirrored.Filled.Note,
+        comparator = compareByDescending(MapFile::size)
     )
 }

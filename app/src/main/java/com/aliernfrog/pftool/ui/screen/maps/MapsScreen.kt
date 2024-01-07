@@ -79,7 +79,7 @@ fun MapsScreen(
             onDismissRequest = { mapsViewModel.pendingMapDelete = null },
             onConfirmDelete = {
                 scope.launch {
-                    mapsViewModel.deleteMap(it)
+                    it.delete()
                     mapsViewModel.pendingMapDelete = null
                 }
             }
@@ -93,9 +93,10 @@ private fun MapActions(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val isImported = mapsViewModel.chosenMap?.importedState == MapImportedState.IMPORTED
-    val isExported = mapsViewModel.chosenMap?.importedState == MapImportedState.EXPORTED
-    val isZip = mapsViewModel.chosenMap?.isZip == true
+    val chosenMap = mapsViewModel.chosenMap ?: return
+    val isImported = chosenMap.importedState == MapImportedState.IMPORTED
+    val isExported = chosenMap.importedState == MapImportedState.EXPORTED
+    val isZip = chosenMap.isZip
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
     TextField(
         value = mapsViewModel.mapNameEdit,
@@ -107,9 +108,7 @@ private fun MapActions(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
         doneIconShown = isImported && mapNameUpdated,
-        onDone = {
-            scope.launch { mapsViewModel.renameChosenMap() }
-        }
+        onDone = { scope.launch { chosenMap.rename() } }
     )
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).alpha(0.7f),
@@ -124,7 +123,7 @@ private fun MapActions(
                     painter = rememberVectorPainter(Icons.Rounded.Download),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
-                    scope.launch { mapsViewModel.importChosenMap(context) }
+                    scope.launch { chosenMap.import(context) }
                 }
             }
         },
@@ -136,7 +135,7 @@ private fun MapActions(
                     painter = rememberVectorPainter(Icons.Rounded.Upload),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
-                    scope.launch { mapsViewModel.exportChosenMap(context) }
+                    scope.launch { chosenMap.export(context) }
                 }
             }
         },
@@ -147,10 +146,8 @@ private fun MapActions(
                     painter = rememberVectorPainter(Icons.Rounded.Share),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 ) {
-                    val map = mapsViewModel.chosenMap
-                    val file = map?.file ?: map?.documentFile
-                    if (isZip && file != null) scope.launch {
-                        FileUtil.shareFile(file, context)
+                    if (isZip) scope.launch {
+                        FileUtil.shareFile(chosenMap.file, context)
                     }
                 }
             }

@@ -13,7 +13,6 @@ import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,20 +21,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.aliernfrog.pftool.data.PFMap
+import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.form.FormHeader
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.combinedClickableWithColor
-import com.aliernfrog.pftool.util.extension.getDetails
 
 @Composable
 fun MapButton(
-    map: PFMap,
+    map: MapFile,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentColor: Color = contentColorFor(containerColor),
@@ -44,14 +41,9 @@ fun MapButton(
     onLongClick: () -> Unit = {},
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
     fun invertIfRTL(list: List<Color>): List<Color> {
         return if (isRTL) list.reversed() else list
-    }
-
-    LaunchedEffect(map) {
-        if (map.details.value.isNullOrBlank()) map.getDetails(context)
     }
 
     Box(
@@ -82,7 +74,7 @@ fun MapButton(
         ) {
             FormHeader(
                 title = map.name,
-                description = map.details.value ?: "",
+                description = map.details,
                 painter = rememberVectorPainter(Icons.Outlined.PinDrop),
                 modifier = Modifier
                     .fillMaxSize()

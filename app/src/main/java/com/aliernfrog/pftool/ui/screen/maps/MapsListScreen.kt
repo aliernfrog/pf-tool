@@ -56,7 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapsListSegment
-import com.aliernfrog.pftool.enum.SortingOption
+import com.aliernfrog.pftool.enum.MapsListSortingType
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
@@ -65,7 +65,6 @@ import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
@@ -214,7 +213,7 @@ fun MapsListScreen(
             }
 
             items(mapsToShow) { map ->
-                val path = map.resolvePath().toString()
+                val path = map.path
                 val selected = mapsListViewModel.selectedMaps.contains(path)
                 fun toggleSelection() {
                     mapsListViewModel.selectedMaps.run {
@@ -252,8 +251,8 @@ fun MapsListScreen(
 private fun Search(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    sorting: SortingOption,
-    onSortingChange: (SortingOption) -> Unit,
+    sorting: MapsListSortingType,
+    onSortingChange: (MapsListSortingType) -> Unit,
     reversed: Boolean,
     onReversedChange: (Boolean) -> Unit
 ) {
@@ -296,7 +295,7 @@ private fun Search(
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
                 DividerRow(Modifier.padding(vertical = 4.dp))
-                SortingOption.entries.forEach { option ->
+                MapsListSortingType.entries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(stringResource(option.labelId)) },
                         leadingIcon = {
