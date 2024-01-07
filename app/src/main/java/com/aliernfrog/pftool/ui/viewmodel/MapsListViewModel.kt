@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ class MapsListViewModel(
     var chosenSegment by mutableStateOf(MapsListSegment.IMPORTED)
     var sorting by mutableStateOf(SortingOption.ALPHABETICAL)
     var reverseList by mutableStateOf(false)
+    var selectedMaps = mutableStateListOf<String>()
 
     /**
      * Map list with filters and sorting options applied.

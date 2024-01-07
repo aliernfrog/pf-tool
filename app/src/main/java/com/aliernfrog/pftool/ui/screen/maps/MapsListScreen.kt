@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.outlined.FolderZip
@@ -37,7 +41,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,12 +58,14 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.SortingOption
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
 import com.aliernfrog.pftool.ui.component.MapButton
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
@@ -73,12 +78,14 @@ import org.koin.androidx.compose.koinViewModel
 fun MapsListScreen(
     mapsListViewModel: MapsListViewModel = koinViewModel(),
     mapsViewModel: MapsViewModel = koinViewModel(),
+    multiSelectFloatingActionButton: @Composable () -> Unit = {},
     onBackClick: (() -> Unit)?,
     onMapPick: (Any) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val mapsToShow = mapsListViewModel.mapsToShow
+    val isMultiSelecting = mapsListViewModel.selectedMaps.isNotEmpty()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -107,42 +114,60 @@ fun MapsListScreen(
     }
 
     AppScaffold(
-        title = stringResource(R.string.mapsList_pickMap),
-        topAppBarState = rememberTopAppBarState(),
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                shape = RoundedCornerShape(16.dp),
-                onClick = {
-                    val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-                    launcher.launch(intent)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.FolderZip,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp)
+        topBar = { scrollBehavior ->
+            AnimatedContent(targetState = isMultiSelecting) { multiSelecting ->
+                AppTopBar(
+                    title = if (!multiSelecting) stringResource(R.string.mapsList_pickMap)
+                    else stringResource(R.string.mapsList_multiSelection)
+                        .replace("{COUNT}", mapsListViewModel.selectedMaps.size.toString()),
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = if (multiSelecting) Icons.Default.Close else Icons.AutoMirrored.Rounded.ArrowBack,
+                    onNavigationClick = if (multiSelecting) { {
+                        mapsListViewModel.selectedMaps.clear()
+                    } } else onBackClick,
+                    actions = {
+                        if (multiSelecting) IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = stringResource(R.string.action_more)
+                            )
+                        } else Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
+                            if (showLoading) CircularProgressIndicator(
+                                modifier = Modifier.size(48.dp).padding(8.dp)
+                            )
+                            else IconButton(
+                                onClick = { scope.launch {
+                                    mapsViewModel.loadMaps(context)
+                                } }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = stringResource(R.string.mapsList_reload)
+                                )
+                            }
+                        }
+                    }
                 )
-                Text(stringResource(R.string.mapsList_storage))
             }
         },
-        topBarActions = {
-            Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
-                if (showLoading) CircularProgressIndicator(
-                    modifier = Modifier.size(48.dp).padding(8.dp)
-                )
-                else IconButton(
-                    onClick = { scope.launch {
-                        mapsViewModel.loadMaps(context)
-                    } }
+        floatingActionButton = {
+            AnimatedContent(targetState = !isMultiSelecting) { showStorage ->
+                if (showStorage) ExtendedFloatingActionButton(
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+                        launcher.launch(intent)
+                    }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.mapsList_reload)
+                        imageVector = Icons.Outlined.FolderZip,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
                     )
-                }
+                    Text(stringResource(R.string.mapsList_storage))
+                } else multiSelectFloatingActionButton()
             }
-        },
-        onBackClick = onBackClick
+        }
     ) {
         LazyColumn(
             contentPadding = PaddingValues(bottom = 80.dp),
@@ -189,12 +214,33 @@ fun MapsListScreen(
             }
 
             items(mapsToShow) { map ->
+                val path = map.resolvePath().toString()
+                val selected = mapsListViewModel.selectedMaps.contains(path)
+                fun toggleSelection() {
+                    mapsListViewModel.selectedMaps.run {
+                        if (selected) remove(path) else add(path)
+                    }
+                }
+
                 MapButton(
                     map = map,
                     showMapThumbnail = mapsListViewModel.prefs.showMapThumbnailsInList,
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItemPlacement(),
+                    trailingComponent = {
+                        if (isMultiSelecting) Checkbox(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            checked = selected,
+                            onCheckedChange = {
+                                toggleSelection()
+                            }
+                        )
+                    },
+                    onLongClick = {
+                        toggleSelection()
+                    }
                 ) {
-                    onMapPick(map)
+                    if (isMultiSelecting) toggleSelection()
+                    else onMapPick(map)
                 }
             }
         }

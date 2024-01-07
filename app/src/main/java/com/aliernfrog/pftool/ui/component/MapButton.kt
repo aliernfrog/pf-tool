@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -28,7 +30,7 @@ import coil.compose.AsyncImage
 import com.aliernfrog.pftool.data.PFMap
 import com.aliernfrog.pftool.ui.component.form.FormHeader
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.util.extension.clickableWithColor
+import com.aliernfrog.pftool.util.extension.combinedClickableWithColor
 import com.aliernfrog.pftool.util.extension.getDetails
 
 @Composable
@@ -38,6 +40,8 @@ fun MapButton(
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentColor: Color = contentColorFor(containerColor),
     showMapThumbnail: Boolean = true,
+    trailingComponent: @Composable () -> Unit = {},
+    onLongClick: () -> Unit = {},
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -57,8 +61,9 @@ fun MapButton(
             .padding(8.dp)
             .clip(AppComponentShape)
             .background(containerColor)
-            .clickableWithColor(
+            .combinedClickableWithColor(
                 color = contentColor,
+                onLongClick = onLongClick,
                 onClick = onClick
             )
     ) {
@@ -72,18 +77,24 @@ fun MapButton(
             contentScale = ContentScale.Crop,
             alpha = 0.5f
         )
-        FormHeader(
-            title = map.name,
-            description = map.details.value ?: "",
-            painter = rememberVectorPainter(Icons.Outlined.PinDrop),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Brush.horizontalGradient(
-                    invertIfRTL(
-                        listOf(containerColor, Color.Transparent)
-                    )
-                ))
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FormHeader(
+                title = map.name,
+                description = map.details.value ?: "",
+                painter = rememberVectorPainter(Icons.Outlined.PinDrop),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Brush.horizontalGradient(
+                        invertIfRTL(
+                            listOf(containerColor, Color.Transparent)
+                        )
+                    ))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .weight(1f)
+            )
+            trailingComponent()
+        }
     }
 }

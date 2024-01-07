@@ -21,6 +21,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.filesAppMightBlockAndroidData
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.CardWithActions
 import com.aliernfrog.pftool.ui.component.FilesDowngradeNotice
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
@@ -49,7 +50,10 @@ fun PermissionsScreen(
     Crossfade(targetState = missingPermissions.isEmpty()) { hasPermissions ->
         if (hasPermissions) content()
         else AppScaffold(
-            title = stringResource(R.string.permissions)
+            topBar = { AppTopBar(
+                title = stringResource(R.string.permissions),
+                scrollBehavior = it
+            ) }
         ) {
             PermissionsList(
                 missingPermissions = missingPermissions,

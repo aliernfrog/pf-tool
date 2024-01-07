@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.PickMapButton
 import com.aliernfrog.pftool.ui.component.TextField
@@ -55,7 +56,10 @@ fun MapsScreen(
     }
 
     AppScaffold(
-        title = stringResource(R.string.maps),
+        topBar = { AppTopBar(
+            title = stringResource(R.string.maps),
+            scrollBehavior = it
+        ) },
         topAppBarState = mapsViewModel.topAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
