@@ -10,11 +10,11 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MapsPermissionsScreen(
-    mapsViewModel: MapsViewModel = getViewModel()
+    mapsViewModel: MapsViewModel = koinViewModel()
 ) {
     val permissions = remember { arrayOf(
         PermissionData(

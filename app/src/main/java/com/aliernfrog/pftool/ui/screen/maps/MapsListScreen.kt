@@ -66,13 +66,13 @@ import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MapsListScreen(
-    mapsListViewModel: MapsListViewModel = getViewModel(),
-    mapsViewModel: MapsViewModel = getViewModel(),
+    mapsListViewModel: MapsListViewModel = koinViewModel(),
+    mapsViewModel: MapsViewModel = koinViewModel(),
     onBackClick: (() -> Unit)?,
     onMapPick: (Any) -> Unit
 ) {
@@ -250,7 +250,7 @@ private fun Search(
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
                 DividerRow(Modifier.padding(vertical = 4.dp))
-                SortingOption.values().forEach { option ->
+                SortingOption.entries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(stringResource(option.labelId)) },
                         leadingIcon = {
@@ -307,7 +307,7 @@ private fun Filter(
     onSelectedSegmentChange: (MapsListSegment) -> Unit
 ) {
     SegmentedButtons(
-        options = MapsListSegment.values().map {
+        options = MapsListSegment.entries.map {
             stringResource(it.labelId)
         },
         selectedIndex = selectedSegment.ordinal,
@@ -315,6 +315,6 @@ private fun Filter(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        onSelectedSegmentChange(MapsListSegment.values()[it])
+        onSelectedSegmentChange(MapsListSegment.entries[it])
     }
 }

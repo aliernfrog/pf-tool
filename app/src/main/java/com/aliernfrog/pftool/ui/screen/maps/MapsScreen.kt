@@ -37,12 +37,12 @@ import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(
-    mapsViewModel: MapsViewModel = getViewModel()
+    mapsViewModel: MapsViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
@@ -85,7 +85,7 @@ fun MapsScreen(
 
 @Composable
 private fun MapActions(
-    mapsViewModel: MapsViewModel = getViewModel()
+    mapsViewModel: MapsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

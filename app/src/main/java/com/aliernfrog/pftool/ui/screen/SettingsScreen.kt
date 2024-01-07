@@ -57,14 +57,14 @@ import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    mainViewModel: MainViewModel = getViewModel(),
-    settingsViewModel: SettingsViewModel = getViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
