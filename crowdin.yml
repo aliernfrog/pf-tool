@@ -1,5 +1,5 @@
 pull_request_title: 'feat(l10n): update translations'
-commit_message: 'feat(l10n): update %locale_with_underscore% translations [skip ci]'
+commit_message: 'feat(l10n): update translations [skip ci]'
 append_commit_message: 
 files:
   - source: /app/src/main/res/values/strings.xml
