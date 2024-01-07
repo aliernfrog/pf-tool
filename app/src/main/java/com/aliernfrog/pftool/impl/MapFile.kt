@@ -49,7 +49,7 @@ class MapFile(
     /**
      * Name of the map file.
      */
-    val fileName: String = when (file) {
+    private val fileName: String = when (file) {
         is File -> file.name
         is DocumentFileCompat -> file.name
         else -> ""
@@ -199,8 +199,14 @@ class MapFile(
         }
     }
 
+    suspend fun share(context: Context) {
+        runInIOThreadSafe {
+            FileUtil.shareFile(file, context)
+        }
+    }
+
     /**
-     * Deletes the map.
+     * Deletes the map without confirmation.
      */
     suspend fun delete(showToast: Boolean = true) {
         runInIOThreadSafe {
@@ -214,6 +220,13 @@ class MapFile(
                 icon = Icons.Rounded.Delete
             )
         }
+    }
+
+    /**
+     * Shows delete confirmation dialog for this map.
+     */
+    fun showDeleteConfirmation() {
+        mapsViewModel.pendingMapDelete = this
     }
 
     private suspend fun runInIOThreadSafe(block: () -> Unit) {

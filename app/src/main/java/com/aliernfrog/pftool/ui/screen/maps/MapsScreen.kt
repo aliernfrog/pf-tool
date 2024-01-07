@@ -6,16 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TextFields
-import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.enum.MapActions
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
@@ -36,7 +34,6 @@ import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import com.aliernfrog.pftool.util.staticutil.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,7 +66,7 @@ fun MapsScreen(
             ) {
                 mapsViewModel.mapListShown = true
             }
-            MapActions()
+            Actions()
         }
     }
 
@@ -88,15 +85,13 @@ fun MapsScreen(
 }
 
 @Composable
-private fun MapActions(
+private fun Actions(
     mapsViewModel: MapsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val chosenMap = mapsViewModel.chosenMap ?: return
     val isImported = chosenMap.importedState == MapImportedState.IMPORTED
-    val isExported = chosenMap.importedState == MapImportedState.EXPORTED
-    val isZip = chosenMap.isZip
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
     TextField(
         value = mapsViewModel.mapNameEdit,
@@ -115,55 +110,24 @@ private fun MapActions(
         thickness = 1.dp,
         color = MaterialTheme.colorScheme.surfaceVariant
     )
+
+    val actions: List<@Composable () -> Unit> = MapActions.entries.map { action -> {
+        FadeVisibility(visible = action.availableFor(chosenMap)) {
+            ButtonRow(
+                title = stringResource(action.labelId),
+                description = action.descriptionId?.let { stringResource(it) },
+                painter = rememberVectorPainter(action.icon),
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = if (action.destructive) MaterialTheme.colorScheme.error
+                else contentColorFor(MaterialTheme.colorScheme.surfaceContainerHigh)
+            ) { scope.launch {
+                action.execute(chosenMap, context)
+            } }
+        }
+    } }
+
     VerticalSegmentedButtons(
-        {
-            FadeVisibility(visible = !isImported) {
-                ButtonRow(
-                    title = stringResource(R.string.maps_import),
-                    painter = rememberVectorPainter(Icons.Rounded.Download),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                ) {
-                    scope.launch { chosenMap.import(context) }
-                }
-            }
-        },
-        {
-            FadeVisibility(visible = isImported) {
-                ButtonRow(
-                    title = stringResource(R.string.maps_export),
-                    description = stringResource(R.string.maps_export_description),
-                    painter = rememberVectorPainter(Icons.Rounded.Upload),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                ) {
-                    scope.launch { chosenMap.export(context) }
-                }
-            }
-        },
-        {
-            FadeVisibility(visible = isZip) {
-                ButtonRow(
-                    title = stringResource(R.string.maps_share),
-                    painter = rememberVectorPainter(Icons.Rounded.Share),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                ) {
-                    if (isZip) scope.launch {
-                        FileUtil.shareFile(chosenMap.file, context)
-                    }
-                }
-            }
-        },
-        {
-            FadeVisibility(visible = (isImported || isExported)) {
-                ButtonRow(
-                    title = stringResource(R.string.maps_delete),
-                    painter = rememberVectorPainter(Icons.Rounded.Delete),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    contentColor = MaterialTheme.colorScheme.error
-                ) {
-                    mapsViewModel.pendingMapDelete = mapsViewModel.chosenMap
-                }
-            }
-        },
+        *actions.toTypedArray(),
         modifier = Modifier.padding(8.dp)
     )
 }
