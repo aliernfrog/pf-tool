@@ -55,15 +55,16 @@ class MainViewModel(
     val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
     private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
 
+    private val defaultLanguage = GeneralUtil.getLanguageFromCode("en-US")!!
     val deviceLanguage = Resources.getSystem().configuration?.let {
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= 24) it.locales[0]
         else it.locale
-    }?.toLanguage() ?: GeneralUtil.getLanguageFromCode("en-US")!!
+    }?.toLanguage() ?: defaultLanguage
 
     private var _appLanguage by mutableStateOf<Language?>(null)
     var appLanguage: Language?
-        get() = _appLanguage ?: deviceLanguage.getAvailableLanguage()!!
+        get() = _appLanguage ?: deviceLanguage.getAvailableLanguage() ?: defaultLanguage
         set(language) {
             prefs.language = language?.fullCode ?: ""
             val localeListCompat = if (language == null) LocaleListCompat.getEmptyLocaleList()

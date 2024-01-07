@@ -186,12 +186,12 @@ class MapFile(
             var output = mapsViewModel.exportedMapsFile.findFile(zipName)
             if (output?.exists() == true) return@runInIOThreadSafe topToastState.showMapAlreadyExistsToast()
             output = mapsViewModel.exportedMapsFile.createFile("application/zip", zipName)
-            val newFile = when (file) {
+            when (file) {
                 is File -> ZipUtil.zipMap(file, output!!, context)
                 is DocumentFileCompat -> ZipUtil.zipMap(file, output!!, context)
                 else -> throw IllegalArgumentException("File class was somehow unknown")
             }
-            mapsViewModel.chooseMap(newFile)
+            mapsViewModel.chooseMap(mapsViewModel.exportedMapsFile.findFile(zipName))
             if (showToast) topToastState.showToast(
                 text = contextUtils.getString(R.string.maps_export_done).replace("{NAME}", withName),
                 icon = Icons.Rounded.Upload
