@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -47,6 +48,10 @@ fun MapsScreen(
 
     LaunchedEffect(mapsViewModel.chosenMap) {
         if (mapsViewModel.chosenMap == null) mapsViewModel.mapListShown = true
+    }
+
+    BackHandler(mapsViewModel.chosenMap != null) {
+        mapsViewModel.chooseMap(null)
     }
 
     AppScaffold(
