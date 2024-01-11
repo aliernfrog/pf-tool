@@ -4,16 +4,21 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
+import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.extension.showErrorToast
+import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
@@ -23,6 +28,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
+    private val contextUtils: ContextUtils,
     val prefs: PreferenceManager
 ) : ViewModel() {
     val topAppBarState = TopAppBarState(0F, 0F, 0F)
@@ -39,11 +45,13 @@ class MapsViewModel(
     var importedMaps by mutableStateOf(emptyList<MapFile>())
     var exportedMaps by mutableStateOf(emptyList<MapFile>())
     var chosenMap by mutableStateOf<MapFile?>(null)
-    var pendingMapDelete by mutableStateOf<MapFile?>(null)
+    var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
     var mapNameEdit by mutableStateOf("")
     var mapListShown by mutableStateOf(true)
     val mapListBackButtonShown
         get() = chosenMap != null
+
+    var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
 
     fun chooseMap(map: Any?) {
         try {
@@ -60,8 +68,36 @@ class MapsViewModel(
         }
     }
 
+    suspend fun deletePendingMaps(context: Context) {
+        mapsPendingDelete?.let { maps ->
+            if (maps.isEmpty()) return@let
+            val first = maps.first()
+            first.runInIOThreadSafe {
+                maps.forEach { it.delete() }
+                topToastState.showToast(
+                    text = if (maps.size == 1) contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", first.name)
+                    else contextUtils.getString(R.string.maps_delete_multiple).replace("{COUNT}", maps.size.toString()),
+                    icon = Icons.Rounded.Delete
+                )
+            }
+            chosenMap?.path?.let { path ->
+                if (maps.map { it.path }.contains(path)) chooseMap(null)
+            }
+        }
+        mapsPendingDelete = null
+        loadMaps(context)
+    }
+
     fun resolveMapNameInput(): String {
         return mapNameEdit.ifBlank { chosenMap?.name ?: "" }
+    }
+
+    fun showActionFailedDialog(successes: List<Pair<String, MapActionResult>>, fails: List<Pair<String, MapActionResult>>) {
+        customDialogTitleAndText = contextUtils.getString(R.string.maps_actionFailed)
+            .replace("{SUCCESSES}", successes.size.toString())
+            .replace("{FAILS}", fails.size.toString()) to fails.joinToString("\n\n") {
+                "${it.first}: ${contextUtils.getString(it.second.messageId ?: R.string.warning_error)}"
+            }
     }
 
     /**

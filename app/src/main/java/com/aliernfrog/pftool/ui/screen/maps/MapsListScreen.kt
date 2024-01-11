@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -55,8 +57,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.MapsListSortingType
+import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
@@ -85,6 +89,7 @@ fun MapsListScreen(
     val scope = rememberCoroutineScope()
     val mapsToShow = mapsListViewModel.mapsToShow
     val isMultiSelecting = mapsListViewModel.selectedMaps.isNotEmpty()
+    var multiSelectionDropdownShown by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -125,19 +130,35 @@ fun MapsListScreen(
                         mapsListViewModel.selectedMaps.clear()
                     } } else onBackClick,
                     actions = {
-                        if (multiSelecting) IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = stringResource(R.string.action_more)
+                        if (multiSelecting) Box {
+                            IconButton(
+                                onClick = {
+                                    multiSelectionDropdownShown = true
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = stringResource(R.string.action_more)
+                                )
+                            }
+                            MultiSelectionDropdown(
+                                expanded = multiSelectionDropdownShown,
+                                maps = mapsListViewModel.selectedMaps,
+                                actions = mapsListViewModel.selectedMapsActions,
+                                onDismissRequest = {
+                                    multiSelectionDropdownShown = false
+                                }
                             )
                         } else Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
                             if (showLoading) CircularProgressIndicator(
                                 modifier = Modifier.size(48.dp).padding(8.dp)
                             )
                             else IconButton(
-                                onClick = { scope.launch {
-                                    mapsViewModel.loadMaps(context)
-                                } }
+                                onClick = {
+                                    scope.launch {
+                                        mapsViewModel.loadMaps(context)
+                                    }
+                                }
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
@@ -213,11 +234,10 @@ fun MapsListScreen(
             }
 
             items(mapsToShow) { map ->
-                val path = map.path
-                val selected = mapsListViewModel.selectedMaps.contains(path)
+                val selected = mapsListViewModel.isMapSelected(map)
                 fun toggleSelection() {
                     mapsListViewModel.selectedMaps.run {
-                        if (selected) remove(path) else add(path)
+                        if (selected) remove(map) else add(map)
                     }
                 }
 
@@ -361,5 +381,35 @@ private fun Filter(
             .padding(8.dp)
     ) {
         onSelectedSegmentChange(MapsListSegment.entries[it])
+    }
+}
+
+@Composable
+private fun MultiSelectionDropdown(
+    expanded: Boolean,
+    maps: List<MapFile>,
+    actions: List<MapAction>,
+    onDismissRequest: () -> Unit
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest
+    ) {
+        actions.forEach { action ->
+            DropdownMenuItem(
+                text = { Text(stringResource(action.shortLabelId)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = action.icon,
+                        contentDescription = null
+                    )
+                },
+                onClick = { scope.launch {
+                    action.execute(context = context, *maps.toTypedArray())
+                } }
+            )
+        }
     }
 }

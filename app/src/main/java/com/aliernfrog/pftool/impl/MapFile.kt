@@ -3,12 +3,10 @@ package com.aliernfrog.pftool.impl
 import android.content.Context
 import android.util.Log
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Upload
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
+import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.cacheFile
@@ -33,8 +31,8 @@ class MapFile(
      */
     val file: Any
 ): KoinComponent {
-    private val mapsViewModel by inject<MapsViewModel>()
-    private val topToastState by inject<TopToastState>()
+    val mapsViewModel by inject<MapsViewModel>()
+    val topToastState by inject<TopToastState>()
     private val contextUtils by inject<ContextUtils>()
 
     /**
@@ -146,90 +144,75 @@ class MapFile(
     /**
      * Imports the map.
      */
-    suspend fun import(
+    fun import(
         context: Context,
-        withName: String = mapsViewModel.resolveMapNameInput(),
-        showToast: Boolean = true
-    ) {
-        if (importedState == MapImportedState.IMPORTED) return
-        runInIOThreadSafe {
-            val zipPath = when (file) {
-                is File -> file.absolutePath
-                is DocumentFileCompat -> file.uri.cacheFile(context)!!.absolutePath
-                else -> throw IllegalArgumentException("File class was somehow unknown")
-            }
-            var output = mapsViewModel.mapsFile.findFile(withName)
-            if (output?.exists() == true) return@runInIOThreadSafe topToastState.showMapAlreadyExistsToast()
-            output = mapsViewModel.mapsFile.createDirectory(withName)
-            ZipUtil.unzipMap(zipPath, output!!, context)
-            mapsViewModel.chooseMap(mapsViewModel.mapsFile.findFile(withName))
-            if (showToast) topToastState.showToast(
-                text = contextUtils.getString(R.string.maps_import_done).replace("{NAME}", withName),
-                icon = Icons.Rounded.Download
-            )
+        withName: String = resolveMapNameInput()
+    ): MapActionResult {
+        if (importedState == MapImportedState.IMPORTED) return MapActionResult(successful = false)
+        val zipPath = when (file) {
+            is File -> file.absolutePath
+            is DocumentFileCompat -> file.uri.cacheFile(context)!!.absolutePath
+            else -> throw IllegalArgumentException("File class was somehow unknown")
         }
+        var output = mapsViewModel.mapsFile.findFile(withName)
+        if (output?.exists() == true) return MapActionResult(
+            successful = false,
+            messageId = R.string.maps_alreadyExists
+        )
+        output = mapsViewModel.mapsFile.createDirectory(withName)
+        ZipUtil.unzipMap(zipPath, output!!, context)
+        return MapActionResult(
+            successful = true,
+            newFile = mapsViewModel.mapsFile.findFile(withName)
+        )
     }
 
     /**
      * Exports the map.
      */
-    suspend fun export(
+    fun export(
         context: Context,
-        withName: String = mapsViewModel.resolveMapNameInput(),
-        showToast: Boolean = true
-    ) {
-        if (importedState == MapImportedState.EXPORTED) return
+        withName: String = resolveMapNameInput()
+    ): MapActionResult {
+        if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
         val zipName = withName.let {
             if (it.endsWith(".zip")) it else "$it.zip"
         }
-        runInIOThreadSafe {
-            var output = mapsViewModel.exportedMapsFile.findFile(zipName)
-            if (output?.exists() == true) return@runInIOThreadSafe topToastState.showMapAlreadyExistsToast()
-            output = mapsViewModel.exportedMapsFile.createFile("application/zip", zipName)
-            when (file) {
-                is File -> ZipUtil.zipMap(file, output!!, context)
-                is DocumentFileCompat -> ZipUtil.zipMap(file, output!!, context)
-                else -> throw IllegalArgumentException("File class was somehow unknown")
-            }
-            mapsViewModel.chooseMap(mapsViewModel.exportedMapsFile.findFile(zipName))
-            if (showToast) topToastState.showToast(
-                text = contextUtils.getString(R.string.maps_export_done).replace("{NAME}", withName),
-                icon = Icons.Rounded.Upload
-            )
+        var output = mapsViewModel.exportedMapsFile.findFile(zipName)
+        if (output?.exists() == true) return MapActionResult(
+            successful = false,
+            messageId = R.string.maps_alreadyExists
+        )
+        output = mapsViewModel.exportedMapsFile.createFile("application/zip", zipName)
+        when (file) {
+            is File -> ZipUtil.zipMap(file, output!!, context)
+            is DocumentFileCompat -> ZipUtil.zipMap(file, output!!, context)
+            else -> throw IllegalArgumentException("File class was somehow unknown")
         }
-    }
-
-    suspend fun share(context: Context) {
-        runInIOThreadSafe {
-            FileUtil.shareFile(file, context)
-        }
+        return MapActionResult(
+            successful = true,
+            newFile = mapsViewModel.exportedMapsFile.findFile(zipName)
+        )
     }
 
     /**
      * Deletes the map without confirmation.
      */
-    suspend fun delete(showToast: Boolean = true) {
-        runInIOThreadSafe {
-            when (file) {
-                is File -> file.delete()
-                is DocumentFileCompat -> file.delete()
-            }
-            mapsViewModel.chooseMap(null)
-            if (showToast) topToastState.showToast(
-                text = contextUtils.getString(R.string.maps_delete_done).replace("{NAME}", name),
-                icon = Icons.Rounded.Delete
-            )
+    fun delete() {
+        when (file) {
+            is File -> file.delete()
+            is DocumentFileCompat -> file.delete()
         }
     }
 
     /**
-     * Shows delete confirmation dialog for this map.
+     * Returns the user-provided map name if this map is chosen.
      */
-    fun showDeleteConfirmation() {
-        mapsViewModel.pendingMapDelete = this
+    fun resolveMapNameInput(): String {
+        return if (mapsViewModel.chosenMap?.path == path) mapsViewModel.resolveMapNameInput() else name
     }
 
-    private suspend fun runInIOThreadSafe(block: () -> Unit) {
+    suspend fun runInIOThreadSafe(block: () -> Unit) {
         return withContext(Dispatchers.IO) {
             try {
                 block()

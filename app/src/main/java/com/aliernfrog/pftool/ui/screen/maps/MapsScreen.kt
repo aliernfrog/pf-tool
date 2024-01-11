@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.MapActions
+import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.FadeVisibility
@@ -31,7 +31,6 @@ import com.aliernfrog.pftool.ui.component.PickMapButton
 import com.aliernfrog.pftool.ui.component.TextField
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
-import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -41,8 +40,6 @@ import org.koin.androidx.compose.koinViewModel
 fun MapsScreen(
     mapsViewModel: MapsViewModel = koinViewModel()
 ) {
-    val scope = rememberCoroutineScope()
-
     LaunchedEffect(mapsViewModel.chosenMap) {
         if (mapsViewModel.chosenMap == null) mapsViewModel.mapListShown = true
     }
@@ -67,19 +64,6 @@ fun MapsScreen(
             }
             Actions()
         }
-    }
-
-    mapsViewModel.pendingMapDelete?.let {
-        DeleteConfirmationDialog(
-            name = it.name,
-            onDismissRequest = { mapsViewModel.pendingMapDelete = null },
-            onConfirmDelete = {
-                scope.launch {
-                    it.delete()
-                    mapsViewModel.pendingMapDelete = null
-                }
-            }
-        )
     }
 }
 
@@ -110,17 +94,17 @@ private fun Actions(
         color = MaterialTheme.colorScheme.surfaceVariant
     )
 
-    val actions: List<@Composable () -> Unit> = MapActions.entries.map { action -> {
+    val actions: List<@Composable () -> Unit> = MapAction.entries.map { action -> {
         FadeVisibility(visible = action.availableFor(chosenMap)) {
             ButtonRow(
-                title = stringResource(action.labelId),
+                title = stringResource(action.longLabelId),
                 description = action.descriptionId?.let { stringResource(it) },
                 painter = rememberVectorPainter(action.icon),
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 contentColor = if (action.destructive) MaterialTheme.colorScheme.error
                 else contentColorFor(MaterialTheme.colorScheme.surfaceContainerHigh)
             ) { scope.launch {
-                action.execute(chosenMap, context)
+                action.execute(context = context, chosenMap)
             } }
         }
     } }
