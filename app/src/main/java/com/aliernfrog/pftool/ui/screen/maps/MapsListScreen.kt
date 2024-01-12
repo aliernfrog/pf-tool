@@ -149,8 +149,9 @@ fun MapsListScreen(
                                 expanded = multiSelectionDropdownShown,
                                 maps = mapsListViewModel.selectedMaps,
                                 actions = mapsListViewModel.selectedMapsActions,
-                                onDismissRequest = {
+                                onDismissRequest = { clearSelection ->
                                     multiSelectionDropdownShown = false
+                                    if (clearSelection) mapsListViewModel.selectedMaps.clear()
                                 }
                             )
                         } else Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
@@ -393,13 +394,13 @@ private fun MultiSelectionDropdown(
     expanded: Boolean,
     maps: List<MapFile>,
     actions: List<MapAction>,
-    onDismissRequest: () -> Unit
+    onDismissRequest: (clearSelection: Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    DropdownMenu(
+    if (maps.isNotEmpty()) DropdownMenu(
         expanded = expanded,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = { onDismissRequest(false) }
     ) {
         actions.forEach { action ->
             DropdownMenuItem(
@@ -414,11 +415,12 @@ private fun MultiSelectionDropdown(
                     textColor = MaterialTheme.colorScheme.error,
                     leadingIconColor = MaterialTheme.colorScheme.error
                 ) else MenuDefaults.itemColors(),
-                onClick = {
-                    scope.launch {
-                        onDismissRequest()
-                        action.execute(context = context, *maps.toTypedArray())
-                    } }
+                onClick = { scope.launch {
+                    maps.toTypedArray().let { mapsArray ->
+                        onDismissRequest(true)
+                        action.execute(context = context, *mapsArray)
+                    }
+                } }
             )
         }
     }
