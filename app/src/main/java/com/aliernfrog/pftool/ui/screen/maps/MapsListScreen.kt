@@ -416,10 +416,9 @@ private fun MultiSelectionDropdown(
                     leadingIconColor = MaterialTheme.colorScheme.error
                 ) else MenuDefaults.itemColors(),
                 onClick = { scope.launch {
-                    maps.toTypedArray().let { mapsArray ->
-                        onDismissRequest(true)
-                        action.execute(context = context, *mapsArray)
-                    }
+                    onDismissRequest(false)
+                    action.execute(context = context, *maps.toTypedArray())
+                    onDismissRequest(true) // clear selection
                 } }
             )
         }
