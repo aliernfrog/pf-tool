@@ -70,7 +70,12 @@ fun MapButton(
             alpha = 0.5f
         )
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.background(Brush.horizontalGradient(
+                invertIfRTL(
+                    listOf(containerColor, Color.Transparent)
+                )
+            ))
         ) {
             FormHeader(
                 title = map.name,
@@ -78,11 +83,6 @@ fun MapButton(
                 painter = rememberVectorPainter(Icons.Outlined.PinDrop),
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Brush.horizontalGradient(
-                        invertIfRTL(
-                            listOf(containerColor, Color.Transparent)
-                        )
-                    ))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .weight(1f)
             )

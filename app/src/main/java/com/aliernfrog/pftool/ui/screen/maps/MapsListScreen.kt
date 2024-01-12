@@ -39,6 +39,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -113,8 +114,11 @@ fun MapsListScreen(
         mapsViewModel.loadMaps(context)
     }
 
-    onBackClick?.let {
-        BackHandler(onBack = it)
+    BackHandler(
+        enabled = isMultiSelecting || onBackClick != null
+    ) {
+        if (isMultiSelecting) mapsListViewModel.selectedMaps.clear()
+        else onBackClick?.invoke()
     }
 
     AppScaffold(
@@ -406,9 +410,15 @@ private fun MultiSelectionDropdown(
                         contentDescription = null
                     )
                 },
-                onClick = { scope.launch {
-                    action.execute(context = context, *maps.toTypedArray())
-                } }
+                colors = if (action.destructive) MenuDefaults.itemColors(
+                    textColor = MaterialTheme.colorScheme.error,
+                    leadingIconColor = MaterialTheme.colorScheme.error
+                ) else MenuDefaults.itemColors(),
+                onClick = {
+                    scope.launch {
+                        onDismissRequest()
+                        action.execute(context = context, *maps.toTypedArray())
+                    } }
             )
         }
     }
