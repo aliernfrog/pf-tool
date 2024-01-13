@@ -25,7 +25,7 @@ import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
-import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun AppContent(
-        mainViewModel: MainViewModel = getViewModel()
+        mainViewModel: MainViewModel = koinViewModel()
     ) {
         val context = LocalContext.current
         val view = LocalView.current

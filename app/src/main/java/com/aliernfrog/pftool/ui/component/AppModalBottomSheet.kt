@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.ui.viewmodel.InsetsViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 /*
 // this is not yet used by the app, uncomment when needed
@@ -58,7 +58,7 @@ fun AppModalBottomSheet(
 @Composable
 fun BaseModalBottomSheet(
     sheetState: SheetState,
-    insetsViewModel: InsetsViewModel = getViewModel(),
+    insetsViewModel: InsetsViewModel = koinViewModel(),
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     content: @Composable ColumnScope.(bottomPadding: Dp) -> Unit
 ) {

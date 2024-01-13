@@ -21,12 +21,12 @@ import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationConstant
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = getViewModel()
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val navController = rememberNavController()
     BaseScaffold(

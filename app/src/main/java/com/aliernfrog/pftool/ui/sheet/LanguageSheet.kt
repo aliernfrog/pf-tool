@@ -42,12 +42,12 @@ import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.getNameIn
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageSheet(
-    mainViewModel: MainViewModel = getViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
     sheetState: SheetState
 ) {
     val currentLanguage = mainViewModel.prefs.language

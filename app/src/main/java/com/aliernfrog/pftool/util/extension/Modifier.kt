@@ -1,7 +1,9 @@
 package com.aliernfrog.pftool.util.extension
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.remember
@@ -21,6 +23,20 @@ fun Modifier.clickableWithColor(
     this.clickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = rememberRipple(color = color),
+        onClick = onClick
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+fun Modifier.combinedClickableWithColor(
+    color: Color,
+    onLongClick: () -> Unit,
+    onClick: () -> Unit
+): Modifier = composed {
+    this.combinedClickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = rememberRipple(color = color),
+        onLongClick = onLongClick,
         onClick = onClick
     )
 }
