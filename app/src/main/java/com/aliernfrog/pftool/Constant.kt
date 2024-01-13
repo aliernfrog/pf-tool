@@ -6,6 +6,8 @@ import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
+const val TAG = "PFToolLogs"
+
 const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"

@@ -43,6 +43,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.RadioButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
@@ -72,7 +73,10 @@ fun SettingsScreen(
     val version = "${mainViewModel.applicationVersionName} (${mainViewModel.applicationVersionCode})"
 
     AppScaffold(
-        title = stringResource(R.string.settings),
+        topBar = { AppTopBar(
+            title = stringResource(R.string.settings),
+            scrollBehavior = it
+        ) },
         topAppBarState = settingsViewModel.topAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsViewModel.scrollState)) {
