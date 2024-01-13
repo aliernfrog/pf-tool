@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapAction
+import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.FadeVisibility
@@ -74,6 +75,7 @@ private fun Actions(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val chosenMap = mapsViewModel.chosenMap ?: return
+    val canBeRenamed = chosenMap.importedState != MapImportedState.NONE
     val mapNameUpdated = mapsViewModel.resolveMapNameInput() != mapsViewModel.chosenMap?.name
 
     TextField(
@@ -85,7 +87,7 @@ private fun Actions(
         singleLine = true,
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         doneIcon = rememberVectorPainter(Icons.Rounded.Edit),
-        doneIconShown = mapNameUpdated,
+        doneIconShown = canBeRenamed && mapNameUpdated,
         onDone = { scope.launch { chosenMap.rename() } }
     )
     HorizontalDivider(
