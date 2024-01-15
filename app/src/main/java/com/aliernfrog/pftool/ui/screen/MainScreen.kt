@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.component.BaseScaffold
+import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
@@ -73,4 +74,8 @@ fun MainScreen(
         sheetState = mainViewModel.updateSheetState,
         latestVersionInfo = mainViewModel.latestVersionInfo
     )
+
+    if (mainViewModel.showProgressDialog) ProgressDialog {
+        // (onDismissRequest) do nothing
+    }
 }

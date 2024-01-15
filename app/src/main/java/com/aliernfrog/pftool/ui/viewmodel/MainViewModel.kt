@@ -85,6 +85,8 @@ class MainViewModel(
     var updateAvailable by mutableStateOf(false)
         private set
 
+    var showProgressDialog by mutableStateOf(false)
+
     init {
         if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
             appLanguage = GeneralUtil.getLanguageFromCode(prefs.language)?.getAvailableLanguage()
@@ -157,9 +159,11 @@ class MainViewModel(
     fun handleIntent(intent: Intent, context: Context) {
         val uri = intent.data ?: return
         viewModelScope.launch(Dispatchers.IO) {
+            showProgressDialog = true
             val file = uri.cacheFile(context)
             mapsViewModel.chooseMap(file)
             mapsViewModel.mapListShown = false
+            showProgressDialog = false
         }
     }
 }
