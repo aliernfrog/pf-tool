@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.dialog
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,16 +13,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.impl.Progress
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressDialog(
+    progress: Progress?,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
@@ -38,9 +42,15 @@ fun ProgressDialog(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularProgressIndicator()
+            if (progress?.percentage == null || progress.finished) CircularProgressIndicator()
+            else progress.percentage.toFloat().let {
+                val animated by animateFloatAsState(it/100)
+                CircularProgressIndicator(
+                    progress = animated
+                )
+            }
             Text(
-                text = stringResource(R.string.info_pleaseWait),
+                text = progress?.description ?: stringResource(R.string.info_pleaseWait),
                 color = MaterialTheme.colorScheme.onSurface
             )
         }

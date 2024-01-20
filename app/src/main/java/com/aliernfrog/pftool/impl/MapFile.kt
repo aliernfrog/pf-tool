@@ -115,6 +115,11 @@ class MapFile(
         newName: String = mapsViewModel.resolveMapNameInput(),
         showToast: Boolean = true
     ) {
+        mapsViewModel.activeProgress = Progress(
+            description = contextUtils.getString(R.string.maps_renaming)
+                .replace("{NAME}", name)
+                .replace("{NEW_NAME}", newName)
+        )
         return runInIOThreadSafe {
             val newFile: Any = when (file) {
                 is File -> {
@@ -134,8 +139,9 @@ class MapFile(
                 else -> {}
             }
             mapsViewModel.chooseMap(newFile)
+            mapsViewModel.activeProgress = null
             if (showToast) topToastState.showToast(
-                text = contextUtils.getString(R.string.maps_rename_done).replace("{NAME}", newName),
+                text = contextUtils.getString(R.string.maps_renamed).replace("{NAME}", newName),
                 icon = Icons.Rounded.Edit
             )
         }

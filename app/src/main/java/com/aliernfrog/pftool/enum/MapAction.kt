@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.impl.MapFile
+import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 
 /**
@@ -59,8 +60,10 @@ enum class MapAction(
         override suspend fun execute(context: Context, vararg maps: MapFile) {
             runIOAction(
                 *maps,
-                singleSuccessMessageId = R.string.maps_import_done,
-                multipleSuccessMessageId = R.string.maps_import_multiple,
+                singleSuccessMessageId = R.string.maps_imported_single,
+                multipleSuccessMessageId = R.string.maps_imported_multiple,
+                singleProcessingMessageId = R.string.maps_importing_single,
+                multipleProcessingMessageId = R.string.maps_importing_multiple,
                 successIcon = icon,
                 result = { it.import(context) },
                 context = context
@@ -80,8 +83,10 @@ enum class MapAction(
         override suspend fun execute(context: Context, vararg maps: MapFile) {
             runIOAction(
                 *maps,
-                singleSuccessMessageId = R.string.maps_export_done,
-                multipleSuccessMessageId = R.string.maps_export_multiple,
+                singleSuccessMessageId = R.string.maps_exported_single,
+                multipleSuccessMessageId = R.string.maps_exported_multiple,
+                singleProcessingMessageId = R.string.maps_exporting_single,
+                multipleProcessingMessageId = R.string.maps_exporting_multiple,
                 successIcon = icon,
                 result = { it.export(context) },
                 context = context
@@ -129,16 +134,39 @@ private suspend fun runIOAction(
     vararg maps: MapFile,
     singleSuccessMessageId: Int,
     multipleSuccessMessageId: Int,
+    singleProcessingMessageId: Int,
+    multipleProcessingMessageId: Int,
     successIcon: ImageVector,
     result: (MapFile) -> MapActionResult,
     context: Context
 ) {
     val first = maps.first()
+    val total = maps.size
+    val isSingle = total == 1
+
+    var passedProgress = 0
+    fun getProgress(): Progress {
+        return Progress(
+            description = if (isSingle) context.getString(singleProcessingMessageId)
+                .replace("{NAME}", first.name)
+                .replace("{NEW_NAME}", first.resolveMapNameInput())
+            else context.getString(multipleProcessingMessageId)
+                .replace("{DONE}", passedProgress.toString())
+                .replace("{TOTAL}", total.toString()),
+            totalProgress = total.toLong(),
+            passedProgress = passedProgress.toLong()
+        )
+    }
+
+    first.mapsViewModel.activeProgress = getProgress()
     first.runInIOThreadSafe {
         val results = maps.map {
-            it.resolveMapNameInput() to result(it)
+            val executionResult = result(it)
+            passedProgress++
+            first.mapsViewModel.activeProgress = getProgress()
+            it.resolveMapNameInput() to executionResult
         }
-        if (maps.size == 1) results.first().let { (mapName, result) ->
+        if (isSingle) results.first().let { (mapName, result) ->
             first.topToastState.showToast(
                 text = if (result.successful) context.getString(singleSuccessMessageId).replace("{NAME}", mapName)
                 else context.getString(result.messageId ?: R.string.warning_error),
@@ -158,4 +186,5 @@ private suspend fun runIOAction(
         }
     }
     first.mapsViewModel.loadMaps(context)
+    first.mapsViewModel.activeProgress = null
 }

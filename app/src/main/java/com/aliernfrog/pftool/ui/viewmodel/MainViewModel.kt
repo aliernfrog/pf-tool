@@ -158,8 +158,8 @@ class MainViewModel(
 
     fun handleIntent(intent: Intent, context: Context) {
         val uri = intent.data ?: return
+        showProgressDialog = true
         viewModelScope.launch(Dispatchers.IO) {
-            showProgressDialog = true
             val file = uri.cacheFile(context)
             mapsViewModel.chooseMap(file)
             mapsViewModel.mapListShown = false
