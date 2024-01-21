@@ -14,5 +14,10 @@ enum class MapsListSegment(
     EXPORTED(
         labelId = R.string.mapsList_exported,
         noMapsFoundTextId = R.string.mapsList_noExportedMaps
+    ),
+
+    SHARED(
+        labelId = R.string.mapsList_shared,
+        noMapsFoundTextId = R.string.mapsList_noSharedMaps
     )
 }

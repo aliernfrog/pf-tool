@@ -35,6 +35,7 @@
             <!-- Open map from shared .zip files -->
             <intent-filter android:label="@string/intent_openMap">
                 <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="application/zip"/>
             </intent-filter>

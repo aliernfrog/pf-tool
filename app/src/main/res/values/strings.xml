@@ -94,8 +94,10 @@
     <string name="mapsList_storage">Storage</string>
     <string name="mapsList_imported">Your maps</string>
     <string name="mapsList_exported">Exported maps</string>
+    <string name="mapsList_shared">Shared</string>
     <string name="mapsList_noImportedMaps">You do not have any maps</string>
     <string name="mapsList_noExportedMaps">You have not exported any maps</string>
+    <string name="mapsList_noSharedMaps">You haven\'t shared any map files to PF Tool</string>
     <string name="mapsList_searchNoMatches">No matching maps found</string>
     <string name="settings">Settings</string>
     <string name="settings_updateNotification_updateAvailable">Update available: {VERSION}</string>
