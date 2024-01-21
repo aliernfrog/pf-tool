@@ -181,9 +181,7 @@ class MapFile(
         withName: String = resolveMapNameInput()
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
-        val zipName = withName.let {
-            if (it.endsWith(".zip")) it else "$it.zip"
-        }
+        val zipName = "$withName.zip"
         var output = mapsViewModel.exportedMapsFile.findFile(zipName)
         if (output?.exists() == true) return MapActionResult(
             successful = false,
