@@ -106,7 +106,7 @@ class MapFile(
     }
 
     /**
-     * Renames the map, also handles the extension.
+     * Renames the map.
      */
     fun rename(
         newName: String = mapsViewModel.resolveMapNameInput()
@@ -138,6 +138,9 @@ class MapFile(
         )
     }
 
+    /**
+     * Duplicates the map.
+     */
     fun duplicate(
         context: Context,
         newName: String = mapsViewModel.resolveMapNameInput()
