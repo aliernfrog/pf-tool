@@ -115,6 +115,11 @@ class MapFile(
         newName: String = mapsViewModel.resolveMapNameInput(),
         showToast: Boolean = true
     ) {
+        mapsViewModel.activeProgress = Progress(
+            description = contextUtils.getString(R.string.maps_renaming)
+                .replace("{NAME}", name)
+                .replace("{NEW_NAME}", newName)
+        )
         return runInIOThreadSafe {
             val newFile: Any = when (file) {
                 is File -> {
@@ -134,8 +139,9 @@ class MapFile(
                 else -> {}
             }
             mapsViewModel.chooseMap(newFile)
+            mapsViewModel.activeProgress = null
             if (showToast) topToastState.showToast(
-                text = contextUtils.getString(R.string.maps_rename_done).replace("{NAME}", newName),
+                text = contextUtils.getString(R.string.maps_renamed).replace("{NAME}", newName),
                 icon = Icons.Rounded.Edit
             )
         }
@@ -175,9 +181,7 @@ class MapFile(
         withName: String = resolveMapNameInput()
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
-        val zipName = withName.let {
-            if (it.endsWith(".zip")) it else "$it.zip"
-        }
+        val zipName = "$withName.zip"
         var output = mapsViewModel.exportedMapsFile.findFile(zipName)
         if (output?.exists() == true) return MapActionResult(
             successful = false,
