@@ -2,8 +2,6 @@ package com.aliernfrog.pftool.impl
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Edit
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
@@ -12,7 +10,6 @@ import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.showErrorToast
-import com.aliernfrog.pftool.util.extension.showMapAlreadyExistsToast
 import com.aliernfrog.pftool.util.extension.size
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -109,42 +106,81 @@ class MapFile(
     }
 
     /**
-     * Renames the map and also handles the extension.
+     * Renames the map, also handles the extension.
      */
-    suspend fun rename(
-        newName: String = mapsViewModel.resolveMapNameInput(),
-        showToast: Boolean = true
-    ) {
-        mapsViewModel.activeProgress = Progress(
-            description = contextUtils.getString(R.string.maps_renaming)
-                .replace("{NAME}", name)
-                .replace("{NEW_NAME}", newName)
-        )
-        return runInIOThreadSafe {
-            val newFile: Any = when (file) {
-                is File -> {
-                    val output = File((file.parent?.plus("/") ?: "") + fileName.replace(
-                        name, newName
-                    ))
-                    if (output.exists()) return@runInIOThreadSafe topToastState.showMapAlreadyExistsToast()
-                    file.renameTo(output)
-                    File(output.absolutePath)
-                }
-                is DocumentFileCompat -> {
-                    val to = fileName.replace(name, newName)
-                    if (file.parentFile?.findFile(to)?.exists() == true) return@runInIOThreadSafe topToastState.showMapAlreadyExistsToast()
-                    file.renameTo(to)
-                    file.parentFile!!.findFile(to)!!
-                }
-                else -> {}
+    fun rename(
+        newName: String = mapsViewModel.resolveMapNameInput()
+    ): MapActionResult {
+        val toName = fileName.replace(name, newName)
+        val newFile: Any = when (file) {
+            is File -> {
+                val output = File((file.parent?.plus("/") ?: "") + toName)
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                file.renameTo(output)
+                File(output.absolutePath)
             }
-            mapsViewModel.chooseMap(newFile)
-            mapsViewModel.activeProgress = null
-            if (showToast) topToastState.showToast(
-                text = contextUtils.getString(R.string.maps_renamed).replace("{NAME}", newName),
-                icon = Icons.Rounded.Edit
-            )
+            is DocumentFileCompat -> {
+                if (file.parentFile?.findFile(toName)?.exists() == true) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                file.renameTo(toName)
+                file.parentFile!!.findFile(toName)!!
+            }
+            else -> {}
         }
+        return MapActionResult(
+            successful = true,
+            newFile = newFile
+        )
+    }
+
+    fun duplicate(
+        context: Context,
+        newName: String = mapsViewModel.resolveMapNameInput()
+    ): MapActionResult {
+        val toName = fileName.replace(name, newName)
+        when (file) {
+            is File -> {
+                val targetFile = File((file.parent?.plus("/") ?: "") + toName)
+                if (targetFile.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                if (file.isFile) file.inputStream().use { inputStream ->
+                    targetFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+                else FileUtil.copyDirectory(file, targetFile)
+            }
+            is DocumentFileCompat -> {
+                if (file.parentFile!!.findFile(toName)?.exists() == true) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                if (file.isFile()) context.contentResolver.openInputStream(file.uri).use { inputStream ->
+                    context.contentResolver.openOutputStream(file.parentFile!!.createFile("", toName)!!.uri).use { outputStream ->
+                        inputStream!!.copyTo(outputStream!!)
+                    }
+                }
+                else FileUtil.copyDirectory(
+                    file, file.parentFile!!.createDirectory(toName)!!, context
+                )
+            }
+        }
+        val newFile: Any = when (file) {
+            is File -> File((file.parent?.plus("/") ?: "") + toName)
+            is DocumentFileCompat -> file.parentFile!!.findFile(toName)!!
+            else -> throw IllegalArgumentException("File class was somehow unknown")
+        }
+        return MapActionResult(
+            successful = true,
+            newFile = newFile
+        )
     }
 
     /**
@@ -217,7 +253,7 @@ class MapFile(
     }
 
     suspend fun runInIOThreadSafe(block: () -> Unit) {
-        return withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             try {
                 block()
             } catch (e: Exception) {
