@@ -126,7 +126,6 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="settings_experimental_showUpdateToast">Güncelleme mesajını göster</string>
     <string name="settings_experimental_showUpdateDialog">Güncelleme diyaloğunu göster</string>
     <string name="settings_experimental_updatesURL">Güncellemeler için URL</string>
-    <string name="settings_experimental_resetPrefs">Tercihleri sıfırla</string>
     <string name="settings_experimental_resetPrefsDone">Deneysel tercihlerin varsayılan değerleri geri yüklendi</string>
     <string name="updates_updateAvailable">PF Tool güncellemesi mevcut! Daha fazla detay için tıklayın</string>
     <string name="updates_noUpdates">Güncelleme yok</string>
