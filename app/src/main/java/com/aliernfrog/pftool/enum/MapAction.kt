@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Download
-import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -12,6 +11,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
+import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 
 /**
@@ -167,10 +167,11 @@ private suspend fun runIOAction(
             it.resolveMapNameInput() to executionResult
         }
         if (isSingle) results.first().let { (mapName, result) ->
-            first.topToastState.showToast(
-                text = if (result.successful) context.getString(singleSuccessMessageId).replace("{NAME}", mapName)
-                else context.getString(result.messageId ?: R.string.warning_error),
-                icon = if (result.successful) successIcon else Icons.Rounded.PriorityHigh
+            if (result.successful) first.topToastState.showToast(
+                text = context.getString(singleSuccessMessageId).replace("{NAME}", mapName),
+                icon = successIcon
+            ) else first.topToastState.showErrorToast(
+                text = context.getString(result.messageId ?: R.string.warning_error)
             )
             result.newFile?.let { first.mapsViewModel.chooseMap(it) }
         } else {
