@@ -26,7 +26,7 @@ class MapsListViewModel(
 
     val selectedMapsActions: List<MapAction>
         get() = MapAction.entries.filter { action ->
-            !selectedMaps.any { map ->
+            action.availableForMultiSelection && !selectedMaps.any { map ->
                 !action.availableFor(map)
             }
         }
