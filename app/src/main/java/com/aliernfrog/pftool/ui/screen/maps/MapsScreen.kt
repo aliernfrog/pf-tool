@@ -126,10 +126,19 @@ private fun Actions(
                 )
             ) {
                 Icon(Icons.Rounded.TipsAndUpdates, contentDescription = null)
-                Text(
-                    text = stringResource(R.string.maps_mapName_guide),
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(1.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.maps_mapName_guide),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = stringResource(R.string.action_tapToDismiss),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.alpha(0.7f)
+                    )
+                }
             }
         }
     }
