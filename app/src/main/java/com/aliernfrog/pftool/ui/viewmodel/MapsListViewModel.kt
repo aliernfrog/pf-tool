@@ -22,7 +22,13 @@ class MapsListViewModel(
     var chosenSegment by mutableStateOf(MapsListSegment.IMPORTED)
     var sorting by mutableStateOf(MapsListSortingType.ALPHABETICAL)
     var reverseList by mutableStateOf(false)
+    var sharedMaps = mutableStateListOf<MapFile>()
     var selectedMaps = mutableStateListOf<MapFile>()
+
+    val availableSegments: List<MapsListSegment>
+        get() = MapsListSegment.entries.filter {
+            !(sharedMaps.isEmpty() && it == MapsListSegment.SHARED)
+        }
 
     val selectedMapsActions: List<MapAction>
         get() = MapAction.entries.filter { action ->
@@ -39,6 +45,7 @@ class MapsListViewModel(
             val list = when (chosenSegment) {
                 MapsListSegment.IMPORTED -> mapsViewModel.importedMaps
                 MapsListSegment.EXPORTED -> mapsViewModel.exportedMaps
+                MapsListSegment.SHARED -> sharedMaps
             }.filter {
                 it.name.contains(searchQuery, ignoreCase = true)
             }.sortedWith(sorting.comparator)
