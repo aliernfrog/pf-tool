@@ -208,6 +208,7 @@ fun MapsListScreen(
                     onReversedChange = { mapsListViewModel.reverseList = it }
                 )
                 Filter(
+                    segments = mapsListViewModel.availableSegments,
                     selectedSegment = mapsListViewModel.chosenSegment,
                     onSelectedSegmentChange = {
                         mapsListViewModel.chosenSegment = it
@@ -373,11 +374,12 @@ private fun Search(
 
 @Composable
 private fun Filter(
+    segments: List<MapsListSegment>,
     selectedSegment: MapsListSegment,
     onSelectedSegmentChange: (MapsListSegment) -> Unit
 ) {
     SegmentedButtons(
-        options = MapsListSegment.entries.map {
+        options = segments.map {
             stringResource(it.labelId)
         },
         selectedIndex = selectedSegment.ordinal,
@@ -385,7 +387,7 @@ private fun Filter(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        onSelectedSegmentChange(MapsListSegment.entries[it])
+        onSelectedSegmentChange(segments[it])
     }
 }
 

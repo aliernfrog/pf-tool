@@ -3,7 +3,9 @@ package com.aliernfrog.pftool.ui.viewmodel
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
@@ -14,18 +16,23 @@ import androidx.compose.material3.SheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.unit.Density
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.ReleaseInfo
+import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.githubRepoURL
+import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
+import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.extension.toLanguage
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
@@ -46,7 +53,8 @@ class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
-    private val mapsViewModel: MapsViewModel
+    private val mapsViewModel: MapsViewModel,
+    private val mapsListViewModel: MapsListViewModel
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -84,6 +92,8 @@ class MainViewModel(
 
     var updateAvailable by mutableStateOf(false)
         private set
+
+    var showProgressDialog by mutableStateOf(false)
 
     init {
         if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
@@ -155,11 +165,35 @@ class MainViewModel(
     }
 
     fun handleIntent(intent: Intent, context: Context) {
-        val uri = intent.data ?: return
-        viewModelScope.launch(Dispatchers.IO) {
-            val file = uri.cacheFile(context)
-            mapsViewModel.chooseMap(file)
-            mapsViewModel.mapListShown = false
+        try {
+            val uris: MutableList<Uri> = intent.data?.let {
+                mutableListOf(it)
+            } ?: mutableListOf()
+            intent.clipData?.let { clipData ->
+                for (i in 0..<clipData.itemCount) {
+                    uris.add(clipData.getItemAt(i).uri)
+                }
+            }
+            if (uris.isEmpty()) return
+
+            showProgressDialog = true
+            viewModelScope.launch(Dispatchers.IO) {
+                val cached = uris.map { uri ->
+                    MapFile(uri.cacheFile(context)!!)
+                }
+                if (cached.size <= 1) {
+                    mapsViewModel.chooseMap(cached.first())
+                    mapsViewModel.mapListShown = false
+                } else {
+                    mapsListViewModel.sharedMaps = cached.toMutableStateList()
+                    mapsListViewModel.chosenSegment = MapsListSegment.SHARED
+                }
+                showProgressDialog = false
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "handleIntent: $e")
+            topToastState.showErrorToast()
+            showProgressDialog = false
         }
     }
 }

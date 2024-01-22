@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Download
-import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.FileCopy
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.impl.MapFile
+import com.aliernfrog.pftool.impl.Progress
+import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 
 /**
@@ -39,6 +42,11 @@ enum class MapAction(
     val icon: ImageVector,
 
     /**
+     * Whether the action is available for multi-selection.
+     */
+    val availableForMultiSelection: Boolean = true,
+
+    /**
      * Whether the action is destructive.
      */
     val destructive: Boolean = false,
@@ -48,6 +56,72 @@ enum class MapAction(
      */
     val availableFor: (map: MapFile) -> Boolean
 ) {
+    RENAME(
+        shortLabelId = R.string.maps_rename,
+        icon = Icons.Rounded.Edit,
+        availableForMultiSelection = false,
+        availableFor = {
+            it.importedState != MapImportedState.NONE && it.resolveMapNameInput() != it.name
+        }
+    ) {
+        override suspend fun execute(context: Context, vararg maps: MapFile) {
+            val first = maps.first()
+            val newName = first.resolveMapNameInput()
+            first.mapsViewModel.activeProgress = Progress(
+                description = context.getString(R.string.maps_renaming)
+                    .replace("{NAME}", first.name)
+                    .replace("{NEW_NAME}", newName)
+            )
+            first.runInIOThreadSafe {
+                val result = first.rename(newName = newName)
+                if (!result.successful) return@runInIOThreadSafe first.topToastState.showErrorToast(
+                    text = result.messageId ?: R.string.warning_error
+                )
+                result.newFile?.let {
+                    first.mapsViewModel.chooseMap(it)
+                }
+                first.topToastState.showToast(
+                    text = context.getString(result.messageId ?: R.string.maps_renamed)
+                        .replace("{NAME}", newName),
+                    icon = Icons.Rounded.Edit
+                )
+            }
+            first.mapsViewModel.activeProgress = null
+        }
+    },
+
+    DUPLICATE(
+        shortLabelId = R.string.maps_duplicate,
+        icon = Icons.Rounded.FileCopy,
+        availableForMultiSelection = false,
+        availableFor = RENAME.availableFor
+    ) {
+        override suspend fun execute(context: Context, vararg maps: MapFile) {
+            val first = maps.first()
+            val newName = first.resolveMapNameInput()
+            first.mapsViewModel.activeProgress = Progress(
+                description = context.getString(R.string.maps_duplicating)
+                    .replace("{NAME}", first.name)
+                    .replace("{NEW_NAME}", newName)
+            )
+            first.runInIOThreadSafe {
+                val result = first.duplicate(context, newName = newName)
+                if (!result.successful) return@runInIOThreadSafe first.topToastState.showErrorToast(
+                    text = result.messageId ?: R.string.warning_error
+                )
+                result.newFile?.let {
+                    first.mapsViewModel.chooseMap(it)
+                }
+                first.topToastState.showToast(
+                    text = context.getString(result.messageId ?: R.string.maps_duplicated)
+                        .replace("{NAME}", newName),
+                    icon = Icons.Rounded.FileCopy
+                )
+            }
+            first.mapsViewModel.activeProgress = null
+        }
+    },
+
     IMPORT(
         shortLabelId = R.string.maps_import_short,
         longLabelId = R.string.maps_import,
@@ -59,8 +133,10 @@ enum class MapAction(
         override suspend fun execute(context: Context, vararg maps: MapFile) {
             runIOAction(
                 *maps,
-                singleSuccessMessageId = R.string.maps_import_done,
-                multipleSuccessMessageId = R.string.maps_import_multiple,
+                singleSuccessMessageId = R.string.maps_imported_single,
+                multipleSuccessMessageId = R.string.maps_imported_multiple,
+                singleProcessingMessageId = R.string.maps_importing_single,
+                multipleProcessingMessageId = R.string.maps_importing_multiple,
                 successIcon = icon,
                 result = { it.import(context) },
                 context = context
@@ -80,8 +156,10 @@ enum class MapAction(
         override suspend fun execute(context: Context, vararg maps: MapFile) {
             runIOAction(
                 *maps,
-                singleSuccessMessageId = R.string.maps_export_done,
-                multipleSuccessMessageId = R.string.maps_export_multiple,
+                singleSuccessMessageId = R.string.maps_exported_single,
+                multipleSuccessMessageId = R.string.maps_exported_multiple,
+                singleProcessingMessageId = R.string.maps_exporting_single,
+                multipleProcessingMessageId = R.string.maps_exporting_multiple,
                 successIcon = icon,
                 result = { it.export(context) },
                 context = context
@@ -129,20 +207,44 @@ private suspend fun runIOAction(
     vararg maps: MapFile,
     singleSuccessMessageId: Int,
     multipleSuccessMessageId: Int,
+    singleProcessingMessageId: Int,
+    multipleProcessingMessageId: Int,
     successIcon: ImageVector,
     result: (MapFile) -> MapActionResult,
     context: Context
 ) {
     val first = maps.first()
+    val total = maps.size
+    val isSingle = total == 1
+
+    var passedProgress = 0
+    fun getProgress(): Progress {
+        return Progress(
+            description = if (isSingle) context.getString(singleProcessingMessageId)
+                .replace("{NAME}", first.name)
+                .replace("{NEW_NAME}", first.resolveMapNameInput())
+            else context.getString(multipleProcessingMessageId)
+                .replace("{DONE}", passedProgress.toString())
+                .replace("{TOTAL}", total.toString()),
+            totalProgress = total.toLong(),
+            passedProgress = passedProgress.toLong()
+        )
+    }
+
+    first.mapsViewModel.activeProgress = getProgress()
     first.runInIOThreadSafe {
         val results = maps.map {
-            it.resolveMapNameInput() to result(it)
+            val executionResult = result(it)
+            passedProgress++
+            first.mapsViewModel.activeProgress = getProgress()
+            it.resolveMapNameInput() to executionResult
         }
-        if (maps.size == 1) results.first().let { (mapName, result) ->
-            first.topToastState.showToast(
-                text = if (result.successful) context.getString(singleSuccessMessageId).replace("{NAME}", mapName)
-                else context.getString(result.messageId ?: R.string.warning_error),
-                icon = if (result.successful) successIcon else Icons.Rounded.PriorityHigh
+        if (isSingle) results.first().let { (mapName, result) ->
+            if (result.successful) first.topToastState.showToast(
+                text = context.getString(singleSuccessMessageId).replace("{NAME}", mapName),
+                icon = successIcon
+            ) else first.topToastState.showErrorToast(
+                text = context.getString(result.messageId ?: R.string.warning_error)
             )
             result.newFile?.let { first.mapsViewModel.chooseMap(it) }
         } else {
@@ -158,4 +260,5 @@ private suspend fun runIOAction(
         }
     }
     first.mapsViewModel.loadMaps(context)
+    first.mapsViewModel.activeProgress = null
 }
