@@ -1,2 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation"></resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="action_back">Wstecz</string>
+    <string name="action_ok">Okej</string>
+    <string name="action_done">Gotowe</string>
+    <string name="action_cancel">Anuluj</string>
+    <string name="action_dismiss">Odrzuć</string>
+    <string name="action_tapToDismiss">Dotknij, aby odrzucić</string>
+    <string name="action_share">Udostępnij</string>
+    <string name="action_delete">Usuń</string>
+    <string name="action_more">Więcej</string>
+    <string name="intent_openMap">Otwórz mapę</string>
+    <string name="intent_downloadMap">Pobierz mapę</string>
+    <string name="warning_error">Coś poszło nie tak</string>
+    <string name="warning_fileDoesntExist">Plik nie istnieje</string>
+    <string name="info_pleaseWait">Proszę czekać..</string>
+    <string name="info_deleteQuestion">Czy jesteś pewien, że chcesz usunąć {NAME}?\nTej operacji NIE można cofnąć!</string>
+    <string name="permissions">Uprawnienia</string>
+    <string name="permissions_filesApp">Aktualizacje przeglądarki plików</string>
+    <string name="permissions_filesApp_description">Przeglądarka plików otrzymała aktualizację we wrześniu 2023 r., która zabrania innym aplikacjom dostępu do plików w folderze Android/data.\nJeśli masz tę aktualizację, prawdopodobnie będziesz musiał ją odinstalować. Kliknij przycisk poniżej aby uzyskać więcej informacji.</string>
+    <string name="permissions_filesApp_moreInfo">Więcej informacji</string>
+    <string name="permissions_filesApp_moreInfo_text">## Czy mnie to dotyczy?\n
+Upewnij się, że chociaż raz włączyłeś Polyfield i wybierz folder \"Polyfield\" w PF Tool. Jeżeli jesteś w stanie zrobić to bezproblemowo, to ciebie to nie dotyczy.\n\n
+## Co mam zrobić jeśli mnie to dotyczy?\n
+Musisz odinstalować aktualizacje **przeglądarki plików**. Wykonaj poniższe kroki, ale pamiętaj, że mogą one się różnić w zależności od twojego urządzenia:\n\n
+Ustawienia urządzenia &gt; Aplikacje &gt; Wszystkie aplikacje/Zarządzaj aplikacjami &gt; aplikacja \"Pliki\" (nazwa aplikacji może się różnić w zależności od twojego języka) &gt; Odinstaluj aktualizacje\n\n
+## Nie możesz znaleźć przeglądarki plików?\n
+Poszukaj opcji, która ukrywa domyślne aplikacje z listy, i wyłącz ją jeśli jest włączona. Możesz ją znaleźć w charakterystycznych \"menu z trzema kropkami\".\n\n
+## Brak możliwości odinstalowania aktualizacji?\n
+Spróbuj ponownie wybrać folder \"Polyfield\" w PF Tool. Jeśli nie możesz tego zrobić, to niestety na chwilę obecną nie ma na to rozwiązania.\n\n
+Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliwe rozwiązania, oraz nowe naprawy błędów nad którymi pracuję.    </string>
+    <string name="permissions_chooseFolder">Wybierz folder</string>
+    <string name="permissions_recommendedFolder">Zalecany folder</string>
+    <string name="permissions_recommendedFolder_a8Hint">Po kliknięciu \"Okej\", ten folder zostanie otwarty w nowym oknie. Upewnij się, że jesteś w odpowiednim folderze i kliknij \"UŻYJ TEN FOLDER\"</string>
+    <string name="permissions_recommendedFolder_a7Hint">Po kliknięciu \"Okej\", przejdź do tego folderu i kliknij \"UŻYJ TEN FOLDER\"</string>
+    <string name="permissions_recommendedFolder_doesNotExist">Ten folder nie istnieje?</string>
+    <string name="permissions_recommendedFolder_manuallyCreate">* Jeśli ten folder nie istnieje, możesz go utworzyć ręcznie</string>
+    <string name="permissions_recommendedFolder_openPFToCreate">* Jeśli ten folder nie istnieje, możesz utworzyć go ręcznie lub uruchomić Polyfield raz aby utworzyć folder automatycznie</string>
+    <string name="permissions_notRecommendedFolder_description">Zalecany jest folder poniżej:</string>
+    <string name="permissions_notRecommendedFolder_question">Czy chcesz wrócić i wybrać folder zalecany, czy użyć niezalecanego?</string>
+    <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Wybierz zalecany folder</string>
+    <string name="permissions_notRecommendedFolder_useUnrecommendedFolder">Wybierz niezalecany folder</string>
+    <string name="permissions_maps">Folder z mapami Polyfield</string>
+    <string name="permissions_maps_description">Musisz wybrać folder, w którym przechowywane są mapy Polyfield</string>
+    <string name="permissions_maps_recommended">Mapy Polyfield są przechowywane w tym folderze</string>
+    <string name="permissions_exportedMaps">Folder eksportowanych map</string>
+    <string name="permissions_exportedMaps_description">Musisz wybrać folder, w którym chcesz zapisywać eksportowane mapy</string>
+    <string name="permissions_exportedMaps_recommended">PF Tool używał tego folderu w starszych wersjach, wybierz ten folder jeśli chcesz uzyskać dostęp do map, które wyeksportowałeś/aś wcześniej</string>
+    <string name="maps">Mapy</string>
+    <string name="maps_alreadyExists">Mapa o tej nazwie już istnieje, wybierz inną nazwę</string>
+</resources>
