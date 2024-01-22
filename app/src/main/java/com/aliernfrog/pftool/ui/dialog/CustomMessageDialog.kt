@@ -1,10 +1,13 @@
 package com.aliernfrog.pftool.ui.dialog
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
@@ -27,7 +30,10 @@ fun CustomMessageDialog(
             Text(title)
         },
         text = {
-            Text(text)
+            Text(
+                text = text,
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            )
         },
         icon = icon?.let { {
             Icon(
