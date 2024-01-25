@@ -185,7 +185,7 @@ class MainViewModel(
                     mapsViewModel.chooseMap(cached.first())
                     mapsViewModel.mapListShown = false
                 } else {
-                    mapsListViewModel.sharedMaps = cached.toMutableStateList()
+                    mapsViewModel.sharedMaps = cached.toMutableStateList()
                     mapsListViewModel.chosenSegment = MapsListSegment.SHARED
                 }
                 showProgressDialog = false

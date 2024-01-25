@@ -9,6 +9,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -45,6 +46,7 @@ class MapsViewModel(
     var isLoadingMaps by mutableStateOf(true)
     var importedMaps by mutableStateOf(emptyList<MapFile>())
     var exportedMaps by mutableStateOf(emptyList<MapFile>())
+    var sharedMaps = mutableStateListOf<MapFile>()
     var chosenMap by mutableStateOf<MapFile?>(null)
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
     var mapNameEdit by mutableStateOf("")
