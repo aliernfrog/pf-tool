@@ -75,7 +75,7 @@ fun MainScreen(
         latestVersionInfo = mainViewModel.latestVersionInfo
     )
 
-    if (mainViewModel.showProgressDialog) ProgressDialog(progress = null) {
-        // (onDismissRequest) do nothing
+    mainViewModel.progressState.currentProgress?.let {
+        ProgressDialog(it) {}
     }
 }

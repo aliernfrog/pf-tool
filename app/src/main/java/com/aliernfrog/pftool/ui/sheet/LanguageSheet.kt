@@ -71,7 +71,7 @@ fun LanguageSheet(
             trailingComponent = if (selected) { {
                 Icon(
                     painter = rememberVectorPainter(Icons.Default.CheckCircle),
-                    contentDescription = stringResource(R.string.settings_appearance_language_selected)
+                    contentDescription = stringResource(R.string.settings_general_language_selected)
                 )
             } } else null,
             onClick = onClick
@@ -83,7 +83,7 @@ fun LanguageSheet(
         dragHandle = { SmallDragHandle() }
     ) { bottomPadding ->
         Text(
-            text = stringResource(R.string.settings_appearance_language_select),
+            text = stringResource(R.string.settings_general_language_select),
             fontSize = 25.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
@@ -98,8 +98,8 @@ fun LanguageSheet(
 
             item {
                 LanguageButton(
-                    title = stringResource(R.string.settings_appearance_language_system),
-                    description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_appearance_language_system_notAvailable)
+                    title = stringResource(R.string.settings_general_language_system),
+                    description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_general_language_system_notAvailable)
                         .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
                             mainViewModel.deviceLanguage.getNameIn(it.languageCode, it.countryCode)
                         } ?: ""),
@@ -148,14 +148,14 @@ fun TranslationHelp(
                 )
                 Text(
                     text = stringResource(
-                        if (isDeviceLanguageAvailable) R.string.settings_appearance_language_help
-                        else R.string.settings_appearance_language_help_deviceNotAvailable
+                        if (isDeviceLanguageAvailable) R.string.settings_general_language_help
+                        else R.string.settings_general_language_help_deviceNotAvailable
                     ),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = stringResource(R.string.settings_appearance_language_help_description),
+                text = stringResource(R.string.settings_general_language_help_description),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

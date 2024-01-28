@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -80,11 +81,13 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MapsListScreen(
+    title: String = stringResource(R.string.mapsList_pickMap),
     mapsListViewModel: MapsListViewModel = koinViewModel(),
     mapsViewModel: MapsViewModel = koinViewModel(),
-    multiSelectFloatingActionButton: @Composable () -> Unit = {},
+    showMultiSelectionOptions: Boolean = true,
+    multiSelectFloatingActionButton: @Composable (selectedMaps: List<MapFile>, clearSelection: () -> Unit) -> Unit = { _, _ -> },
     onBackClick: (() -> Unit)?,
-    onMapPick: (Any) -> Unit
+    onMapPick: (MapFile) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -100,7 +103,7 @@ fun MapsListScreen(
                     parentName = "maps",
                     context = context
                 )
-                if (cachedFile != null) onMapPick(cachedFile)
+                if (cachedFile != null) onMapPick(MapFile(cachedFile))
                 else mapsListViewModel.topToastState.showToast(
                     text = R.string.mapsList_pickMap_failed,
                     icon = Icons.Rounded.PriorityHigh,
@@ -125,7 +128,7 @@ fun MapsListScreen(
         topBar = { scrollBehavior ->
             AnimatedContent(targetState = isMultiSelecting) { multiSelecting ->
                 AppTopBar(
-                    title = if (!multiSelecting) stringResource(R.string.mapsList_pickMap)
+                    title = if (!multiSelecting) title
                     else stringResource(R.string.mapsList_multiSelection)
                         .replace("{COUNT}", mapsListViewModel.selectedMaps.size.toString()),
                     scrollBehavior = scrollBehavior,
@@ -134,7 +137,7 @@ fun MapsListScreen(
                         mapsListViewModel.selectedMaps.clear()
                     } } else onBackClick,
                     actions = {
-                        if (multiSelecting) Box {
+                        if (multiSelecting && showMultiSelectionOptions) Box {
                             IconButton(
                                 onClick = {
                                     multiSelectionDropdownShown = true
@@ -176,21 +179,34 @@ fun MapsListScreen(
             }
         },
         floatingActionButton = {
-            AnimatedContent(targetState = !isMultiSelecting) { showStorage ->
-                if (showStorage) ExtendedFloatingActionButton(
-                    shape = RoundedCornerShape(16.dp),
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-                        launcher.launch(intent)
-                    }
+            AnimatedContent(
+                targetState = !isMultiSelecting,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
+                    .offset(x = 16.dp, y = 16.dp)
+            ) { showStorage ->
+                Box(
+                    // padding so that FAB shadow doesnt get cropped
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.FolderZip,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    Text(stringResource(R.string.mapsList_storage))
-                } else multiSelectFloatingActionButton()
+                    if (showStorage) ExtendedFloatingActionButton(
+                        shape = RoundedCornerShape(16.dp),
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+                            launcher.launch(intent)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.FolderZip,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(stringResource(R.string.mapsList_storage))
+                    } else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
+                        mapsListViewModel.selectedMaps.clear()
+                    }
+                }
             }
         }
     ) {
@@ -228,7 +244,7 @@ fun MapsListScreen(
                     else ErrorWithIcon(
                         error = stringResource(
                             if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
-                            else mapsListViewModel.chosenSegment.noMapsFoundTextId
+                            else mapsListViewModel.chosenSegment.noMapsTextId
                         ),
                         painter = rememberVectorPainter(Icons.Rounded.LocationOff)
                     )

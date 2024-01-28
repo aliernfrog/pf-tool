@@ -9,13 +9,13 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     prefs = context.getSharedPreferences(ConfigKey.PREF_NAME, Context.MODE_PRIVATE)
 ) {
     // Appearance options
-    var language by stringPreference(ConfigKey.KEY_APP_LANGUAGE, "") // follow system if blank
     var theme by intPreference(ConfigKey.KEY_APP_THEME, Theme.SYSTEM.int)
     var materialYou by booleanPreference(ConfigKey.KEY_APP_MATERIAL_YOU, true)
 
-    // Maps options
+    // General options
     var showChosenMapThumbnail by booleanPreference(ConfigKey.KEY_SHOW_CHOSEN_MAP_THUMBNAIL, true)
     var showMapThumbnailsInList by booleanPreference(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true)
+    var language by stringPreference(ConfigKey.KEY_APP_LANGUAGE, "") // follow system if blank
 
     // Directory options
     var pfMapsDir by stringPreference(ConfigKey.KEY_MAPS_DIR, ConfigKey.RECOMMENDED_MAPS_DIR)
