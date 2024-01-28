@@ -45,10 +45,17 @@ class MainActivity : AppCompatActivity() {
         val view = LocalView.current
         val scope = rememberCoroutineScope()
         val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme)
-        PFToolTheme(
-            darkTheme = useDarkTheme,
-            dynamicColors = mainViewModel.prefs.materialYou
-        ) {
+
+        @Composable
+        fun AppTheme(content: @Composable () -> Unit) {
+            PFToolTheme(
+                darkTheme = useDarkTheme,
+                dynamicColors = mainViewModel.prefs.materialYou,
+                content = content
+            )
+        }
+
+        AppTheme {
             InsetsObserver()
             AppContainer {
                 MainScreen()
@@ -59,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         LaunchedEffect(Unit) {
             mainViewModel.scope = scope
             mainViewModel.topToastState.setComposeView(view)
+            mainViewModel.topToastState.setAppTheme { AppTheme(it) }
 
             if (mainViewModel.prefs.autoCheckUpdates) mainViewModel.checkUpdates()
 

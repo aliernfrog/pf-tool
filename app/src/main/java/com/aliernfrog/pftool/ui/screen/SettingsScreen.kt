@@ -56,7 +56,6 @@ import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -260,10 +259,9 @@ fun SettingsScreen(
                     SettingsConstant.experimentalPrefOptions.forEach {
                         it.setValue(it.default, settingsViewModel.prefs)
                     }
-                    settingsViewModel.topToastState.showToast(
+                    settingsViewModel.topToastState.showAndroidToast(
                         text = R.string.settings_experimental_resetPrefsDone,
-                        icon = Icons.Rounded.Done,
-                        type = TopToastType.ANDROID
+                        icon = Icons.Rounded.Done
                     )
                     GeneralUtil.restartApp(context)
                 }
