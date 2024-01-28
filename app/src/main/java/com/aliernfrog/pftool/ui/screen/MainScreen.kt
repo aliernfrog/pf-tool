@@ -16,17 +16,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.component.BaseScaffold
+import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationConstant
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = getViewModel()
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val navController = rememberNavController()
     BaseScaffold(
@@ -73,4 +74,8 @@ fun MainScreen(
         sheetState = mainViewModel.updateSheetState,
         latestVersionInfo = mainViewModel.latestVersionInfo
     )
+
+    mainViewModel.progressState.currentProgress?.let {
+        ProgressDialog(it) {}
+    }
 }

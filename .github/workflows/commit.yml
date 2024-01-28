@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: 17
@@ -20,6 +20,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew assembleRelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sign APK
         id: sign_apk
@@ -35,7 +37,7 @@ jobs:
         run: cp ${{steps.sign_apk.outputs.signedFile}} pftool.apk
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pftool
           path: pftool.apk

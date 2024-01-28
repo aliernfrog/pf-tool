@@ -2,8 +2,8 @@ package com.aliernfrog.pftool.ui.activity
 
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -25,9 +25,9 @@ import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
-import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -39,16 +39,23 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun AppContent(
-        mainViewModel: MainViewModel = getViewModel()
+        mainViewModel: MainViewModel = koinViewModel()
     ) {
         val context = LocalContext.current
         val view = LocalView.current
         val scope = rememberCoroutineScope()
         val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme)
-        PFToolTheme(
-            darkTheme = useDarkTheme,
-            dynamicColors = mainViewModel.prefs.materialYou
-        ) {
+
+        @Composable
+        fun AppTheme(content: @Composable () -> Unit) {
+            PFToolTheme(
+                darkTheme = useDarkTheme,
+                dynamicColors = mainViewModel.prefs.materialYou,
+                content = content
+            )
+        }
+
+        AppTheme {
             InsetsObserver()
             AppContainer {
                 MainScreen()
@@ -59,6 +66,7 @@ class MainActivity : ComponentActivity() {
         LaunchedEffect(Unit) {
             mainViewModel.scope = scope
             mainViewModel.topToastState.setComposeView(view)
+            mainViewModel.topToastState.setAppTheme { AppTheme(it) }
 
             if (mainViewModel.prefs.autoCheckUpdates) mainViewModel.checkUpdates()
 
