@@ -124,6 +124,15 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="settings_general_folders_openAndroidData">Android/data klasörünü aç</string>
     <string name="settings_general_folders_maps">Haritalar klasörü</string>
     <string name="settings_general_folders_exportedMaps">Dışa aktarılan haritalar klasörü</string>
+    <string name="settings_general_language">Dil</string>
+    <string name="settings_general_language_description">PF Tool\'un dilini seçin</string>
+    <string name="settings_general_language_select">Dil seçin</string>
+    <string name="settings_general_language_help">PF Tool çevirilerine yardım edin</string>
+    <string name="settings_general_language_help_deviceNotAvailable">Cihazınızdaki dil şu an mevcut değil</string>
+    <string name="settings_general_language_help_description">Buraya tıklayarak Crowdin\'de çevirilere katkıda bulunabilirsiniz</string>
+    <string name="settings_general_language_system">Sistemi takip et</string>
+    <string name="settings_general_language_system_notAvailable">{SYSTEM_LANGUAGE} mevcut değil</string>
+    <string name="settings_general_language_selected">Seçili</string>
     <string name="settings_about">Hakkında</string>
     <string name="settings_about_version">PF Tool sürümü</string>
     <string name="settings_about_update">Güncelle</string>
