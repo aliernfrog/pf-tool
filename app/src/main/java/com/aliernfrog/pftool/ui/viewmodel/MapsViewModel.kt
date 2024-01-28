@@ -18,6 +18,7 @@ import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
+import com.aliernfrog.pftool.impl.ProgressState
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.ContextUtils
@@ -30,6 +31,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
+    private val progressState: ProgressState,
     private val contextUtils: ContextUtils,
     val prefs: PreferenceManager
 ) : ViewModel() {
@@ -52,7 +54,10 @@ class MapsViewModel(
     var mapNameEdit by mutableStateOf("")
     var mapListShown by mutableStateOf(true)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
-    var activeProgress by mutableStateOf<Progress?>(null)
+
+    var activeProgress: Progress?
+        get() = progressState.currentProgress
+        set(value) { progressState.currentProgress = value }
 
     val mapListBackButtonShown
         get() = chosenMap != null

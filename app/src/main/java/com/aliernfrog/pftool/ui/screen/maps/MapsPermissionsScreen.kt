@@ -14,7 +14,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
-import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.PermissionsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import kotlinx.coroutines.launch
@@ -89,9 +88,5 @@ fun MapsPermissionsScreen(
                 mapsViewModel.deletePendingMaps(context)
             } }
         )
-    }
-
-    mapsViewModel.activeProgress?.let {
-        ProgressDialog(it) {}
     }
 }

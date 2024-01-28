@@ -25,9 +25,12 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.ReleaseInfo
+import com.aliernfrog.pftool.di.get
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.githubRepoURL
 import com.aliernfrog.pftool.impl.MapFile
+import com.aliernfrog.pftool.impl.Progress
+import com.aliernfrog.pftool.impl.ProgressState
 import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.cacheFile
@@ -53,8 +56,7 @@ class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
-    private val mapsViewModel: MapsViewModel,
-    private val mapsListViewModel: MapsListViewModel
+    val progressState: ProgressState
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -92,8 +94,6 @@ class MainViewModel(
 
     var updateAvailable by mutableStateOf(false)
         private set
-
-    var showProgressDialog by mutableStateOf(false)
 
     init {
         if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
@@ -165,6 +165,9 @@ class MainViewModel(
     }
 
     fun handleIntent(intent: Intent, context: Context) {
+        val mapsViewModel = get<MapsViewModel>()
+        val mapsListViewModel = get<MapsListViewModel>()
+
         try {
             val uris: MutableList<Uri> = intent.data?.let {
                 mutableListOf(it)
@@ -176,7 +179,7 @@ class MainViewModel(
             }
             if (uris.isEmpty()) return
 
-            showProgressDialog = true
+            progressState.currentProgress = Progress(context.getString(R.string.info_pleaseWait))
             viewModelScope.launch(Dispatchers.IO) {
                 val cached = uris.map { uri ->
                     MapFile(uri.cacheFile(context)!!)
@@ -188,12 +191,12 @@ class MainViewModel(
                     mapsViewModel.sharedMaps = cached.toMutableStateList()
                     mapsListViewModel.chosenSegment = MapsListSegment.SHARED
                 }
-                showProgressDialog = false
+                progressState.currentProgress = null
             }
         } catch (e: Exception) {
             Log.e(TAG, "handleIntent: $e")
             topToastState.showErrorToast()
-            showProgressDialog = false
+            progressState.currentProgress = null
         }
     }
 }
