@@ -1,7 +1,6 @@
 pull_request_title: 'feat(l10n): update translations'
 commit_message: 'feat(l10n): update translations [skip ci]'
-append_commit_message: false
-
+append_commit_message: 
 files:
   - source: /app/src/main/res/values/strings.xml
     translation: /app/src/main/res/values-%android_code%/strings.xml
