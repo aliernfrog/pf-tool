@@ -109,7 +109,7 @@ class MapFile(
      * Renames the map.
      */
     fun rename(
-        newName: String = mapsViewModel.resolveMapNameInput()
+        newName: String = resolveMapNameInput()
     ): MapActionResult {
         val toName = fileName.replace(name, newName)
         val newFile: Any = when (file) {

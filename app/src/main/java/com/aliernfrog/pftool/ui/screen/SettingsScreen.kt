@@ -90,13 +90,6 @@ fun SettingsScreen(
             
             // Appearance options
             FormSection(title = stringResource(R.string.settings_appearance)) {
-                ButtonRow(
-                    title = stringResource(R.string.settings_appearance_language),
-                    description = stringResource(R.string.settings_appearance_language_description),
-                    expanded = false
-                ) { scope.launch {
-                    settingsViewModel.languageSheetState.show()
-                } }
                 ExpandableRow(
                     expanded = settingsViewModel.themeOptionsExpanded,
                     title = stringResource(R.string.settings_appearance_theme),
@@ -149,6 +142,14 @@ fun SettingsScreen(
                 ) {
                     settingsViewModel.foldersDialogShown = true
                 }
+                ButtonRow(
+                    title = stringResource(R.string.settings_general_language),
+                    description = stringResource(R.string.settings_general_language_description),
+                    expanded = true,
+                    arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
+                ) { scope.launch {
+                    settingsViewModel.languageSheetState.show()
+                } }
             }
 
             // About app
