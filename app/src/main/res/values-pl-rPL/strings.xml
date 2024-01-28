@@ -102,15 +102,6 @@ Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliw
     <string name="settings_updateNotification_updateAvailable">Dostępna aktualizacja: {VERSION}</string>
     <string name="settings_updateNotification_description">Kliknij, aby wyświetlić więcej szczegółów i działań</string>
     <string name="settings_appearance">Wygląd</string>
-    <string name="settings_appearance_language">Język</string>
-    <string name="settings_appearance_language_description">Wybierz język PF Tool</string>
-    <string name="settings_appearance_language_select">Wybierz język</string>
-    <string name="settings_appearance_language_help">Pomóż w tłumaczeniu PF Tool</string>
-    <string name="settings_appearance_language_help_deviceNotAvailable">Język Twojego urządzenia nie jest jeszcze dostępny</string>
-    <string name="settings_appearance_language_help_description">Możesz przyłączyć się do tłumaczenia na Crowdin klikając tutaj</string>
-    <string name="settings_appearance_language_system">Zgodnie z urządzeniem</string>
-    <string name="settings_appearance_language_system_notAvailable">{SYSTEM_LANGUAGE} nie jest dostępny</string>
-    <string name="settings_appearance_language_selected">Wybrany</string>
     <string name="settings_appearance_theme">Motyw</string>
     <string name="settings_appearance_theme_description">Preferencje trybu ciemnego</string>
     <string name="settings_appearance_theme_system">Zgodnie z urządzeniem</string>
