@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="action_back">返回</string>
+    <string name="action_ok">好的</string>
+    <string name="action_done">完成</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_dismiss">关闭</string>
+    <string name="action_tapToDismiss">点击关闭</string>
+    <string name="action_share">分享</string>
+    <string name="action_delete">删除</string>
+    <string name="action_more">更多</string>
+    <string name="intent_openMap">打开地图</string>
+    <string name="intent_downloadMap">下载地图</string>
+    <string name="warning_error">出现了一些错误</string>
+    <string name="warning_fileDoesntExist">文件不存在</string>
+    <string name="info_pleaseWait">请稍候……</string>
+    <string name="info_deleteQuestion">你确定要删除 {NAME} 么？\n此操作不可撤销！</string>
+    <string name="permissions">权限</string>
+    <string name="permissions_filesApp">文件应用更新</string>
+    <string name="permissions_filesApp_description">文件应用已在2023年9月收到更新，阻止其他应用请求访问 Android/data 文件夹中的文件。\n如果您有此更新，您可能必须卸载它。点击下面的按钮以获取更多信息。</string>
+    <string name="permissions_filesApp_moreInfo">更多信息</string>
+</resources>
