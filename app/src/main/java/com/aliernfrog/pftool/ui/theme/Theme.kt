@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.theme
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,9 +16,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.aliernfrog.pftool.ui.activity.MainActivity
 
 val supportsMaterialYou = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
+@SuppressLint("NewApi")
 @Composable
 fun PFToolTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -34,6 +37,7 @@ fun PFToolTheme(
 
     val view = LocalView.current
     if (!view.isInEditMode) SideEffect {
+        if (view.context !is MainActivity) return@SideEffect
         val activity = view.context as Activity
         val insetsController = WindowCompat.getInsetsController(activity.window, view)
         val transparentColor = Color.Transparent.toArgb()
