@@ -26,9 +26,7 @@ fun CardWithActions(
 ) {
     Card(
         shape = AppComponentShape,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

@@ -31,19 +31,21 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.externalStorageRoot
+import com.aliernfrog.pftool.filesAppMightBlockAndroidData
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
+import com.aliernfrog.pftool.ui.component.FilesDowngradeNotice
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun FolderConfigurationDialog(
     onDismissRequest: () -> Unit,
-    settingsViewModel: SettingsViewModel = getViewModel()
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val folders = remember { SettingsConstant.folders }
@@ -72,6 +74,7 @@ fun FolderConfigurationDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (filesAppMightBlockAndroidData) FilesDowngradeNotice()
                 folders.forEachIndexed { index, pref ->
                     FolderCard(
                         pref = pref,

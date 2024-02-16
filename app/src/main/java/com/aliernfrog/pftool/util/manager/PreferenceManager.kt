@@ -12,14 +12,17 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     var theme by intPreference(ConfigKey.KEY_APP_THEME, Theme.SYSTEM.int)
     var materialYou by booleanPreference(ConfigKey.KEY_APP_MATERIAL_YOU, true)
 
-    // Maps options
+    // General options
     var showChosenMapThumbnail by booleanPreference(ConfigKey.KEY_SHOW_CHOSEN_MAP_THUMBNAIL, true)
     var showMapThumbnailsInList by booleanPreference(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true)
+    var language by stringPreference(ConfigKey.KEY_APP_LANGUAGE, "") // follow system if blank
 
     // Directory options
     var pfMapsDir by stringPreference(ConfigKey.KEY_MAPS_DIR, ConfigKey.RECOMMENDED_MAPS_DIR)
     var exportedMapsDir by stringPreference(ConfigKey.KEY_EXPORTED_MAPS_DIR, ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR)
 
+    // Experimental (developer) options
+    var showMapNameFieldGuide by booleanPreference("showMapNameFieldGuide", true)
     var autoCheckUpdates by booleanPreference(ConfigKey.KEY_APP_AUTO_UPDATES, true)
     var updatesURL by stringPreference(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL)
 }

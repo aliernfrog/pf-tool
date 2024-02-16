@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Card
@@ -42,6 +43,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.RadioButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
@@ -49,20 +51,20 @@ import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.component.form.SwitchRow
 import com.aliernfrog.pftool.ui.dialog.FolderConfigurationDialog
+import com.aliernfrog.pftool.ui.sheet.LanguageSheet
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import com.aliernfrog.toptoast.enum.TopToastType
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    mainViewModel: MainViewModel = getViewModel(),
-    settingsViewModel: SettingsViewModel = getViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
@@ -70,7 +72,10 @@ fun SettingsScreen(
     val version = "${mainViewModel.applicationVersionName} (${mainViewModel.applicationVersionCode})"
 
     AppScaffold(
-        title = stringResource(R.string.settings),
+        topBar = { AppTopBar(
+            title = stringResource(R.string.settings),
+            scrollBehavior = it
+        ) },
         topAppBarState = settingsViewModel.topAppBarState
     ) {
         Column(Modifier.fillMaxSize().verticalScroll(settingsViewModel.scrollState)) {
@@ -136,6 +141,14 @@ fun SettingsScreen(
                 ) {
                     settingsViewModel.foldersDialogShown = true
                 }
+                ButtonRow(
+                    title = stringResource(R.string.settings_general_language),
+                    description = stringResource(R.string.settings_general_language_description),
+                    expanded = true,
+                    arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
+                ) { scope.launch {
+                    settingsViewModel.languageSheetState.show()
+                } }
             }
 
             // About app
@@ -173,6 +186,7 @@ fun SettingsScreen(
                         val icon = when(it.url.split("/")[2]) {
                             "discord.gg" -> painterResource(id = R.drawable.discord)
                             "github.com" -> painterResource(id = R.drawable.github)
+                            "crowdin.com" -> rememberVectorPainter(Icons.Default.Translate)
                             else -> null
                         }
                         ButtonRow(
@@ -196,6 +210,13 @@ fun SettingsScreen(
                     checked = settingsViewModel.showMaterialYouOption,
                     onCheckedChange = {
                         settingsViewModel.showMaterialYouOption = it
+                    }
+                )
+                SwitchRow(
+                    title = stringResource(R.string.settings_experimental_showMapNameFieldGuide),
+                    checked = settingsViewModel.prefs.showMapNameFieldGuide,
+                    onCheckedChange = {
+                        settingsViewModel.prefs.showMapNameFieldGuide = it
                     }
                 )
                 ButtonRow(
@@ -238,16 +259,19 @@ fun SettingsScreen(
                     SettingsConstant.experimentalPrefOptions.forEach {
                         it.setValue(it.default, settingsViewModel.prefs)
                     }
-                    settingsViewModel.topToastState.showToast(
+                    settingsViewModel.topToastState.showAndroidToast(
                         text = R.string.settings_experimental_resetPrefsDone,
-                        icon = Icons.Rounded.Done,
-                        type = TopToastType.ANDROID
+                        icon = Icons.Rounded.Done
                     )
                     GeneralUtil.restartApp(context)
                 }
             }
         }
     }
+
+    LanguageSheet(
+        sheetState = settingsViewModel.languageSheetState
+    )
 
     if (settingsViewModel.foldersDialogShown) FolderConfigurationDialog(
         onDismissRequest = { settingsViewModel.foldersDialogShown = false }

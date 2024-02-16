@@ -1,15 +1,12 @@
 package com.aliernfrog.pftool.ui.sheet
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Update
@@ -22,10 +19,10 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
@@ -39,6 +36,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
 import com.aliernfrog.pftool.ui.component.ButtonIcon
+import com.aliernfrog.pftool.ui.component.SmallDragHandle
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -52,15 +50,7 @@ fun UpdateSheet(
     val uriHandler = LocalUriHandler.current
     BaseModalBottomSheet(
         sheetState = sheetState,
-        dragHandle = {
-            Box(
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .size(32.dp, 4.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
-            )
-        }
+        dragHandle = { SmallDragHandle() }
     ) { bottomPadding ->
         Actions(
             versionName = latestVersionInfo.versionName,
@@ -78,9 +68,10 @@ fun UpdateSheet(
                 .padding(bottom = bottomPadding)
                 .padding(16.dp),
             markdown = latestVersionInfo.body,
-            color = LocalContentColor.current,
             linkColor = MaterialTheme.colorScheme.primary,
-            style = LocalTextStyle.current,
+            style = LocalTextStyle.current.copy(
+                color = LocalContentColor.current
+            ),
             onLinkClicked = {
                 uriHandler.openUri(it)
             }
@@ -109,7 +100,7 @@ private fun Actions(
                 .weight(1f)
                 .horizontalFadingEdge(
                     scrollState = versionNameScrollState,
-                    edgeColor = MaterialTheme.colorScheme.surface,
+                    edgeColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
                     isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                 )
         ) {

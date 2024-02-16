@@ -4,14 +4,20 @@ import android.os.Build
 import android.os.Environment
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+
+const val TAG = "PFToolLogs"
 
 const val TAG = "PFToolLogs"
 
 const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
+const val crowdinURL = "https://crowdin.com/project/pf-tool"
 
 val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
+val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+val filesAppMightBlockAndroidData = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 /**
  * False if the device has Android October 2023 security patches, which made requesting access to Android/data impossible.
@@ -28,6 +34,7 @@ val canRequestAndroidDataAccess: Boolean = false /* TODO try {
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
+    const val KEY_APP_LANGUAGE = "appLanguage"
     const val KEY_APP_THEME = "appTheme"
     const val KEY_APP_MATERIAL_YOU = "materialYou"
     const val KEY_APP_AUTO_UPDATES = "autoUpdates"
@@ -44,7 +51,8 @@ object ConfigKey {
 object SettingsConstant {
     val socials = listOf(
         Social("Polyfield Discord", "https://discord.gg/X6WzGpCgDJ"),
-        Social("PF Tool GitHub", githubRepoURL)
+        Social("PF Tool GitHub", githubRepoURL),
+        Social("PF Tool Crowdin", crowdinURL)
     )
     val folders = listOf(
         PrefEditItem(
@@ -75,4 +83,8 @@ object SettingsConstant {
         ),
         *folders.toTypedArray()
     )
+}
+
+val languages = BuildConfig.LANGUAGES.sorted().map { langCode ->
+    GeneralUtil.getLanguageFromCode(langCode)!!
 }
