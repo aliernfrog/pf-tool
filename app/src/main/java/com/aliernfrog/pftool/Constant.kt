@@ -8,8 +8,6 @@ import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
 const val TAG = "PFToolLogs"
 
-const val TAG = "PFToolLogs"
-
 const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"
@@ -18,19 +16,6 @@ val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"
 val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 val filesAppMightBlockAndroidData = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-
-/**
- * False if the device has Android October 2023 security patches, which made requesting access to Android/data impossible.
- */
-val canRequestAndroidDataAccess: Boolean = false /* TODO try {
-    val securityPatchSplit = Build.VERSION.SECURITY_PATCH.split("-") // 2023-10-01 (YYYY-MM-DD)
-    val year = securityPatchSplit[0].toInt()
-    val month = securityPatchSplit[1].toInt()
-    if (year == 2023) month < 10
-    else year < 2023
-} catch (_: Exception) {
-    true
-}*/
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
