@@ -32,7 +32,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-        //isCoreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -73,5 +73,5 @@ dependencies {
     implementation("dev.rikka.shizuku:provider:$shizukuVersion")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.jeziellago:compose-markdown:0.3.7")
-    //coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }
