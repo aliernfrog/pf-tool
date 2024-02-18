@@ -15,7 +15,7 @@ import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.IFileService
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.enum.ShizukuStatus
-import com.aliernfrog.pftool.impl.FileService
+import com.aliernfrog.pftool.service.FileService
 import com.aliernfrog.toptoast.state.TopToastState
 import rikka.shizuku.Shizuku
 
@@ -45,17 +45,20 @@ class ShizukuViewModel(
     private val userServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, binder: IBinder) {
             Log.d(TAG, "user service connected")
+            topToastState.showToast("user service connected")
             val service = IFileService.Stub.asInterface(binder)
             val files = service.listFiles(Environment.getExternalStorageDirectory().toString()+"/Android/data/com.MA.Polyfield/files")
             topToastState.showToast(files.joinToString("\n"))
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
+            topToastState.showToast("user service disconnected")
             Log.d(TAG, "user service disconnected")
         }
     }
 
     private val userServiceArgs = Shizuku.UserServiceArgs(ComponentName(BuildConfig.APPLICATION_ID, FileService::class.java.name))
+        .daemon(false)
         .processNameSuffix("service")
         .debuggable(BuildConfig.DEBUG)
         .version(BuildConfig.VERSION_CODE)
@@ -83,7 +86,7 @@ class ShizukuViewModel(
         return status
     }
 
-    fun isInstalled(context: Context): Boolean {
+    private fun isInstalled(context: Context): Boolean {
         return try {
             context.packageManager.getPackageInfo(SHIZUKU_PACKAGE, 0) != null
         } catch (e: Exception) {
