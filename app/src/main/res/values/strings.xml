@@ -31,20 +31,26 @@
         Try choosing the Polyfield folder in PF Tool one more time. If you can\'t do that, unfortunately, there\'s nothing much you can do for now.\n\n
         Check [this page]({MORE_INFO_URL}) for more info, possible workarounds and the new fix which is currently being worked on.
     </string>
+    <string name="permissions_info">Following folders have to be configured before continuing:</string>
     <string name="permissions_chooseFolder">Choose folder</string>
     <string name="permissions_recommendedFolder">Recommended folder</string>
     <string name="permissions_recommendedFolder_a8Hint">After clicking \"Okay\", this folder will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>
     <string name="permissions_recommendedFolder_a7Hint">After clicking \"Okay\", navigate to this folder and click \"USE THIS FOLDER\"</string>
-    <string name="permissions_recommendedFolder_doesNotExist">This folder does not exist?</string>
-    <string name="permissions_recommendedFolder_manuallyCreate">* If this folder doesn\'t exist, you can create it manually</string>
-    <string name="permissions_recommendedFolder_openPFToCreate">* If this folder doesn\'t exist, you can either create it manually or start Polyfield once to make it create the folder automatically</string>
-    <string name="permissions_notRecommendedFolder_description">The folder below is recommended:</string>
-    <string name="permissions_notRecommendedFolder_question">Do you want to go back and choose the recommended one, or use the unrecommended one?</string>
+    <string name="permissions_recommendedFolder_doesNotExist">This folder is not there?</string>
+    <string name="permissions_notRecommendedFolder_description">You have not chosen the recommended folder:</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Choose recommended folder</string>
-    <string name="permissions_notRecommendedFolder_useUnrecommendedFolder">Use unrecommended folder</string>
+    <string name="permissions_notRecommendedFolder_advanced_show">Show advanced options</string>
+    <string name="permissions_notRecommendedFolder_advanced_hide">Hide advanced options</string>
+    <string name="permissions_notRecommendedFolder_useAnyway">Use anyway (advanced)</string>
+    <string name="permissions_makeSureFolderExists">Make sure Polyfield is started at least once</string>
+    <string name="permissions_makeSureFolderExists_description">Polyfield should create the folders PF Tool needs automatically on start</string>
+    <string name="permissions_uninstallFilesAppUpdates">Try uninstalling updates of the Files app</string>
+    <string name="permissions_uninstallFilesAppUpdates_description">Files app on your device might have an update which prevents PF Tool from requesting access to Polyfield maps</string>
     <string name="permissions_maps">Polyfield maps folder</string>
     <string name="permissions_maps_description">You need to choose the folder where your Polyfield maps are stored</string>
     <string name="permissions_maps_recommended">Polyfield maps are stored in this folder</string>
+    <string name="permissions_maps_openPFToCreate">Make sure to start Polyfield once to make it create this folder</string>
+    <string name="permissions_maps_useUnrecommendedAnyway">Only do this if you are sure that Polyfield stores your maps here, or if you are experimenting</string>
     <string name="permissions_exportedMaps">Exported maps folder</string>
     <string name="permissions_exportedMaps_description">You need to choose the folder where you want to save your exported maps</string>
     <string name="permissions_exportedMaps_recommended">PF Tool used this folder in older versions, choose this folder if you want to access maps you have exported before</string>
@@ -125,6 +131,9 @@
     <string name="settings_general_folders_openAndroidData">Open Android/data folder</string>
     <string name="settings_general_folders_maps">Maps folder</string>
     <string name="settings_general_folders_exportedMaps">Exported maps folder</string>
+    <string name="settings_general_fileManagamentService">File management method</string>
+    <string name="settings_general_fileManagementService_saf">Scoped storage</string>
+    <string name="settings_general_fileManagementService_shizuku">Shizuku</string>
     <string name="settings_general_language">Language</string>
     <string name="settings_general_language_description">Select the language of PF Tool</string>
     <string name="settings_general_language_select">Select language</string>

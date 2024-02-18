@@ -6,13 +6,16 @@ import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,10 +25,10 @@ import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.filesAppMightBlockAndroidData
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
-import com.aliernfrog.pftool.ui.component.CardWithActions
 import com.aliernfrog.pftool.ui.component.FilesDowngradeNotice
+import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
-import com.aliernfrog.pftool.ui.dialog.NotRecommendedFolderDialog
+import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
@@ -86,15 +89,13 @@ private fun PermissionsList(
 
     val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
         if (it == null) return@rememberLauncherForActivityResult
-        val recommendedPath = activePermissionData?.recommendedPath
-        if (recommendedPath != null) {
+        if (activePermissionData?.forceRecommendedPath == true) {
+            val recommendedPath = activePermissionData?.recommendedPath
             val resolvedPath = it.resolvePath()
             val isRecommendedPath = resolvedPath.equals(recommendedPath, ignoreCase = true)
             if (!isRecommendedPath) unrecommendedPathWarningUri = it
             else takePersistableUriPermissions(it)
-        } else {
-            takePersistableUriPermissions(it)
-        }
+        } else takePersistableUriPermissions(it)
     })
 
     fun openFolderPicker(permissionData: PermissionData) {
@@ -115,7 +116,17 @@ private fun PermissionsList(
             )
         }
 
-        items(missingPermissions) { permissionData ->
+        item {
+            Text(
+                text = stringResource(R.string.permissions_info),
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 4.dp
+                )
+            )
+        }
+
+        itemsIndexed(missingPermissions) { index, permissionData ->
             var introDialogShown by remember { mutableStateOf(false) }
             if (introDialogShown) ChooseFolderIntroDialog(
                 permissionData = permissionData,
@@ -126,27 +137,35 @@ private fun PermissionsList(
                 }
             )
 
-            CardWithActions(
-                title = stringResource(permissionData.titleId),
-                buttons = {
-                    Button(
-                        onClick = {
-                            if (permissionData.recommendedPath != null && permissionData.recommendedPathDescriptionId != null)
-                                introDialogShown = true
-                            else openFolderPicker(permissionData)
+            fun onClick() {
+                if (permissionData.recommendedPath != null && permissionData.recommendedPathDescription != null)
+                    introDialogShown = true
+                else openFolderPicker(permissionData)
+            }
+
+            if (index != 0) DividerRow(Modifier.fillMaxWidth())
+            ListItem(
+                headlineContent = { Text(stringResource(permissionData.title)) },
+                supportingContent = {
+                    Column {
+                        permissionData.content()
+                        Button(
+                            onClick = ::onClick,
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .padding(top = 4.dp)
+                        ) {
+                            Text(stringResource(R.string.permissions_chooseFolder))
                         }
-                    ) {
-                        Text(stringResource(R.string.permissions_chooseFolder))
                     }
                 },
-                content = permissionData.content,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.clickable(onClick = ::onClick)
             )
         }
     }
 
     unrecommendedPathWarningUri?.let { uri ->
-        NotRecommendedFolderDialog(
+        UnrecommendedFolderDialog(
             permissionData = activePermissionData!!,
             onDismissRequest = { unrecommendedPathWarningUri = null },
             onUseUnrecommendedFolderRequest = {

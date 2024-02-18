@@ -25,10 +25,11 @@ fun MapsPermissionsScreen(
 ) {
     val permissions = remember { arrayOf(
         PermissionData(
-            titleId = R.string.permissions_maps,
+            title = R.string.permissions_maps,
             recommendedPath = ConfigKey.RECOMMENDED_MAPS_DIR,
-            recommendedPathDescriptionId = R.string.permissions_maps_recommended,
-            doesntExistHintId = R.string.permissions_recommendedFolder_openPFToCreate,
+            recommendedPathDescription = R.string.permissions_maps_recommended,
+            createFolderHint = R.string.permissions_maps_openPFToCreate,
+            useUnrecommendedAnywayDescription = R.string.permissions_maps_useUnrecommendedAnyway,
             getUri = { mapsViewModel.prefs.pfMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.pfMapsDir = it.toString()
@@ -38,9 +39,10 @@ fun MapsPermissionsScreen(
             }
         ),
         PermissionData(
-            titleId = R.string.permissions_exportedMaps,
+            title = R.string.permissions_exportedMaps,
             recommendedPath = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
-            recommendedPathDescriptionId = R.string.permissions_exportedMaps_recommended,
+            recommendedPathDescription = R.string.permissions_exportedMaps_recommended,
+            forceRecommendedPath = false,
             getUri = { mapsViewModel.prefs.exportedMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.exportedMapsDir = it.toString()

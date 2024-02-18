@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
+import com.aliernfrog.pftool.enum.FileManagementService
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
@@ -53,6 +54,7 @@ import com.aliernfrog.pftool.ui.component.form.SwitchRow
 import com.aliernfrog.pftool.ui.dialog.FolderConfigurationDialog
 import com.aliernfrog.pftool.ui.sheet.LanguageSheet
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
+import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
@@ -93,16 +95,13 @@ fun SettingsScreen(
                     expanded = settingsViewModel.themeOptionsExpanded,
                     title = stringResource(R.string.settings_appearance_theme),
                     description = stringResource(R.string.settings_appearance_theme_description),
+                    trailingButtonText = stringResource(Theme.entries[settingsViewModel.prefs.theme].label),
                     onClickHeader = {
                         settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
                     }
                 ) {
                     RadioButtons(
-                        options = listOf(
-                            stringResource(R.string.settings_appearance_theme_system),
-                            stringResource(R.string.settings_appearance_theme_light),
-                            stringResource(R.string.settings_appearance_theme_dark)
-                        ),
+                        options = Theme.entries.map { stringResource(it.label) },
                         selectedOptionIndex = settingsViewModel.prefs.theme
                     ) {
                         settingsViewModel.prefs.theme = it
@@ -133,6 +132,9 @@ fun SettingsScreen(
                 ) {
                     settingsViewModel.prefs.showMapThumbnailsInList = it
                 }
+                val enabledFileManagementService = FileManagementService.entries.find {
+                    it.isEnabled(settingsViewModel.prefs)
+                }
                 ButtonRow(
                     title = stringResource(R.string.settings_general_folders),
                     description = stringResource(R.string.settings_general_folders_description),
@@ -140,6 +142,22 @@ fun SettingsScreen(
                     arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
                 ) {
                     settingsViewModel.foldersDialogShown = true
+                }
+                ExpandableRow(
+                    expanded = settingsViewModel.fileServiceOptionsExpanded,
+                    title = stringResource(R.string.settings_general_fileManagamentService),
+                    trailingButtonText = enabledFileManagementService?.let { stringResource(it.label) },
+                    onClickHeader = {
+                        settingsViewModel.fileServiceOptionsExpanded = !settingsViewModel.fileServiceOptionsExpanded
+                    }
+                ) {
+                    RadioButtons(
+                        options = FileManagementService.entries.map { stringResource(it.label) },
+                        selectedOptionIndex = enabledFileManagementService?.ordinal ?: 0,
+                        onSelect = {
+                            FileManagementService.entries[it].enable(settingsViewModel.prefs)
+                        }
+                    )
                 }
                 ButtonRow(
                     title = stringResource(R.string.settings_general_language),
@@ -278,7 +296,6 @@ fun SettingsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateNotification(
     isShown: Boolean,
