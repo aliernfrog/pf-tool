@@ -11,6 +11,7 @@ import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import rikka.shizuku.Shizuku
 
+
 class ShizukuViewModel(
     context: Context
 ) : ViewModel() {
@@ -19,21 +20,19 @@ class ShizukuViewModel(
     }
 
     var status by mutableStateOf(ShizukuStatus.UNKNOWN)
-    private var binderRunning by mutableStateOf(false)
     val installed: Boolean
         get() = status != ShizukuStatus.NOT_INSTALLED && status != ShizukuStatus.UNKNOWN
 
     private val binderReceivedListener = Shizuku.OnBinderReceivedListener {
-        binderRunning = true
         checkAvailability(context)
     }
     private val binderDeadListener = Shizuku.OnBinderDeadListener {
-        binderRunning = false
         checkAvailability(context)
     }
     private val permissionResultListener = Shizuku.OnRequestPermissionResultListener { _ /* requestCode */, _ /*grantResult*/ ->
         checkAvailability(context)
     }
+
 
     init {
         Shizuku.addBinderReceivedListener(binderReceivedListener)
@@ -44,7 +43,7 @@ class ShizukuViewModel(
     fun checkAvailability(context: Context): ShizukuStatus {
         status = try {
             if (!isInstalled(context)) ShizukuStatus.NOT_INSTALLED
-            else if (!binderRunning) ShizukuStatus.WAITING_FOR_BINDER
+            else if (!Shizuku.pingBinder()) ShizukuStatus.WAITING_FOR_BINDER
             else {
                 if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) ShizukuStatus.AVAILABLE
                 else ShizukuStatus.UNAUTHORIZED
@@ -56,7 +55,7 @@ class ShizukuViewModel(
         return status
     }
 
-    fun isInstalled(context: Context): Boolean {
+    private fun isInstalled(context: Context): Boolean {
         return try {
             context.packageManager.getPackageInfo(SHIZUKU_PACKAGE, 0) != null
         } catch (e: Exception) {
