@@ -10,6 +10,7 @@ val viewModelModule = module {
     singleOf(::ShizukuViewModel)
 
     singleOf(::SettingsViewModel)
+    singleOf(::PermissionsViewModel)
     singleOf(::MapsViewModel)
     singleOf(::MapsListViewModel)
 }

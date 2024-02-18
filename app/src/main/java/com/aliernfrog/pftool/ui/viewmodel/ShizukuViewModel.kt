@@ -1,22 +1,15 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.IBinder
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import rikka.shizuku.Shizuku
-import rikka.shizuku.ShizukuBinderWrapper
-import rikka.shizuku.ShizukuProvider
-import rikka.shizuku.SystemServiceHelper
 
 class ShizukuViewModel(
     context: Context
@@ -25,44 +18,41 @@ class ShizukuViewModel(
         const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
     }
 
-    private val packageName = context.packageName
-
     var status by mutableStateOf(ShizukuStatus.UNKNOWN)
-
+    private var binderRunning by mutableStateOf(false)
     val installed: Boolean
         get() = status != ShizukuStatus.NOT_INSTALLED && status != ShizukuStatus.UNKNOWN
 
+    private val binderReceivedListener = Shizuku.OnBinderReceivedListener {
+        binderRunning = true
+        checkAvailability(context)
+    }
+    private val binderDeadListener = Shizuku.OnBinderDeadListener {
+        binderRunning = false
+        checkAvailability(context)
+    }
     private val permissionResultListener = Shizuku.OnRequestPermissionResultListener { _ /* requestCode */, _ /*grantResult*/ ->
         checkAvailability(context)
     }
 
-    var takePersistableUriPermission: ((Uri, Int) -> Unit)? = null
-        private set
-
     init {
-        // TODO do not run if no need?
+        Shizuku.addBinderReceivedListener(binderReceivedListener)
+        Shizuku.addBinderDeadListener(binderDeadListener)
         Shizuku.addRequestPermissionResultListener(permissionResultListener)
-        checkAvailability(context)
     }
 
     fun checkAvailability(context: Context): ShizukuStatus {
         status = try {
             if (!isInstalled(context)) ShizukuStatus.NOT_INSTALLED
+            else if (!binderRunning) ShizukuStatus.WAITING_FOR_BINDER
             else {
-                val permission = if (Shizuku.isPreV11()) Shizuku.checkSelfPermission()
-                else ContextCompat.checkSelfPermission(context, ShizukuProvider.PERMISSION)
-                if (permission == PackageManager.PERMISSION_GRANTED) {
-                    if (takePersistableUriPermission == null) getUriGrantsManager()
-                    ShizukuStatus.AVAILABLE
-                }
+                if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) ShizukuStatus.AVAILABLE
                 else ShizukuStatus.UNAUTHORIZED
             }
         } catch (e: Exception) {
             Log.e(TAG, "updateStatus: ", e)
             ShizukuStatus.UNKNOWN
         }
-        Log.d(TAG, "updateStatus: $status")
-        Log.d(TAG, "updateStatus: installed = $installed")
         return status
     }
 
@@ -75,22 +65,9 @@ class ShizukuViewModel(
         }
     }
 
-    @SuppressLint("PrivateApi")
-    fun getUriGrantsManager() {
-        val uriGrantsManagerServiceClass = Class.forName("com.android.service.uri.UriGrantsManagerService")
-        val uriGrantsManagerStub = Class.forName("android.app.IUriGrantsManager\$Stub")
-        Log.d(TAG, uriGrantsManagerStub.methods   .joinToString(", ") { it.name })
-        val asInterfaceMethod = uriGrantsManagerStub.getMethod("asInterface", IBinder::class.java)
-        // takePersistableUriPermission(uri: Uri, modeFlags: Int, toPackage: String?, userId: Int)
-        val takePersistableUriPermissionMethod = uriGrantsManagerServiceClass.getMethod("grantUriPermissionUnchecked", Uri::class.java, Int::class.java, String::class.java, Int::class.java)
-        val uriGrantsManagerInstance = asInterfaceMethod.invoke(null, ShizukuBinderWrapper(SystemServiceHelper.getSystemService("uri_grants")))
-        takePersistableUriPermission = { uri, takeFlags ->
-            Log.d(TAG, "granting permission to $uri with Shizuku..")
-            takePersistableUriPermissionMethod.invoke(uriGrantsManagerInstance, uri, takeFlags, packageName, 0)
-        }
-    }
-
     override fun onCleared() {
+        Shizuku.removeBinderReceivedListener(binderReceivedListener)
+        Shizuku.removeBinderDeadListener(binderDeadListener)
         Shizuku.removeRequestPermissionResultListener(permissionResultListener)
         super.onCleared()
     }

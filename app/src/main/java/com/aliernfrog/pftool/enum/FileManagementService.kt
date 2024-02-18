@@ -12,7 +12,7 @@ enum class FileManagementService(
     SAF(
         label = R.string.settings_general_fileManagementService_saf,
         isEnabled = {
-            it.permissionsSetupGuideLevel < PermissionSetupGuideLevel.SETUP_SHIZUKU.ordinal
+            it.permissionsSetupGuideLevel < PermissionSetupGuideLevel.SHIZUKU.ordinal
         },
         enable = {
             it.permissionsSetupGuideLevel = 0
@@ -22,10 +22,10 @@ enum class FileManagementService(
     SHIZUKU(
         label = R.string.settings_general_fileManagementService_shizuku,
         isEnabled = {
-            it.permissionsSetupGuideLevel >= PermissionSetupGuideLevel.SETUP_SHIZUKU.ordinal
+            it.permissionsSetupGuideLevel >= PermissionSetupGuideLevel.SHIZUKU.ordinal
         },
         enable = {
-            it.permissionsSetupGuideLevel = PermissionSetupGuideLevel.SETUP_SHIZUKU.ordinal
+            it.permissionsSetupGuideLevel = PermissionSetupGuideLevel.SHIZUKU.ordinal
         }
     )
 }

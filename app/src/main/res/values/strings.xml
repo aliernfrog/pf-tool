@@ -31,29 +31,38 @@
         Try choosing the Polyfield folder in PF Tool one more time. If you can\'t do that, unfortunately, there\'s nothing much you can do for now.\n\n
         Check [this page]({MORE_INFO_URL}) for more info, possible workarounds and the new fix which is currently being worked on.
     </string>
-    <string name="permissions_info">Following folders have to be configured before continuing:</string>
     <string name="permissions_chooseFolder">Choose folder</string>
     <string name="permissions_recommendedFolder">Recommended folder</string>
     <string name="permissions_recommendedFolder_a8Hint">After clicking \"Okay\", this folder will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>
     <string name="permissions_recommendedFolder_a7Hint">After clicking \"Okay\", navigate to this folder and click \"USE THIS FOLDER\"</string>
     <string name="permissions_recommendedFolder_doesNotExist">This folder is not there?</string>
-    <string name="permissions_notRecommendedFolder_description">You have not chosen the recommended folder:</string>
+    <string name="permissions_notRecommendedFolder_description">You have not chosen the recommended folder below:</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Choose recommended folder</string>
     <string name="permissions_notRecommendedFolder_advanced_show">Show advanced options</string>
     <string name="permissions_notRecommendedFolder_advanced_hide">Hide advanced options</string>
-    <string name="permissions_notRecommendedFolder_useAnyway">Use anyway (advanced)</string>
-    <string name="permissions_makeSureFolderExists">Make sure Polyfield is started at least once</string>
-    <string name="permissions_makeSureFolderExists_description">Polyfield should create the folders PF Tool needs automatically on start</string>
+    <string name="permissions_notRecommendedFolder_useAnyway">Use the selected folder anyway</string>
     <string name="permissions_uninstallFilesAppUpdates">Try uninstalling updates of the Files app</string>
     <string name="permissions_uninstallFilesAppUpdates_description">Files app on your device might have an update which prevents PF Tool from requesting access to Polyfield maps</string>
+    <string name="permissions_uninstallFilesAppUpdates_uninstall">Uninstall updates</string>
+    <string name="permissions_uninstallFilesAppUpdates_guide">Find an option to uninstall updates and click it. If unable to do return to PF Tool</string>
     <string name="permissions_maps">Polyfield maps folder</string>
     <string name="permissions_maps_description">You need to choose the folder where your Polyfield maps are stored</string>
     <string name="permissions_maps_recommended">Polyfield maps are stored in this folder</string>
     <string name="permissions_maps_openPFToCreate">Make sure to start Polyfield once to make it create this folder</string>
-    <string name="permissions_maps_useUnrecommendedAnyway">Only do this if you are sure that Polyfield stores your maps here, or if you are experimenting</string>
+    <string name="permissions_maps_useUnrecommendedAnyway">Only do this if you are sure that Polyfield stores your maps in a different folder, or if you are experimenting</string>
     <string name="permissions_exportedMaps">Exported maps folder</string>
     <string name="permissions_exportedMaps_description">You need to choose the folder where you want to save your exported maps</string>
     <string name="permissions_exportedMaps_recommended">PF Tool used this folder in older versions, choose this folder if you want to access maps you have exported before</string>
+    <string name="permissions_shizuku_introduction">Shizuku is an app which lets apps use shell permissions by making use of wireless debugging.\nPF Tool can also use it to access Polyfield maps</string>
+    <string name="permissions_shizuku_warning">Shizuku mode is enabled. If you were unable to grant PF Tool access to Polyfield folders, this is the only solution for now.\nClick to return to normal mode</string>
+    <string name="permissions_shizuku_install_title">Install Shizuku to get started</string>
+    <string name="permissions_shizuku_install_install">Install</string>
+    <string name="permissions_shizuku_notRunning">Shizuku is not running</string>
+    <string name="permissions_shizuku_notRunning_description">Start Shizuku service to proceed</string>
+    <string name="permissions_shizuku_notRunning_openShizuku">Open Shizuku</string>
+    <string name="permissions_shizuku_permission">Permission needed</string>
+    <string name="permissions_shizuku_permission_description">PF Tool does not have permissions to use Shizuku</string>
+    <string name="permissions_shizuku_permission_grant">Grant permission</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
     <string name="maps_actionFailed">{SUCCESSES} succeeded, {FAILS} failed</string>

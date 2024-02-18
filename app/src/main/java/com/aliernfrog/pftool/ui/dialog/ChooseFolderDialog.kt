@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.dialog
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -79,7 +80,9 @@ fun ChooseFolderIntroDialog(
 @Composable
 fun UnrecommendedFolderDialog(
     permissionData: PermissionData,
+    chosenUri: Uri,
     onDismissRequest: () -> Unit,
+    onFolderDoesNotExist: () -> Unit,
     onUseUnrecommendedFolderRequest: () -> Unit,
     onChooseFolderRequest: () -> Unit
 ) {
@@ -119,10 +122,10 @@ fun UnrecommendedFolderDialog(
                 ClickableText(
                     text = stringResource(R.string.permissions_recommendedFolder_doesNotExist)
                 ) {
-                    /* TODO */
+                    onFolderDoesNotExist()
                 }
                 
-                ClickableText(
+                if (chosenUri != Uri.EMPTY) ClickableText(
                     text = stringResource(
                         if (showAdvancedOptions) R.string.permissions_notRecommendedFolder_advanced_hide
                         else R.string.permissions_notRecommendedFolder_advanced_show

@@ -5,10 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
-import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.lazygeniouz.dfc.file.DocumentFileCompat
-import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 
 
@@ -51,9 +49,7 @@ fun Uri.resolvePath(): String? {
 }
 
 fun Uri.takePersistablePermissions(context: Context) {
-    val shizukuViewModel by inject<ShizukuViewModel>(ShizukuViewModel::class.java)
     val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
     context.grantUriPermission(context.packageName, this, takeFlags)
-    shizukuViewModel.takePersistableUriPermission?.invoke(this, takeFlags)
-        ?: context.contentResolver.takePersistableUriPermission(this, takeFlags)
+    context.contentResolver.takePersistableUriPermission(this, takeFlags)
 }
