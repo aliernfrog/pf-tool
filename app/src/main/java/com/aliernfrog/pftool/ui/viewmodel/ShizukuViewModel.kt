@@ -4,15 +4,17 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.os.Environment
 import android.os.IBinder
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.IFileService
+import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import com.aliernfrog.pftool.service.FileService
@@ -32,10 +34,14 @@ class ShizukuViewModel(
     val installed: Boolean
         get() = status != ShizukuStatus.NOT_INSTALLED && status != ShizukuStatus.UNKNOWN
 
+    var fileService: IFileService? = null
+    var fileServiceRunning by mutableStateOf(false)
+
     private val binderReceivedListener = Shizuku.OnBinderReceivedListener {
         checkAvailability(context)
     }
     private val binderDeadListener = Shizuku.OnBinderDeadListener {
+        fileServiceRunning = false
         checkAvailability(context)
     }
     private val permissionResultListener = Shizuku.OnRequestPermissionResultListener { _ /* requestCode */, _ /*grantResult*/ ->
@@ -45,15 +51,17 @@ class ShizukuViewModel(
     private val userServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, binder: IBinder) {
             Log.d(TAG, "user service connected")
-            topToastState.showToast("user service connected")
-            val service = IFileService.Stub.asInterface(binder)
-            val files = service.listFiles(Environment.getExternalStorageDirectory().toString()+"/Android/data/com.MA.Polyfield/files")
-            topToastState.showToast(files.joinToString("\n"))
+            fileService = IFileService.Stub.asInterface(binder)
+            fileServiceRunning = true
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-            topToastState.showToast("user service disconnected")
             Log.d(TAG, "user service disconnected")
+            fileServiceRunning = false
+            topToastState.showToast(
+                text = R.string.info_shizuku_disconnected,
+                icon = Icons.Default.Info
+            )
         }
     }
 

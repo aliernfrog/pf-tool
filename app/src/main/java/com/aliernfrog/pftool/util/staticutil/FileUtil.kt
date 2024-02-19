@@ -5,6 +5,7 @@ import android.content.Intent
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.data.ServiceFile
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
@@ -79,6 +80,7 @@ class FileUtil {
             val fileName = when (file) {
                 is DocumentFileCompat -> file.name
                 is File -> file.name
+                is ServiceFile -> TODO()
                 else -> throw IllegalArgumentException()
             }
             val inputStream = when(file) {

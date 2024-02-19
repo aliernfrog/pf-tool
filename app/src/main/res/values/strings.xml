@@ -15,6 +15,7 @@
     <string name="warning_fileDoesntExist">File does not exist</string>
     <string name="info_pleaseWait">Please wait..</string>
     <string name="info_deleteQuestion">Are you sure you want to delete {NAME}?\nThis can NOT be undone!</string>
+    <string name="info_shizuku_disconnected">Disconnected from Shizuku</string>
     <string name="permissions">Permissions</string>
     <string name="permissions_filesApp">Files app updates</string>
     <string name="permissions_filesApp_description">The Files app has received an update on September 2023 which prevents other apps from requesting access to files inside Android/data folder.\nIf you have this update, you may have to uninstall it. Click the button below for more info.</string>

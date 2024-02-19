@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
 
-enum class PermissionSetupGuideLevel(
+enum class SAFWorkaroundLevel(
     @StringRes val title: Int? = null,
     @StringRes val description: Int? = null,
     val buttons: @Composable () -> Unit = {}

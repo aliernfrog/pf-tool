@@ -5,8 +5,14 @@ import android.util.Log
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
+import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.data.delete
+import com.aliernfrog.pftool.data.exists
+import com.aliernfrog.pftool.data.nameWithoutExtension
+import com.aliernfrog.pftool.data.renameTo
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -29,6 +35,7 @@ class MapFile(
     val file: Any
 ): KoinComponent {
     val mapsViewModel by inject<MapsViewModel>()
+    private val shizukuViewModel by inject<ShizukuViewModel>()
     val topToastState by inject<TopToastState>()
     private val contextUtils by inject<ContextUtils>()
 
@@ -38,6 +45,7 @@ class MapFile(
     val name: String = when (file) {
         is File -> if (file.isFile) file.nameWithoutExtension else file.name
         is DocumentFileCompat -> if (file.isFile()) file.nameWithoutExtension else file.name
+        is ServiceFile -> if (file.isFile) file.nameWithoutExtension else file.name
         else -> throw IllegalArgumentException("Unknown class for a map. Supply File or DocumentFileCompat.")
     }
 
@@ -47,6 +55,7 @@ class MapFile(
     private val fileName: String = when (file) {
         is File -> file.name
         is DocumentFileCompat -> file.name
+        is ServiceFile -> file.name
         else -> ""
     }
 
@@ -56,13 +65,14 @@ class MapFile(
     val path: String = when (file) {
         is File -> file.absolutePath
         is DocumentFileCompat -> file.uri.toString()
+        is ServiceFile -> file.path
         else -> ""
     }
 
     /**
      * Whether the file is .zip.
      */
-    val isZip: Boolean = fileName.endsWith(".zip")
+    val isZip: Boolean = fileName.lowercase().endsWith(".zip")
 
     /**
      * Size of the map file.
@@ -70,6 +80,7 @@ class MapFile(
     val size: Long = when (file) {
         is File -> file.size
         is DocumentFileCompat -> file.size
+        is ServiceFile -> file.size
         else -> -1
     }
 
@@ -79,6 +90,7 @@ class MapFile(
     val lastModified: Long = when (file) {
         is File -> file.lastModified()
         is DocumentFileCompat -> file.lastModified
+        is ServiceFile -> file.lastModified
         else -> -1
     }
 
@@ -92,9 +104,10 @@ class MapFile(
     /**
      * Thumbnail model of the map.
      */
-    val thumbnailModel: String? = if (importedState != MapImportedState.IMPORTED) null else when (file) {
+    val thumbnailModel: Any? = if (importedState != MapImportedState.IMPORTED) null else when (file) {
         is File -> if (file.isDirectory) "$path/Thumbnail.jpg" else null
         is DocumentFileCompat -> if (file.isDirectory()) file.findFile("Thumbnail.jpg")?.uri?.toString() else null
+        is ServiceFile -> if (!file.isFile) shizukuViewModel.fileService!!.getByteArray("$path/Thumbnail.jpg") else null
         else -> null
     }
 
@@ -130,6 +143,15 @@ class MapFile(
                 file.renameTo(toName)
                 file.parentFile!!.findFile(toName)!!
             }
+            is ServiceFile -> {
+                val output = shizukuViewModel.fileService!!.getFile((file.parentPath?.plus("/") ?: "") + toName)
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                file.renameTo(output.path)
+                shizukuViewModel.fileService!!.getFile(output.path)
+            }
             else -> {}
         }
         return MapActionResult(
@@ -146,19 +168,20 @@ class MapFile(
         newName: String = mapsViewModel.resolveMapNameInput()
     ): MapActionResult {
         val toName = fileName.replace(name, newName)
-        when (file) {
+        val newFile: Any = when (file) {
             is File -> {
-                val targetFile = File((file.parent?.plus("/") ?: "") + toName)
-                if (targetFile.exists()) return MapActionResult(
+                val output = File((file.parent?.plus("/") ?: "") + toName)
+                if (output.exists()) return MapActionResult(
                     successful = false,
                     messageId = R.string.maps_alreadyExists
                 )
                 if (file.isFile) file.inputStream().use { inputStream ->
-                    targetFile.outputStream().use { outputStream ->
+                    output.outputStream().use { outputStream ->
                         inputStream.copyTo(outputStream)
                     }
                 }
-                else FileUtil.copyDirectory(file, targetFile)
+                else FileUtil.copyDirectory(file, output)
+                File((file.parent?.plus("/") ?: "") + toName)
             }
             is DocumentFileCompat -> {
                 if (file.parentFile!!.findFile(toName)?.exists() == true) return MapActionResult(
@@ -173,11 +196,17 @@ class MapFile(
                 else FileUtil.copyDirectory(
                     file, file.parentFile!!.createDirectory(toName)!!, context
                 )
+                file.parentFile!!.findFile(toName)!!
             }
-        }
-        val newFile: Any = when (file) {
-            is File -> File((file.parent?.plus("/") ?: "") + toName)
-            is DocumentFileCompat -> file.parentFile!!.findFile(toName)!!
+            is ServiceFile -> {
+                val output = shizukuViewModel.fileService!!.getFile((file.parentPath?.plus("/") ?: "") + toName)
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                shizukuViewModel.fileService!!.copy(file.path, output.path)
+                shizukuViewModel.fileService!!.getFile(output.path)
+            }
             else -> throw IllegalArgumentException("File class was somehow unknown")
         }
         return MapActionResult(
@@ -197,18 +226,43 @@ class MapFile(
         val zipPath = when (file) {
             is File -> file.absolutePath
             is DocumentFileCompat -> file.uri.cacheFile(context)!!.absolutePath
+            is ServiceFile -> file.path
             else -> throw IllegalArgumentException("File class was somehow unknown")
         }
-        var output = mapsViewModel.mapsFile.findFile(withName)
-        if (output?.exists() == true) return MapActionResult(
-            successful = false,
-            messageId = R.string.maps_alreadyExists
-        )
-        output = mapsViewModel.mapsFile.createDirectory(withName)
-        ZipUtil.unzipMap(zipPath, output!!, context)
+        val newFile: Any = when (val mapsFile = mapsViewModel.mapsFile) {
+            is File -> {
+                val output = File(mapsFile.absolutePath + "/$withName")
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                ZipUtil.unzipMap(zipPath, output)
+                File(mapsFile.absolutePath + "/$withName")
+            }
+            is DocumentFileCompat -> {
+                var output = mapsFile.findFile(withName)
+                if (output?.exists() == true) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                output = mapsFile.createDirectory(withName)
+                ZipUtil.unzipMap(zipPath, output!!, context)
+                mapsFile.findFile(withName)!!
+            }
+            is ServiceFile -> {
+                val output = shizukuViewModel.fileService!!.getFile(mapsFile.path + "/$withName")
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                shizukuViewModel.fileService!!.unzipMap(zipPath, output.path)
+                shizukuViewModel.fileService!!.getFile(output.path)
+            }
+            else -> throw IllegalArgumentException("File class was somehow unknown")
+        }
         return MapActionResult(
             successful = true,
-            newFile = mapsViewModel.mapsFile.findFile(withName)
+            newFile = newFile
         )
     }
 
@@ -221,20 +275,40 @@ class MapFile(
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
         val zipName = "$withName.zip"
-        var output = mapsViewModel.exportedMapsFile.findFile(zipName)
-        if (output?.exists() == true) return MapActionResult(
-            successful = false,
-            messageId = R.string.maps_alreadyExists
-        )
-        output = mapsViewModel.exportedMapsFile.createFile("application/zip", zipName)
-        when (file) {
-            is File -> ZipUtil.zipMap(file, output!!, context)
-            is DocumentFileCompat -> ZipUtil.zipMap(file, output!!, context)
+        val newFile: Any = when (val exportedMapsFile = mapsViewModel.exportedMapsFile) {
+            is File -> {
+                val output = File(exportedMapsFile.absolutePath+"/$zipName")
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                ZipUtil.zipMap(file as File, output)
+                File(output.absolutePath)
+            }
+            is DocumentFileCompat -> {
+                var output = exportedMapsFile.findFile(zipName)
+                if (output?.exists() == true) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                output = exportedMapsFile.createFile("application/zip", zipName)!!
+                ZipUtil.zipMap(file as DocumentFileCompat, output, context)
+                exportedMapsFile.findFile(zipName)!!
+            }
+            is ServiceFile -> {
+                val output = shizukuViewModel.fileService!!.getFile(exportedMapsFile.path+"/$zipName")
+                if (output.exists()) return MapActionResult(
+                    successful = false,
+                    messageId = R.string.maps_alreadyExists
+                )
+                shizukuViewModel.fileService!!.zipMap(path, output.path)
+                shizukuViewModel.fileService!!.getFile(output.path)
+            }
             else -> throw IllegalArgumentException("File class was somehow unknown")
         }
         return MapActionResult(
             successful = true,
-            newFile = mapsViewModel.exportedMapsFile.findFile(zipName)
+            newFile = newFile
         )
     }
 
@@ -245,6 +319,7 @@ class MapFile(
         when (file) {
             is File -> file.delete()
             is DocumentFileCompat -> file.delete()
+            is ServiceFile -> file.delete()
         }
     }
 

@@ -1,8 +1,10 @@
 package com.aliernfrog.pftool.service
 
-import android.util.Log
 import com.aliernfrog.pftool.IFileService
-import com.aliernfrog.pftool.TAG
+import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.util.getServiceFile
+import com.aliernfrog.pftool.util.staticutil.FileUtil
+import com.aliernfrog.pftool.util.staticutil.ZipUtil
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -15,9 +17,45 @@ class FileService : IFileService.Stub() {
         destroy()
     }
 
-    override fun listFiles(path: String): Array<String> {
+    override fun copy(sourcePath: String, targetPath: String) {
+        val source = File(sourcePath)
+        val output = File(targetPath)
+        if (source.isFile) source.inputStream().use { inputStream ->
+            output.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        else FileUtil.copyDirectory(source, output)
+    }
+
+    override fun delete(path: String) {
+        File(path).deleteRecursively()
+    }
+
+    override fun getByteArray(path: String): ByteArray {
+        return File(path).readBytes()
+    }
+
+    override fun getFile(path: String): ServiceFile {
+        return getServiceFile(File(path))
+    }
+
+    override fun listFiles(path: String): Array<ServiceFile> {
         val files = File(path).listFiles() ?: emptyArray()
-        Log.d(TAG, "files: ${files.map { it.absolutePath }}")
-        return files.map { it.absolutePath }.toTypedArray()
+        return files.map {
+            getServiceFile(it)
+        }.toTypedArray()
+    }
+
+    override fun renameFile(oldPath: String, newPath: String) {
+        File(oldPath).renameTo(File(newPath))
+    }
+
+    override fun unzipMap(path: String, targetPath: String) {
+        ZipUtil.unzipMap(path, File(targetPath))
+    }
+
+    override fun zipMap(path: String, targetPath: String) {
+        ZipUtil.zipMap(File(path), File(targetPath))
     }
 }

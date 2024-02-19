@@ -16,11 +16,14 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
+import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.data.listFiles
+import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
-import com.aliernfrog.pftool.util.extension.resolvePath
 import com.aliernfrog.pftool.util.extension.showErrorToast
+import com.aliernfrog.pftool.util.getKoinInstance
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
@@ -40,10 +43,12 @@ class MapsViewModel(
 
     val mapsDir: String get() { return prefs.pfMapsDir }
     val exportedMapsDir: String get() { return prefs.exportedMapsDir }
-    lateinit var mapsFile: DocumentFileCompat
+    lateinit var mapsFile: Any
         private set
-    lateinit var exportedMapsFile: DocumentFileCompat
+    lateinit var exportedMapsFile: Any
         private set
+
+    private var lastKnownFileManagementMethod = prefs.fileManagementMethod
 
     var isLoadingMaps by mutableStateOf(true)
     var importedMaps by mutableStateOf(emptyList<MapFile>())
@@ -147,16 +152,32 @@ class MapsViewModel(
      * Gets [DocumentFileCompat] to imported maps folder.
      * Use this before accessing [mapsFile], otherwise the app will crash.
      */
-    private fun getMapsFile(context: Context): DocumentFileCompat {
+    private fun getMapsFile(context: Context): Any {
         val isUpToDate = if (!::mapsFile.isInitialized) false
+        else if (lastKnownFileManagementMethod != prefs.fileManagementMethod) false
         else {
-            val updatedPath = mapsFile.uri.resolvePath()
-            val existingPath = Uri.parse(mapsDir).resolvePath()
-            updatedPath == existingPath
+            val existingPath = when (val file = mapsFile) {
+                //is File -> file.absolutePath
+                is DocumentFileCompat -> file.uri
+                is ServiceFile -> file.path
+                else -> throw IllegalArgumentException("getMapsFile: received unknown class ${file.javaClass.name}")
+            }
+            mapsDir == existingPath
         }
         if (isUpToDate) return mapsFile
-        val treeUri = Uri.parse(mapsDir)
-        mapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
+        val fileManagementMethod = prefs.fileManagementMethod
+        lastKnownFileManagementMethod = fileManagementMethod
+        mapsFile = when (FileManagementMethod.entries[fileManagementMethod]) {
+            FileManagementMethod.SAF -> {
+                val treeUri = Uri.parse(mapsDir)
+                mapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
+                return mapsFile
+            }
+            FileManagementMethod.SHIZUKU -> {
+                val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+                shizukuViewModel.fileService!!.getFile(mapsDir)
+            }
+        }
         return mapsFile
     }
 
@@ -164,16 +185,32 @@ class MapsViewModel(
      * Gets [DocumentFileCompat] to exported maps folder.
      * Use this before accessing [exportedMapsFile], otherwise the app will crash.
      */
-    private fun getExportedMapsFile(context: Context): DocumentFileCompat {
+    private fun getExportedMapsFile(context: Context): Any {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
+        else if (lastKnownFileManagementMethod != prefs.fileManagementMethod) false
         else {
-            val updatedPath = exportedMapsFile.uri.resolvePath()
-            val existingPath = Uri.parse(exportedMapsDir).resolvePath()
-            updatedPath == existingPath
+            val existingPath = when (val file = exportedMapsFile) {
+                //is File -> file.absolutePath
+                is DocumentFileCompat -> file.uri
+                is ServiceFile -> file.path
+                else -> throw IllegalArgumentException("getExportedMapsFile: received unknown class ${file.javaClass.name}")
+            }
+            exportedMapsDir == existingPath
         }
         if (isUpToDate) return exportedMapsFile
-        val treeUri = Uri.parse(exportedMapsDir)
-        exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
+        val fileManagementMethod = prefs.fileManagementMethod
+        lastKnownFileManagementMethod = fileManagementMethod
+        exportedMapsFile = when (FileManagementMethod.entries[fileManagementMethod]) {
+            FileManagementMethod.SAF -> {
+                val treeUri = Uri.parse(exportedMapsDir)
+                exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
+                return exportedMapsFile
+            }
+            FileManagementMethod.SHIZUKU -> {
+                val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+                shizukuViewModel.fileService!!.getFile(exportedMapsDir)
+            }
+        }
         return exportedMapsFile
     }
 
@@ -182,12 +219,18 @@ class MapsViewModel(
      */
     private suspend fun fetchImportedMaps() {
         withContext(Dispatchers.IO) {
-            importedMaps = mapsFile.listFiles()
-                .filter { it.isDirectory() }
-                .sortedBy { it.name.lowercase() }
-                .map { file ->
-                    MapFile(file)
-                }
+            importedMaps = when (val it = mapsFile) {
+                /*is File -> (it.listFiles() ?: arrayOf<File>())
+                    .filter { it.isDirectory }
+                    .map { MapFile(it) }*/
+                is DocumentFileCompat -> it.listFiles()
+                    .filter { it.isDirectory() }
+                    .map { MapFile(it) }
+                is ServiceFile -> (it.listFiles() ?: arrayOf())
+                    .filter { !it.isFile }
+                    .map { MapFile(it) }
+                else -> throw IllegalArgumentException("fetchImportedMaps: received unknown class ${it.javaClass.name}")
+            }.sortedBy { it.name.lowercase() }
         }
     }
 
@@ -196,12 +239,18 @@ class MapsViewModel(
      */
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
-            exportedMaps = exportedMapsFile.listFiles()
-                .filter { it.isFile() && it.name.lowercase().endsWith(".zip") }
-                .sortedBy { it.name.lowercase() }
-                .map { file ->
-                    MapFile(file)
-                }
+            exportedMaps = when (val it = exportedMapsFile) {
+                /*is File -> (it.listFiles() ?: arrayOf<File>())
+                    .filter { it.isFile }
+                    .map { MapFile(it) }*/
+                is DocumentFileCompat -> it.listFiles()
+                    .filter { it.isFile() }
+                    .map { MapFile(it) }
+                is ServiceFile -> (it.listFiles() ?: arrayOf())
+                    .filter { it.isFile }
+                    .map { MapFile(it) }
+                else -> throw IllegalArgumentException("fetchExportedMaps: received unknown class ${it.javaClass.name}")
+            }.filter { it.isZip }.sortedBy { it.name.lowercase() }
         }
     }
 }

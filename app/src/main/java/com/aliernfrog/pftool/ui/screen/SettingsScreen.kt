@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
-import com.aliernfrog.pftool.enum.FileManagementService
+import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
@@ -132,9 +132,7 @@ fun SettingsScreen(
                 ) {
                     settingsViewModel.prefs.showMapThumbnailsInList = it
                 }
-                val enabledFileManagementService = FileManagementService.entries.find {
-                    it.isEnabled(settingsViewModel.prefs)
-                }
+                val enabledFileManagementMethod = FileManagementMethod.entries[settingsViewModel.prefs.fileManagementMethod]
                 ButtonRow(
                     title = stringResource(R.string.settings_general_folders),
                     description = stringResource(R.string.settings_general_folders_description),
@@ -146,16 +144,16 @@ fun SettingsScreen(
                 ExpandableRow(
                     expanded = settingsViewModel.fileServiceOptionsExpanded,
                     title = stringResource(R.string.settings_general_fileManagamentService),
-                    trailingButtonText = enabledFileManagementService?.let { stringResource(it.label) },
+                    trailingButtonText = stringResource(enabledFileManagementMethod.label),
                     onClickHeader = {
                         settingsViewModel.fileServiceOptionsExpanded = !settingsViewModel.fileServiceOptionsExpanded
                     }
                 ) {
                     RadioButtons(
-                        options = FileManagementService.entries.map { stringResource(it.label) },
-                        selectedOptionIndex = enabledFileManagementService?.ordinal ?: 0,
+                        options = FileManagementMethod.entries.map { stringResource(it.label) },
+                        selectedOptionIndex = enabledFileManagementMethod.ordinal,
                         onSelect = {
-                            FileManagementService.entries[it].enable(settingsViewModel.prefs)
+                            settingsViewModel.prefs.fileManagementMethod = it
                         }
                     )
                 }

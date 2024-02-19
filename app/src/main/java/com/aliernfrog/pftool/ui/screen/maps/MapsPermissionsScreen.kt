@@ -14,7 +14,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
-import com.aliernfrog.pftool.ui.screen.PermissionsScreen
+import com.aliernfrog.pftool.ui.screen.permissions.PermissionsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -56,7 +56,7 @@ fun MapsPermissionsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    PermissionsScreen(*permissions) {
+    PermissionsScreen(*permissions, title = stringResource(R.string.maps)) {
         AnimatedContent(mapsViewModel.mapListShown) { showMapList ->
             if (showMapList) MapsListScreen(
                 onBackClick = if (mapsViewModel.mapListBackButtonShown) {
