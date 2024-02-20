@@ -35,12 +35,8 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="permissions_recommendedFolder_a8Hint">\"Tamam\"a tıkladıktan sonra, bu klasör yeni bir pencerede açılacak. Doğru klasör olduğundan emin olun ve \"BU KLASÖRÜ KULLAN\" tuşuna tıklayın</string>
     <string name="permissions_recommendedFolder_a7Hint">\"Tamam\"a tıkladıktan sonra, bu klasöre gidin ve \"BU KLASÖRÜ KULLAN\" tuşuna tıklayın</string>
     <string name="permissions_recommendedFolder_doesNotExist">Böyle bir klasör yok mu?</string>
-    <string name="permissions_recommendedFolder_manuallyCreate">* Eğer bu klasör yoksa, kendiniz oluşturabilirsiniz</string>
-    <string name="permissions_recommendedFolder_openPFToCreate">* Eğer bu klasör yoksa, kendiniz oluşturabilir veya Polyfield\'i bir defa başlatarak klasörü oluşturmasını sağlayabilirsiniz</string>
     <string name="permissions_notRecommendedFolder_description">Aşağıdaki klasör önerilir:</string>
-    <string name="permissions_notRecommendedFolder_question">Geri gidip önerilen klasörü seçmek mi istersiniz, yoksa önerilmeyen klasörü kullanmak mı?</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Önerilen klasörü seç</string>
-    <string name="permissions_notRecommendedFolder_useUnrecommendedFolder">Önerilmeyen klasörü kullan</string>
     <string name="permissions_maps">Polyfield haritalar klasörü</string>
     <string name="permissions_maps_description">Polyfield haritalarınızın saklandığı klasörü seçmeniz gerekiyor</string>
     <string name="permissions_maps_recommended">Polyfield haritaları bu klasörde saklanır</string>
