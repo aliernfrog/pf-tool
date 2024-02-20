@@ -13,9 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
@@ -30,9 +36,11 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.PrefEditItem
+import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.filesAppMightBlockAndroidData
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
+import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.FilesDowngradeNotice
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -40,6 +48,7 @@ import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
+import com.aliernfrog.pftool.util.staticutil.FileUtil
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -48,6 +57,7 @@ fun FolderConfigurationDialog(
     settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
+    val isSAF = settingsViewModel.prefs.fileManagementMethod == FileManagementMethod.SAF.ordinal
     val folders = remember { SettingsConstant.folders }
     var activePref: PrefEditItem? = remember { null }
     val openFolderLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
@@ -74,9 +84,9 @@ fun FolderConfigurationDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (filesAppMightBlockAndroidData) FilesDowngradeNotice()
+                if (isSAF && filesAppMightBlockAndroidData) FilesDowngradeNotice()
                 folders.forEachIndexed { index, pref ->
-                    FolderCard(
+                    if (isSAF) FolderCard(
                         pref = pref,
                         path = getFolderDescription(
                             folder = pref,
@@ -88,9 +98,64 @@ fun FolderConfigurationDialog(
                             openFolderLauncher.launch(uri)
                         }
                     )
+                    else RawPathInput(
+                        pref = pref,
+                        prefs = settingsViewModel.prefs,
+                        onPickFolderRequest = {
+                            openFolderLauncher.launch(null)
+                        }
+                    )
                 }
             }
         }
+    )
+}
+
+@Composable
+fun RawPathInput(
+    pref: PrefEditItem,
+    prefs: PreferenceManager,
+    onPickFolderRequest: () -> Unit
+) {
+    val currentPath = FileUtil.resolvePath(pref.getValue(prefs)) ?: pref.default
+    val isDefault = pref.default == currentPath
+    OutlinedTextField(
+        value = currentPath,
+        onValueChange = {
+            pref.setValue(it, prefs)
+        },
+        label = {
+            Text(stringResource(pref.labelResourceId))
+        },
+        supportingText = {
+            FadeVisibility(!isDefault) {
+                Text(
+                    stringResource(R.string.settings_general_folders_default).replace("%s", pref.default)
+                )
+            }
+        },
+        leadingIcon = {
+            IconButton(
+                onClick = { onPickFolderRequest() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FolderOpen,
+                    contentDescription = stringResource(R.string.settings_general_folders_choose)
+                )
+            }
+        },
+        trailingIcon = if (isDefault) null else { {
+            IconButton(
+                onClick = { pref.setValue(pref.default, prefs) }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Restore,
+                    contentDescription = stringResource(R.string.settings_general_folders_restoreDefault)
+                )
+            }
+        } },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
