@@ -15,10 +15,10 @@ import com.aliernfrog.pftool.R
 enum class SAFWorkaroundLevel(
     @StringRes val title: Int? = null,
     @StringRes val description: Int? = null,
-    val buttons: @Composable () -> Unit = {}
+    val button: (@Composable () -> Unit)? = null
 ) {
     /**
-     * Telling the user to make sure they have started the game at least once.
+     * Telling the user to make sure the folder exists.
      */
     MAKE_SURE_FOLDER_EXISTS,
 
@@ -28,7 +28,7 @@ enum class SAFWorkaroundLevel(
     UNINSTALL_FILES_APP_UPDATES(
         title = R.string.permissions_uninstallFilesAppUpdates,
         description = R.string.permissions_uninstallFilesAppUpdates_description,
-        buttons = {
+        button = {
             val context = LocalContext.current
             Button(
                 onClick = {
@@ -46,7 +46,10 @@ enum class SAFWorkaroundLevel(
     ),
 
     /**
-     * Guiding user to setup Shizuku.
+     * No workarounds anymore.
      */
-    SHIZUKU
+    SETUP_SHIZUKU(
+        title = R.string.permissions_setupShizuku,
+        description = R.string.permissions_setupShizuku_description
+    )
 }

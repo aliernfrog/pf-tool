@@ -16,19 +16,20 @@ import com.aliernfrog.pftool.util.manager.PreferenceManager
 class PermissionsViewModel(
     val prefs: PreferenceManager
 ) : ViewModel() {
-    var fileManagementMethod: FileManagementMethod
+    private var fileManagementMethod: FileManagementMethod
         get() = FileManagementMethod.entries[prefs.fileManagementMethod]
         set(value) { prefs.fileManagementMethod = value.ordinal }
 
     var safWorkaroundLevel by mutableStateOf(SAFWorkaroundLevel.entries.first())
+    var showSAFWorkaroundDialog by mutableStateOf(false)
 
-    fun pushSAFWorkaroundLevel() {
-        if (!hasAndroidDataRestrictions) return
+    fun pushSAFWorkaroundLevel(): SAFWorkaroundLevel {
+        if (!hasAndroidDataRestrictions) return safWorkaroundLevel
         val newIndex = safWorkaroundLevel.ordinal+1
-        SAFWorkaroundLevel.entries.let {
-            if (newIndex > SAFWorkaroundLevel.UNINSTALL_FILES_APP_UPDATES.ordinal) fileManagementMethod = FileManagementMethod.SHIZUKU
-            else safWorkaroundLevel = SAFWorkaroundLevel.entries[newIndex]
-        }
+        if (newIndex >= SAFWorkaroundLevel.entries.size) return safWorkaroundLevel
+        if (newIndex >= SAFWorkaroundLevel.SETUP_SHIZUKU.ordinal) fileManagementMethod = FileManagementMethod.SHIZUKU
+        safWorkaroundLevel = SAFWorkaroundLevel.entries[newIndex]
+        return SAFWorkaroundLevel.entries[newIndex]
     }
 
     fun hasPermissions(

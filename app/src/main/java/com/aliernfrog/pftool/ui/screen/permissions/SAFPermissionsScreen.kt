@@ -145,6 +145,7 @@ fun SAFPermissionsScreen(
             onFolderDoesNotExist = {
                 unrecommendedPathWarningUri = null
                 permissionsViewModel.pushSAFWorkaroundLevel()
+                permissionsViewModel.showSAFWorkaroundDialog = true
             },
             onUseUnrecommendedFolderRequest = {
                 takePersistableUriPermissions(uri)
@@ -185,11 +186,13 @@ private fun Guide(
                     text = stringResource(it)
                 )
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
-            ) {
-                level.buttons()
+            level.button?.let { button ->
+                Row(
+                    horizontalArrangement = Arrangement.aligned(Alignment.End),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    button()
+                }
             }
         }
     }

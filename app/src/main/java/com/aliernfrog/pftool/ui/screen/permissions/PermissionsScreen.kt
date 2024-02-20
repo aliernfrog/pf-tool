@@ -8,10 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
+import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -61,5 +63,14 @@ fun PermissionsScreen(
                 )
             }
         }
+    }
+
+    if (permissionsViewModel.showSAFWorkaroundDialog) permissionsViewModel.safWorkaroundLevel.let { level ->
+        CustomMessageDialog(
+            title = level.title?.let { stringResource(it) },
+            text = level.description?.let { stringResource(it) },
+            confirmButton = level.button,
+            onDismissRequest = { permissionsViewModel.showSAFWorkaroundDialog = false }
+        )
     }
 }
