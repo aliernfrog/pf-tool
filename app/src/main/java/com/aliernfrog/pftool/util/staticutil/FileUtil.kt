@@ -3,6 +3,8 @@ package com.aliernfrog.pftool.util.staticutil
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
+import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
@@ -34,6 +36,13 @@ class FileUtil {
             if (prefs.fileManagementMethod == FileManagementMethod.SAF.ordinal) return path
             return if (path.startsWith("/")) path
             else Uri.parse(path).toPath()
+        }
+
+        fun getUriForPath(path: String): Uri {
+            return DocumentsContract.buildDocumentUri(
+                "com.android.externalstorage.documents",
+                "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
+            )
         }
 
         fun lastModifiedFromLong(lastModified: Long?, context: Context): String {

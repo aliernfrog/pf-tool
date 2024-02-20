@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.ui.dialog
 
 import android.net.Uri
-import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
@@ -207,7 +206,7 @@ fun FolderCard(
             ) {
                 if (folderPickerSupportsInitialUri) AssistChip(
                     onClick = {
-                        onPickFolderRequest(getUriFromFolder(pref.default))
+                        onPickFolderRequest(FileUtil.getUriForPath(pref.default))
                     },
                     label = {
                         Text(stringResource(R.string.settings_general_folders_openRecommended))
@@ -223,7 +222,7 @@ fun FolderCard(
 
                 if (folderPickerSupportsInitialUri) AssistChip(
                     onClick = {
-                        onPickFolderRequest(getUriFromFolder(dataFolderPath))
+                        onPickFolderRequest(FileUtil.getUriForPath(dataFolderPath))
                     },
                     label = {
                         Text(stringResource(R.string.settings_general_folders_openAndroidData))
@@ -245,9 +244,4 @@ private fun getFolderDescription(
             ?: text
     } catch (_: Exception) {}
     return text.ifEmpty { stringResource(R.string.settings_general_folders_notSet) }
-}
-
-private fun getUriFromFolder(path: String): Uri {
-    val treeId = "primary:"+path.removePrefix(externalStorageRoot)
-    return DocumentsContract.buildDocumentUri("com.android.externalstorage.documents", treeId)
 }

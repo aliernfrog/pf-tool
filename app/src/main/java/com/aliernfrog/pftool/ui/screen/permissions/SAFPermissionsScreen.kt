@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.screen.permissions
 
 import android.net.Uri
 import android.os.Environment
-import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -39,6 +38,7 @@ import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.util.extension.requiresAndroidData
 import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
+import com.aliernfrog.pftool.util.staticutil.FileUtil
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -80,10 +80,9 @@ fun SAFPermissionsScreen(
     })
 
     fun openFolderPicker(permissionData: PermissionData) {
-        val starterUri = if (permissionData.recommendedPath != null) DocumentsContract.buildDocumentUri(
-            "com.android.externalstorage.documents",
-            "primary:"+permissionData.recommendedPath.removePrefix("${Environment.getExternalStorageDirectory()}/")
-        ) else null
+        val starterUri = permissionData.recommendedPath?.let {
+            FileUtil.getUriForPath(it)
+        }
         uriPermsLauncher.launch(starterUri)
         activePermissionData = permissionData
     }
