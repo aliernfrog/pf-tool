@@ -153,7 +153,7 @@ fun SettingsScreen(
                         options = FileManagementMethod.entries.map { stringResource(it.label) },
                         selectedOptionIndex = enabledFileManagementMethod.ordinal,
                         onSelect = {
-                            settingsViewModel.prefs.fileManagementMethod = it
+                            FileManagementMethod.entries[it].enable(settingsViewModel.prefs)
                         }
                     )
                 }

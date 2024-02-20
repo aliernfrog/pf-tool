@@ -10,10 +10,7 @@ import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ServiceFile
 import com.aliernfrog.pftool.data.getByteArray
-import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.util.extension.toPath
-import com.aliernfrog.pftool.util.getKoinInstance
-import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
@@ -31,15 +28,20 @@ class FileUtil {
             else name
         }
 
-        fun resolvePath(path: String): String? {
-            val prefs = getKoinInstance<PreferenceManager>()
-            if (prefs.fileManagementMethod == FileManagementMethod.SAF.ordinal) return path
+        fun getFilePath(path: String): String? {
             return if (path.startsWith("/")) path
             else Uri.parse(path).toPath()
         }
 
         fun getUriForPath(path: String): Uri {
             return DocumentsContract.buildDocumentUri(
+                "com.android.externalstorage.documents",
+                "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
+            )
+        }
+
+        fun getTreeUriForPath(path: String): Uri {
+            return DocumentsContract.buildTreeDocumentUri(
                 "com.android.externalstorage.documents",
                 "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
             )

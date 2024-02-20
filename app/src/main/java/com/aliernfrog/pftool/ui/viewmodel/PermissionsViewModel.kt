@@ -18,7 +18,7 @@ class PermissionsViewModel(
 ) : ViewModel() {
     private var fileManagementMethod: FileManagementMethod
         get() = FileManagementMethod.entries[prefs.fileManagementMethod]
-        set(value) { prefs.fileManagementMethod = value.ordinal }
+        set(value) { value.enable(prefs) }
 
     var safWorkaroundLevel by mutableStateOf(SAFWorkaroundLevel.entries.first())
     var showSAFWorkaroundDialog by mutableStateOf(false)

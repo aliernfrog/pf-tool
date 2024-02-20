@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
@@ -27,7 +26,6 @@ import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.getKoinInstance
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
@@ -44,9 +42,9 @@ class MapsViewModel(
     val scrollState = ScrollState(0)
 
     val mapsDir: String
-        get() = FileUtil.resolvePath(prefs.pfMapsDir) ?: ConfigKey.RECOMMENDED_MAPS_DIR
+        get() = prefs.pfMapsDir
     val exportedMapsDir: String
-        get() = FileUtil.resolvePath(prefs.exportedMapsDir) ?: ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR
+        get() = prefs.exportedMapsDir
     lateinit var mapsFile: Any
         private set
     lateinit var exportedMapsFile: Any

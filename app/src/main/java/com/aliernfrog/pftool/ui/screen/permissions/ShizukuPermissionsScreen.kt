@@ -148,7 +148,7 @@ private fun ShizukuSetupGuide(
         shape = AppComponentShape,
         modifier = Modifier.padding(8.dp),
         onClick = {
-            permissionsViewModel.prefs.fileManagementMethod = FileManagementMethod.SAF.ordinal
+            FileManagementMethod.SAF.enable(permissionsViewModel.prefs)
         }
     ) {
         Row(

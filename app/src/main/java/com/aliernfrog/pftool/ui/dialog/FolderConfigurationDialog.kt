@@ -116,7 +116,7 @@ fun RawPathInput(
     prefs: PreferenceManager,
     onPickFolderRequest: () -> Unit
 ) {
-    val currentPath = FileUtil.resolvePath(pref.getValue(prefs)) ?: pref.default
+    val currentPath = pref.getValue(prefs)
     val isDefault = pref.default == currentPath
     OutlinedTextField(
         value = currentPath,
