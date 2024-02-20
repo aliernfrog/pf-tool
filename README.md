@@ -1,8 +1,3 @@
-> [!WARNING]
-> On Android 12 and above, September 2023 update of the Files app prevents other apps from requesting access to files in Android/data.
-> 
-> Check [this page](https://aliernfrog.github.io/android-data-access) for more info, workarounds and the new fix which is currently being implemented in [this pull request](https://github.com/aliernfrog/pf-tool/pull/29).
-
 <div align="center">
 
   <img alt="PF Tool icon" src="images/icon.png" width="120px"/>
@@ -24,6 +19,13 @@
   <img alt="PF Tool screenshot" src="images/maps.jpg" width="200px"/>
   
 </div>
+
+## 🦝 Shizuku support
+[Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging (or root, if you have one).
+
+Shizuku method in PF Tool can be enabled or disabled anytime from settings.
+
+Shizuku method will automatically be enabled if there is no other way for the app to access Polyfield data. The app will guide you to setup Shizuku if this mode is enabled.
 
 ## 🔧 Building
 - Clone the repository

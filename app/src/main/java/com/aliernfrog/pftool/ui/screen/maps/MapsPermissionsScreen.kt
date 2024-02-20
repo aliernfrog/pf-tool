@@ -14,7 +14,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
 import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
-import com.aliernfrog.pftool.ui.screen.PermissionsScreen
+import com.aliernfrog.pftool.ui.screen.permissions.PermissionsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -25,10 +25,11 @@ fun MapsPermissionsScreen(
 ) {
     val permissions = remember { arrayOf(
         PermissionData(
-            titleId = R.string.permissions_maps,
+            title = R.string.permissions_maps,
             recommendedPath = ConfigKey.RECOMMENDED_MAPS_DIR,
-            recommendedPathDescriptionId = R.string.permissions_maps_recommended,
-            doesntExistHintId = R.string.permissions_recommendedFolder_openPFToCreate,
+            recommendedPathDescription = R.string.permissions_maps_recommended,
+            createFolderHint = R.string.permissions_maps_openPFToCreate,
+            useUnrecommendedAnywayDescription = R.string.permissions_maps_useUnrecommendedAnyway,
             getUri = { mapsViewModel.prefs.pfMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.pfMapsDir = it.toString()
@@ -38,9 +39,10 @@ fun MapsPermissionsScreen(
             }
         ),
         PermissionData(
-            titleId = R.string.permissions_exportedMaps,
+            title = R.string.permissions_exportedMaps,
             recommendedPath = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
-            recommendedPathDescriptionId = R.string.permissions_exportedMaps_recommended,
+            recommendedPathDescription = R.string.permissions_exportedMaps_recommended,
+            forceRecommendedPath = false,
             getUri = { mapsViewModel.prefs.exportedMapsDir },
             onUriUpdate = {
                 mapsViewModel.prefs.exportedMapsDir = it.toString()
@@ -54,7 +56,7 @@ fun MapsPermissionsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    PermissionsScreen(*permissions) {
+    PermissionsScreen(*permissions, title = stringResource(R.string.maps)) {
         AnimatedContent(mapsViewModel.mapListShown) { showMapList ->
             if (showMapList) MapsListScreen(
                 onBackClick = if (mapsViewModel.mapListBackButtonShown) {

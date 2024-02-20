@@ -2,9 +2,15 @@ package com.aliernfrog.pftool.util.staticutil
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Environment
+import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.data.getByteArray
+import com.aliernfrog.pftool.util.extension.toPath
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
@@ -20,6 +26,25 @@ class FileUtil {
             val name = path.split("/").last()
             return if (removeExtension) removeExtension(name)
             else name
+        }
+
+        fun getFilePath(path: String): String? {
+            return if (path.startsWith("/")) path
+            else Uri.parse(path).toPath()
+        }
+
+        fun getUriForPath(path: String): Uri {
+            return DocumentsContract.buildDocumentUri(
+                "com.android.externalstorage.documents",
+                "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
+            )
+        }
+
+        fun getTreeUriForPath(path: String): Uri {
+            return DocumentsContract.buildTreeDocumentUri(
+                "com.android.externalstorage.documents",
+                "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
+            )
         }
 
         fun lastModifiedFromLong(lastModified: Long?, context: Context): String {
@@ -79,14 +104,16 @@ class FileUtil {
             val fileName = when (file) {
                 is DocumentFileCompat -> file.name
                 is File -> file.name
+                is ServiceFile -> file.name
                 else -> throw IllegalArgumentException()
             }
             val inputStream = when(file) {
                 is DocumentFileCompat -> context.contentResolver.openInputStream(file.uri)
                 is File -> file.inputStream()
+                is ServiceFile -> file.getByteArray().inputStream()
                 else -> throw IllegalArgumentException()
             }
-            val targetFile = File("${context.cacheDir.absolutePath}/shared/$fileName")
+            val targetFile = File("${context.externalCacheDir}/shared/$fileName")
             targetFile.parentFile?.mkdirs()
             if (targetFile.isFile) targetFile.delete()
             val output = targetFile.outputStream()

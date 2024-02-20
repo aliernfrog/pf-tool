@@ -1,24 +1,22 @@
 package com.aliernfrog.pftool.ui.component.form
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
 
 @Composable
 fun ButtonRow(
@@ -50,13 +48,13 @@ fun ButtonRow(
         onClick = onClick
     ) {
         expanded?.let {
-            Image(
+            Icon(
                 imageVector = Icons.Rounded.KeyboardArrowUp,
                 contentDescription = null,
+                tint = contentColor,
                 modifier = Modifier
                     .padding(horizontal = 2.dp)
-                    .rotate(animatedRotation.value),
-                colorFilter = ColorFilter.tint(contentColor)
+                    .rotate(animatedRotation.value)
             )
         }
         trailingComponent?.let {
@@ -65,32 +63,4 @@ fun ButtonRow(
             }
         }
     }
-}
-
-@Composable
-fun RoundedButtonRow(
-    title: String,
-    modifier: Modifier = Modifier,
-    description: String? = null,
-    painter: Painter? = null,
-    expanded: Boolean? = null,
-    arrowRotation: Float = if (expanded == true) 0f else 180f,
-    trailingComponent: @Composable (() -> Unit)? = null,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    contentColor: Color = contentColorFor(containerColor),
-    onClick: () -> Unit
-) {
-    ButtonRow(
-        title = title,
-        modifier = modifier.padding(8.dp),
-        description = description,
-        painter = painter,
-        expanded = expanded,
-        arrowRotation = arrowRotation,
-        trailingComponent = trailingComponent,
-        shape = AppComponentShape,
-        containerColor = containerColor,
-        contentColor = contentColor,
-        onClick = onClick
-    )
 }

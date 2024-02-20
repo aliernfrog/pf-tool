@@ -176,6 +176,7 @@ enum class MapAction(
         }
     ) {
         override suspend fun execute(context: Context, vararg maps: MapFile) {
+            // TODO show progress dialog here
             val files = maps.map { it.file }
             maps.first().runInIOThreadSafe {
                 FileUtil.shareFiles(*files.toTypedArray(), context = context)
