@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,12 +38,10 @@ import rikka.shizuku.Shizuku
 
 @Composable
 fun ShizukuPermissionsScreen(
-    permissionsViewModel: PermissionsViewModel = koinViewModel(),
     shizukuViewModel: ShizukuViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
-    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
         shizukuViewModel.checkAvailability(context)
@@ -52,98 +51,119 @@ fun ShizukuPermissionsScreen(
         onUpdateStateRequest()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        if (shizukuViewModel.installed) Text(
-            text = stringResource(R.string.permissions_shizuku_introduction),
-            style = MaterialTheme.typography.bodyMedium,
+    AnimatedContent(
+        shizukuViewModel.status == ShizukuStatus.AVAILABLE
+    ) { isLoading ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    text = stringResource(R.string.info_shizuku_startingFileService),
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 8.dp)
+                )
+            } else ShizukuSetupGuide()
+        }
+    }
+}
+
+@Composable
+private fun ShizukuSetupGuide(
+    permissionsViewModel: PermissionsViewModel = koinViewModel(),
+    shizukuViewModel: ShizukuViewModel = koinViewModel()
+) {
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+
+    if (shizukuViewModel.installed) Text(
+        text = stringResource(R.string.permissions_shizuku_introduction),
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(8.dp)
+    )
+
+    AnimatedContent(shizukuViewModel.status) { status ->
+        val title = when (status) {
+            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> R.string.permissions_shizuku_install_title
+            ShizukuStatus.WAITING_FOR_BINDER -> R.string.permissions_shizuku_notRunning
+            ShizukuStatus.UNAUTHORIZED -> R.string.permissions_shizuku_permission
+            else -> null
+        }
+        val description = when (status) {
+            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> R.string.permissions_shizuku_introduction
+            ShizukuStatus.WAITING_FOR_BINDER -> R.string.permissions_shizuku_notRunning_description
+            ShizukuStatus.UNAUTHORIZED -> R.string.permissions_shizuku_permission_description
+            else -> null
+        }
+        val button: @Composable () -> Unit = { when (status) {
+            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> {
+                Button(
+                    onClick = {
+                        uriHandler.openUri("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+                    }
+                ) {
+                    ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
+                    Text(stringResource(R.string.permissions_shizuku_install_install))
+                }
+            }
+            ShizukuStatus.WAITING_FOR_BINDER -> {
+                Button(
+                    onClick = {
+                        context.packageManager.getLaunchIntentForPackage(ShizukuViewModel.SHIZUKU_PACKAGE)?.let {
+                            context.startActivity(it)
+                        }
+                    }
+                ) {
+                    ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
+                    Text(stringResource(R.string.permissions_shizuku_notRunning_openShizuku))
+                }
+            }
+            ShizukuStatus.UNAUTHORIZED -> {
+                Button(
+                    onClick = { Shizuku.requestPermission(0) }
+                ) {
+                    Text(stringResource(R.string.permissions_shizuku_permission_grant))
+                }
+            }
+            else -> {}
+        } }
+
+        CardWithActions(
+            title = title?.let { stringResource(it) } ?: "",
+            buttons = { button() },
             modifier = Modifier.padding(8.dp)
-        )
-
-        AnimatedContent(shizukuViewModel.status) { status ->
-            val title = when (status) {
-                ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> R.string.permissions_shizuku_install_title
-                ShizukuStatus.WAITING_FOR_BINDER -> R.string.permissions_shizuku_notRunning
-                ShizukuStatus.UNAUTHORIZED -> R.string.permissions_shizuku_permission
-                else -> null
-            }
-            val description = when (status) {
-                ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> R.string.permissions_shizuku_introduction
-                ShizukuStatus.WAITING_FOR_BINDER -> R.string.permissions_shizuku_notRunning_description
-                ShizukuStatus.UNAUTHORIZED -> R.string.permissions_shizuku_permission_description
-                else -> null
-            }
-            val button: @Composable () -> Unit = { when (status) {
-                ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> {
-                    Button(
-                        onClick = {
-                            uriHandler.openUri("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
-                        }
-                    ) {
-                        ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                        Text(stringResource(R.string.permissions_shizuku_install_install))
-                    }
-                }
-                ShizukuStatus.WAITING_FOR_BINDER -> {
-                    Button(
-                        onClick = {
-                            context.packageManager.getLaunchIntentForPackage(ShizukuViewModel.SHIZUKU_PACKAGE)?.let {
-                                context.startActivity(it)
-                            }
-                        }
-                    ) {
-                        ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                        Text(stringResource(R.string.permissions_shizuku_notRunning_openShizuku))
-                    }
-                }
-                ShizukuStatus.UNAUTHORIZED -> {
-                    Button(
-                        onClick = { Shizuku.requestPermission(0) }
-                    ) {
-                        Text(stringResource(R.string.permissions_shizuku_permission_grant))
-                    }
-                }
-                else -> {}
-            } }
-
-            CardWithActions(
-                title = title?.let { stringResource(it) } ?: "",
-                buttons = { button() },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                description?.let {
-                    Text(
-                        text = stringResource(it),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+        ) {
+            description?.let {
+                Text(
+                    text = stringResource(it),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
+    }
 
-        Card(
-            shape = AppComponentShape,
-            modifier = Modifier.padding(8.dp),
-            onClick = {
-                permissionsViewModel.prefs.fileManagementMethod = FileManagementMethod.SAF.ordinal
-            }
+    Card(
+        shape = AppComponentShape,
+        modifier = Modifier.padding(8.dp),
+        onClick = {
+            permissionsViewModel.prefs.fileManagementMethod = FileManagementMethod.SAF.ordinal
+        }
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Help,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(
-                    text = stringResource(R.string.permissions_shizuku_warning),
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Help,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.permissions_shizuku_warning),
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
