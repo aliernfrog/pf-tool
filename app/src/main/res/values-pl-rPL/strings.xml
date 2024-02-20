@@ -34,12 +34,8 @@ Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliw
     <string name="permissions_recommendedFolder_a8Hint">Po kliknięciu \"Okej\", ten folder zostanie otwarty w nowym oknie. Upewnij się, że jesteś w odpowiednim folderze i kliknij \"UŻYJ TEN FOLDER\"</string>
     <string name="permissions_recommendedFolder_a7Hint">Po kliknięciu \"Okej\", przejdź do tego folderu i kliknij \"UŻYJ TEN FOLDER\"</string>
     <string name="permissions_recommendedFolder_doesNotExist">Ten folder nie istnieje?</string>
-    <string name="permissions_recommendedFolder_manuallyCreate">* Jeśli ten folder nie istnieje, możesz go utworzyć ręcznie</string>
-    <string name="permissions_recommendedFolder_openPFToCreate">* Jeśli ten folder nie istnieje, możesz utworzyć go ręcznie lub uruchomić Polyfield raz aby utworzyć folder automatycznie</string>
     <string name="permissions_notRecommendedFolder_description">Zalecany jest folder poniżej:</string>
-    <string name="permissions_notRecommendedFolder_question">Czy chcesz wrócić i wybrać folder zalecany, czy użyć niezalecanego?</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Wybierz zalecany folder</string>
-    <string name="permissions_notRecommendedFolder_useUnrecommendedFolder">Wybierz niezalecany folder</string>
     <string name="permissions_maps">Folder z mapami Polyfield</string>
     <string name="permissions_maps_description">Musisz wybrać folder, w którym przechowywane są mapy Polyfield</string>
     <string name="permissions_maps_recommended">Mapy Polyfield są przechowywane w tym folderze</string>
