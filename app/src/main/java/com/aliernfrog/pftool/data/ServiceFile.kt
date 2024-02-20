@@ -26,7 +26,7 @@ fun ServiceFile.delete() {
 
 fun ServiceFile.exists(): Boolean {
     val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
-    return shizukuViewModel.fileService!!.getFile(path).exists()
+    return shizukuViewModel.fileService!!.exists(path)
 }
 
 fun ServiceFile.listFiles(): Array<ServiceFile>? {

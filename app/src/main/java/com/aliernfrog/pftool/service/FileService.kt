@@ -31,6 +31,10 @@ class FileService : IFileService.Stub() {
     override fun delete(path: String) {
         File(path).deleteRecursively()
     }
+    
+    override fun exists(path: String): Boolean {
+      return File(path).exists()
+    }
 
     override fun getByteArray(path: String): ByteArray {
         return File(path).readBytes()
