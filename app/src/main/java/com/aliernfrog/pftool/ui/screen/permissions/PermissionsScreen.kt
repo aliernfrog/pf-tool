@@ -40,27 +40,29 @@ fun PermissionsScreen(
     AnimatedContent(
         FileManagementMethod.entries[permissionsViewModel.prefs.fileManagementMethod]
     ) { method ->
-        var showContent by remember { mutableStateOf(hasPermissions()) }
+        var permissionsGranted by remember { mutableStateOf(hasPermissions()) }
 
-        if (showContent) content()
-        else AppScaffold(
-            topBar = { AppTopBar(
-                title = title,
-                scrollBehavior = it
-            ) }
-        ) {
-            when (method) {
-                FileManagementMethod.SAF -> SAFPermissionsScreen(
-                    *permissionsData,
-                    onUpdateStateRequest = {
-                        showContent = hasPermissions()
-                    }
-                )
-                FileManagementMethod.SHIZUKU -> ShizukuPermissionsScreen(
-                    onUpdateStateRequest = {
-                        showContent = hasPermissions()
-                    }
-                )
+        AnimatedContent(permissionsGranted) { showContent ->
+            if (showContent) content()
+            else AppScaffold(
+                topBar = { AppTopBar(
+                    title = title,
+                    scrollBehavior = it
+                ) }
+            ) {
+                when (method) {
+                    FileManagementMethod.SAF -> SAFPermissionsScreen(
+                        *permissionsData,
+                        onUpdateStateRequest = {
+                            permissionsGranted = hasPermissions()
+                        }
+                    )
+                    FileManagementMethod.SHIZUKU -> ShizukuPermissionsScreen(
+                        onUpdateStateRequest = {
+                            permissionsGranted = hasPermissions()
+                        }
+                    )
+                }
             }
         }
     }
