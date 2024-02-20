@@ -6,6 +6,7 @@ import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.data.getByteArray
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
@@ -80,15 +81,16 @@ class FileUtil {
             val fileName = when (file) {
                 is DocumentFileCompat -> file.name
                 is File -> file.name
-                is ServiceFile -> TODO()
+                is ServiceFile -> file.name
                 else -> throw IllegalArgumentException()
             }
             val inputStream = when(file) {
                 is DocumentFileCompat -> context.contentResolver.openInputStream(file.uri)
                 is File -> file.inputStream()
+                is ServiceFile -> file.getByteArray().inputStream()
                 else -> throw IllegalArgumentException()
             }
-            val targetFile = File("${context.cacheDir.absolutePath}/shared/$fileName")
+            val targetFile = File("${context.externalCacheDir}/shared/$fileName")
             targetFile.parentFile?.mkdirs()
             if (targetFile.isFile) targetFile.delete()
             val output = targetFile.outputStream()
