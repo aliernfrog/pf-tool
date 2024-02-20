@@ -34,7 +34,7 @@ class ZipUtil {
                     }?.forEach { file ->
                         val entry = ZipEntry(file.name)
                         zos.putNextEntry(entry)
-                        folder.inputStream().use { it.copyTo(zos) }
+                        file.inputStream().use { it.copyTo(zos) }
                     }
                 }
             }
