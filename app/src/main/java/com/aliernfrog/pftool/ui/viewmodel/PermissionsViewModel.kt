@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.enum.SAFWorkaroundLevel
+import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 
@@ -22,6 +23,7 @@ class PermissionsViewModel(
     var safWorkaroundLevel by mutableStateOf(SAFWorkaroundLevel.entries.first())
 
     fun pushSAFWorkaroundLevel() {
+        if (!hasAndroidDataRestrictions) return
         val newIndex = safWorkaroundLevel.ordinal+1
         SAFWorkaroundLevel.entries.let {
             if (newIndex > SAFWorkaroundLevel.UNINSTALL_FILES_APP_UPDATES.ordinal) fileManagementMethod = FileManagementMethod.SHIZUKU
