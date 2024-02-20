@@ -20,7 +20,7 @@
   
 </div>
 
-## 🫚 Shizuku support
+## 🦝 Shizuku support
 [Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging (or root, if you have one).
 
 Shizuku method in PF Tool can be enabled or disabled anytime from settings.
