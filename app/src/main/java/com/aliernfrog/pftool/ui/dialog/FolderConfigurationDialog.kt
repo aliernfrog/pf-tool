@@ -37,7 +37,7 @@ import com.aliernfrog.pftool.ui.component.FilesDowngradeNotice
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
-import com.aliernfrog.pftool.util.extension.resolvePath
+import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import org.koin.androidx.compose.koinViewModel
@@ -176,7 +176,7 @@ private fun getFolderDescription(
 ): String {
     var text = folder.getValue(prefs)
     if (text.isNotEmpty()) try {
-        text = Uri.parse(text).resolvePath()?.removePrefix(externalStorageRoot)
+        text = Uri.parse(text).toPath()?.removePrefix(externalStorageRoot)
             ?: text
     } catch (_: Exception) {}
     return text.ifEmpty { stringResource(R.string.settings_general_folders_notSet) }

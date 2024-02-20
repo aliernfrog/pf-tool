@@ -37,7 +37,7 @@ import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.util.extension.requiresAndroidData
-import com.aliernfrog.pftool.util.extension.resolvePath
+import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import org.koin.androidx.compose.koinViewModel
 
@@ -72,7 +72,7 @@ fun SAFPermissionsScreen(
 
         if (activePermissionData?.forceRecommendedPath == true) {
             val recommendedPath = activePermissionData?.recommendedPath
-            val resolvedPath = it.resolvePath()
+            val resolvedPath = it.toPath()
             val isRecommendedPath = resolvedPath.equals(recommendedPath, ignoreCase = true)
             if (!isRecommendedPath) unrecommendedPathWarningUri = it
             else takePersistableUriPermissions(it)

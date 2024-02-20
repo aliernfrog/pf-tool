@@ -2,11 +2,16 @@ package com.aliernfrog.pftool.util.staticutil
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ServiceFile
 import com.aliernfrog.pftool.data.getByteArray
+import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.util.extension.toPath
+import com.aliernfrog.pftool.util.getKoinInstance
+import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
@@ -22,6 +27,13 @@ class FileUtil {
             val name = path.split("/").last()
             return if (removeExtension) removeExtension(name)
             else name
+        }
+
+        fun resolvePath(path: String): String? {
+            val prefs = getKoinInstance<PreferenceManager>()
+            if (prefs.fileManagementMethod == FileManagementMethod.SAF.ordinal) return path
+            return if (path.startsWith("/")) path
+            else Uri.parse(path).toPath()
         }
 
         fun lastModifiedFromLong(lastModified: Long?, context: Context): String {
