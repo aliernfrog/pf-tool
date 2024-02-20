@@ -237,7 +237,7 @@ class MapFile(
                     messageId = R.string.maps_alreadyExists
                 )
                 ZipUtil.unzipMap(zipPath, output)
-                File(mapsFile.absolutePath + "/$withName")
+                File(output.absolutePath)
             }
             is DocumentFileCompat -> {
                 var output = mapsFile.findFile(withName)
