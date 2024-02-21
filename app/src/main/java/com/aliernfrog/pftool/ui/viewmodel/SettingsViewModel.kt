@@ -32,6 +32,7 @@ class SettingsViewModel(
 
     var themeOptionsExpanded by mutableStateOf(false)
     var foldersDialogShown by mutableStateOf(false)
+    var fileServiceOptionsExpanded by mutableStateOf(false)
     var linksExpanded by mutableStateOf(false)
     var experimentalSettingsShown by mutableStateOf(false)
     var showMaterialYouOption by mutableStateOf(supportsMaterialYou)

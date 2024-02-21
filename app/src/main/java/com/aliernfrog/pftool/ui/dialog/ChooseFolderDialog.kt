@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.dialog
 
-import androidx.compose.animation.Crossfade
+import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +28,8 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
+import com.aliernfrog.pftool.hasAndroidDataRestrictions
+import com.aliernfrog.pftool.ui.component.form.ButtonRow
 
 @Composable
 fun ChooseFolderIntroDialog(
@@ -59,15 +61,11 @@ fun ChooseFolderIntroDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(permissionData.recommendedPathDescriptionId!!),)
+                Text(stringResource(permissionData.recommendedPathDescription!!))
 
                 PathCard(permissionData.recommendedPath!!)
 
-                permissionData.doesntExistHintId?.let {
-                    FolderDoesntExistHint(stringResource(it))
-                }
-
-                Text(
+                if (permissionData.forceRecommendedPath) Text(
                     text = stringResource(
                         //? Folder picker on Android 7 or below doesn't support automatically navigating
                         if (folderPickerSupportsInitialUri) R.string.permissions_recommendedFolder_a8Hint
@@ -81,12 +79,16 @@ fun ChooseFolderIntroDialog(
 }
 
 @Composable
-fun NotRecommendedFolderDialog(
+fun UnrecommendedFolderDialog(
     permissionData: PermissionData,
+    chosenUri: Uri,
     onDismissRequest: () -> Unit,
+    onFolderDoesNotExist: () -> Unit,
     onUseUnrecommendedFolderRequest: () -> Unit,
     onChooseFolderRequest: () -> Unit
 ) {
+    var showAdvancedOptions by remember { mutableStateOf(false) }
+    
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -98,9 +100,9 @@ fun NotRecommendedFolderDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = onUseUnrecommendedFolderRequest
+                onClick = onDismissRequest
             ) {
-                Text(stringResource(R.string.permissions_notRecommendedFolder_useUnrecommendedFolder))
+                Text(stringResource(R.string.action_cancel))
             }
         },
         text = {
@@ -111,12 +113,38 @@ fun NotRecommendedFolderDialog(
                 Text(stringResource(R.string.permissions_notRecommendedFolder_description))
 
                 PathCard(permissionData.recommendedPath!!)
-
-                permissionData.doesntExistHintId?.let {
-                    FolderDoesntExistHint(stringResource(it))
+                
+                permissionData.recommendedPathDescription?.let { description ->
+                    Text(
+                        text = stringResource(description)
+                    )
                 }
-
-                Text(stringResource(R.string.permissions_notRecommendedFolder_question))
+                
+                if (hasAndroidDataRestrictions) ClickableText(
+                    text = stringResource(R.string.permissions_recommendedFolder_doesNotExist)
+                ) {
+                    onFolderDoesNotExist()
+                }
+                
+                if (chosenUri != Uri.EMPTY) ClickableText(
+                    text = stringResource(
+                        if (showAdvancedOptions) R.string.permissions_notRecommendedFolder_advanced_hide
+                        else R.string.permissions_notRecommendedFolder_advanced_show
+                    )
+                ) {
+                    showAdvancedOptions = !showAdvancedOptions
+                }
+                
+                AnimatedVisibility(showAdvancedOptions) {
+                    ButtonRow(
+                        title = stringResource(R.string.permissions_notRecommendedFolder_useAnyway),
+                        description = permissionData.useUnrecommendedAnywayDescription?.let {
+                            stringResource(it)
+                        }
+                    ) {
+                        onUseUnrecommendedFolderRequest()
+                    }
+                }
             }
         }
     )
@@ -135,23 +163,17 @@ private fun PathCard(path: String) {
 }
 
 @Composable
-private fun FolderDoesntExistHint(
-    hint: String
+private fun ClickableText(
+    text: String,
+    onClick: () -> Unit
 ) {
-    var showMoreInfo by rememberSaveable { mutableStateOf(false) }
-    Crossfade(showMoreInfo) { moreInfoShown ->
-        if (!moreInfoShown) Text(
-            text = stringResource(R.string.permissions_recommendedFolder_doesNotExist),
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { showMoreInfo = true }
-                .padding(vertical = 4.dp)
-        )
-        else Text(
-            text = hint,
-            fontSize = 13.5.sp,
-            modifier = Modifier.alpha(0.8f)
-        )
-    }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 4.dp)
+    )
 }

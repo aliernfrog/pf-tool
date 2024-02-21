@@ -47,8 +47,7 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="permissions_uninstallFilesAppUpdates_uninstall">Güncellemeleri kaldır</string>
     <string name="permissions_uninstallFilesAppUpdates_guide">Güncellemeleri kaldırmak için bir seçenek bulun ve tıklayın. Yapamazsanız PF Tool\'a geri dönün</string>
     <string name="permissions_setupShizuku">Shizuku kullanın</string>
-    <string name="permissions_setupShizuku_description">PF Tool\'un Polyfield haritalarına erişmesine izin vermek için Shizuku kullanmanız gerekiyor.\nÇünkü cihazındaki Dosyalar uygulaması diğer uygulamaların Android/data klasörü içindeki dosyalara erişim izni almasını engelliyor.\nShizuku modunu istediğiniz zaman ayarlardan devre dışı bırakabilirsiniz.</string>
-    <string name="permissions_maps">Polyfield haritalar klasörü</string>
+    <string name="permissions_setupShizuku_description">PF Tool\'un Polyfield haritalarına erişmesine izin vermek için Shizuku kullanmanız gerekiyor.\nÇünkü cihazındaki Dosyalar uygulaması diğer uygulamaların Android/data klasörü içindeki dosyalara erişim izni almasını engelliyor.\nShizuku modunu istediğiniz zaman ayarlardan devre dışı bırakabilirsiniz.</string><string name="permissions_maps">Polyfield haritalar klasörü</string>
     <string name="permissions_maps_description">Polyfield haritalarınızın saklandığı klasörü seçmeniz gerekiyor</string>
     <string name="permissions_maps_recommended">Polyfield haritaları bu klasörde saklanır</string>
     <string name="permissions_maps_openPFToCreate">Polyfield\'in bu klasörü oluşturmasını sağlamak için en az bir kere başlattığınızdan emin olun</string>

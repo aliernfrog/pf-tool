@@ -81,7 +81,6 @@ fun MapsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Actions(
     mapsViewModel: MapsViewModel = koinViewModel()
