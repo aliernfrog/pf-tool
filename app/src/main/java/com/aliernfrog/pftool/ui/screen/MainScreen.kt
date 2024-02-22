@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
+import com.aliernfrog.pftool.ui.screen.settings.SettingsScreen
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination

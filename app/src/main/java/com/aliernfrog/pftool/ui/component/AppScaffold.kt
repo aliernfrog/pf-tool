@@ -19,10 +19,10 @@ import com.aliernfrog.pftool.R
 fun AppScaffold(
     topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
     topAppBarState: TopAppBarState = TopAppBarState(0F,0F,0F),
+    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState),
     floatingActionButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { topBar(scrollBehavior) },
@@ -47,6 +47,34 @@ fun AppTopBar(
     onNavigationClick: (() -> Unit)? = null
 ) {
     LargeTopAppBar(
+        title = { Text(title) },
+        scrollBehavior = scrollBehavior,
+        colors = colors,
+        navigationIcon = {
+            onNavigationClick?.let {
+                IconButton(onClick = it) {
+                    Icon(
+                        imageVector = navigationIcon,
+                        contentDescription = stringResource(R.string.action_back)
+                    )
+                }
+            }
+        },
+        actions = actions
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppSmallTopBar(
+    title: String,
+    scrollBehavior: TopAppBarScrollBehavior,
+    actions: @Composable RowScope.() -> Unit = {},
+    colors: TopAppBarColors = TopAppBarDefaults.largeTopAppBarColors(),
+    navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+    onNavigationClick: (() -> Unit)? = null
+) {
+    TopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
         colors = colors,

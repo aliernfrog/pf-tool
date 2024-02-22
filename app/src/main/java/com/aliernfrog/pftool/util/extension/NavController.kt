@@ -6,8 +6,9 @@ import com.aliernfrog.pftool.util.Destination
 /**
  * Pops back stack only if it exists.
  */
-fun NavController.popBackStackSafe() {
+fun NavController.popBackStackSafe(onNoBackStack: () -> Unit = {}) {
     if (previousBackStackEntry != null) popBackStack()
+    else onNoBackStack()
 }
 
 /**

@@ -1,6 +1,8 @@
-package com.aliernfrog.pftool.ui.screen
+package com.aliernfrog.pftool.ui.screen.settings
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -15,10 +17,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Update
+import androidx.compose.material.icons.outlined.FolderOpen
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.PinDrop
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedButton
@@ -32,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -41,6 +51,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
@@ -56,17 +69,84 @@ import com.aliernfrog.pftool.ui.component.form.SwitchRow
 import com.aliernfrog.pftool.ui.dialog.FolderConfigurationDialog
 import com.aliernfrog.pftool.ui.sheet.LanguageSheet
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
+import com.aliernfrog.pftool.util.extension.popBackStackSafe
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@Composable
+fun SettingsScreen(
+    onNavigateBackRequest: () -> Unit
+) {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = SettingsPage.ROOT.id,
+        enterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start) + fadeIn()
+        },
+        exitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start) + fadeOut()
+        },
+        popEnterTransition = {
+            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End) + fadeIn()
+        },
+        popExitTransition = {
+            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End) + fadeOut()
+        }
+    ) {
+        SettingsPage.entries.forEach { page ->
+            composable(page.id) {
+                page.content (
+                    { navController.popBackStackSafe(onNoBackStack = onNavigateBackRequest) },
+                    { navController.navigate(it.id) }
+                )
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+private fun SettingsRootPage(
+    onNavigateBackRequest: () -> Unit,
+    onNavigateRequest: (SettingsPage) -> Unit
+) {
+    AppScaffold(
+        topBar = { scrollBehavior ->
+            AppTopBar(
+                title = stringResource(R.string.settings),
+                scrollBehavior = scrollBehavior,
+                onNavigationClick = onNavigateBackRequest
+            )
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            SettingsPage.entries
+                .filter { it != SettingsPage.ROOT }
+                .forEach { page ->
+                    ButtonRow(
+                        title = stringResource(page.title),
+                        description = stringResource(page.description),
+                        painter = rememberVectorPainter(page.icon)
+                    ) {
+                        onNavigateRequest(page)
+                    }
+                }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun OldSettingsScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     settingsViewModel: SettingsViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
@@ -92,33 +172,6 @@ fun SettingsScreen(
                     mainViewModel.updateSheetState.show()
                 } }
             )
-            
-            // Appearance options
-            FormSection(title = stringResource(R.string.settings_appearance)) {
-                ExpandableRow(
-                    expanded = settingsViewModel.themeOptionsExpanded,
-                    title = stringResource(R.string.settings_appearance_theme),
-                    description = stringResource(R.string.settings_appearance_theme_description),
-                    trailingButtonText = stringResource(Theme.entries[settingsViewModel.prefs.theme].label),
-                    onClickHeader = {
-                        settingsViewModel.themeOptionsExpanded = !settingsViewModel.themeOptionsExpanded
-                    }
-                ) {
-                    RadioButtons(
-                        options = Theme.entries.map { stringResource(it.label) },
-                        selectedOptionIndex = settingsViewModel.prefs.theme
-                    ) {
-                        settingsViewModel.prefs.theme = it
-                    }
-                }
-                if (settingsViewModel.showMaterialYouOption) SwitchRow(
-                    title = stringResource(R.string.settings_appearance_materialYou),
-                    description = stringResource(R.string.settings_appearance_materialYou_description),
-                    checked = settingsViewModel.prefs.materialYou
-                ) {
-                    settingsViewModel.prefs.materialYou = it
-                }
-            }
 
             // General options
             FormSection(title = stringResource(R.string.settings_general)) {
@@ -360,4 +413,82 @@ fun UpdateButton(
             Text(stringResource(R.string.settings_about_checkUpdates))
         }
     }
+}
+
+@Suppress("unused")
+enum class SettingsPage(
+    val id: String,
+    @StringRes val title: Int,
+    @StringRes val description: Int,
+    val icon: ImageVector,
+    val content: @Composable (
+        onNavigateBackRequest: () -> Unit,
+        onNavigateRequest: (SettingsPage) -> Unit
+    ) -> Unit
+) {
+    ROOT(
+        id = "root",
+        title = R.string.settings,
+        description = R.string.settings,
+        icon = Icons.Outlined.Settings,
+        content = { onNavigateBackRequest, onNavigateRequest ->
+            SettingsRootPage(
+                onNavigateBackRequest = onNavigateBackRequest,
+                onNavigateRequest = onNavigateRequest
+            )
+        }
+    ),
+
+    APPEARANCE(
+        id = "appearance",
+        title = R.string.settings_appearance,
+        description = R.string.settings_appearance_description,
+        icon = Icons.Outlined.Palette,
+        content = { onNavigateBackRequest, _ ->
+            AppearancePage(onNavigateBackRequest = onNavigateBackRequest)
+        }
+    ),
+
+    MAPS(
+        id = "maps",
+        title = R.string.settings_maps,
+        description = R.string.settings_maps_description,
+        icon = Icons.Outlined.PinDrop,
+        content = { _, _ ->
+            TODO()
+        }
+    ),
+
+    FILES(
+        id = "files",
+        title = R.string.settings_files,
+        description = R.string.settings_files_description,
+        icon = Icons.Outlined.FolderOpen,
+        content = { _, _ ->
+            TODO()
+        }
+    ),
+
+    LANGUAGE(
+        id = "language",
+        title = R.string.settings_language,
+        description = R.string.settings_language_description,
+        icon = Icons.Outlined.Translate,
+        content = { _, _ ->
+            TODO()
+        }
+    ),
+
+    ABOUT(
+        id = "about",
+        title = R.string.settings_about,
+        description = R.string.settings_about,
+        icon = Icons.Outlined.Info,
+        content = { onNavigateBackRequest, _ ->
+            /* TODO */
+            OldSettingsScreen {
+                onNavigateBackRequest()
+            }
+        }
+    )
 }
