@@ -4,6 +4,13 @@ import androidx.navigation.NavController
 import com.aliernfrog.pftool.util.Destination
 
 /**
+ * Pops back stack only if it exists.
+ */
+fun NavController.popBackStackSafe() {
+    if (previousBackStackEntry != null) popBackStack()
+}
+
+/**
  * Navigates to given [destination] and removes previous destinations from back stack.
  */
 fun NavController.set(destination: Destination) {

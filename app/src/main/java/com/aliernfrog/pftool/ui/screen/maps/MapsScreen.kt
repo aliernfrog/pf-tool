@@ -5,8 +5,10 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -42,6 +44,7 @@ import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.PickMapButton
+import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
@@ -52,7 +55,8 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(
-    mapsViewModel: MapsViewModel = koinViewModel()
+    mapsViewModel: MapsViewModel = koinViewModel(),
+    onNavigateSettingsRequest: () -> Unit
 ) {
     LaunchedEffect(mapsViewModel.chosenMap) {
         if (mapsViewModel.chosenMap == null) mapsViewModel.mapListShown = true
@@ -65,7 +69,10 @@ fun MapsScreen(
     AppScaffold(
         topBar = { AppTopBar(
             title = stringResource(R.string.maps),
-            scrollBehavior = it
+            scrollBehavior = it,
+            actions = {
+                SettingsButton(onClick = onNavigateSettingsRequest)
+            }
         ) },
         topAppBarState = mapsViewModel.topAppBarState
     ) {
@@ -201,4 +208,6 @@ private fun Actions(
         *actions.toTypedArray(),
         modifier = Modifier.padding(8.dp)
     )
+
+    Spacer(Modifier.navigationBarsPadding())
 }

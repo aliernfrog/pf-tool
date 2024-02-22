@@ -22,6 +22,7 @@ import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.NavigationConstant
+import com.aliernfrog.pftool.util.extension.popBackStackSafe
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,10 +63,18 @@ fun MainScreen(
             ) }
         ) {
             composable(route = Destination.MAPS.route) {
-                MapsPermissionsScreen()
+                MapsPermissionsScreen(
+                    onNavigateSettingsRequest = {
+                        navController.navigate(Destination.SETTINGS.route)
+                    }
+                )
             }
             composable(route = Destination.SETTINGS.route) {
-                SettingsScreen()
+                SettingsScreen(
+                    onNavigateBackRequest = {
+                        navController.popBackStackSafe()
+                    }
+                )
             }
         }
     }

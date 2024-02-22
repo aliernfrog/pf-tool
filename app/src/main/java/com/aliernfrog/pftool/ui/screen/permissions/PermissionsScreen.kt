@@ -13,6 +13,7 @@ import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
+import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
@@ -25,6 +26,7 @@ fun PermissionsScreen(
     title: String,
     permissionsViewModel: PermissionsViewModel = koinViewModel(),
     shizukuViewModel: ShizukuViewModel = koinViewModel(),
+    onNavigateSettingsRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -47,7 +49,10 @@ fun PermissionsScreen(
             else AppScaffold(
                 topBar = { AppTopBar(
                     title = title,
-                    scrollBehavior = it
+                    scrollBehavior = it,
+                    actions = {
+                        SettingsButton(onClick = onNavigateSettingsRequest)
+                    }
                 ) }
             ) {
                 when (method) {

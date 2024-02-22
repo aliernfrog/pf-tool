@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -66,7 +68,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsScreen(
     mainViewModel: MainViewModel = koinViewModel(),
-    settingsViewModel: SettingsViewModel = koinViewModel()
+    settingsViewModel: SettingsViewModel = koinViewModel(),
+    onNavigateBackRequest: () -> Unit
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
@@ -76,7 +79,8 @@ fun SettingsScreen(
     AppScaffold(
         topBar = { AppTopBar(
             title = stringResource(R.string.settings),
-            scrollBehavior = it
+            scrollBehavior = it,
+            onNavigationClick = onNavigateBackRequest
         ) },
         topAppBarState = settingsViewModel.topAppBarState
     ) {
@@ -282,6 +286,7 @@ fun SettingsScreen(
                     GeneralUtil.restartApp(context)
                 }
             }
+            Spacer(Modifier.navigationBarsPadding())
         }
     }
 
