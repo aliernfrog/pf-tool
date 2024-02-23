@@ -10,7 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.data.PermissionData
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.SettingsButton
@@ -40,7 +40,7 @@ fun PermissionsScreen(
     }
 
     AnimatedContent(
-        FileManagementMethod.entries[permissionsViewModel.prefs.fileManagementMethod]
+        StorageAccessType.entries[permissionsViewModel.prefs.storageAccessType]
     ) { method ->
         var permissionsGranted by remember { mutableStateOf(hasPermissions()) }
 
@@ -56,13 +56,13 @@ fun PermissionsScreen(
                 ) }
             ) {
                 when (method) {
-                    FileManagementMethod.SAF -> SAFPermissionsScreen(
+                    StorageAccessType.SAF -> SAFPermissionsScreen(
                         *permissionsData,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
                     )
-                    FileManagementMethod.SHIZUKU -> ShizukuPermissionsScreen(
+                    StorageAccessType.SHIZUKU -> ShizukuPermissionsScreen(
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }

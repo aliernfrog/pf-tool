@@ -59,7 +59,7 @@ import androidx.navigation.compose.rememberNavController
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppSmallTopBar
 import com.aliernfrog.pftool.ui.component.AppTopBar
@@ -206,9 +206,9 @@ private fun OldSettingsScreen(
 
             // General options
             FormSection(title = stringResource(R.string.settings_general)) {
-                val enabledFileManagementMethod = FileManagementMethod.entries[settingsViewModel.prefs.fileManagementMethod]
+                val enabledStorageAccessType = StorageAccessType.entries[settingsViewModel.prefs.storageAccessType]
                 ButtonRow(
-                    title = stringResource(R.string.settings_general_folders),
+                    title = stringResource(R.string.settings_storage_folders),
                     description = stringResource(R.string.settings_general_folders_description),
                     expanded = true,
                     arrowRotation = if (LocalLayoutDirection.current == LayoutDirection.Rtl) 270f else 90f
@@ -217,17 +217,17 @@ private fun OldSettingsScreen(
                 }
                 ExpandableRow(
                     expanded = settingsViewModel.fileServiceOptionsExpanded,
-                    title = stringResource(R.string.settings_general_fileManagamentService),
-                    trailingButtonText = stringResource(enabledFileManagementMethod.label),
+                    title = stringResource(R.string.settings_storage_storageAccessType),
+                    trailingButtonText = stringResource(enabledStorageAccessType.label),
                     onClickHeader = {
                         settingsViewModel.fileServiceOptionsExpanded = !settingsViewModel.fileServiceOptionsExpanded
                     }
                 ) {
                     RadioButtons(
-                        options = FileManagementMethod.entries.map { stringResource(it.label) },
-                        selectedOptionIndex = enabledFileManagementMethod.ordinal,
+                        options = StorageAccessType.entries.map { stringResource(it.label) },
+                        selectedOptionIndex = enabledStorageAccessType.ordinal,
                         onSelect = {
-                            FileManagementMethod.entries[it].enable(settingsViewModel.prefs)
+                            StorageAccessType.entries[it].enable(settingsViewModel.prefs)
                         }
                     )
                 }
@@ -481,8 +481,10 @@ enum class SettingsPage(
         title = R.string.settings_storage,
         description = R.string.settings_storage_description,
         icon = Icons.Outlined.FolderOpen,
-        content = { _, _ ->
-            TODO()
+        content = { onNavigateBackRequest, _ ->
+            StoragePage(
+                onNavigateBackRequest = onNavigateBackRequest
+            )
         }
     ),
 

@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.CardWithActions
@@ -150,7 +150,7 @@ private fun ShizukuSetupGuide(
         shape = AppComponentShape,
         modifier = Modifier.padding(8.dp),
         onClick = {
-            FileManagementMethod.SAF.enable(permissionsViewModel.prefs)
+            StorageAccessType.SAF.enable(permissionsViewModel.prefs)
         }
     ) {
         Row(

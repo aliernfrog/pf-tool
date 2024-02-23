@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.PrefEditItem
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.filesAppMightBlockAndroidData
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
@@ -56,7 +56,7 @@ fun FolderConfigurationDialog(
     settingsViewModel: SettingsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val isSAF = settingsViewModel.prefs.fileManagementMethod == FileManagementMethod.SAF.ordinal
+    val isSAF = settingsViewModel.prefs.storageAccessType == StorageAccessType.SAF.ordinal
     val folders = remember { SettingsConstant.folders }
     var activePref: PrefEditItem? = remember { null }
     val openFolderLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
@@ -76,7 +76,7 @@ fun FolderConfigurationDialog(
             }
         },
         title = {
-            Text(stringResource(R.string.settings_general_folders))
+            Text(stringResource(R.string.settings_storage_folders))
         },
         text = {
             Column(

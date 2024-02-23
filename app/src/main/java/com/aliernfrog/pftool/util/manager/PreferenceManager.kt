@@ -2,7 +2,7 @@ package com.aliernfrog.pftool.util.manager
 
 import android.content.Context
 import com.aliernfrog.pftool.ConfigKey
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
 
@@ -21,7 +21,7 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // Folder configuration
     var pfMapsDir by stringPreference(ConfigKey.KEY_MAPS_DIR, ConfigKey.RECOMMENDED_MAPS_DIR)
     var exportedMapsDir by stringPreference(ConfigKey.KEY_EXPORTED_MAPS_DIR, ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR)
-    var fileManagementMethod by intPreference("fileManagementService", FileManagementMethod.SAF.ordinal)
+    var storageAccessType by intPreference("storageAccessType", StorageAccessType.SAF.ordinal)
 
     // Experimental (developer)
     var showMapNameFieldGuide by booleanPreference("showMapNameFieldGuide", true)

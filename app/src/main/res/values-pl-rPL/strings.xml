@@ -110,7 +110,7 @@ Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliw
     <string name="settings_maps_showChosenMapThumbnail_description">Wiedz, na której mapie jesteś</string>
     <string name="settings_maps_showMapThumbnailsInList">Pokazuj miniaturki na liście map</string>
     <string name="settings_maps_showMapThumbnailsInList_description">Łatwo identyfikuj mapy które posiadasz</string>
-    <string name="settings_general_folders">Konfiguracja folderu</string>
+    <string name="settings_storage_folders">Konfiguracja folderu</string>
     <string name="settings_general_folders_description">Konfiguruj foldery używane przez PF Tool</string>
     <string name="settings_general_folders_notSet">Nieskonfigurowany</string>
     <string name="settings_general_folders_recommendedFolder">Zalecany folder</string>
