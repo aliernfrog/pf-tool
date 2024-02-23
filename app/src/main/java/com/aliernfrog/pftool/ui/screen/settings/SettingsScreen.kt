@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -59,6 +61,7 @@ import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.enum.FileManagementMethod
 import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppSmallTopBar
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.RadioButtons
@@ -127,6 +130,7 @@ private fun SettingsRootPage(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
             SettingsPage.entries
@@ -141,6 +145,33 @@ private fun SettingsRootPage(
                     }
                 }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsPageContainer(
+    title: String,
+    onNavigateBackRequest: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    AppScaffold(
+        topBar = { scrollBehavior ->
+            AppSmallTopBar(
+                title = title,
+                scrollBehavior = scrollBehavior,
+                onNavigationClick = onNavigateBackRequest
+            )
+        },
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState()),
+            content = content
+        )
     }
 }
 
@@ -175,20 +206,6 @@ private fun OldSettingsScreen(
 
             // General options
             FormSection(title = stringResource(R.string.settings_general)) {
-                SwitchRow(
-                    title = stringResource(R.string.settings_general_showChosenMapThumbnail),
-                    description = stringResource(R.string.settings_general_showChosenMapThumbnail_description),
-                    checked = settingsViewModel.prefs.showChosenMapThumbnail
-                ) {
-                    settingsViewModel.prefs.showChosenMapThumbnail = it
-                }
-                SwitchRow(
-                    title = stringResource(R.string.settings_general_showMapThumbnailsInList),
-                    description = stringResource(R.string.settings_general_showMapThumbnailsInList_description),
-                    checked = settingsViewModel.prefs.showMapThumbnailsInList
-                ) {
-                    settingsViewModel.prefs.showMapThumbnailsInList = it
-                }
                 val enabledFileManagementMethod = FileManagementMethod.entries[settingsViewModel.prefs.fileManagementMethod]
                 ButtonRow(
                     title = stringResource(R.string.settings_general_folders),
@@ -454,15 +471,15 @@ enum class SettingsPage(
         title = R.string.settings_maps,
         description = R.string.settings_maps_description,
         icon = Icons.Outlined.PinDrop,
-        content = { _, _ ->
-            TODO()
+        content = { onNavigateBackRequest, _ ->
+            MapsPage(onNavigateBackRequest = onNavigateBackRequest)
         }
     ),
 
-    FILES(
+    STORAGE(
         id = "files",
-        title = R.string.settings_files,
-        description = R.string.settings_files_description,
+        title = R.string.settings_storage,
+        description = R.string.settings_storage_description,
         icon = Icons.Outlined.FolderOpen,
         content = { _, _ ->
             TODO()

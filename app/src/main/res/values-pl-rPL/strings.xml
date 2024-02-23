@@ -106,10 +106,10 @@ Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliw
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Motyw oparty na kolorach twojego urządzenia</string>
     <string name="settings_general">Ogólne</string>
-    <string name="settings_general_showChosenMapThumbnail">Pokaż miniaturkę wybranej mapy</string>
-    <string name="settings_general_showChosenMapThumbnail_description">Wiedz, na której mapie jesteś</string>
-    <string name="settings_general_showMapThumbnailsInList">Pokazuj miniaturki na liście map</string>
-    <string name="settings_general_showMapThumbnailsInList_description">Łatwo identyfikuj mapy które posiadasz</string>
+    <string name="settings_maps_showChosenMapThumbnail">Pokaż miniaturkę wybranej mapy</string>
+    <string name="settings_maps_showChosenMapThumbnail_description">Wiedz, na której mapie jesteś</string>
+    <string name="settings_maps_showMapThumbnailsInList">Pokazuj miniaturki na liście map</string>
+    <string name="settings_maps_showMapThumbnailsInList_description">Łatwo identyfikuj mapy które posiadasz</string>
     <string name="settings_general_folders">Konfiguracja folderu</string>
     <string name="settings_general_folders_description">Konfiguruj foldery używane przez PF Tool</string>
     <string name="settings_general_folders_notSet">Nieskonfigurowany</string>

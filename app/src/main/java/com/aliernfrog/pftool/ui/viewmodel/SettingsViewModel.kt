@@ -30,7 +30,6 @@ class SettingsViewModel(
     val scrollState = ScrollState(0)
     val languageSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
-    var themeOptionsExpanded by mutableStateOf(false)
     var foldersDialogShown by mutableStateOf(false)
     var fileServiceOptionsExpanded by mutableStateOf(false)
     var linksExpanded by mutableStateOf(false)

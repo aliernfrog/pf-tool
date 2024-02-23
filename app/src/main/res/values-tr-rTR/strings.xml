@@ -107,10 +107,10 @@ Daha fazla bilgi, çözümler ve şu an üzerinde çalışılan yeni düzeltme i
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Cihazınızdaki renklere göre bir tema</string>
     <string name="settings_general">Genel</string>
-    <string name="settings_general_showChosenMapThumbnail">Seçilen haritanın resmini göster</string>
-    <string name="settings_general_showChosenMapThumbnail_description">Hangi haritada olduğunuzu bilin</string>
-    <string name="settings_general_showMapThumbnailsInList">Harita listesinde resimleri göster</string>
-    <string name="settings_general_showMapThumbnailsInList_description">Haritalarınızı kolayca ayırt edin</string>
+    <string name="settings_maps_showChosenMapThumbnail">Seçilen haritanın resmini göster</string>
+    <string name="settings_maps_showChosenMapThumbnail_description">Hangi haritada olduğunuzu bilin</string>
+    <string name="settings_maps_showMapThumbnailsInList">Harita listesinde resimleri göster</string>
+    <string name="settings_maps_showMapThumbnailsInList_description">Haritalarınızı kolayca ayırt edin</string>
     <string name="settings_general_folders">Klasör yapılandırması</string>
     <string name="settings_general_folders_description">PF Tool\'da kullanılan klasörleri yapılandırın</string>
     <string name="settings_general_folders_notSet">Ayarlanmadı</string>

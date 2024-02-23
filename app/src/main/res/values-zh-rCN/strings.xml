@@ -107,10 +107,10 @@
     <string name="settings_appearance_materialYou">Material You 风格</string>
     <string name="settings_appearance_materialYou_description">基于您设备颜色的主题</string>
     <string name="settings_general">概览</string>
-    <string name="settings_general_showChosenMapThumbnail">显示选中地图的缩略图</string>
-    <string name="settings_general_showChosenMapThumbnail_description">了解你正在查看的地图</string>
-    <string name="settings_general_showMapThumbnailsInList">在地图列表中显示地图缩略图</string>
-    <string name="settings_general_showMapThumbnailsInList_description">轻松识别您拥有的地图</string>
+    <string name="settings_maps_showChosenMapThumbnail">显示选中地图的缩略图</string>
+    <string name="settings_maps_showChosenMapThumbnail_description">了解你正在查看的地图</string>
+    <string name="settings_maps_showMapThumbnailsInList">在地图列表中显示地图缩略图</string>
+    <string name="settings_maps_showMapThumbnailsInList_description">轻松识别您拥有的地图</string>
     <string name="settings_general_folders">文件夹设置</string>
     <string name="settings_general_folders_description">配置用于PF工具的文件夹</string>
     <string name="settings_general_folders_notSet">未配置</string>
