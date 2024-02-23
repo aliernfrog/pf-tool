@@ -16,19 +16,6 @@
     <string name="info_pleaseWait">Proszę czekać..</string>
     <string name="info_deleteQuestion">Czy jesteś pewien, że chcesz usunąć {NAME}?\nTej operacji NIE można cofnąć!</string>
     <string name="permissions">Uprawnienia</string>
-    <string name="permissions_filesApp">Aktualizacje przeglądarki plików</string>
-    <string name="permissions_filesApp_description">Przeglądarka plików otrzymała aktualizację we wrześniu 2023 r., która zabrania innym aplikacjom dostępu do plików w folderze Android/data.\nJeśli masz tę aktualizację, prawdopodobnie będziesz musiał ją odinstalować. Kliknij przycisk poniżej aby uzyskać więcej informacji.</string>
-    <string name="permissions_filesApp_moreInfo">Więcej informacji</string>
-    <string name="permissions_filesApp_moreInfo_text">## Czy mnie to dotyczy?\n
-Upewnij się, że chociaż raz włączyłeś Polyfield i wybierz folder \"Polyfield\" w PF Tool. Jeżeli jesteś w stanie zrobić to bezproblemowo, to ciebie to nie dotyczy.\n\n
-## Co mam zrobić jeśli mnie to dotyczy?\n
-Musisz odinstalować aktualizacje **przeglądarki plików**. Wykonaj poniższe kroki, ale pamiętaj, że mogą one się różnić w zależności od twojego urządzenia:\n\n
-Ustawienia urządzenia &gt; Aplikacje &gt; Wszystkie aplikacje/Zarządzaj aplikacjami &gt; aplikacja \"Pliki\" (nazwa aplikacji może się różnić w zależności od twojego języka) &gt; Odinstaluj aktualizacje\n\n
-## Nie możesz znaleźć przeglądarki plików?\n
-Poszukaj opcji, która ukrywa domyślne aplikacje z listy, i wyłącz ją jeśli jest włączona. Możesz ją znaleźć w charakterystycznych \"menu z trzema kropkami\".\n\n
-## Brak możliwości odinstalowania aktualizacji?\n
-Spróbuj ponownie wybrać folder \"Polyfield\" w PF Tool. Jeśli nie możesz tego zrobić, to niestety na chwilę obecną nie ma na to rozwiązania.\n\n
-Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliwe rozwiązania, oraz nowe naprawy błędów nad którymi pracuję.    </string>
     <string name="permissions_chooseFolder">Wybierz folder</string>
     <string name="permissions_recommendedFolder">Zalecany folder</string>
     <string name="permissions_recommendedFolder_a8Hint">Po kliknięciu \"Okej\", ten folder zostanie otwarty w nowym oknie. Upewnij się, że jesteś w odpowiednim folderze i kliknij \"UŻYJ TEN FOLDER\"</string>
@@ -105,37 +92,30 @@ Sprawdź [tę stronę]({MORE_INFO_URL}) aby uzyskać więcej informacji, możliw
     <string name="settings_appearance_theme_dark">Ciemny</string>
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Motyw oparty na kolorach twojego urządzenia</string>
-    <string name="settings_general">Ogólne</string>
     <string name="settings_maps_showChosenMapThumbnail">Pokaż miniaturkę wybranej mapy</string>
     <string name="settings_maps_showChosenMapThumbnail_description">Wiedz, na której mapie jesteś</string>
     <string name="settings_maps_showMapThumbnailsInList">Pokazuj miniaturki na liście map</string>
     <string name="settings_maps_showMapThumbnailsInList_description">Łatwo identyfikuj mapy które posiadasz</string>
     <string name="settings_storage_folders">Konfiguracja folderu</string>
-    <string name="settings_general_folders_description">Konfiguruj foldery używane przez PF Tool</string>
-    <string name="settings_general_folders_notSet">Nieskonfigurowany</string>
-    <string name="settings_general_folders_recommendedFolder">Zalecany folder</string>
-    <string name="settings_general_folders_choose">Wybierz folder</string>
-    <string name="settings_general_folders_openRecommended">Wybierz zalecany folder</string>
-    <string name="settings_general_folders_openAndroidData">Otwórz folder Android/data</string>
-    <string name="settings_general_folders_maps">Folder map</string>
-    <string name="settings_general_folders_exportedMaps">Folder eksportowanych map</string>
-    <string name="settings_general_language">Język</string>
-    <string name="settings_general_language_description">Wybierz język PF Tool</string>
-    <string name="settings_general_language_select">Wybierz język</string>
-    <string name="settings_general_language_help">Pomóż w tłumaczeniu PF Tool</string>
-    <string name="settings_general_language_help_deviceNotAvailable">Język Twojego urządzenia nie jest jeszcze dostępny</string>
-    <string name="settings_general_language_help_description">Możesz przyłączyć się do tłumaczenia na Crowdin klikając tutaj</string>
-    <string name="settings_general_language_system">Zgodnie z urządzeniem</string>
-    <string name="settings_general_language_system_notAvailable">{SYSTEM_LANGUAGE} nie jest dostępny</string>
-    <string name="settings_general_language_selected">Wybrany</string>
+    <string name="settings_storage_folders_notSet">Nieskonfigurowany</string>
+    <string name="settings_storage_folders_recommendedFolder">Zalecany folder</string>
+    <string name="settings_storage_folders_choose">Wybierz folder</string>
+    <string name="settings_storage_folders_openRecommended">Wybierz zalecany folder</string>
+    <string name="settings_storage_folders_openAndroidData">Otwórz folder Android/data</string>
+    <string name="settings_storage_folders_maps">Folder map</string>
+    <string name="settings_storage_folders_exportedMaps">Folder eksportowanych map</string>
+    <string name="settings_language_help">Pomóż w tłumaczeniu PF Tool</string>
+    <string name="settings_language_help_deviceNotAvailable">Język Twojego urządzenia nie jest jeszcze dostępny</string>
+    <string name="settings_language_help_description">Możesz przyłączyć się do tłumaczenia na Crowdin klikając tutaj</string>
+    <string name="settings_language_system">Zgodnie z urządzeniem</string>
+    <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} nie jest dostępny</string>
+    <string name="settings_language_selected">Wybrany</string>
     <string name="settings_about">O aplikacji</string>
     <string name="settings_about_version">Wersja PF Tool</string>
     <string name="settings_about_update">Aktualizuj</string>
     <string name="settings_about_checkUpdates">Sprawdź dostępność aktualizacji</string>
     <string name="settings_about_autoCheckUpdates">Automatycznie sprawdzaj aktualizacje</string>
     <string name="settings_about_autoCheckUpdates_description">Automatycznie sprawdzaj aktualizacje PF Tool przy uruchomieniu</string>
-    <string name="settings_about_links">Powiązane linki</string>
-    <string name="settings_about_links_description">Kliknij, aby wyświetlić powiązane linki</string>
     <string name="settings_experimental">Ustawienia eksperymentalne</string>
     <string name="settings_experimental_enabled">Ustawienia eksperymentalne włączone!</string>
     <string name="settings_experimental_description">Te ustawienia nie są przeznaczone do normalnego użytku i mogą zepsuć PF Tool w przypadku niewłaściwego użycia</string>

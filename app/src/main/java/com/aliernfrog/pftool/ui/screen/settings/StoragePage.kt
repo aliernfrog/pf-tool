@@ -178,7 +178,7 @@ fun RawPathInput(
         supportingText = {
             FadeVisibility(!isDefault) {
                 Text(
-                    stringResource(R.string.settings_general_folders_default).replace("%s", pref.default)
+                    stringResource(R.string.settings_storage_folders_default).replace("%s", pref.default)
                 )
             }
         },
@@ -190,7 +190,7 @@ fun RawPathInput(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Restore,
-                        contentDescription = stringResource(R.string.settings_general_folders_restoreDefault)
+                        contentDescription = stringResource(R.string.settings_storage_folders_restoreDefault)
                     )
                 }
                 IconButton(
@@ -198,7 +198,7 @@ fun RawPathInput(
                 ) {
                     Icon(
                         imageVector = Icons.Default.FolderOpen,
-                        contentDescription = stringResource(R.string.settings_general_folders_choose)
+                        contentDescription = stringResource(R.string.settings_storage_folders_choose)
                     )
                 }
             }
@@ -241,7 +241,7 @@ fun FolderCard(
 
             if (!usingRecommendedPath) {
                 Text(
-                    text = stringResource(R.string.settings_general_folders_recommendedFolder),
+                    text = stringResource(R.string.settings_storage_folders_recommendedFolder),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = 8.dp)
                 )
@@ -265,14 +265,14 @@ fun FolderCard(
                             onPickFolderRequest(FileUtil.getUriForPath(pref.default))
                         },
                         label = {
-                            Text(stringResource(R.string.settings_general_folders_openRecommended))
+                            Text(stringResource(R.string.settings_storage_folders_openRecommended))
                         }
                     )
 
                     AssistChip(
                         onClick = { onPickFolderRequest(null) },
                         label = {
-                            Text(stringResource(R.string.settings_general_folders_choose))
+                            Text(stringResource(R.string.settings_storage_folders_choose))
                         }
                     )
 
@@ -281,7 +281,7 @@ fun FolderCard(
                             onPickFolderRequest(FileUtil.getUriForPath(dataFolderPath))
                         },
                         label = {
-                            Text(stringResource(R.string.settings_general_folders_openAndroidData))
+                            Text(stringResource(R.string.settings_storage_folders_openAndroidData))
                         }
                     )
                 }
@@ -300,5 +300,5 @@ private fun getFolderDescription(
         text = Uri.parse(text).toPath()?.removePrefix(externalStorageRoot)
             ?: text
     } catch (_: Exception) {}
-    return text.ifEmpty { stringResource(R.string.settings_general_folders_notSet) }
+    return text.ifEmpty { stringResource(R.string.settings_storage_folders_notSet) }
 }

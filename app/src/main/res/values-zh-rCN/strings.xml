@@ -16,20 +16,6 @@
     <string name="info_pleaseWait">请稍候……</string>
     <string name="info_deleteQuestion">你确定要删除 {NAME} 么？\n此操作不可撤销！</string>
     <string name="permissions">权限</string>
-    <string name="permissions_filesApp">文件应用更新</string>
-    <string name="permissions_filesApp_description">文件应用已在2023年9月收到更新，阻止其他应用请求访问 Android/data 文件夹中的文件。\n如果您有此更新，您可能必须卸载它。点击下面的按钮以获取更多信息。</string>
-    <string name="permissions_filesApp_moreInfo">更多信息</string>
-    <string name="permissions_filesApp_moreInfo_text">## 我是否受到影响？\n
-        确保您至少启动了 Polyfield 一次，并尝试在 PF Tool 中选择 Polyfield 文件夹。如果您可以顺利完成而没有问题，则您未受影响。\n\n
-        ## 如果我受到影响该怎么办？\n
-您需要卸载 **文件** 应用的更新。按照以下步骤操作，注意步骤可能因您的设备而异：\n\n
-        设备设置 &gt; 应用 &gt; 所有应用/管理应用 &gt; 文件（应用名称取决于您的语言） &gt; 卸载更新\n\n
-        ## 在列表中找不到文件应用？\n
-        尝试寻找一个选项，该选项可能会从列表中隐藏系统应用，这个选项也可能在一个三点菜单中。\n\n
-        ## 卸载更新选项被禁用？\n
-        尝试再次在 PF Tool 中选择 Polyfield 文件夹。如果您无法完成此操作，很遗憾，我也没辙了。\n\n
-        查看 [此页面]({MORE_INFO_URL}) 获取更多信息、可能的解决方法以及目前正在进行的新修复内容。
-    </string>
     <string name="permissions_chooseFolder">选择文件夹</string>
     <string name="permissions_recommendedFolder">推荐的文件夹</string>
     <string name="permissions_recommendedFolder_a8Hint">点击“确定”后，此文件夹将在新窗口中打开。请确保您位于正确的文件夹，并点击“使用此选项”</string>
@@ -106,37 +92,30 @@
     <string name="settings_appearance_theme_dark">深色</string>
     <string name="settings_appearance_materialYou">Material You 风格</string>
     <string name="settings_appearance_materialYou_description">基于您设备颜色的主题</string>
-    <string name="settings_general">概览</string>
     <string name="settings_maps_showChosenMapThumbnail">显示选中地图的缩略图</string>
     <string name="settings_maps_showChosenMapThumbnail_description">了解你正在查看的地图</string>
     <string name="settings_maps_showMapThumbnailsInList">在地图列表中显示地图缩略图</string>
     <string name="settings_maps_showMapThumbnailsInList_description">轻松识别您拥有的地图</string>
     <string name="settings_storage_folders">文件夹设置</string>
-    <string name="settings_general_folders_description">配置用于PF工具的文件夹</string>
-    <string name="settings_general_folders_notSet">未配置</string>
-    <string name="settings_general_folders_recommendedFolder">推荐的文件夹</string>
-    <string name="settings_general_folders_choose">选择文件夹</string>
-    <string name="settings_general_folders_openRecommended">打开推荐的文件夹</string>
-    <string name="settings_general_folders_openAndroidData">打开 Android/data 文件夹</string>
-    <string name="settings_general_folders_maps">地图文件夹</string>
-    <string name="settings_general_folders_exportedMaps">导出地图的文件夹</string>
-    <string name="settings_general_language">语言</string>
-    <string name="settings_general_language_description">选择 PF 工具的语言</string>
-    <string name="settings_general_language_select">选择语言</string>
-    <string name="settings_general_language_help">帮助PF工具翻译</string>
-    <string name="settings_general_language_help_deviceNotAvailable">您设备的语言尚不可用</string>
-    <string name="settings_general_language_help_description">您可以通过 Crowdin 来贡献翻译</string>
-    <string name="settings_general_language_system">跟随系统</string>
-    <string name="settings_general_language_system_notAvailable">{SYSTEM_LANGUAGE} 暂不可用</string>
-    <string name="settings_general_language_selected">已选择</string>
+    <string name="settings_storage_folders_notSet">未配置</string>
+    <string name="settings_storage_folders_recommendedFolder">推荐的文件夹</string>
+    <string name="settings_storage_folders_choose">选择文件夹</string>
+    <string name="settings_storage_folders_openRecommended">打开推荐的文件夹</string>
+    <string name="settings_storage_folders_openAndroidData">打开 Android/data 文件夹</string>
+    <string name="settings_storage_folders_maps">地图文件夹</string>
+    <string name="settings_storage_folders_exportedMaps">导出地图的文件夹</string>
+    <string name="settings_language_help">帮助PF工具翻译</string>
+    <string name="settings_language_help_deviceNotAvailable">您设备的语言尚不可用</string>
+    <string name="settings_language_help_description">您可以通过 Crowdin 来贡献翻译</string>
+    <string name="settings_language_system">跟随系统</string>
+    <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} 暂不可用</string>
+    <string name="settings_language_selected">已选择</string>
     <string name="settings_about">关于</string>
     <string name="settings_about_version">PF 工具版本</string>
     <string name="settings_about_update">更新</string>
     <string name="settings_about_checkUpdates">检查更新</string>
     <string name="settings_about_autoCheckUpdates">自动检查更新</string>
     <string name="settings_about_autoCheckUpdates_description">启动时自动检查 PF 工具更新</string>
-    <string name="settings_about_links">相关链接</string>
-    <string name="settings_about_links_description">点击查看相关链接</string>
     <string name="settings_experimental">实验性功能设置</string>
     <string name="settings_experimental_enabled">已启用实验性设置！</string>
     <string name="settings_experimental_description">这些设置不适用于常规使用，如果被滥用可能会导致 PF Tool 故障。</string>

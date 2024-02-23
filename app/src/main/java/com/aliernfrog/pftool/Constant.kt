@@ -2,6 +2,8 @@ package com.aliernfrog.pftool
 
 import android.os.Build
 import android.os.Environment
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Translate
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
@@ -16,7 +18,6 @@ val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"
 val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 val hasAndroidDataRestrictions = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-val filesAppMightBlockAndroidData = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 object ConfigKey {
     const val PREF_NAME = "APP_CONFIG"
@@ -36,13 +37,25 @@ object ConfigKey {
 
 object SettingsConstant {
     val socials = listOf(
-        Social("Polyfield Discord", "https://discord.gg/X6WzGpCgDJ"),
-        Social("PF Tool GitHub", githubRepoURL),
-        Social("PF Tool Crowdin", crowdinURL)
+        Social(
+            label = "Polyfield",
+            icon = R.drawable.discord,
+            url = "https://discord.gg/X6WzGpCgDJ"
+        ),
+        Social(
+            label = "PF Tool",
+            icon = R.drawable.github,
+            url = githubRepoURL
+        ),
+        Social(
+            label = "Crowdin",
+            icon = Icons.Default.Translate,
+            url = crowdinURL
+        )
     )
     val folders = listOf(
         PrefEditItem(
-            labelResourceId = R.string.settings_general_folders_maps,
+            labelResourceId = R.string.settings_storage_folders_maps,
             getValue = { it.pfMapsDir },
             setValue = { newValue, prefs ->
                 prefs.pfMapsDir = newValue
@@ -50,7 +63,7 @@ object SettingsConstant {
             default = ConfigKey.RECOMMENDED_MAPS_DIR
         ),
         PrefEditItem(
-            labelResourceId = R.string.settings_general_folders_exportedMaps,
+            labelResourceId = R.string.settings_storage_folders_exportedMaps,
             getValue = { it.exportedMapsDir },
             setValue = { newValue, prefs ->
                 prefs.exportedMapsDir = newValue
