@@ -111,7 +111,6 @@
     <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} nie jest dostępny</string>
     <string name="settings_language_selected">Wybrany</string>
     <string name="settings_about">O aplikacji</string>
-    <string name="settings_about_version">Wersja PF Tool</string>
     <string name="settings_about_update">Aktualizuj</string>
     <string name="settings_about_checkUpdates">Sprawdź dostępność aktualizacji</string>
     <string name="settings_about_autoCheckUpdates">Automatycznie sprawdzaj aktualizacje</string>

@@ -111,7 +111,6 @@
     <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} 暂不可用</string>
     <string name="settings_language_selected">已选择</string>
     <string name="settings_about">关于</string>
-    <string name="settings_about_version">PF 工具版本</string>
     <string name="settings_about_update">更新</string>
     <string name="settings_about_checkUpdates">检查更新</string>
     <string name="settings_about_autoCheckUpdates">自动检查更新</string>

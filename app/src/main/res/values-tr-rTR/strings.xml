@@ -111,7 +111,6 @@
     <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} mevcut değil</string>
     <string name="settings_language_selected">Seçili</string>
     <string name="settings_about">Hakkında</string>
-    <string name="settings_about_version">PF Tool sürümü</string>
     <string name="settings_about_update">Güncelle</string>
     <string name="settings_about_checkUpdates">Güncellemeleri denetle</string>
     <string name="settings_about_autoCheckUpdates">Güncellemeleri otomatik olarak denetle</string>

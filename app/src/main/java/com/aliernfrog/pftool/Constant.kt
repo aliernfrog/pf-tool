@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Environment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Translate
+import com.aliernfrog.pftool.data.CreditsData
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.data.Social
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
@@ -36,23 +37,6 @@ object ConfigKey {
 }
 
 object SettingsConstant {
-    val socials = listOf(
-        Social(
-            label = "Polyfield",
-            icon = R.drawable.discord,
-            url = "https://discord.gg/X6WzGpCgDJ"
-        ),
-        Social(
-            label = "PF Tool",
-            icon = R.drawable.github,
-            url = githubRepoURL
-        ),
-        Social(
-            label = "Crowdin",
-            icon = Icons.Default.Translate,
-            url = crowdinURL
-        )
-    )
     val folders = listOf(
         PrefEditItem(
             labelResourceId = R.string.settings_storage_folders_maps,
@@ -71,6 +55,58 @@ object SettingsConstant {
             default = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR
         )
     )
+
+    val socials = listOf(
+        Social(
+            label = "Polyfield",
+            icon = R.drawable.discord,
+            url = "https://discord.gg/X6WzGpCgDJ"
+        ),
+        Social(
+            label = "PF Tool",
+            icon = R.drawable.github,
+            url = githubRepoURL
+        ),
+        Social(
+            label = "Crowdin",
+            icon = Icons.Default.Translate,
+            url = crowdinURL
+        )
+    )
+
+    val credits = listOf(
+        CreditsData(
+            name = "Mohammad Alizadeh",
+            description = R.string.settings_about_credits_pfDev,
+            url = "https://discord.gg/X6WzGpCgDJ"
+        ),
+        CreditsData(
+            name = "alieRN",
+            description = R.string.settings_about_credits_pfToolDev,
+            url = "https://github.com/aliernfrog"
+        ),
+        CreditsData(
+            name = "infini0083",
+            description = R.string.settings_about_credits_ui,
+            url = "https://github.com/infini0083"
+        ),
+        CreditsData(
+            name = "Crowdin members",
+            description = R.string.settings_about_credits_translations,
+            url = "https://crowdin.com/project/pf-tool"
+        ),
+        CreditsData(
+            name = "Vendetta Manager",
+            description = R.string.settings_about_credits_inspiration,
+            url = "https://github.com/vendetta-mod/VendettaManager"
+        ),
+        CreditsData(
+            name = "ReVanced Manager",
+            description = R.string.settings_about_credits_inspiration,
+            url = "https://github.com/ReVanced/revanced-manager"
+        )
+    )
+
     val experimentalPrefOptions = listOf(
         PrefEditItem(
             labelResourceId = R.string.settings_experimental_updatesURL,
