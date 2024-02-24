@@ -185,7 +185,7 @@ fun RawPathInput(
             Row {
                 IconButton(
                     onClick = { pref.setValue(pref.default, prefs) },
-                    enabled = isDefault
+                    enabled = !isDefault
                 ) {
                     Icon(
                         imageVector = Icons.Default.Restore,
