@@ -191,7 +191,7 @@ fun AboutPage(
                 )
             ) {
                 MarkdownText(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     markdown = mainViewModel.latestVersionInfo.body,
                     style = LocalTextStyle.current.copy(
                         color = MaterialTheme.colorScheme.onSurface
