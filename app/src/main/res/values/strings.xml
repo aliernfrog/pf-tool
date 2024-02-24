@@ -158,6 +158,8 @@
     <string name="settings_about_credits_crowdin">Crowdin members</string>
     <string name="settings_about_credits_translations">Translations</string>
     <string name="settings_about_credits_inspiration">Inspiration</string>
+    <string name="settings_about_changelog">Changelog</string>
+    <string name="settings_about_changelog_noChangelog">No changelog available</string>
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">These settings are not intended for normal usage and they might break PF Tool when misused</string>

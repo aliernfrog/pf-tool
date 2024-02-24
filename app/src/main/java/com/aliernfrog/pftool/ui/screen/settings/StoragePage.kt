@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -248,43 +247,40 @@ fun FolderCard(
                 Text(recommendedPath)
             }
 
-            Box(
+            Row(
                 modifier = Modifier
                     .horizontalFadingEdge(
                         scrollState = buttonsScrollState,
                         edgeColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                     )
+                    .horizontalScroll(buttonsScrollState),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    modifier = Modifier.horizontalScroll(buttonsScrollState),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (folderPickerSupportsInitialUri) AssistChip(
-                        onClick = {
-                            onPickFolderRequest(FileUtil.getUriForPath(pref.default))
-                        },
-                        label = {
-                            Text(stringResource(R.string.settings_storage_folders_openRecommended))
-                        }
-                    )
+                if (folderPickerSupportsInitialUri) AssistChip(
+                    onClick = {
+                        onPickFolderRequest(FileUtil.getUriForPath(pref.default))
+                    },
+                    label = {
+                        Text(stringResource(R.string.settings_storage_folders_openRecommended))
+                    }
+                )
 
-                    AssistChip(
-                        onClick = { onPickFolderRequest(null) },
-                        label = {
-                            Text(stringResource(R.string.settings_storage_folders_choose))
-                        }
-                    )
+                AssistChip(
+                    onClick = { onPickFolderRequest(null) },
+                    label = {
+                        Text(stringResource(R.string.settings_storage_folders_choose))
+                    }
+                )
 
-                    if (folderPickerSupportsInitialUri) AssistChip(
-                        onClick = {
-                            onPickFolderRequest(FileUtil.getUriForPath(dataFolderPath))
-                        },
-                        label = {
-                            Text(stringResource(R.string.settings_storage_folders_openAndroidData))
-                        }
-                    )
-                }
+                if (folderPickerSupportsInitialUri) AssistChip(
+                    onClick = {
+                        onPickFolderRequest(FileUtil.getUriForPath(dataFolderPath))
+                    },
+                    label = {
+                        Text(stringResource(R.string.settings_storage_folders_openAndroidData))
+                    }
+                )
             }
         }
     }

@@ -15,9 +15,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -42,14 +45,17 @@ import androidx.core.graphics.drawable.toBitmap
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.ui.component.ButtonIcon
+import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.component.form.SwitchRow
+import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import com.aliernfrog.pftool.util.extension.resolveString
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -168,7 +174,33 @@ fun AboutPage(
             settingsViewModel.prefs.autoCheckUpdates = it
         }
 
-        if (settingsViewModel.experimentalSettingsShown) ExperimentalSettings()
+        FadeVisibility(settingsViewModel.experimentalSettingsShown) {
+            ExperimentalSettings()
+        }
+
+        FormSection(
+            title = stringResource(R.string.settings_about_changelog),
+            topDivider = true,
+            bottomDivider = false
+        ) {
+            Card(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                shape = AppComponentShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                )
+            ) {
+                MarkdownText(
+                    modifier = Modifier.padding(16.dp),
+                    markdown = mainViewModel.latestVersionInfo.body,
+                    style = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    linkColor = MaterialTheme.colorScheme.primary,
+                    onLinkClicked = { uriHandler.openUri(it) }
+                )
+            }
+        }
     }
 }
 
