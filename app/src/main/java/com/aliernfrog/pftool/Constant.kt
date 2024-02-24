@@ -91,7 +91,7 @@ object SettingsConstant {
             url = "https://github.com/infini0083"
         ),
         CreditsData(
-            name = "Crowdin members",
+            name = R.string.settings_about_credits_crowdin,
             description = R.string.settings_about_credits_translations,
             url = "https://crowdin.com/project/pf-tool"
         ),
