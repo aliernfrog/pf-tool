@@ -113,8 +113,8 @@ private fun SettingsRootPage(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
         ) {
             UpdateNotification(
                 isShown = mainViewModel.updateAvailable,
@@ -159,8 +159,8 @@ fun SettingsPageContainer(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding(),
             content = content
         )
     }
