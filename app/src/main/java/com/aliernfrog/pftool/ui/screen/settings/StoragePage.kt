@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -183,14 +184,16 @@ fun RawPathInput(
         },
         trailingIcon = {
             Row {
-                IconButton(
-                    onClick = { pref.setValue(pref.default, prefs) },
-                    enabled = !isDefault
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Restore,
-                        contentDescription = stringResource(R.string.settings_storage_folders_restoreDefault)
-                    )
+                Crossfade(!isDefault) { enabled ->
+                    IconButton(
+                        onClick = { pref.setValue(pref.default, prefs) },
+                        enabled = enabled
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Restore,
+                            contentDescription = stringResource(R.string.settings_storage_folders_restoreDefault)
+                        )
+                    }
                 }
                 IconButton(
                     onClick = { onPickFolderRequest() }
