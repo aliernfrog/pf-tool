@@ -10,9 +10,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.data.PermissionData
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
+import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
@@ -25,6 +26,7 @@ fun PermissionsScreen(
     title: String,
     permissionsViewModel: PermissionsViewModel = koinViewModel(),
     shizukuViewModel: ShizukuViewModel = koinViewModel(),
+    onNavigateSettingsRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -38,7 +40,7 @@ fun PermissionsScreen(
     }
 
     AnimatedContent(
-        FileManagementMethod.entries[permissionsViewModel.prefs.fileManagementMethod]
+        StorageAccessType.entries[permissionsViewModel.prefs.storageAccessType]
     ) { method ->
         var permissionsGranted by remember { mutableStateOf(hasPermissions()) }
 
@@ -47,17 +49,20 @@ fun PermissionsScreen(
             else AppScaffold(
                 topBar = { AppTopBar(
                     title = title,
-                    scrollBehavior = it
+                    scrollBehavior = it,
+                    actions = {
+                        SettingsButton(onClick = onNavigateSettingsRequest)
+                    }
                 ) }
             ) {
                 when (method) {
-                    FileManagementMethod.SAF -> SAFPermissionsScreen(
+                    StorageAccessType.SAF -> SAFPermissionsScreen(
                         *permissionsData,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
                     )
-                    FileManagementMethod.SHIZUKU -> ShizukuPermissionsScreen(
+                    StorageAccessType.SHIZUKU -> ShizukuPermissionsScreen(
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }

@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.data.PermissionData
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.SAFWorkaroundLevel
 import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.util.extension.appHasPermissions
@@ -16,8 +16,8 @@ import com.aliernfrog.pftool.util.manager.PreferenceManager
 class PermissionsViewModel(
     val prefs: PreferenceManager
 ) : ViewModel() {
-    private var fileManagementMethod: FileManagementMethod
-        get() = FileManagementMethod.entries[prefs.fileManagementMethod]
+    private var storageAccessType: StorageAccessType
+        get() = StorageAccessType.entries[prefs.storageAccessType]
         set(value) { value.enable(prefs) }
 
     var safWorkaroundLevel by mutableStateOf(SAFWorkaroundLevel.entries.first())
@@ -27,7 +27,7 @@ class PermissionsViewModel(
         if (!hasAndroidDataRestrictions) return safWorkaroundLevel
         val newIndex = safWorkaroundLevel.ordinal+1
         if (newIndex >= SAFWorkaroundLevel.entries.size) return safWorkaroundLevel
-        if (newIndex >= SAFWorkaroundLevel.SETUP_SHIZUKU.ordinal) fileManagementMethod = FileManagementMethod.SHIZUKU
+        if (newIndex >= SAFWorkaroundLevel.SETUP_SHIZUKU.ordinal) storageAccessType = StorageAccessType.SHIZUKU
         safWorkaroundLevel = SAFWorkaroundLevel.entries[newIndex]
         return SAFWorkaroundLevel.entries[newIndex]
     }
@@ -37,11 +37,11 @@ class PermissionsViewModel(
         isShizukuFileServiceRunning: Boolean,
         context: Context
     ): Boolean {
-        return when (fileManagementMethod) {
-            FileManagementMethod.SAF -> getMissingUriPermissions(
+        return when (storageAccessType) {
+            StorageAccessType.SAF -> getMissingUriPermissions(
                 *permissionsData, context = context
             ).isEmpty()
-            FileManagementMethod.SHIZUKU -> isShizukuFileServiceRunning
+            StorageAccessType.SHIZUKU -> isShizukuFileServiceRunning
         }
     }
 

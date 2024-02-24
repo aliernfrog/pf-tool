@@ -9,7 +9,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -68,6 +68,7 @@ import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
 import com.aliernfrog.pftool.ui.component.MapButton
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
+import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -86,6 +87,7 @@ fun MapsListScreen(
     mapsViewModel: MapsViewModel = koinViewModel(),
     showMultiSelectionOptions: Boolean = true,
     multiSelectFloatingActionButton: @Composable (selectedMaps: List<MapFile>, clearSelection: () -> Unit) -> Unit = { _, _ -> },
+    onNavigateSettingsRequest: () -> Unit,
     onBackClick: (() -> Unit)?,
     onMapPick: (MapFile) -> Unit
 ) {
@@ -157,22 +159,25 @@ fun MapsListScreen(
                                     if (clearSelection) mapsListViewModel.selectedMaps.clear()
                                 }
                             )
-                        } else Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
-                            if (showLoading) CircularProgressIndicator(
-                                modifier = Modifier.size(48.dp).padding(8.dp)
-                            )
-                            else IconButton(
-                                onClick = {
-                                    scope.launch {
-                                        mapsViewModel.loadMaps(context)
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = stringResource(R.string.mapsList_reload)
+                        } else {
+                            Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
+                                if (showLoading) CircularProgressIndicator(
+                                    modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
+                                else IconButton(
+                                    onClick = {
+                                        scope.launch {
+                                            mapsViewModel.loadMaps(context)
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = stringResource(R.string.mapsList_reload)
+                                    )
+                                }
                             }
+                            SettingsButton(onClick = onNavigateSettingsRequest)
                         }
                     }
                 )
@@ -211,7 +216,6 @@ fun MapsListScreen(
         }
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 80.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             item {
@@ -283,6 +287,10 @@ fun MapsListScreen(
                     if (isMultiSelecting) toggleSelection()
                     else onMapPick(map)
                 }
+            }
+
+            item {
+                Spacer(Modifier.navigationBarsPadding().padding(bottom = 80.dp))
             }
         }
     }
