@@ -18,21 +18,6 @@
     <string name="info_shizuku_startingFileService">Starting file service..</string>
     <string name="info_shizuku_disconnected">Disconnected from Shizuku</string>
     <string name="permissions">Permissions</string>
-    <string name="permissions_filesApp">Files app updates</string>
-    <string name="permissions_filesApp_description">The Files app has received an update on September 2023 which prevents other apps from requesting access to files inside Android/data folder.\nIf you have this update, you may have to uninstall it. Click the button below for more info.</string>
-    <string name="permissions_filesApp_moreInfo">More info</string>
-    <string name="permissions_filesApp_moreInfo_text">
-        ## Am I affected by this?\n
-        Make sure you have started Polyfield at least once and try choosing the Polyfield folder in PF Tool. If you can do that without issues, you are not affected.\n\n
-        ## What to do if I am affected by this?\n
-        You need to uninstall updates of the **Files** app. Follow the steps below, note that steps may vary depending on your device:\n\n
-        Device settings > Apps > All apps/Manage apps > Files (app name depends on your language) > Uninstall updates\n\n
-        ## Can\'t find the Files app in the list?\n
-        Look for an option which hides system apps from the list, this option may also be in a three-dot menu.\n\n
-        ## Uninstall updates option is disabled?\n
-        Try choosing the Polyfield folder in PF Tool one more time. If you can\'t do that, unfortunately, there\'s nothing much you can do for now.\n\n
-        Check [this page]({MORE_INFO_URL}) for more info, possible workarounds and the new fix which is currently being worked on.
-    </string>
     <string name="permissions_chooseFolder">Choose folder</string>
     <string name="permissions_recommendedFolder">Recommended folder</string>
     <string name="permissions_recommendedFolder_a8Hint">After clicking \"Okay\", this folder will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>
@@ -123,6 +108,7 @@
     <string name="settings_updateNotification_updateAvailable">Update available: {VERSION}</string>
     <string name="settings_updateNotification_description">Click to view more details and actions</string>
     <string name="settings_appearance">Appearance</string>
+    <string name="settings_appearance_description">Customize the look of PF Tool</string>
     <string name="settings_appearance_theme">Theme</string>
     <string name="settings_appearance_theme_description">Dark mode preference</string>
     <string name="settings_appearance_theme_system">Follow system</string>
@@ -130,42 +116,50 @@
     <string name="settings_appearance_theme_dark">Dark</string>
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Theme based on colors of your device</string>
-    <string name="settings_general">General</string>
-    <string name="settings_general_showChosenMapThumbnail">Show thumbnail of selected map</string>
-    <string name="settings_general_showChosenMapThumbnail_description">Know which map you are on</string>
-    <string name="settings_general_showMapThumbnailsInList">Show map thumbnails in map list</string>
-    <string name="settings_general_showMapThumbnailsInList_description">Easily identify the maps you have</string>
-    <string name="settings_general_folders">Folder configuration</string>
-    <string name="settings_general_folders_description">Configure folders used in PF Tool</string>
-    <string name="settings_general_folders_default">Default: %s</string>
-    <string name="settings_general_folders_notSet">Not configured</string>
-    <string name="settings_general_folders_recommendedFolder">Recommended folder</string>
-    <string name="settings_general_folders_choose">Choose folder</string>
-    <string name="settings_general_folders_openRecommended">Open recommended folder</string>
-    <string name="settings_general_folders_openAndroidData">Open Android/data folder</string>
-    <string name="settings_general_folders_restoreDefault">Restore default</string>
-    <string name="settings_general_folders_maps">Maps folder</string>
-    <string name="settings_general_folders_exportedMaps">Exported maps folder</string>
-    <string name="settings_general_fileManagamentService">File management method</string>
-    <string name="settings_general_fileManagementService_saf">Scoped storage</string>
-    <string name="settings_general_fileManagementService_shizuku">Shizuku</string>
-    <string name="settings_general_language">Language</string>
-    <string name="settings_general_language_description">Select the language of PF Tool</string>
-    <string name="settings_general_language_select">Select language</string>
-    <string name="settings_general_language_help">Help translation of PF Tool</string>
-    <string name="settings_general_language_help_deviceNotAvailable">The language of your device is not yet available</string>
-    <string name="settings_general_language_help_description">You can contribute to translations on Crowdin by clicking this</string>
-    <string name="settings_general_language_system">Follow system</string>
-    <string name="settings_general_language_system_notAvailable">{SYSTEM_LANGUAGE} is not available</string>
-    <string name="settings_general_language_selected">Selected</string>
+    <string name="settings_maps">Map thumbnails</string>
+    <string name="settings_maps_description">Configure when map thumbnails will be shown</string>
+    <string name="settings_maps_showChosenMapThumbnail">Show thumbnail of selected map</string>
+    <string name="settings_maps_showChosenMapThumbnail_description">Know which map you are on</string>
+    <string name="settings_maps_showMapThumbnailsInList">Show map thumbnails in map list</string>
+    <string name="settings_maps_showMapThumbnailsInList_description">Easily identify the maps you have</string>
+    <string name="settings_storage">Storage</string>
+    <string name="settings_storage_description">Configure how PF Tool interacts with the storage</string>
+    <string name="settings_storage_storageAccessType">Storage access type</string>
+    <string name="settings_storage_storageAccessType_saf">Scoped storage</string>
+    <string name="settings_storage_storageAccessType_saf_description">Only access the directories PF Tool needs. Might not work on Android 12 and above</string>
+    <string name="settings_storage_storageAccessType_shizuku">Shizuku</string>
+    <string name="settings_storage_storageAccessType_shizuku_description">Use Shizuku to access storage</string>
+    <string name="settings_storage_folders">Folders</string>
+    <string name="settings_storage_folders_default">Default: %s</string>
+    <string name="settings_storage_folders_notSet">Not configured</string>
+    <string name="settings_storage_folders_recommendedFolder">Recommended folder</string>
+    <string name="settings_storage_folders_choose">Choose folder</string>
+    <string name="settings_storage_folders_openRecommended">Open recommended folder</string>
+    <string name="settings_storage_folders_openAndroidData">Open Android/data folder</string>
+    <string name="settings_storage_folders_restoreDefault">Restore default</string>
+    <string name="settings_storage_folders_maps">Maps folder</string>
+    <string name="settings_storage_folders_exportedMaps">Exported maps folder</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_description">Select the language of PF Tool</string>
+    <string name="settings_language_help">Help translation of PF Tool</string>
+    <string name="settings_language_help_deviceNotAvailable">The language of your device is not yet available</string>
+    <string name="settings_language_help_description">You can contribute to translations on Crowdin by clicking this</string>
+    <string name="settings_language_system">Follow system</string>
+    <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} is not available</string>
+    <string name="settings_language_selected">Selected</string>
     <string name="settings_about">About</string>
-    <string name="settings_about_version">PF Tool version</string>
     <string name="settings_about_update">Update</string>
     <string name="settings_about_checkUpdates">Check for updates</string>
     <string name="settings_about_autoCheckUpdates">Check for updates automatically</string>
     <string name="settings_about_autoCheckUpdates_description">Check for PF Tool updates automatically on launch</string>
-    <string name="settings_about_links">Related links</string>
-    <string name="settings_about_links_description">Click to view related links</string>
+    <string name="settings_about_credits_pfDev">Polyfield developer</string>
+    <string name="settings_about_credits_pfToolDev">PF Tool developer</string>
+    <string name="settings_about_credits_ui">UI</string>
+    <string name="settings_about_credits_crowdin">Crowdin members</string>
+    <string name="settings_about_credits_translations">Translations</string>
+    <string name="settings_about_credits_inspiration">Inspiration</string>
+    <string name="settings_about_changelog">Changelog</string>
+    <string name="settings_about_changelog_noChangelog">No changelog available</string>
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">These settings are not intended for normal usage and they might break PF Tool when misused</string>
