@@ -17,8 +17,8 @@ android {
         applicationId = "com.aliernfrog.pftool"
         minSdk = 23
         targetSdk = 34
-        versionCode = 16200
-        versionName = "1.6.2"
+        versionCode = 17000
+        versionName = "1.7.0"
         vectorDrawables { useSupportLibrary = true }
     }
 
