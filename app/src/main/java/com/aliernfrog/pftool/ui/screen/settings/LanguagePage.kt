@@ -1,11 +1,11 @@
-package com.aliernfrog.pftool.ui.sheet
+package com.aliernfrog.pftool.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,8 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,15 +27,13 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.crowdinURL
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.languages
-import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
-import com.aliernfrog.pftool.ui.component.SmallDragHandle
+import com.aliernfrog.pftool.ui.component.AppScaffold
+import com.aliernfrog.pftool.ui.component.AppSmallTopBar
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
@@ -46,9 +44,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LanguageSheet(
+fun LanguagePage(
     mainViewModel: MainViewModel = koinViewModel(),
-    sheetState: SheetState
+    onNavigateBackRequest: () -> Unit
 ) {
     val currentLanguage = mainViewModel.prefs.language
     val availableDeviceLanguage = mainViewModel.deviceLanguage.getAvailableLanguage()
@@ -71,26 +69,23 @@ fun LanguageSheet(
             trailingComponent = if (selected) { {
                 Icon(
                     painter = rememberVectorPainter(Icons.Default.CheckCircle),
-                    contentDescription = stringResource(R.string.settings_general_language_selected)
+                    contentDescription = stringResource(R.string.settings_language_selected)
                 )
             } } else null,
             onClick = onClick
         )
     }
 
-    BaseModalBottomSheet(
-        sheetState = sheetState,
-        dragHandle = { SmallDragHandle() }
-    ) { bottomPadding ->
-        Text(
-            text = stringResource(R.string.settings_general_language_select),
-            fontSize = 25.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
-        )
-        DividerRow(
-            alpha = 0.3f
-        )
+    AppScaffold(
+        topBar = { scrollBehavior ->
+            AppSmallTopBar(
+                title = stringResource(R.string.settings_language),
+                scrollBehavior = scrollBehavior,
+                onNavigationClick = onNavigateBackRequest
+            )
+        },
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    ) {
         LazyColumn {
             item {
                 TranslationHelp(isDeviceLanguageAvailable = availableDeviceLanguage != null)
@@ -98,8 +93,8 @@ fun LanguageSheet(
 
             item {
                 LanguageButton(
-                    title = stringResource(R.string.settings_general_language_system),
-                    description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_general_language_system_notAvailable)
+                    title = stringResource(R.string.settings_language_system),
+                    description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_language_system_notAvailable)
                         .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
                             mainViewModel.deviceLanguage.getNameIn(it.languageCode, it.countryCode)
                         } ?: ""),
@@ -117,13 +112,12 @@ fun LanguageSheet(
             }
 
             item {
-                Spacer(Modifier.height(bottomPadding))
+                Spacer(Modifier.navigationBarsPadding())
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TranslationHelp(
     isDeviceLanguageAvailable: Boolean
@@ -148,14 +142,14 @@ fun TranslationHelp(
                 )
                 Text(
                     text = stringResource(
-                        if (isDeviceLanguageAvailable) R.string.settings_general_language_help
-                        else R.string.settings_general_language_help_deviceNotAvailable
+                        if (isDeviceLanguageAvailable) R.string.settings_language_help
+                        else R.string.settings_language_help_deviceNotAvailable
                     ),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = stringResource(R.string.settings_general_language_help_description),
+                text = stringResource(R.string.settings_language_help_description),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

@@ -18,7 +18,7 @@ import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.data.ServiceFile
 import com.aliernfrog.pftool.data.listFiles
-import com.aliernfrog.pftool.enum.FileManagementMethod
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
@@ -50,7 +50,7 @@ class MapsViewModel(
     lateinit var exportedMapsFile: Any
         private set
 
-    private var lastKnownFileManagementMethod = prefs.fileManagementMethod
+    private var lastKnownStorageAccessType = prefs.storageAccessType
 
     var isLoadingMaps by mutableStateOf(true)
     var importedMaps by mutableStateOf(emptyList<MapFile>())
@@ -156,7 +156,7 @@ class MapsViewModel(
      */
     private fun getMapsFile(context: Context): Any {
         val isUpToDate = if (!::mapsFile.isInitialized) false
-        else if (lastKnownFileManagementMethod != prefs.fileManagementMethod) false
+        else if (lastKnownStorageAccessType != prefs.storageAccessType) false
         else {
             val existingPath = when (val file = mapsFile) {
                 //is File -> file.absolutePath
@@ -167,15 +167,15 @@ class MapsViewModel(
             mapsDir == existingPath
         }
         if (isUpToDate) return mapsFile
-        val fileManagementMethod = prefs.fileManagementMethod
-        lastKnownFileManagementMethod = fileManagementMethod
-        mapsFile = when (FileManagementMethod.entries[fileManagementMethod]) {
-            FileManagementMethod.SAF -> {
+        val storageAccessType = prefs.storageAccessType
+        lastKnownStorageAccessType = storageAccessType
+        mapsFile = when (StorageAccessType.entries[storageAccessType]) {
+            StorageAccessType.SAF -> {
                 val treeUri = Uri.parse(mapsDir)
                 mapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
                 return mapsFile
             }
-            FileManagementMethod.SHIZUKU -> {
+            StorageAccessType.SHIZUKU -> {
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
                 shizukuViewModel.fileService!!.getFile(mapsDir)
             }
@@ -189,7 +189,7 @@ class MapsViewModel(
      */
     private fun getExportedMapsFile(context: Context): Any {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
-        else if (lastKnownFileManagementMethod != prefs.fileManagementMethod) false
+        else if (lastKnownStorageAccessType != prefs.storageAccessType) false
         else {
             val existingPath = when (val file = exportedMapsFile) {
                 //is File -> file.absolutePath
@@ -200,15 +200,15 @@ class MapsViewModel(
             exportedMapsDir == existingPath
         }
         if (isUpToDate) return exportedMapsFile
-        val fileManagementMethod = prefs.fileManagementMethod
-        lastKnownFileManagementMethod = fileManagementMethod
-        exportedMapsFile = when (FileManagementMethod.entries[fileManagementMethod]) {
-            FileManagementMethod.SAF -> {
+        val storageAccessType = prefs.storageAccessType
+        lastKnownStorageAccessType = storageAccessType
+        exportedMapsFile = when (StorageAccessType.entries[storageAccessType]) {
+            StorageAccessType.SAF -> {
                 val treeUri = Uri.parse(exportedMapsDir)
                 exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
                 return exportedMapsFile
             }
-            FileManagementMethod.SHIZUKU -> {
+            StorageAccessType.SHIZUKU -> {
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
                 shizukuViewModel.fileService!!.getFile(exportedMapsDir)
             }
