@@ -176,10 +176,16 @@ enum class MapAction(
         }
     ) {
         override suspend fun execute(context: Context, vararg maps: MapFile) {
+            val first = maps.first()
             val files = maps.map { it.file }
-            maps.first().runInIOThreadSafe {
+            first.mapsViewModel.activeProgress = Progress(
+                description = if (maps.size == 1) context.getString(R.string.maps_share_sharing_single).replace("{NAME}", first.name)
+                else context.getString(R.string.maps_share_sharing_multiple).replace("{COUNT}", maps.size.toString())
+            )
+            first.runInIOThreadSafe {
                 FileUtil.shareFiles(*files.toTypedArray(), context = context)
             }
+            first.mapsViewModel.activeProgress = null
         }
     },
 

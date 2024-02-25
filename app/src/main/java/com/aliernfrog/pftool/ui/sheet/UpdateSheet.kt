@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.sheet
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -94,8 +93,8 @@ private fun Actions(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            Modifier
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .horizontalFadingEdge(
@@ -103,29 +102,24 @@ private fun Actions(
                     edgeColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
                     isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
                 )
+                .horizontalScroll(versionNameScrollState),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(versionNameScrollState),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = versionName,
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = stringResource(
-                        if (preRelease) R.string.updates_preRelease
-                        else R.string.updates_stable
-                    ),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Light,
-                    color = LocalContentColor.current.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(horizontal = 6.dp)
-                )
-            }
+            Text(
+                text = versionName,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = stringResource(
+                    if (preRelease) R.string.updates_preRelease
+                    else R.string.updates_stable
+                ),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Light,
+                color = LocalContentColor.current.copy(alpha = 0.7f),
+                modifier = Modifier.padding(horizontal = 6.dp)
+            )
         }
         IconButton(onClick = onGithubClick) {
             Icon(

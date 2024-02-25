@@ -51,7 +51,8 @@ class UriUtil {
             parentName: String?,
             context: Context
         ): File {
-            val outputFile = File("${context.cacheDir.absolutePath}${
+            val cacheDir = context.externalCacheDir ?: context.cacheDir
+            val outputFile = File("${cacheDir.absolutePath}${
                 if (parentName != null) "/$parentName" else ""
             }/$fileName")
             outputFile.parentFile?.mkdirs()
