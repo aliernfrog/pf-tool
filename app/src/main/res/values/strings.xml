@@ -78,6 +78,8 @@
     <string name="maps_exporting_multiple">Exporting {DONE}/{TOTAL} maps..</string>
     <string name="maps_share">Share this map</string>
     <string name="maps_share_short">Share</string>
+    <string name="maps_share_sharing_single">Sharing {NAME}..</string>
+    <string name="maps_share_sharing_multiple">Sharing {COUNT} maps..</string>
     <string name="maps_delete">Delete this map</string>
     <string name="maps_delete_short">Delete</string>
     <string name="maps_deleted_single">Deleted {NAME}</string>
