@@ -96,6 +96,7 @@
     <string name="settings_maps_showChosenMapThumbnail_description">了解你正在查看的地图</string>
     <string name="settings_maps_showMapThumbnailsInList">在地图列表中显示地图缩略图</string>
     <string name="settings_maps_showMapThumbnailsInList_description">轻松识别您拥有的地图</string>
+    <string name="settings_storage">存储</string>
     <string name="settings_storage_folders">文件夹设置</string>
     <string name="settings_storage_folders_notSet">未配置</string>
     <string name="settings_storage_folders_recommendedFolder">推荐的文件夹</string>
