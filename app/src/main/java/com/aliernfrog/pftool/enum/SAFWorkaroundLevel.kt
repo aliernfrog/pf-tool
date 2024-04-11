@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -15,7 +16,9 @@ import com.aliernfrog.pftool.R
 enum class SAFWorkaroundLevel(
     @StringRes val title: Int? = null,
     @StringRes val description: Int? = null,
-    val button: (@Composable () -> Unit)? = null
+    val buttons: List<@Composable (
+        onSkipLevelRequest: () -> Unit
+    ) -> Unit> = emptyList()
 ) {
     /**
      * Telling the user to make sure the folder exists.
@@ -28,7 +31,7 @@ enum class SAFWorkaroundLevel(
     UNINSTALL_FILES_APP_UPDATES(
         title = R.string.permissions_uninstallFilesAppUpdates,
         description = R.string.permissions_uninstallFilesAppUpdates_description,
-        button = {
+        buttons = listOf({
             val context = LocalContext.current
             Button(
                 onClick = {
@@ -42,7 +45,13 @@ enum class SAFWorkaroundLevel(
             ) {
                 Text(stringResource(R.string.permissions_uninstallFilesAppUpdates_uninstall))
             }
-        }
+        },{ onSkipLevelRequest ->
+            TextButton(
+                onClick = onSkipLevelRequest
+            ) {
+                Text(stringResource(R.string.permissions_uninstallFilesAppUpdates_cant))
+            }
+        })
     ),
 
     /**

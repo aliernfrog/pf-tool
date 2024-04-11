@@ -16,7 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -120,7 +121,11 @@ fun SAFPermissionsScreen(
                             ?.startsWith("${Environment.getExternalStorageDirectory()}/Android/data") == true
                         if (isAndroidData) Guide(
                             level = permissionsViewModel.safWorkaroundLevel,
-                            permissionData = permissionData
+                            permissionData = permissionData,
+                            onPushSAFWorkaroundLevel = {
+                                permissionsViewModel.pushSAFWorkaroundLevel()
+                                permissionsViewModel.showSAFWorkaroundDialog = true
+                            }
                         )
 
                         Button(
@@ -167,14 +172,18 @@ fun SAFPermissionsScreen(
 @Composable
 private fun Guide(
     level: SAFWorkaroundLevel,
-    permissionData: PermissionData
+    permissionData: PermissionData,
+    onPushSAFWorkaroundLevel: () -> Unit
 ) {
     val title = level.title
     val description = if (level == SAFWorkaroundLevel.MAKE_SURE_FOLDER_EXISTS) permissionData.createFolderHint
     else level.description
 
-    if (title != null || description != null) Card(
-        modifier = Modifier.padding(vertical = 4.dp)
+    if (title != null || description != null) ElevatedCard(
+        modifier = Modifier.padding(vertical = 4.dp),
+        colors = CardDefaults.elevatedCardColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        )
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -191,13 +200,11 @@ private fun Guide(
                     text = stringResource(it)
                 )
             }
-            level.button?.let { button ->
-                Row(
-                    horizontalArrangement = Arrangement.aligned(Alignment.End),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    button()
-                }
+            if (level.buttons.isNotEmpty()) Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                level.buttons.reversed().forEach { it(onPushSAFWorkaroundLevel) }
             }
         }
     }

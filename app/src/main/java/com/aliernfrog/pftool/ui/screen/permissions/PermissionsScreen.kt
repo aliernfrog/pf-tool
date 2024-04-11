@@ -76,7 +76,9 @@ fun PermissionsScreen(
         CustomMessageDialog(
             title = level.title?.let { stringResource(it) },
             text = level.description?.let { stringResource(it) },
-            confirmButton = level.button,
+            confirmButton = { level.buttons.firstOrNull()?.invoke {
+                permissionsViewModel.pushSAFWorkaroundLevel()
+            } },
             onDismissRequest = { permissionsViewModel.showSAFWorkaroundDialog = false }
         )
     }

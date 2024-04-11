@@ -22,7 +22,7 @@
     <string name="permissions_recommendedFolder">Recommended folder</string>
     <string name="permissions_recommendedFolder_a8Hint">After clicking \"Okay\", this folder will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>
     <string name="permissions_recommendedFolder_a7Hint">After clicking \"Okay\", navigate to this folder and click \"USE THIS FOLDER\"</string>
-    <string name="permissions_recommendedFolder_doesNotExist">This folder is not there?</string>
+    <string name="permissions_recommendedFolder_doesNotExist">Folder is not there or not selectable?</string>
     <string name="permissions_notRecommendedFolder_description">You have not chosen the recommended folder below:</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Choose recommended folder</string>
     <string name="permissions_notRecommendedFolder_advanced_show">Show advanced options</string>
@@ -32,6 +32,7 @@
     <string name="permissions_uninstallFilesAppUpdates_description">Files app on your device might have an update which prevents PF Tool from requesting access to Polyfield maps</string>
     <string name="permissions_uninstallFilesAppUpdates_uninstall">Uninstall updates</string>
     <string name="permissions_uninstallFilesAppUpdates_guide">Find an option to uninstall updates and click it. If unable to do return to PF Tool</string>
+    <string name="permissions_uninstallFilesAppUpdates_cant">Can\'t uninstall?</string>
     <string name="permissions_setupShizuku">Use Shizuku</string>
     <string name="permissions_setupShizuku_description">You need to use Shizuku to let PF Tool access Polyfield maps.\nThis is because the Files app on your device does not allow apps to get access to files inside Android/data.\nYou can disable Shizuku mode anytime from settings.</string>
     <string name="permissions_maps">Polyfield maps folder</string>
