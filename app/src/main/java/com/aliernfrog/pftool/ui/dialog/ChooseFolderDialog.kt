@@ -28,7 +28,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
-import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 
 @Composable
@@ -83,7 +82,6 @@ fun UnrecommendedFolderDialog(
     permissionData: PermissionData,
     chosenUri: Uri,
     onDismissRequest: () -> Unit,
-    onFolderDoesNotExist: () -> Unit,
     onUseUnrecommendedFolderRequest: () -> Unit,
     onChooseFolderRequest: () -> Unit
 ) {
@@ -118,12 +116,6 @@ fun UnrecommendedFolderDialog(
                     Text(
                         text = stringResource(description)
                     )
-                }
-                
-                if (hasAndroidDataRestrictions) ClickableText(
-                    text = stringResource(R.string.permissions_recommendedFolder_doesNotExist)
-                ) {
-                    onFolderDoesNotExist()
                 }
                 
                 if (chosenUri != Uri.EMPTY) ClickableText(

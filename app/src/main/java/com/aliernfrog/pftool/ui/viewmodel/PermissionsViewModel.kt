@@ -8,8 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.StorageAccessType
-import com.aliernfrog.pftool.enum.SAFWorkaroundLevel
-import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 
@@ -20,17 +18,8 @@ class PermissionsViewModel(
         get() = StorageAccessType.entries[prefs.storageAccessType]
         set(value) { value.enable(prefs) }
 
-    var safWorkaroundLevel by mutableStateOf(SAFWorkaroundLevel.entries.first())
-    var showSAFWorkaroundDialog by mutableStateOf(false)
-
-    fun pushSAFWorkaroundLevel(): SAFWorkaroundLevel {
-        if (!hasAndroidDataRestrictions) return safWorkaroundLevel
-        val newIndex = safWorkaroundLevel.ordinal+1
-        if (newIndex >= SAFWorkaroundLevel.entries.size) return safWorkaroundLevel
-        if (newIndex >= SAFWorkaroundLevel.SETUP_SHIZUKU.ordinal) storageAccessType = StorageAccessType.SHIZUKU
-        safWorkaroundLevel = SAFWorkaroundLevel.entries[newIndex]
-        return SAFWorkaroundLevel.entries[newIndex]
-    }
+    var showShizukuIntroDialog by mutableStateOf(false)
+    var showFilesDowngradeDialog by mutableStateOf(false)
 
     fun hasPermissions(
         vararg permissionsData: PermissionData,

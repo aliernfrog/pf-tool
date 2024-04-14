@@ -20,7 +20,6 @@
     <string name="permissions_recommendedFolder">Zalecany folder</string>
     <string name="permissions_recommendedFolder_a8Hint">Po kliknięciu \"Okej\", ten folder zostanie otwarty w nowym oknie. Upewnij się, że jesteś w odpowiednim folderze i kliknij \"UŻYJ TEN FOLDER\"</string>
     <string name="permissions_recommendedFolder_a7Hint">Po kliknięciu \"Okej\", przejdź do tego folderu i kliknij \"UŻYJ TEN FOLDER\"</string>
-    <string name="permissions_recommendedFolder_doesNotExist">Ten folder nie istnieje?</string>
     <string name="permissions_notRecommendedFolder_description">Zalecany jest folder poniżej:</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">Wybierz zalecany folder</string>
     <string name="permissions_maps">Folder z mapami Polyfield</string>
