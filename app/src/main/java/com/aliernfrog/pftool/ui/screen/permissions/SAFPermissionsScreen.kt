@@ -121,11 +121,7 @@ fun SAFPermissionsScreen(
                             ?.startsWith("${Environment.getExternalStorageDirectory()}/Android/data") == true
                         if (isAndroidData) Guide(
                             level = permissionsViewModel.safWorkaroundLevel,
-                            permissionData = permissionData,
-                            onPushSAFWorkaroundLevel = {
-                                permissionsViewModel.pushSAFWorkaroundLevel()
-                                permissionsViewModel.showSAFWorkaroundDialog = true
-                            }
+                            permissionData = permissionData
                         )
 
                         Button(
@@ -155,7 +151,6 @@ fun SAFPermissionsScreen(
             onFolderDoesNotExist = {
                 unrecommendedPathWarningUri = null
                 permissionsViewModel.pushSAFWorkaroundLevel()
-                permissionsViewModel.showSAFWorkaroundDialog = true
             },
             onUseUnrecommendedFolderRequest = {
                 takePersistableUriPermissions(uri)
@@ -172,8 +167,7 @@ fun SAFPermissionsScreen(
 @Composable
 private fun Guide(
     level: SAFWorkaroundLevel,
-    permissionData: PermissionData,
-    onPushSAFWorkaroundLevel: () -> Unit
+    permissionData: PermissionData
 ) {
     val title = level.title
     val description = if (level == SAFWorkaroundLevel.MAKE_SURE_FOLDER_EXISTS) permissionData.createFolderHint
@@ -204,7 +198,7 @@ private fun Guide(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                level.buttons.reversed().forEach { it(onPushSAFWorkaroundLevel) }
+                level.buttons.reversed().forEach { it() }
             }
         }
     }

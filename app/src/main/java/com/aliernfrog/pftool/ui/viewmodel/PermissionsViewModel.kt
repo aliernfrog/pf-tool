@@ -22,6 +22,7 @@ class PermissionsViewModel(
 
     var safWorkaroundLevel by mutableStateOf(SAFWorkaroundLevel.entries.first())
     var showSAFWorkaroundDialog by mutableStateOf(false)
+    var showFilesDowngradeDialog by mutableStateOf(false)
 
     fun pushSAFWorkaroundLevel(): SAFWorkaroundLevel {
         if (!hasAndroidDataRestrictions) return safWorkaroundLevel
@@ -29,6 +30,7 @@ class PermissionsViewModel(
         if (newIndex >= SAFWorkaroundLevel.entries.size) return safWorkaroundLevel
         if (newIndex >= SAFWorkaroundLevel.SETUP_SHIZUKU.ordinal) storageAccessType = StorageAccessType.SHIZUKU
         safWorkaroundLevel = SAFWorkaroundLevel.entries[newIndex]
+        showSAFWorkaroundDialog = true
         return SAFWorkaroundLevel.entries[newIndex]
     }
 

@@ -31,7 +31,7 @@
     <string name="permissions_uninstallFilesAppUpdates">Try uninstalling updates of the Files app</string>
     <string name="permissions_uninstallFilesAppUpdates_description">Files app on your device might have an update which prevents PF Tool from requesting access to Polyfield maps</string>
     <string name="permissions_uninstallFilesAppUpdates_uninstall">Uninstall updates</string>
-    <string name="permissions_uninstallFilesAppUpdates_guide">Find an option to uninstall updates and click it. If unable to do return to PF Tool</string>
+    <string name="permissions_uninstallFilesAppUpdates_guide">Look for an option to uninstall updates of the Files app in the next screen. After uninstalling, try choosing the folder again. If you were not able to uninstall updates or it still won\'t work click \"{CANT_UNINSTALL_TEXT}\"</string>
     <string name="permissions_uninstallFilesAppUpdates_cant">Can\'t uninstall?</string>
     <string name="permissions_setupShizuku">Use Shizuku</string>
     <string name="permissions_setupShizuku_description">You need to use Shizuku to let PF Tool access Polyfield maps.\nThis is because the Files app on your device does not allow apps to get access to files inside Android/data.\nYou can toggle Shizuku mode anytime from settings.</string>

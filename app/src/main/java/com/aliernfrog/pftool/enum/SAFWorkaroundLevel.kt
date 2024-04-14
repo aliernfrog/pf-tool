@@ -1,24 +1,19 @@
 package com.aliernfrog.pftool.enum
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
+import com.aliernfrog.pftool.util.getKoinInstance
 
 enum class SAFWorkaroundLevel(
     @StringRes val title: Int? = null,
     @StringRes val description: Int? = null,
-    val buttons: List<@Composable (
-        onSkipLevelRequest: () -> Unit
-    ) -> Unit> = emptyList()
+    val buttons: List<@Composable () -> Unit> = emptyList()
 ) {
     /**
      * Telling the user to make sure the folder exists.
@@ -32,22 +27,21 @@ enum class SAFWorkaroundLevel(
         title = R.string.permissions_uninstallFilesAppUpdates,
         description = R.string.permissions_uninstallFilesAppUpdates_description,
         buttons = listOf({
-            val context = LocalContext.current
+            val permissionsViewModel = getKoinInstance<PermissionsViewModel>()
             Button(
                 onClick = {
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        data = Uri.parse("package:com.google.android.documentsui")
-                        context.startActivity(this)
-                    }
-                    Toast.makeText(context, context.getString(R.string.permissions_uninstallFilesAppUpdates_guide), Toast.LENGTH_SHORT).show()
+                    permissionsViewModel.showSAFWorkaroundDialog = false
+                    permissionsViewModel.showFilesDowngradeDialog = true
                 }
             ) {
                 Text(stringResource(R.string.permissions_uninstallFilesAppUpdates_uninstall))
             }
-        },{ onSkipLevelRequest ->
+        },{
+            val permissionsViewModel = getKoinInstance<PermissionsViewModel>()
             TextButton(
-                onClick = onSkipLevelRequest
+                onClick = {
+                    permissionsViewModel.pushSAFWorkaroundLevel()
+                }
             ) {
                 Text(stringResource(R.string.permissions_uninstallFilesAppUpdates_cant))
             }
