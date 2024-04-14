@@ -2,7 +2,6 @@ package com.aliernfrog.pftool.ui.screen.permissions
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -10,12 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +24,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.SAFWorkaroundLevel
-import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.CardWithActions
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
@@ -75,7 +67,6 @@ fun ShizukuPermissionsScreen(
 
 @Composable
 private fun ShizukuSetupGuide(
-    permissionsViewModel: PermissionsViewModel = koinViewModel(),
     shizukuViewModel: ShizukuViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -144,30 +135,6 @@ private fun ShizukuSetupGuide(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-        }
-    }
-
-    Card(
-        shape = AppComponentShape,
-        modifier = Modifier.padding(8.dp),
-        onClick = {
-            permissionsViewModel.safWorkaroundLevel = SAFWorkaroundLevel.entries.first()
-            StorageAccessType.SAF.enable(permissionsViewModel.prefs)
-        }
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Help,
-                contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Text(
-                text = stringResource(R.string.permissions_shizuku_warning),
-                style = MaterialTheme.typography.bodySmall
-            )
         }
     }
 

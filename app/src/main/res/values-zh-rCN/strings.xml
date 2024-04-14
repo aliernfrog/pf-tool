@@ -20,7 +20,6 @@
     <string name="permissions_recommendedFolder">推荐的文件夹</string>
     <string name="permissions_recommendedFolder_a8Hint">点击“确定”后，此文件夹将在新窗口中打开。请确保您位于正确的文件夹，并点击“使用此选项”</string>
     <string name="permissions_recommendedFolder_a7Hint">点击\"好的\"后，导航到这个文件夹，然后点击“使用这个文件夹”</string>
-    <string name="permissions_recommendedFolder_doesNotExist">这个文件夹不存在？</string>
     <string name="permissions_notRecommendedFolder_description">建议使用以下文件夹：</string>
     <string name="permissions_notRecommendedFolder_chooseRecommendedFolder">选择推荐的文件夹</string>
     <string name="permissions_maps">Polyfield地图文件夹</string>

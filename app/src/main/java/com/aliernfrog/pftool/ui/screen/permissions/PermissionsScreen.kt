@@ -10,10 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.StorageAccessType
@@ -45,11 +48,15 @@ fun PermissionsScreen(
         )
     }
 
+    var permissionsGranted by remember { mutableStateOf(hasPermissions(), neverEqualPolicy()) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        permissionsGranted = hasPermissions()
+    }
+
     AnimatedContent(
         StorageAccessType.entries[permissionsViewModel.prefs.storageAccessType]
     ) { method ->
-        var permissionsGranted by remember { mutableStateOf(hasPermissions()) }
-
         AnimatedContent(permissionsGranted) { showContent ->
             if (showContent) content()
             else AppScaffold(
@@ -78,19 +85,16 @@ fun PermissionsScreen(
         }
     }
 
-    if (permissionsViewModel.showSAFWorkaroundDialog) permissionsViewModel.safWorkaroundLevel.let { level ->
-        CustomMessageDialog(
-            title = level.title?.let { stringResource(it) },
-            text = level.description?.let { stringResource(it) },
-            confirmButton = { level.buttons.firstOrNull()?.invoke() },
-            onDismissRequest = { permissionsViewModel.showSAFWorkaroundDialog = false }
-        )
-    }
+    if (permissionsViewModel.showShizukuIntroDialog) CustomMessageDialog(
+        title = stringResource(R.string.permissions_setupShizuku),
+        text = stringResource(R.string.permissions_setupShizuku_description),
+        onDismissRequest = { permissionsViewModel.showShizukuIntroDialog = false }
+    )
 
     if (permissionsViewModel.showFilesDowngradeDialog) CustomMessageDialog(
         title = null,
-        text = stringResource(R.string.permissions_uninstallFilesAppUpdates_guide)
-            .replace("{CANT_UNINSTALL_TEXT}", stringResource(R.string.permissions_uninstallFilesAppUpdates_cant)),
+        text = stringResource(R.string.permissions_downgradeFilesApp_guide)
+            .replace("{CANT_UNINSTALL_TEXT}", stringResource(R.string.permissions_downgradeFilesApp_cant)),
         onDismissRequest = { permissionsViewModel.showFilesDowngradeDialog = false },
         confirmButton = {
             Button(

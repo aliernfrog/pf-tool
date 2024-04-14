@@ -3,26 +3,35 @@ package com.aliernfrog.pftool.util.staticutil
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.di.appModules
+import com.aliernfrog.pftool.documentsUIPackageName
+import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.ui.activity.MainActivity
 import org.koin.core.context.GlobalContext.loadKoinModules
 import org.koin.core.context.GlobalContext.unloadKoinModules
 import java.util.Locale
 
-@Suppress("DEPRECATION")
 class GeneralUtil {
     companion object {
+        fun filesAppRestrictsAndroidData(context: Context): Boolean {
+            if (!hasAndroidDataRestrictions) return false
+            val packageInfo = context.packageManager.getPackageInfo(documentsUIPackageName, 0)
+            return packageInfo.longVersionCode >= 340916000
+        }
+
         fun getAppVersionName(context: Context): String {
-            val packageManager = context.packageManager
-            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             return packageInfo.versionName
         }
 
-        fun getAppVersionCode(context: Context): Int {
-            val packageManager = context.packageManager
-            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
-            return packageInfo.versionCode
+        fun getAppVersionCode(context: Context): Long {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {
+                @Suppress("DEPRECATION")
+                packageInfo.versionCode.toLong()
+            }
         }
 
         /**
