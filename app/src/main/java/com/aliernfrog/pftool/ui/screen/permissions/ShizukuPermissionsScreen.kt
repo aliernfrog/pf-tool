@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.enum.SAFWorkaroundLevel
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import com.aliernfrog.pftool.ui.component.ButtonIcon
@@ -150,6 +151,7 @@ private fun ShizukuSetupGuide(
         shape = AppComponentShape,
         modifier = Modifier.padding(8.dp),
         onClick = {
+            permissionsViewModel.safWorkaroundLevel = SAFWorkaroundLevel.entries.first()
             StorageAccessType.SAF.enable(permissionsViewModel.prefs)
         }
     ) {
