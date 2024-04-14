@@ -18,6 +18,7 @@
     <string name="info_shizuku_startingFileService">Starting file service..</string>
     <string name="info_shizuku_disconnected">Disconnected from Shizuku</string>
     <string name="permissions">Permissions</string>
+    <string name="permissions_issues_description">Having issues when choosing folders? Try using Shizuku mode by clicking this</string>
     <string name="permissions_chooseFolder">Choose folder</string>
     <string name="permissions_recommendedFolder">Recommended folder</string>
     <string name="permissions_recommendedFolder_a8Hint">After clicking \"Okay\", this folder will open in a new window. Ensure that you are at the correct folder and click \"USE THIS FOLDER\"</string>

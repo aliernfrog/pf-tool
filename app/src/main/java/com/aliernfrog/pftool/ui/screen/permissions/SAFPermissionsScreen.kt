@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,9 +38,12 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.SAFWorkaroundLevel
+import com.aliernfrog.pftool.enum.StorageAccessType
+import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
+import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.util.extension.requiresAndroidData
 import com.aliernfrog.pftool.util.extension.toPath
@@ -93,6 +100,31 @@ fun SAFPermissionsScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
+        if (hasAndroidDataRestrictions) item {
+            Card(
+                shape = AppComponentShape,
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    StorageAccessType.SHIZUKU.enable(permissionsViewModel.prefs)
+                }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Help,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.permissions_issues_description),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        }
+
         itemsIndexed(missingPermissions) { index, permissionData ->
             var introDialogShown by remember { mutableStateOf(false) }
             if (introDialogShown) ChooseFolderIntroDialog(
