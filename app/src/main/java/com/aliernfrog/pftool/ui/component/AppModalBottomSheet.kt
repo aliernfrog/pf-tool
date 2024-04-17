@@ -73,10 +73,7 @@ fun BaseModalBottomSheet(
         dragHandle = dragHandle,
         windowInsets = WindowInsets(0.dp)
     ) {
-        content(
-            // Adding top padding since Modifier.padding causes an offset on the bottom sheet
-            insetsViewModel.topPadding+insetsViewModel.bottomPadding
-        )
+        content(insetsViewModel.bottomPadding)
     }
 }
 
