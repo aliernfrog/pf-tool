@@ -29,7 +29,7 @@ fun MapsPermissionsScreen(
             title = R.string.permissions_maps,
             recommendedPath = ConfigKey.RECOMMENDED_MAPS_DIR,
             recommendedPathDescription = R.string.permissions_maps_recommended,
-            createFolderHint = R.string.permissions_maps_openPFToCreate,
+            recommendedPathWarning = R.string.permissions_maps_openPFToCreate,
             useUnrecommendedAnywayDescription = R.string.permissions_maps_useUnrecommendedAnyway,
             getUri = { mapsViewModel.prefs.pfMapsDir },
             onUriUpdate = {

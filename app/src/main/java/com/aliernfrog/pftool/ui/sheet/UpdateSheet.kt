@@ -35,7 +35,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
 import com.aliernfrog.pftool.ui.component.ButtonIcon
-import com.aliernfrog.pftool.ui.component.SmallDragHandle
 import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -48,8 +47,7 @@ fun UpdateSheet(
 ) {
     val uriHandler = LocalUriHandler.current
     BaseModalBottomSheet(
-        sheetState = sheetState,
-        dragHandle = { SmallDragHandle() }
+        sheetState = sheetState
     ) { bottomPadding ->
         Actions(
             versionName = latestVersionInfo.versionName,
