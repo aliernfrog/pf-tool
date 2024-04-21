@@ -42,7 +42,7 @@
     <string name="permissions_exportedMaps">Dışa aktarılan haritalar klasörü</string>
     <string name="permissions_exportedMaps_description">Dışa aktarılan haritaları saklamak istediğiniz klasörü seçmeniz gerekiyor</string>
     <string name="permissions_exportedMaps_recommended">PF Tool eski sürümlerde bu klasörü kullandı, eğer daha önce dışa aktardığınız haritalara erişmek istiyorsanız bu klasörü seçin</string>
-    <string name="permissions_shizuku_introduction">Shizuku, kablosuz hata ayıklamayı kullanarak diğer uygulamaların kabul (shell) izinlerini kullanmasını sağlayan bir uygulamadır.\nShizuku modu Ayarlar &gt; Depolama &gt; Depolama erişimi tipi kısmından devre dışı bırakılabilir</string>
+    <string name="permissions_shizuku_introduction">Shizuku, kablosuz hata ayıklamayı kullanarak diğer uygulamaların kabuk (shell) izinlerini kullanmasını sağlayan bir uygulamadır.\nShizuku modu Ayarlar &gt; Depolama &gt; Depolama erişimi tipi kısmından devre dışı bırakılabilir</string>
     <string name="permissions_shizuku_install_title">Shizuku\'yu yükleyerek başlayın</string>
     <string name="permissions_shizuku_install_install">Yükle</string>
     <string name="permissions_shizuku_notRunning">Shizuku çalışmıyor</string>
@@ -111,11 +111,15 @@
     <string name="settings_appearance">Görünüm</string>
     <string name="settings_appearance_description">PF Tool\'un görünümünü özelleştirin</string>
     <string name="settings_appearance_theme">Tema</string>
-    <string name="settings_appearance_theme_system">Sistem teması</string>
+    <string name="settings_appearance_theme_system">Sistem</string>
     <string name="settings_appearance_theme_light">Aydınlık</string>
     <string name="settings_appearance_theme_dark">Karanlık</string>
+    <string name="settings_appearance_colors">Renkler</string>
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Cihazınızdaki renklere göre bir tema</string>
+    <string name="settings_appearance_materialYou_unavailable">Sadece Android 12 ve üzerinde kullanılabilir</string>
+    <string name="settings_appearance_pitchBlack">Zifiri karanlık</string>
+    <string name="settings_appearance_pitchBlack_description">Karanlık mod etkinken zifiri karanlık arka plan</string>
     <string name="settings_maps">Harita resimleri</string>
     <string name="settings_maps_description">Harita resimlerinin ne zaman gösterileceğini ayarlayın</string>
     <string name="settings_maps_showChosenMapThumbnail">Seçilen haritanın resmini göster</string>
@@ -162,7 +166,7 @@
     <string name="settings_about_changelog_noChangelog">Değişiklik günlüğünü görmek için güncellemeleri denetleyin</string>
     <string name="settings_experimental">Deneysel ayarlar</string>
     <string name="settings_experimental_enabled">Deneysel ayarlar açıldı!</string>
-    <string name="settings_experimental_description">Bu ayarlar normal kullanım için değildir ve yanlış kullanıldığında PF Tool\'u bozabilir</string>
+    <string name="settings_experimental_description">Normal kullanım için değildir, yanlış kullanıldığında uygulamayı bozabilir</string>
     <string name="settings_experimental_updatesURL">Güncellemeler için URL</string>
     <string name="updates_updateAvailable">PF Tool güncellemesi mevcut! Daha fazla detay için tıklayın</string>
     <string name="updates_noUpdates">Güncelleme yok</string>
