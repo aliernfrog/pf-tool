@@ -66,7 +66,7 @@ import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
-import com.aliernfrog.pftool.ui.component.MapButton
+import com.aliernfrog.pftool.ui.component.maps.MapButton
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.form.DividerRow

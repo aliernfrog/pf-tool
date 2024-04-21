@@ -43,7 +43,7 @@ import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.FadeVisibility
-import com.aliernfrog.pftool.ui.component.PickMapButton
+import com.aliernfrog.pftool.ui.component.maps.PickMapButton
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
 import com.aliernfrog.pftool.ui.component.form.ButtonRow

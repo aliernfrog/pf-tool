@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.component
+package com.aliernfrog.pftool.ui.component.maps
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.form.FormHeader
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.combinedClickableWithColor
 
@@ -77,7 +76,7 @@ fun MapButton(
                 )
             ))
         ) {
-            FormHeader(
+            MapHeader(
                 title = map.name,
                 description = map.details,
                 painter = rememberVectorPainter(Icons.Outlined.PinDrop),
