@@ -85,7 +85,6 @@
     <string name="settings_updateNotification_description">点击查看更多详细信息和操作</string>
     <string name="settings_appearance">外观</string>
     <string name="settings_appearance_theme">主题</string>
-    <string name="settings_appearance_theme_description">暗色模式选项</string>
     <string name="settings_appearance_theme_system">跟随系统</string>
     <string name="settings_appearance_theme_light">亮色</string>
     <string name="settings_appearance_theme_dark">深色</string>
@@ -117,14 +116,7 @@
     <string name="settings_experimental">实验性功能设置</string>
     <string name="settings_experimental_enabled">已启用实验性设置！</string>
     <string name="settings_experimental_description">这些设置不适用于常规使用，如果被滥用可能会导致 PF Tool 故障。</string>
-    <string name="settings_experimental_showMaterialYouOption">显示“Material You”选项</string>
-    <string name="settings_experimental_showMapNameFieldGuide">显示地图名称字段指南</string>
-    <string name="settings_experimental_checkUpdates">检查更新 (忽略版本)</string>
-    <string name="settings_experimental_showUpdateToast">显示更新提示</string>
-    <string name="settings_experimental_showUpdateDialog">显示更新提示</string>
     <string name="settings_experimental_updatesURL">更新网址</string>
-    <string name="settings_experimental_resetPrefs">重置实验性偏好设置</string>
-    <string name="settings_experimental_resetPrefsDone">恢复实验性选项的默认值</string>
     <string name="updates_updateAvailable">PF 工具更新可用！点击获取更多详细信息</string>
     <string name="updates_noUpdates">没有可用的更新</string>
     <string name="updates_error">检查更新时出错。</string>

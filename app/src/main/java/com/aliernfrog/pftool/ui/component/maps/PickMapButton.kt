@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.component
+package com.aliernfrog.pftool.ui.component.maps
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -23,7 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.form.FormHeader
+import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.clickableWithColor
 
@@ -66,7 +66,7 @@ fun PickMapButton(
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FormHeader(
+            MapHeader(
                 title = chosenMap?.name ?: "",
                 description = chosenMap?.details,
                 painter = rememberVectorPainter(Icons.Rounded.LocationOn),

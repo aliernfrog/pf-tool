@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
+import com.aliernfrog.pftool.documentsUIPackageName
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
@@ -102,7 +103,7 @@ fun PermissionsScreen(
                     permissionsViewModel.showFilesDowngradeDialog = false
                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        data = Uri.parse("package:com.google.android.documentsui")
+                        data = Uri.parse("package:$documentsUIPackageName")
                         context.startActivity(this)
                     }
                 }

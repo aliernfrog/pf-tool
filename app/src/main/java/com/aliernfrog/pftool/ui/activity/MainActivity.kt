@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             PFToolTheme(
                 darkTheme = useDarkTheme,
                 dynamicColors = mainViewModel.prefs.materialYou,
+                pitchBlack = mainViewModel.prefs.pitchBlack,
                 content = content
             )
         }
