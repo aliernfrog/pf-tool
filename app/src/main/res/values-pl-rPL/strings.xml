@@ -85,7 +85,6 @@
     <string name="settings_updateNotification_description">Kliknij, aby wyświetlić więcej szczegółów i działań</string>
     <string name="settings_appearance">Wygląd</string>
     <string name="settings_appearance_theme">Motyw</string>
-    <string name="settings_appearance_theme_description">Preferencje trybu ciemnego</string>
     <string name="settings_appearance_theme_system">Zgodnie z urządzeniem</string>
     <string name="settings_appearance_theme_light">Jasny</string>
     <string name="settings_appearance_theme_dark">Ciemny</string>
@@ -117,7 +116,6 @@
     <string name="settings_experimental">Ustawienia eksperymentalne</string>
     <string name="settings_experimental_enabled">Ustawienia eksperymentalne włączone!</string>
     <string name="settings_experimental_description">Te ustawienia nie są przeznaczone do normalnego użytku i mogą zepsuć PF Tool w przypadku niewłaściwego użycia</string>
-    <string name="settings_experimental_showMaterialYouOption">Pokaż opcję Material You</string>
     <string name="settings_experimental_showMapNameFieldGuide">Pokaż samouczek dla pola nazwy mapy</string>
     <string name="settings_experimental_checkUpdates">Sprawdź aktualizacje (ignoruj wersję)</string>
     <string name="settings_experimental_showUpdateToast">Pokaż toast aktualizacji</string>
