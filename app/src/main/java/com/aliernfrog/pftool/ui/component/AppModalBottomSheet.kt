@@ -1,6 +1,8 @@
 package com.aliernfrog.pftool.ui.component
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -11,14 +13,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.aliernfrog.pftool.imeSupportsSyncAppContent
 import com.aliernfrog.pftool.ui.viewmodel.InsetsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-/*
-// this is not yet used by the app, uncomment when needed
-
-@OptIn(ExperimentalMaterial3Api::class)
+/*@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppModalBottomSheet(
     title: String? = null,
@@ -67,8 +67,13 @@ fun BaseModalBottomSheet(
             .padding(top = insetsViewModel.topPadding),
         sheetState = sheetState,
         dragHandle = dragHandle,
-        windowInsets = WindowInsets(0.dp)
+        contentWindowInsets = { WindowInsets(0.dp) }
     ) {
-        content(insetsViewModel.bottomPadding)
+        content(
+            insetsViewModel.bottomPadding
+                    // If IME does not sync app content, keyboard will show over the bottom sheet
+                    // Add IME padding to workaround this
+                    + if (imeSupportsSyncAppContent) 0.dp else insetsViewModel.imePadding
+        )
     }
 }
