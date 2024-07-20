@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.enum
 
 import androidx.annotation.StringRes
-import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -26,8 +25,8 @@ enum class StorageAccessType(
         description = R.string.settings_storage_storageAccessType_shizuku_description,
         enable = {
             it.storageAccessType = SHIZUKU.ordinal
-            it.pfMapsDir = FileUtil.getFilePath(it.pfMapsDir) ?: ConfigKey.RECOMMENDED_MAPS_DIR
-            it.exportedMapsDir = FileUtil.getFilePath(it.exportedMapsDir) ?: ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR
+            it.pfMapsDir = FileUtil.getFilePath(it.pfMapsDir)
+            it.exportedMapsDir = FileUtil.getFilePath(it.exportedMapsDir)
         }
     )
 }

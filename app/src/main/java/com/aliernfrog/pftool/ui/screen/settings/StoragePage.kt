@@ -296,8 +296,7 @@ private fun getFolderDescription(
 ): String {
     var text = folder.getValue(prefs)
     if (text.isNotEmpty()) try {
-        text = Uri.parse(text).toPath()?.removePrefix(externalStorageRoot)
-            ?: text
+        text = Uri.parse(text).toPath().removePrefix(externalStorageRoot)
     } catch (_: Exception) {}
     return text.ifEmpty { stringResource(R.string.settings_storage_folders_notSet) }
 }
