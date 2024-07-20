@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.aliernfrog.pftool"
-        minSdk = 23
+        minSdk = 22
         targetSdk = 34
         versionCode = 17300
         versionName = "1.7.3"
