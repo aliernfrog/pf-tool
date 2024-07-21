@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.ui.viewmodel
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.ReleaseInfo
@@ -36,6 +38,7 @@ import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.extension.toLanguage
+import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -55,7 +58,8 @@ class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
-    val progressState: ProgressState
+    val progressState: ProgressState,
+    private val contextUtils: ContextUtils
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -89,6 +93,16 @@ class MainViewModel(
 
     var updateAvailable by mutableStateOf(false)
         private set
+
+    val debugInfo: String
+        get() = arrayOf(
+            "PF Tool $applicationVersionName ($applicationVersionCode)",
+            "Android API ${Build.VERSION.SDK_INT}",
+            "Storage access type ${prefs.storageAccessType}",
+            SettingsConstant.experimentalPrefOptions.joinToString("\n") {
+                "${contextUtils.getString(it.labelResourceId)}: ${it.getValue(prefs)}"
+            }
+        ).joinToString("\n")
 
     init {
         if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
