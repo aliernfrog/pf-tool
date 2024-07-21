@@ -1,17 +1,21 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
+import com.aliernfrog.toptoast.state.TopToastState
 
 class PermissionsViewModel(
+    val topToastState: TopToastState,
     val prefs: PreferenceManager
 ) : ViewModel() {
     private var storageAccessType: StorageAccessType
@@ -31,6 +35,10 @@ class PermissionsViewModel(
                 *permissionsData, context = context
             ).isEmpty()
             StorageAccessType.SHIZUKU -> isShizukuFileServiceRunning
+            StorageAccessType.ALL_FILES -> {
+                val result = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                result == PackageManager.PERMISSION_GRANTED
+            }
         }
     }
 

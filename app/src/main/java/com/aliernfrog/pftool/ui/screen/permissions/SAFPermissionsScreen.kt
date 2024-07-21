@@ -33,8 +33,11 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.StorageAccessType
+import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.ui.component.CardWithActions
+import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.component.form.DividerRow
+import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
@@ -189,6 +192,21 @@ private fun SAFPermissionsList(
                 },
                 modifier = Modifier.clickable(onClick = ::onClick)
             )
+        }
+
+        if (StorageAccessType.ALL_FILES.isCompatible()) item {
+            FormSection(
+                title = stringResource(R.string.permissions_other),
+                topDivider = true,
+                bottomDivider = false
+            ) {
+                ButtonRow(
+                    title = stringResource(R.string.permissions_saf_allFiles),
+                    description = stringResource(R.string.permissions_saf_allFiles_description)
+                ) {
+                    StorageAccessType.ALL_FILES.enable(permissionsViewModel.prefs)
+                }
+            }
         }
 
         item {
