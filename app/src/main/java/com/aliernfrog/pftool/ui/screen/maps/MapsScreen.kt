@@ -45,7 +45,7 @@ import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.maps.PickMapButton
 import com.aliernfrog.pftool.ui.component.SettingsButton
-import com.aliernfrog.pftool.ui.component.VerticalSegmentedButtons
+import com.aliernfrog.pftool.ui.component.VerticalSegmentor
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -204,7 +204,7 @@ private fun Actions(
         }
     } }
 
-    VerticalSegmentedButtons(
+    VerticalSegmentor(
         *actions.toTypedArray(),
         modifier = Modifier.padding(8.dp)
     )
