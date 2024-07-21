@@ -51,7 +51,7 @@ fun PFToolTheme(
 
         if (Build.VERSION.SDK_INT >= 23) Color.Transparent.toArgb().let {
             activity.window.statusBarColor = it
-            activity.window.navigationBarColor = it
+            if (Build.VERSION.SDK_INT >= 24) activity.window.navigationBarColor = it
         }
 
         if (Build.VERSION.SDK_INT >= 29) {
