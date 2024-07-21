@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.sheet
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
@@ -43,7 +45,9 @@ import dev.jeziellago.compose.markdowntext.MarkdownText
 @Composable
 fun UpdateSheet(
     sheetState: SheetState,
-    latestVersionInfo: ReleaseInfo
+    latestVersionInfo: ReleaseInfo,
+    updateAvailable: Boolean,
+    onCheckUpdatesRequest: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     BaseModalBottomSheet(
@@ -52,8 +56,10 @@ fun UpdateSheet(
         Actions(
             versionName = latestVersionInfo.versionName,
             preRelease = latestVersionInfo.preRelease,
+            updateAvailable = updateAvailable,
             onGithubClick = { uriHandler.openUri(latestVersionInfo.htmlUrl) },
-            onUpdateClick = { uriHandler.openUri(latestVersionInfo.downloadLink) }
+            onUpdateClick = { uriHandler.openUri(latestVersionInfo.downloadLink) },
+            onCheckUpdatesRequest = onCheckUpdatesRequest
         )
         DividerRow(
             alpha = 0.3f
@@ -80,8 +86,10 @@ fun UpdateSheet(
 private fun Actions(
     versionName: String,
     preRelease: Boolean,
+    updateAvailable: Boolean,
     onGithubClick: () -> Unit,
     onUpdateClick: () -> Unit,
+    onCheckUpdatesRequest: () -> Unit
 ) {
     val versionNameScrollState = rememberScrollState()
     Row(
@@ -126,13 +134,23 @@ private fun Actions(
                 modifier = Modifier.padding(6.dp)
             )
         }
-        Button(
-            onClick = onUpdateClick
-        ) {
-            ButtonIcon(
-                painter = rememberVectorPainter(Icons.Default.Update)
-            )
-            Text(stringResource(R.string.updates_update))
+        AnimatedContent(updateAvailable) { showUpdate ->
+            if (showUpdate) Button(
+                onClick = onUpdateClick
+            ) {
+                ButtonIcon(
+                    painter = rememberVectorPainter(Icons.Default.Update)
+                )
+                Text(stringResource(R.string.updates_update))
+            }
+            else OutlinedButton(
+                onClick = onCheckUpdatesRequest
+            ) {
+                ButtonIcon(
+                    painter = rememberVectorPainter(Icons.Default.Update)
+                )
+                Text(stringResource(R.string.updates_checkUpdates))
+            }
         }
     }
 }
