@@ -18,6 +18,7 @@
     <string name="info_shizuku_startingFileService">Starting file service..</string>
     <string name="info_shizuku_disconnected">Disconnected from Shizuku</string>
     <string name="permissions">Permissions</string>
+    <string name="permissions_other">Other options</string>
     <string name="permissions_downgradeFilesApp">Files app updates</string>
     <string name="permissions_downgradeFilesApp_description">Files app on your device prevents PF Tool from requesting access to Polyfield data. This may be resolvable by uninstalling updates of the Files app</string>
     <string name="permissions_downgradeFilesApp_uninstall">Uninstall updates</string>
@@ -32,6 +33,8 @@
     <string name="permissions_notRecommendedFolder_advanced_show">Show advanced options</string>
     <string name="permissions_notRecommendedFolder_advanced_hide">Hide advanced options</string>
     <string name="permissions_notRecommendedFolder_useAnyway">Use the selected folder anyway</string>
+    <string name="permissions_saf_allFiles">Access all files</string>
+    <string name="permissions_saf_allFiles_description">Lets PF Tool access all files, this may be easier to setup</string>
     <string name="permissions_setupShizuku">Use Shizuku</string>
     <string name="permissions_setupShizuku_description">You need to use Shizuku to let PF Tool access Polyfield maps.\nThis is because the Files app on your device does not allow apps to get access to files inside Android/data.\nYou can toggle Shizuku mode anytime from settings.</string>
     <string name="permissions_maps">Polyfield maps folder</string>
@@ -55,6 +58,8 @@
     <string name="permissions_allFiles_description">Storage permissions are needed for PF Tool to access Polyfield data</string>
     <string name="permissions_allFiles_grant">Grant permission</string>
     <string name="permissions_allFiles_denied">Permission was denied</string>
+    <string name="permissions_allFiles_saf">Access specific directories</string>
+    <string name="permissions_allFiles_saf_description">Lets PF Tool only access the directories it needs, this may be complicated to setup</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
     <string name="maps_actionFailed">{SUCCESSES} succeeded, {FAILS} failed</string>

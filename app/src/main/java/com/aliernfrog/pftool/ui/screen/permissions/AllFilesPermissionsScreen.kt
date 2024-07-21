@@ -3,7 +3,9 @@ package com.aliernfrog.pftool.ui.screen.permissions
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.component.CardWithActions
+import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.toptoast.enum.TopToastColor
 import org.koin.androidx.compose.koinViewModel
@@ -50,5 +55,20 @@ fun AllFilesPermissionsScreen(
         ) {
             Text(stringResource(R.string.permissions_allFiles_description))
         }
+
+        FormSection(
+            title = stringResource(R.string.permissions_other),
+            topDivider = true,
+            bottomDivider = false
+        ) {
+            ButtonRow(
+                title = stringResource(R.string.permissions_allFiles_saf),
+                description = stringResource(R.string.permissions_allFiles_saf_description)
+            ) {
+                StorageAccessType.SAF.enable(permissionsViewModel.prefs)
+            }
+        }
+
+        Spacer(Modifier.navigationBarsPadding())
     }
 }
