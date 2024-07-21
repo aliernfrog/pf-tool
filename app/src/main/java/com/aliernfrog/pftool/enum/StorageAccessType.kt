@@ -37,7 +37,7 @@ enum class StorageAccessType(
     ALL_FILES(
         label = R.string.settings_storage_storageAccessType_allFiles,
         description = R.string.settings_storage_storageAccessType_allFiles_description,
-        maxSDK = Build.VERSION_CODES.N,
+        maxSDK = Build.VERSION_CODES.N_MR1,
         enable = {
             it.storageAccessType = ALL_FILES.ordinal
             it.pfMapsDir = FileUtil.getFilePath(it.pfMapsDir)
