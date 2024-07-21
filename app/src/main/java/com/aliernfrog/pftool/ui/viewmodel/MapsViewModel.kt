@@ -30,6 +30,7 @@ import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
@@ -159,7 +160,7 @@ class MapsViewModel(
         else if (lastKnownStorageAccessType != prefs.storageAccessType) false
         else {
             val existingPath = when (val file = mapsFile) {
-                //is File -> file.absolutePath
+                is File -> file.absolutePath
                 is DocumentFileCompat -> file.uri
                 is ServiceFile -> file.path
                 else -> throw IllegalArgumentException("getMapsFile: received unknown class ${file.javaClass.name}")
@@ -179,6 +180,7 @@ class MapsViewModel(
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
                 shizukuViewModel.fileService!!.getFile(mapsDir)
             }
+            StorageAccessType.ALL_FILES -> File(mapsDir)
         }
         return mapsFile
     }
@@ -192,7 +194,7 @@ class MapsViewModel(
         else if (lastKnownStorageAccessType != prefs.storageAccessType) false
         else {
             val existingPath = when (val file = exportedMapsFile) {
-                //is File -> file.absolutePath
+                is File -> file.absolutePath
                 is DocumentFileCompat -> file.uri
                 is ServiceFile -> file.path
                 else -> throw IllegalArgumentException("getExportedMapsFile: received unknown class ${file.javaClass.name}")
@@ -212,6 +214,7 @@ class MapsViewModel(
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
                 shizukuViewModel.fileService!!.getFile(exportedMapsDir)
             }
+            StorageAccessType.ALL_FILES -> File(exportedMapsDir)
         }
         return exportedMapsFile
     }
@@ -222,9 +225,9 @@ class MapsViewModel(
     private suspend fun fetchImportedMaps() {
         withContext(Dispatchers.IO) {
             importedMaps = when (val it = mapsFile) {
-                /*is File -> (it.listFiles() ?: arrayOf<File>())
+                is File -> (it.listFiles() ?: arrayOf<File>())
                     .filter { it.isDirectory }
-                    .map { MapFile(it) }*/
+                    .map { MapFile(it) }
                 is DocumentFileCompat -> it.listFiles()
                     .filter { it.isDirectory() }
                     .map { MapFile(it) }
@@ -242,9 +245,9 @@ class MapsViewModel(
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
             exportedMaps = when (val it = exportedMapsFile) {
-                /*is File -> (it.listFiles() ?: arrayOf<File>())
+                is File -> (it.listFiles() ?: arrayOf<File>())
                     .filter { it.isFile }
-                    .map { MapFile(it) }*/
+                    .map { MapFile(it) }
                 is DocumentFileCompat -> it.listFiles()
                     .filter { it.isFile() }
                     .map { MapFile(it) }

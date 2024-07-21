@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.lazygeniouz.dfc.file.DocumentFileCompat
@@ -33,7 +32,6 @@ fun Uri.cacheFile(context: Context): File? {
 }
 
 fun Uri.toPath(): String {
-    Log.d("heyyaa", pathSegments.last())
     val pathSplit = pathSegments.last().split(":", limit = 2)
     val root = pathSplit.first()
     val filePath = pathSplit.last()

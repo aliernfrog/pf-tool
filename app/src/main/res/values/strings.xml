@@ -51,6 +51,10 @@
     <string name="permissions_shizuku_permission">Permission needed</string>
     <string name="permissions_shizuku_permission_description">PF Tool does not have permissions to use Shizuku</string>
     <string name="permissions_shizuku_permission_grant">Grant permission</string>
+    <string name="permissions_allFiles_title">Storage permissions</string>
+    <string name="permissions_allFiles_description">Storage permissions are needed for PF Tool to access Polyfield data</string>
+    <string name="permissions_allFiles_grant">Grant permission</string>
+    <string name="permissions_allFiles_denied">Permission was denied</string>
     <string name="maps">Maps</string>
     <string name="maps_alreadyExists">A map with this name already exists, choose another name</string>
     <string name="maps_actionFailed">{SUCCESSES} succeeded, {FAILS} failed</string>
@@ -133,6 +137,8 @@
     <string name="settings_storage_storageAccessType_saf_description">Only access the directories PF Tool needs</string>
     <string name="settings_storage_storageAccessType_shizuku">Shizuku</string>
     <string name="settings_storage_storageAccessType_shizuku_description">Use Shizuku to access storage</string>
+    <string name="settings_storage_storageAccessType_allFiles">All files access (legacy)</string>
+    <string name="settings_storage_storageAccessType_allFiles_description">Access all files, this may be easier to setup on Android 7 and below</string>
     <string name="settings_storage_folders">Folders</string>
     <string name="settings_storage_folders_default">Default: %s</string>
     <string name="settings_storage_folders_notSet">Not configured</string>
