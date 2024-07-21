@@ -95,6 +95,7 @@ object SettingsConstant {
         ),
         CreditData(
             name = R.string.settings_about_credits_crowdin,
+            githubUsername = "crowdin",
             description = R.string.settings_about_credits_translations,
             link = "https://crowdin.com/project/pf-tool"
         ),

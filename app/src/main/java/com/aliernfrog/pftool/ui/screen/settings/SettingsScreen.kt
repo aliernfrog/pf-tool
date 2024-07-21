@@ -267,7 +267,7 @@ enum class SettingsPage(
     ),
 
     LIBS(
-        id = "Libs",
+        id = "libs",
         title = R.string.settings_about_libs,
         description = R.string.settings_about_libs_description,
         icon = Icons.Default.Book,
