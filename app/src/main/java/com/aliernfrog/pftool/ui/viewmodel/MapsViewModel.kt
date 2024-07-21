@@ -180,7 +180,11 @@ class MapsViewModel(
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
                 shizukuViewModel.fileService!!.getFile(mapsDir)
             }
-            StorageAccessType.ALL_FILES -> File(mapsDir)
+            StorageAccessType.ALL_FILES -> {
+                val file = File(mapsDir)
+                if (!file.isDirectory) file.mkdirs()
+                File(mapsDir)
+            }
         }
         return mapsFile
     }
@@ -214,7 +218,11 @@ class MapsViewModel(
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
                 shizukuViewModel.fileService!!.getFile(exportedMapsDir)
             }
-            StorageAccessType.ALL_FILES -> File(exportedMapsDir)
+            StorageAccessType.ALL_FILES -> {
+                val file = File(exportedMapsDir)
+                if (!file.isDirectory) file.mkdirs()
+                File(exportedMapsDir)
+            }
         }
         return exportedMapsFile
     }
