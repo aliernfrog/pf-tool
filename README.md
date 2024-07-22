@@ -20,8 +20,13 @@
   
 </div>
 
+## 🌍 Translations
+You can help translate PF Tool in [Crowdin](https://crowdin.com/project/pf-tool).
+
+[![Crowdin](https://badges.crowdin.net/pf-tool/localized.svg)](https://crowdin.com/project/pf-tool)
+
 ## 🦝 Shizuku support
-[Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging (or root, if you have one).
+[Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging or root access.
 
 Shizuku method in PF Tool can be enabled or disabled anytime from settings.
 
@@ -45,13 +50,6 @@ Shizuku method will automatically be enabled if there is no other way for the ap
 
   - Clone the repository
   - Add a signing config (unless you only want to build debug variant or sign manually)
-  - Obtain a GitHub PAT with `read:packages` scope
-  - Put the PAT and your GitHub username in global/project `gradle.properties`:
-    ```
-    gpr.user=MyUserName
-    gpr.key=MyPAT
-    ```
-    or supply `GITHUB_ACTOR` (username) and `GITHUB_TOKEN` (PAT) in environment variables
   - Build APK:
     - Release variant: `./gradlew assembleRelease`
     - Debug variant: `./gradlew assembleDebug`

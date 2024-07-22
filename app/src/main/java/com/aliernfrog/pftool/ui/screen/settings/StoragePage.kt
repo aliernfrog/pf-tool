@@ -44,6 +44,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.enum.StorageAccessType
+import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
 import com.aliernfrog.pftool.ui.component.FadeVisibility
@@ -83,12 +84,12 @@ fun StoragePage(
             trailingButtonText = stringResource(selectedStorageAccessType.label),
             onClickHeader = { storageAccessTypesExpanded = !storageAccessTypesExpanded }
         ) {
-            StorageAccessType.entries.forEachIndexed { index, type ->
+            StorageAccessType.entries.filter { it.isCompatible() }.forEach { type ->
                 val selected = settingsViewModel.prefs.storageAccessType == type.ordinal
                 fun onSelect() {
-                    StorageAccessType.entries[index].enable(settingsViewModel.prefs)
+                    if (!selected) type.enable(settingsViewModel.prefs)
                 }
-                if (index != 0) DividerRow()
+                if (type.ordinal != 0) DividerRow()
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -296,8 +297,7 @@ private fun getFolderDescription(
 ): String {
     var text = folder.getValue(prefs)
     if (text.isNotEmpty()) try {
-        text = Uri.parse(text).toPath()?.removePrefix(externalStorageRoot)
-            ?: text
+        text = Uri.parse(text).toPath().removePrefix(externalStorageRoot)
     } catch (_: Exception) {}
     return text.ifEmpty { stringResource(R.string.settings_storage_folders_notSet) }
 }

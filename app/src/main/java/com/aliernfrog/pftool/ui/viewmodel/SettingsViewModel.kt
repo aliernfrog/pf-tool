@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.runtime.getValue
@@ -11,12 +12,17 @@ import com.aliernfrog.pftool.experimentalSettingsRequiredClicks
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
+import com.mikepenz.aboutlibraries.Libs
+import com.mikepenz.aboutlibraries.util.withContext
 
 class SettingsViewModel(
     val prefs: PreferenceManager,
-    val topToastState: TopToastState
+    val topToastState: TopToastState,
+    context: Context
 ) : ViewModel() {
     private var aboutClickCount by mutableIntStateOf(0)
+
+    val libraries = Libs.Builder().withContext(context).build().libraries
 
     fun onAboutClick() {
         if (prefs.experimentalOptionsEnabled) return
