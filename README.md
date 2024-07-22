@@ -20,8 +20,13 @@
   
 </div>
 
+## 🌍 Translations
+You can help translate PF Tool in [Crowdin](https://crowdin.com/project/pf-tool).
+
+[![Crowdin](https://badges.crowdin.net/pf-tool/localized.svg)](https://crowdin.com/project/pf-tool)
+
 ## 🦝 Shizuku support
-[Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging (or root, if you have one).
+[Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging or root access.
 
 Shizuku method in PF Tool can be enabled or disabled anytime from settings.
 
