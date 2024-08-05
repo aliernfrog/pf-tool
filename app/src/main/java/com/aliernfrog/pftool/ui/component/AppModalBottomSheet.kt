@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.pftool.imeSupportsSyncAppContent
 import com.aliernfrog.pftool.ui.viewmodel.InsetsViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -76,11 +75,6 @@ fun BaseModalBottomSheet(
         dragHandle = dragHandle,
         contentWindowInsets = { WindowInsets(0.dp) }
     ) {
-        content(
-            insetsViewModel.bottomPadding
-                    // If IME does not sync app content, keyboard will show over the bottom sheet
-                    // Add IME padding to workaround this
-                    + if (imeSupportsSyncAppContent) 0.dp else insetsViewModel.imePadding
-        )
+        content(insetsViewModel.bottomPadding)
     }
 }
