@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool;
 
+import android.os.ParcelFileDescriptor;
 import com.aliernfrog.pftool.data.ServiceFile;
 
 interface IFileService {
@@ -13,15 +14,17 @@ interface IFileService {
     
     boolean exists(String path) = 4;
 
-    byte[] getByteArray(String path) = 5;
+    ServiceFile getFile(String path) = 5;
 
-    ServiceFile getFile(String path) = 6;
+    ServiceFile[] listFiles(String path) = 6;
 
-    ServiceFile[] listFiles(String path) = 7;
+    void mkdirs(String path) = 7;
 
     void renameFile(String oldPath, String newPath) = 8;
 
     void unzipMap(String path, String targetPath) = 9;
 
     void zipMap(String path, String targetPath) = 10;
+
+    ParcelFileDescriptor getFd(String path) = 11;
 }

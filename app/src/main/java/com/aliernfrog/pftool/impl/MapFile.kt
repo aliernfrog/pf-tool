@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.impl
 
 import android.content.Context
+import android.os.ParcelFileDescriptor
 import android.util.Log
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
@@ -26,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 class MapFile(
@@ -101,15 +103,31 @@ class MapFile(
     else if (path.startsWith(mapsViewModel.exportedMapsDir)) MapImportedState.EXPORTED
     else MapImportedState.NONE
 
+    private var cachedThumbnailModel: Any? = null
+    
     /**
      * Thumbnail model of the map.
      */
-    val thumbnailModel: Any? = if (importedState != MapImportedState.IMPORTED) null else when (file) {
-        is File -> if (file.isDirectory) "$path/Thumbnail.jpg" else null
-        is DocumentFileCompat -> if (file.isDirectory()) file.findFile("Thumbnail.jpg")?.uri?.toString() else null
-        is ServiceFile -> if (!file.isFile) shizukuViewModel.fileService!!.getByteArray("$path/Thumbnail.jpg") else null
-        else -> null
-    }
+    val thumbnailModel: Any?
+        get() {
+            return if (importedState != MapImportedState.IMPORTED) null else when (file) {
+                is File -> if (file.isDirectory) "$path/Thumbnail.jpg" else null
+                is DocumentFileCompat -> if (file.isDirectory()) file.findFile("Thumbnail.jpg")?.uri?.toString() else null
+                is ServiceFile -> if (!file.isFile) {
+                    if (cachedThumbnailModel != null) return cachedThumbnailModel
+                    val fd = shizukuViewModel.fileService!!.getFd("$path/Thumbnail.jpg")
+                    val input = ParcelFileDescriptor.AutoCloseInputStream(fd)
+                    val output = ByteArrayOutputStream()
+                    input.copyTo(output)
+                    cachedThumbnailModel = output.toByteArray()
+                    output.close()
+                    input.close()
+                    fd.close()
+                    return cachedThumbnailModel
+                } else null
+                else -> null
+            }
+        }
 
     /**
      * Details of the map. Includes size (KB) and modified time.
