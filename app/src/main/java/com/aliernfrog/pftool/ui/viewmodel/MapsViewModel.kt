@@ -17,7 +17,9 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.data.exists
 import com.aliernfrog.pftool.data.listFiles
+import com.aliernfrog.pftool.data.mkdirs
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
@@ -178,6 +180,8 @@ class MapsViewModel(
             }
             StorageAccessType.SHIZUKU -> {
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+                val file = shizukuViewModel.fileService!!.getFile(mapsDir)!!
+                if (!file.exists()) file.mkdirs()
                 shizukuViewModel.fileService!!.getFile(mapsDir)
             }
             StorageAccessType.ALL_FILES -> {
@@ -216,6 +220,8 @@ class MapsViewModel(
             }
             StorageAccessType.SHIZUKU -> {
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+                val file = shizukuViewModel.fileService!!.getFile(exportedMapsDir)
+                if (!file.exists()) file.mkdirs()
                 shizukuViewModel.fileService!!.getFile(exportedMapsDir)
             }
             StorageAccessType.ALL_FILES -> {
