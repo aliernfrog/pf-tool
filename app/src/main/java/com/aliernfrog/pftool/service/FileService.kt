@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.service
 
+import android.os.ParcelFileDescriptor
 import com.aliernfrog.pftool.IFileService
 import com.aliernfrog.pftool.data.ServiceFile
 import com.aliernfrog.pftool.util.getServiceFile
@@ -36,10 +37,6 @@ class FileService : IFileService.Stub() {
       return File(path).exists()
     }
 
-    override fun getByteArray(path: String): ByteArray {
-        return File(path).readBytes()
-    }
-
     override fun getFile(path: String): ServiceFile {
         return getServiceFile(File(path))
     }
@@ -49,6 +46,10 @@ class FileService : IFileService.Stub() {
         return files.map {
             getServiceFile(it)
         }.toTypedArray()
+    }
+
+    override fun mkdirs(path: String) {
+        File(path).mkdirs()
     }
 
     override fun renameFile(oldPath: String, newPath: String) {
@@ -61,5 +62,9 @@ class FileService : IFileService.Stub() {
 
     override fun zipMap(path: String, targetPath: String) {
         ZipUtil.zipMap(File(path), File(targetPath))
+    }
+
+    override fun getFd(path: String): ParcelFileDescriptor {
+        return ParcelFileDescriptor.open(File(path), ParcelFileDescriptor.MODE_READ_ONLY)
     }
 }

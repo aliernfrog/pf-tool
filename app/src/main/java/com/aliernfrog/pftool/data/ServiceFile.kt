@@ -29,11 +29,6 @@ fun ServiceFile.exists(): Boolean {
     return shizukuViewModel.fileService!!.exists(path)
 }
 
-fun ServiceFile.getByteArray(): ByteArray {
-    val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
-    return shizukuViewModel.fileService!!.getByteArray(path)
-}
-
 fun ServiceFile.listFiles(): Array<ServiceFile>? {
     val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
     return shizukuViewModel.fileService!!.listFiles(path)
@@ -42,4 +37,9 @@ fun ServiceFile.listFiles(): Array<ServiceFile>? {
 fun ServiceFile.renameTo(newPath: String) {
     val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
     shizukuViewModel.fileService!!.renameFile(path, newPath)
+}
+
+fun ServiceFile.mkdirs() {
+    val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+    shizukuViewModel.fileService!!.mkdirs(path)
 }

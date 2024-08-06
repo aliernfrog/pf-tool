@@ -4,13 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ServiceFile
-import com.aliernfrog.pftool.data.getByteArray
+import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.extension.toPath
+import com.aliernfrog.pftool.util.getKoinInstance
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
@@ -110,7 +112,11 @@ class FileUtil {
             val inputStream = when(file) {
                 is DocumentFileCompat -> context.contentResolver.openInputStream(file.uri)
                 is File -> file.inputStream()
-                is ServiceFile -> file.getByteArray().inputStream()
+                is ServiceFile -> {
+                    val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+                    val fd = shizukuViewModel.fileService!!.getFd(file.path)
+                    ParcelFileDescriptor.AutoCloseInputStream(fd)
+                }
                 else -> throw IllegalArgumentException()
             }
             val targetFile = File("${context.externalCacheDir}/shared/$fileName")
