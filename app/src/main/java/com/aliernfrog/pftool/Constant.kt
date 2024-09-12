@@ -14,7 +14,6 @@ const val TAG = "PFToolLogs"
 const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"
-const val documentsUIPackageName = "com.google.android.documentsui"
 
 val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
 val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
