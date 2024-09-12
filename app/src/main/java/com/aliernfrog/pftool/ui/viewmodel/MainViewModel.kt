@@ -21,6 +21,7 @@ import androidx.core.app.LocaleManagerCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.TAG
@@ -64,9 +65,19 @@ class MainViewModel(
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
-    val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
-    val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
+    private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
+    private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
     private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
+    val applicationVersionLabel = "$applicationVersionName (${
+        BuildConfig.GIT_COMMIT.ifBlank { applicationVersionCode.toString() }
+    }${
+        if (BuildConfig.GIT_LOCAL_CHANGES) "*" else ""
+    }${
+        BuildConfig.GIT_BRANCH.let {
+            if (it == applicationVersionName) ""
+            else " - ${it.ifBlank { "local" }}"
+        }
+    })"
 
     private val defaultLanguage = GeneralUtil.getLanguageFromCode("en-US")!!
     val deviceLanguage = LocaleManagerCompat.getSystemLocales(context)[0]?.toLanguage() ?: defaultLanguage
@@ -96,7 +107,7 @@ class MainViewModel(
 
     val debugInfo: String
         get() = arrayOf(
-            "PF Tool $applicationVersionName ($applicationVersionCode)",
+            "PF Tool $applicationVersionLabel",
             "Android API ${Build.VERSION.SDK_INT}",
             "Storage access type ${prefs.storageAccessType}",
             SettingsConstant.experimentalPrefOptions.joinToString("\n") {
