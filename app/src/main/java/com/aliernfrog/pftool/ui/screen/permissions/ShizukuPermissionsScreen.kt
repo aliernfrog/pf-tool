@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.ShizukuStatus
 import com.aliernfrog.pftool.ui.component.ButtonIcon
 import com.aliernfrog.pftool.ui.component.CardWithActions
+import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import org.koin.androidx.compose.koinViewModel
@@ -77,7 +79,7 @@ fun ShizukuPermissionsScreen(
                             .align(Alignment.CenterHorizontally)
                             .padding(16.dp),
                         buttons = {
-                            TextButton(
+                            if (shizukuViewModel.managerInstalled) TextButton(
                                 onClick = {
                                     shizukuViewModel.launchManager(context)
                                 }
@@ -111,7 +113,7 @@ private fun ShizukuSetupGuide(
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
-    if (shizukuViewModel.installed) Text(
+    if (shizukuViewModel.managerInstalled) Text(
         text = stringResource(R.string.permissions_shizuku_introduction),
         style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier.padding(8.dp)
@@ -134,11 +136,11 @@ private fun ShizukuSetupGuide(
             ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> {
                 Button(
                     onClick = {
-                        uriHandler.openUri("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+                        shizukuViewModel.launchManager(context)
                     }
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                    Text(stringResource(R.string.permissions_shizuku_install_install))
+                    Text(stringResource(R.string.permissions_shizuku_installShizuku))
                 }
             }
             ShizukuStatus.WAITING_FOR_BINDER -> {
@@ -172,6 +174,41 @@ private fun ShizukuSetupGuide(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
+        }
+    }
+
+    FadeVisibility(
+        shizukuViewModel.deviceRooted && shizukuViewModel.status != ShizukuStatus.UNAUTHORIZED
+    ) {
+        CardWithActions(
+            title = stringResource(R.string.permissions_shizuku_rooted),
+            buttons = {
+                OutlinedButton(
+                    onClick = {
+                        uriHandler.openUri(ShizukuViewModel.SUI_GITHUB)
+                    }
+                ) {
+                    ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
+                    Text(stringResource(R.string.permissions_shizuku_sui))
+                }
+                Button(
+                    onClick = {
+                        shizukuViewModel.launchManager(context)
+                    }
+                ) {
+                    ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
+                    Text(stringResource(
+                        if (shizukuViewModel.managerInstalled) R.string.permissions_shizuku_openShizuku
+                        else R.string.permissions_shizuku_installShizuku
+                    ))
+                }
+            },
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.permissions_shizuku_rooted_description),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 
