@@ -15,7 +15,7 @@
     <string name="warning_fileDoesntExist">文件不存在</string>
     <string name="info_pleaseWait">请稍候……</string>
     <string name="info_deleteQuestion">你确定要删除 {NAME} 么？\n此操作不可撤销！</string>
-    <string name="info_shizuku_startingFileService">正在启动文件服务...</string>
+    <string name="permissions_shizuku_waitingService">正在启动文件服务...</string>
     <string name="info_shizuku_disconnected">断开Shizuku</string>
     <string name="permissions">权限</string>
     <string name="permissions_downgradeFilesApp">文件程序更新</string>
@@ -47,7 +47,7 @@
     <string name="permissions_shizuku_install_install">安装</string>
     <string name="permissions_shizuku_notRunning">Shizuku没有在运行</string>
     <string name="permissions_shizuku_notRunning_description">请启动Shizuku服务以继续</string>
-    <string name="permissions_shizuku_notRunning_openShizuku">转至Shizuku</string>
+    <string name="permissions_shizuku_openShizuku">转至Shizuku</string>
     <string name="permissions_shizuku_permission">需要权限</string>
     <string name="permissions_shizuku_permission_description">PF Tool没有得到Shizuku的授权</string>
     <string name="permissions_shizuku_permission_grant">授予权限</string>

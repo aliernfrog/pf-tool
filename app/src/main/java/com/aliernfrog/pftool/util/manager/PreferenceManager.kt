@@ -28,8 +28,9 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val storageAccessType = intPreference("storageAccessType", StorageAccessType.SAF.ordinal, includeInDebugInfo = true)
 
     // Experimental (developer) options
-    var experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
-    var showMapNameFieldGuide = booleanPreference("showMapNameFieldGuide", true, experimental = true, includeInDebugInfo = false)
+    val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
+    val showMapNameFieldGuide = booleanPreference("showMapNameFieldGuide", true, experimental = true, includeInDebugInfo = false)
+    val shizukuNeverLoad = booleanPreference("shizukuNeverLoad", false)
     val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", GeneralUtil.getAppVersionCode(context), experimental = true, includeInDebugInfo = false)
-    var updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/pftool/latest.json", experimental = true, includeInDebugInfo = false)
+    val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/pftool/latest.json", experimental = true, includeInDebugInfo = false)
 }
