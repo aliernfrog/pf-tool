@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapAction
+import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ButtonIcon
@@ -76,31 +77,37 @@ fun MapsScreen(
         ) },
         topAppBarState = mapsViewModel.topAppBarState
     ) {
-        Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
-            PickMapButton(
-                chosenMap = mapsViewModel.chosenMap,
-                showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value
-            ) {
-                mapsViewModel.mapListShown = true
+        Crossfade(targetState = mapsViewModel.chosenMap) { chosenMap ->
+            if (chosenMap == null) return@Crossfade
+            Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
+                PickMapButton(
+                    chosenMap = chosenMap,
+                    showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value,
+                    onClickThumbnailActions = {
+                        mapsViewModel.openMapThumbnailViewer(chosenMap)
+                    }
+                ) {
+                    mapsViewModel.mapListShown = true
+                }
+                Actions(chosenMap = chosenMap)
             }
-            Actions()
         }
     }
 }
 
 @Composable
 private fun Actions(
+    chosenMap: MapFile,
     mapsViewModel: MapsViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val chosenMap = mapsViewModel.chosenMap ?: return
 
     TextField(
         value = mapsViewModel.mapNameEdit,
         onValueChange = { mapsViewModel.mapNameEdit = it },
         label = { Text(stringResource(R.string.maps_mapName)) },
-        placeholder = { Text(mapsViewModel.chosenMap?.name ?: "") },
+        placeholder = { Text(chosenMap.name) },
         singleLine = true,
         leadingIcon = {
             Icon(

@@ -179,8 +179,7 @@ enum class MapAction(
             val first = maps.first()
             val files = maps.map { it.file }
             first.mapsViewModel.activeProgress = Progress(
-                description = if (maps.size == 1) context.getString(R.string.maps_share_sharing_single).replace("{NAME}", first.name)
-                else context.getString(R.string.maps_share_sharing_multiple).replace("{COUNT}", maps.size.toString())
+                description = context.getString(R.string.info_sharing)
             )
             first.runInIOThreadSafe {
                 FileUtil.shareFiles(*files.toTypedArray(), context = context)

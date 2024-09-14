@@ -25,6 +25,7 @@ import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
+import com.aliernfrog.pftool.data.MediaViewData
 import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.di.get
 import com.aliernfrog.pftool.enum.MapsListSegment
@@ -111,6 +112,9 @@ class MainViewModel(
             }
         ).joinToString("\n")
 
+    var mediaViewData by mutableStateOf<MediaViewData?>(null)
+        private set
+
     init {
         if (!supportsPerAppLanguagePreferences && prefs.language.value.isNotBlank()) runBlocking {
             appLanguage = GeneralUtil.getLanguageFromCode(prefs.language.value)?.getAvailableLanguage()
@@ -182,6 +186,14 @@ class MainViewModel(
                 scope.launch { updateSheetState.show() }
             }
         )
+    }
+
+    fun showMediaView(data: MediaViewData) {
+        mediaViewData = data
+    }
+
+    fun dismissMediaView() {
+        mediaViewData = null
     }
 
     fun handleIntent(intent: Intent, context: Context) {

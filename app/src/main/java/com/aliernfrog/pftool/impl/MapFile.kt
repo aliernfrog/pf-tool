@@ -62,6 +62,11 @@ class MapFile(
     }
 
     /**
+     * Name of the map thumbnail file. Does not check if it exists.
+     */
+    private val thumbnailFileName = "Thumbnail.jpg"
+
+    /**
      * Path of the map. Can be a [File] path or uri.
      */
     val path: String = when (file) {
@@ -111,18 +116,21 @@ class MapFile(
     val thumbnailModel: Any?
         get() {
             return if (importedState != MapImportedState.IMPORTED) null else when (file) {
-                is File -> if (file.isDirectory) "$path/Thumbnail.jpg" else null
-                is DocumentFileCompat -> if (file.isDirectory()) file.findFile("Thumbnail.jpg")?.uri?.toString() else null
+                is File -> if (file.isDirectory) "$path/$thumbnailFileName" else null
+                is DocumentFileCompat -> if (file.isDirectory()) file.findFile(thumbnailFileName)?.uri?.toString() else null
                 is ServiceFile -> if (!file.isFile) {
                     if (cachedThumbnailModel != null) return cachedThumbnailModel
-                    val fd = shizukuViewModel.fileService!!.getFd("$path/Thumbnail.jpg")
-                    val input = ParcelFileDescriptor.AutoCloseInputStream(fd)
-                    val output = ByteArrayOutputStream()
-                    input.copyTo(output)
-                    cachedThumbnailModel = output.toByteArray()
-                    output.close()
-                    input.close()
-                    fd.close()
+                    val thumbnailPath = "$path/$thumbnailFileName"
+                    if (shizukuViewModel.fileService!!.exists(thumbnailPath)) {
+                        val fd = shizukuViewModel.fileService!!.getFd("$path/$thumbnailFileName")
+                        val input = ParcelFileDescriptor.AutoCloseInputStream(fd)
+                        val output = ByteArrayOutputStream()
+                        input.copyTo(output)
+                        cachedThumbnailModel = output.toByteArray()
+                        output.close()
+                        input.close()
+                        fd.close()
+                    }
                     return cachedThumbnailModel
                 } else null
                 else -> null
@@ -338,6 +346,18 @@ class MapFile(
             is File -> file.deleteRecursively()
             is DocumentFileCompat -> file.delete()
             is ServiceFile -> file.delete()
+        }
+    }
+
+    /**
+     * Returns thumbnail file of the map if exists, null otherwise.
+     */
+    fun getThumbnailFile(): Any? {
+        return when (file) {
+            is File -> File("$path/$thumbnailFileName")
+            is DocumentFileCompat -> file.findFile(thumbnailFileName)
+            is ServiceFile -> shizukuViewModel.fileService!!.getFile("$path/$thumbnailFileName")
+            else -> throw IllegalArgumentException("MapFile/getThumbnailFile: unexpected class")
         }
     }
 
