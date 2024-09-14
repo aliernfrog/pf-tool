@@ -120,14 +120,17 @@ class MapFile(
                 is DocumentFileCompat -> if (file.isDirectory()) file.findFile(thumbnailFileName)?.uri?.toString() else null
                 is ServiceFile -> if (!file.isFile) {
                     if (cachedThumbnailModel != null) return cachedThumbnailModel
-                    val fd = shizukuViewModel.fileService!!.getFd("$path/$thumbnailFileName")
-                    val input = ParcelFileDescriptor.AutoCloseInputStream(fd)
-                    val output = ByteArrayOutputStream()
-                    input.copyTo(output)
-                    cachedThumbnailModel = output.toByteArray()
-                    output.close()
-                    input.close()
-                    fd.close()
+                    val thumbnailPath = "$path/$thumbnailFileName"
+                    if (shizukuViewModel.fileService!!.exists(thumbnailPath)) {
+                        val fd = shizukuViewModel.fileService!!.getFd("$path/$thumbnailFileName")
+                        val input = ParcelFileDescriptor.AutoCloseInputStream(fd)
+                        val output = ByteArrayOutputStream()
+                        input.copyTo(output)
+                        cachedThumbnailModel = output.toByteArray()
+                        output.close()
+                        input.close()
+                        fd.close()
+                    }
                     return cachedThumbnailModel
                 } else null
                 else -> null
@@ -351,9 +354,9 @@ class MapFile(
      */
     fun getThumbnailFile(): Any? {
         return when (file) {
-            is File -> File("${file.absolutePath}/$thumbnailFileName")
+            is File -> File("$path/$thumbnailFileName")
             is DocumentFileCompat -> file.findFile(thumbnailFileName)
-            is ServiceFile -> shizukuViewModel.fileService!!.getFile("${file.path}/$thumbnailFileName")
+            is ServiceFile -> shizukuViewModel.fileService!!.getFile("$path/$thumbnailFileName")
             else -> throw IllegalArgumentException("MapFile/getThumbnailFile: unexpected class")
         }
     }
