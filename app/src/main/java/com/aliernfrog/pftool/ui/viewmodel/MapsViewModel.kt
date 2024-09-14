@@ -5,17 +5,23 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
+import com.aliernfrog.pftool.data.MediaViewData
 import com.aliernfrog.pftool.data.ServiceFile
 import com.aliernfrog.pftool.data.exists
 import com.aliernfrog.pftool.data.listFiles
@@ -24,13 +30,16 @@ import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
+import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.getKoinInstance
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
+import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -127,6 +136,33 @@ class MapsViewModel(
         mapsPendingDelete = null
         loadMaps(context)
         activeProgress = null
+    }
+
+    fun openMapThumbnailViewer(map: MapFile) {
+        val mainViewModel = getKoinInstance<MainViewModel>()
+        val hasThumbnail = map.thumbnailModel != null
+        mainViewModel.showMediaView(MediaViewData(
+            model = map.thumbnailModel,
+            title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
+            zoomEnabled = hasThumbnail,
+            options = if (!hasThumbnail) null else { {
+                val context = LocalContext.current
+                val scope = rememberCoroutineScope()
+
+                ButtonRow(
+                    title = stringResource(R.string.maps_thumbnail_share),
+                    painter = rememberVectorPainter(Icons.Default.Share)
+                ) {
+                    scope.launch {
+                        activeProgress = Progress(context.getString(R.string.info_sharing))
+                        map.runInIOThreadSafe {
+                            FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
+                        }
+                        activeProgress = null
+                    }
+                }
+            } }
+        ))
     }
 
     fun resolveMapNameInput(): String {

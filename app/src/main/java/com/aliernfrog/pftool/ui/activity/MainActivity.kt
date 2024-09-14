@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aliernfrog.pftool.ui.component.InsetsObserver
+import com.aliernfrog.pftool.ui.component.MediaView
 import com.aliernfrog.pftool.ui.screen.MainScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -65,6 +67,12 @@ class MainActivity : AppCompatActivity() {
             InsetsObserver()
             AppContainer {
                 MainScreen()
+                Crossfade(mainViewModel.mediaViewData) { data ->
+                    if (data != null) MediaView(
+                        data = data,
+                        onDismissRequest = { mainViewModel.dismissMediaView() }
+                    )
+                }
                 TopToastHost(mainViewModel.topToastState)
             }
         }
