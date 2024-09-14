@@ -6,6 +6,7 @@ import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
 class PreferenceManager(context: Context) : BasePreferenceManager(
     prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)
@@ -29,5 +30,6 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // Experimental (developer) options
     var experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
     var showMapNameFieldGuide = booleanPreference("showMapNameFieldGuide", true, experimental = true, includeInDebugInfo = false)
+    val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", GeneralUtil.getAppVersionCode(context), experimental = true, includeInDebugInfo = false)
     var updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/pftool/latest.json", experimental = true, includeInDebugInfo = false)
 }
