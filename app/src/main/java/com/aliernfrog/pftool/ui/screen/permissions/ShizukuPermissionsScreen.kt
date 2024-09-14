@@ -87,6 +87,7 @@ fun ShizukuPermissionsScreen(
                             }
                             Button(
                                 onClick = {
+                                    shizukuViewModel.prefs.shizukuNeverLoad.value = false
                                     GeneralUtil.restartApp(context)
                                 },
                                 modifier = Modifier.padding(top = 8.dp)
