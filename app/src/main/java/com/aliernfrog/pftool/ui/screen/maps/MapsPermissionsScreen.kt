@@ -9,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.aliernfrog.pftool.ConfigKey
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
@@ -27,27 +26,19 @@ fun MapsPermissionsScreen(
     val permissions = remember { arrayOf(
         PermissionData(
             title = R.string.permissions_maps,
-            recommendedPath = ConfigKey.RECOMMENDED_MAPS_DIR,
+            pref = mapsViewModel.prefs.pfMapsDir,
             recommendedPathDescription = R.string.permissions_maps_recommended,
             recommendedPathWarning = R.string.permissions_maps_openPFToCreate,
             useUnrecommendedAnywayDescription = R.string.permissions_maps_useUnrecommendedAnyway,
-            getUri = { mapsViewModel.prefs.pfMapsDir },
-            onUriUpdate = {
-                mapsViewModel.prefs.pfMapsDir = it.toString()
-            },
             content = {
                 Text(stringResource(R.string.permissions_maps_description))
             }
         ),
         PermissionData(
             title = R.string.permissions_exportedMaps,
-            recommendedPath = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR,
+            pref = mapsViewModel.prefs.exportedMapsDir,
             recommendedPathDescription = R.string.permissions_exportedMaps_recommended,
             forceRecommendedPath = false,
-            getUri = { mapsViewModel.prefs.exportedMapsDir },
-            onUriUpdate = {
-                mapsViewModel.prefs.exportedMapsDir = it.toString()
-            },
             content = {
                 Text(stringResource(R.string.permissions_exportedMaps_description))
             }

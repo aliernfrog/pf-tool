@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.ReleaseInfo
@@ -39,7 +38,6 @@ import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.extension.toLanguage
-import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -59,8 +57,7 @@ class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
-    val progressState: ProgressState,
-    private val contextUtils: ContextUtils
+    val progressState: ProgressState
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
@@ -86,7 +83,7 @@ class MainViewModel(
     var appLanguage: Language?
         get() = _appLanguage ?: deviceLanguage.getAvailableLanguage() ?: defaultLanguage
         set(language) {
-            prefs.language = language?.fullCode ?: ""
+            prefs.language.value = language?.fullCode ?: ""
             val localeListCompat = if (language == null) LocaleListCompat.getEmptyLocaleList()
             else LocaleListCompat.forLanguageTags(language.languageCode)
             AppCompatDelegate.setApplicationLocales(localeListCompat)
@@ -109,15 +106,14 @@ class MainViewModel(
         get() = arrayOf(
             "PF Tool $applicationVersionLabel",
             "Android API ${Build.VERSION.SDK_INT}",
-            "Storage access type ${prefs.storageAccessType}",
-            SettingsConstant.experimentalPrefOptions.joinToString("\n") {
-                "${contextUtils.getString(it.labelResourceId)}: ${it.getValue(prefs)}"
+            prefs.debugInfoPrefs.joinToString("\n") {
+                "${it.key}: ${it.value}"
             }
         ).joinToString("\n")
 
     init {
-        if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
-            appLanguage = GeneralUtil.getLanguageFromCode(prefs.language)?.getAvailableLanguage()
+        if (!supportsPerAppLanguagePreferences && prefs.language.value.isNotBlank()) runBlocking {
+            appLanguage = GeneralUtil.getLanguageFromCode(prefs.language.value)?.getAvailableLanguage()
         }
     }
 
@@ -127,7 +123,7 @@ class MainViewModel(
     ) {
         withContext(Dispatchers.IO) {
             try {
-                val updatesURL = prefs.updatesURL
+                val updatesURL = prefs.updatesURL.value
                 val responseJson = JSONObject(URL(updatesURL).readText())
                 val json = responseJson.getJSONObject(
                     if (applicationIsPreRelease && responseJson.has("preRelease")) "preRelease" else "stable"

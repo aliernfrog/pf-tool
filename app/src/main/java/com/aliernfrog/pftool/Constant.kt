@@ -20,39 +20,15 @@ val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_C
 val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 val hasAndroidDataRestrictions = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 
-object ConfigKey {
-    const val PREF_NAME = "APP_CONFIG"
-    const val KEY_APP_LANGUAGE = "appLanguage"
-    const val KEY_APP_THEME = "appTheme"
-    const val KEY_APP_MATERIAL_YOU = "materialYou"
-    const val KEY_APP_AUTO_UPDATES = "autoUpdates"
-    const val KEY_APP_UPDATES_URL = "updatesUrl"
-    const val KEY_SHOW_CHOSEN_MAP_THUMBNAIL = "showChosenMapThumbnail"
-    const val KEY_SHOW_MAP_THUMBNAILS_LIST = "showMapThumbnailsList"
-    const val KEY_MAPS_DIR = "mapsDir"
-    const val KEY_EXPORTED_MAPS_DIR = "mapsExportDir"
-    const val DEFAULT_UPDATES_URL = "https://aliernfrog.github.io/pftool/latest.json"
-    val RECOMMENDED_MAPS_DIR = "${Environment.getExternalStorageDirectory()}/Android/data/com.MA.Polyfield/files/editor"
-    val RECOMMENDED_EXPORTED_MAPS_DIR = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported"
-}
-
 object SettingsConstant {
     val folders = listOf(
         PrefEditItem(
-            labelResourceId = R.string.settings_storage_folders_maps,
-            getValue = { it.pfMapsDir },
-            setValue = { newValue, prefs ->
-                prefs.pfMapsDir = newValue
-            },
-            default = ConfigKey.RECOMMENDED_MAPS_DIR
+            preference = { it.pfMapsDir },
+            label = { R.string.settings_storage_folders_maps }
         ),
         PrefEditItem(
-            labelResourceId = R.string.settings_storage_folders_exportedMaps,
-            getValue = { it.exportedMapsDir },
-            setValue = { newValue, prefs ->
-                prefs.exportedMapsDir = newValue
-            },
-            default = ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR
+            preference = { it.exportedMapsDir },
+            label = { R.string.settings_storage_folders_exportedMaps }
         )
     )
 
@@ -109,18 +85,6 @@ object SettingsConstant {
             description = R.string.settings_about_credits_inspiration,
             link = "https://github.com/ReVanced/revanced-manager"
         )
-    )
-
-    val experimentalPrefOptions = listOf(
-        PrefEditItem(
-            labelResourceId = R.string.settings_experimental_updatesURL,
-            getValue = { it.updatesURL },
-            setValue = { newValue, prefs ->
-                prefs.updatesURL = newValue
-            },
-            default = ConfigKey.DEFAULT_UPDATES_URL
-        ),
-        *folders.toTypedArray()
     )
 }
 

@@ -185,7 +185,6 @@
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">Not intended for normal usage, might break the app when misused</string>
-    <string name="settings_experimental_updatesURL">Updates URL</string>
     <string name="updates_updateAvailable">PF Tool update available! Click for more details</string>
     <string name="updates_noUpdates">No updates available</string>
     <string name="updates_error">Something went wrong while checking for updates</string>

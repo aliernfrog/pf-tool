@@ -79,7 +79,7 @@ fun MapsScreen(
         Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
             PickMapButton(
                 chosenMap = mapsViewModel.chosenMap,
-                showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail
+                showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value
             ) {
                 mapsViewModel.mapListShown = true
             }
@@ -114,9 +114,9 @@ private fun Actions(
             .clip(AppComponentShape)
     )
 
-    FadeVisibility(visible = mapsViewModel.prefs.showMapNameFieldGuide) {
+    FadeVisibility(visible = mapsViewModel.prefs.showMapNameFieldGuide.value) {
         OutlinedCard(
-            onClick = { mapsViewModel.prefs.showMapNameFieldGuide = false },
+            onClick = { mapsViewModel.prefs.showMapNameFieldGuide.value = false },
             shape = AppComponentShape,
             modifier = Modifier.padding(
                 horizontal = 8.dp,

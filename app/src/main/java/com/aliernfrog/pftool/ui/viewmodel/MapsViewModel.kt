@@ -45,15 +45,15 @@ class MapsViewModel(
     val scrollState = ScrollState(0)
 
     val mapsDir: String
-        get() = prefs.pfMapsDir
+        get() = prefs.pfMapsDir.value
     val exportedMapsDir: String
-        get() = prefs.exportedMapsDir
+        get() = prefs.exportedMapsDir.value
     lateinit var mapsFile: Any
         private set
     lateinit var exportedMapsFile: Any
         private set
 
-    private var lastKnownStorageAccessType = prefs.storageAccessType
+    private var lastKnownStorageAccessType = prefs.storageAccessType.value
 
     var isLoadingMaps by mutableStateOf(true)
     var importedMaps by mutableStateOf(emptyList<MapFile>())
@@ -159,7 +159,7 @@ class MapsViewModel(
      */
     private fun getMapsFile(context: Context): Any {
         val isUpToDate = if (!::mapsFile.isInitialized) false
-        else if (lastKnownStorageAccessType != prefs.storageAccessType) false
+        else if (lastKnownStorageAccessType != prefs.storageAccessType.value) false
         else {
             val existingPath = when (val file = mapsFile) {
                 is File -> file.absolutePath
@@ -170,7 +170,7 @@ class MapsViewModel(
             mapsDir == existingPath
         }
         if (isUpToDate) return mapsFile
-        val storageAccessType = prefs.storageAccessType
+        val storageAccessType = prefs.storageAccessType.value
         lastKnownStorageAccessType = storageAccessType
         mapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
@@ -199,7 +199,7 @@ class MapsViewModel(
      */
     private fun getExportedMapsFile(context: Context): Any {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
-        else if (lastKnownStorageAccessType != prefs.storageAccessType) false
+        else if (lastKnownStorageAccessType != prefs.storageAccessType.value) false
         else {
             val existingPath = when (val file = exportedMapsFile) {
                 is File -> file.absolutePath
@@ -210,7 +210,7 @@ class MapsViewModel(
             exportedMapsDir == existingPath
         }
         if (isUpToDate) return exportedMapsFile
-        val storageAccessType = prefs.storageAccessType
+        val storageAccessType = prefs.storageAccessType.value
         lastKnownStorageAccessType = storageAccessType
         exportedMapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {

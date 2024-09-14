@@ -17,9 +17,9 @@ enum class StorageAccessType(
         label = R.string.settings_storage_storageAccessType_saf,
         description = R.string.settings_storage_storageAccessType_saf_description,
         enable = {
-            it.storageAccessType = SAF.ordinal
-            it.pfMapsDir = FileUtil.getTreeUriForPath(it.pfMapsDir).toString()
-            it.exportedMapsDir = FileUtil.getTreeUriForPath(it.exportedMapsDir).toString()
+            it.storageAccessType.value = SAF.ordinal
+            it.pfMapsDir.value = FileUtil.getTreeUriForPath(it.pfMapsDir.value).toString()
+            it.exportedMapsDir.value = FileUtil.getTreeUriForPath(it.exportedMapsDir.value).toString()
         }
     ),
 
@@ -28,9 +28,9 @@ enum class StorageAccessType(
         description = R.string.settings_storage_storageAccessType_shizuku_description,
         minSDK = Build.VERSION_CODES.M,
         enable = {
-            it.storageAccessType = SHIZUKU.ordinal
-            it.pfMapsDir = FileUtil.getFilePath(it.pfMapsDir)
-            it.exportedMapsDir = FileUtil.getFilePath(it.exportedMapsDir)
+            it.storageAccessType.value = SHIZUKU.ordinal
+            it.pfMapsDir.value = FileUtil.getFilePath(it.pfMapsDir.value)
+            it.exportedMapsDir.value = FileUtil.getFilePath(it.exportedMapsDir.value)
         }
     ),
 
@@ -39,9 +39,9 @@ enum class StorageAccessType(
         description = R.string.settings_storage_storageAccessType_allFiles_description,
         maxSDK = Build.VERSION_CODES.N_MR1,
         enable = {
-            it.storageAccessType = ALL_FILES.ordinal
-            it.pfMapsDir = FileUtil.getFilePath(it.pfMapsDir)
-            it.exportedMapsDir = FileUtil.getFilePath(it.exportedMapsDir)
+            it.storageAccessType.value = ALL_FILES.ordinal
+            it.pfMapsDir.value = FileUtil.getFilePath(it.pfMapsDir.value)
+            it.exportedMapsDir.value = FileUtil.getFilePath(it.exportedMapsDir.value)
         }
     )
 }
