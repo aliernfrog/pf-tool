@@ -73,8 +73,8 @@ class MapFile(
     /**
      * Thumbnail model of the map.
      */
-    val thumbnailModel: Any?
-        get() = if (importedState != MapImportedState.IMPORTED) null else file.findFile(thumbnailFileName)?.painterModel
+    val thumbnailModel = if (importedState != MapImportedState.IMPORTED) null
+    else file.findFile(thumbnailFileName)?.painterModel
 
     /**
      * Details of the map. Includes size (KB) and modified time.
