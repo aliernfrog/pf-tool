@@ -22,17 +22,16 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.data.MediaViewData
-import com.aliernfrog.pftool.data.ServiceFile
 import com.aliernfrog.pftool.data.exists
-import com.aliernfrog.pftool.data.listFiles
 import com.aliernfrog.pftool.data.mkdirs
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.StorageAccessType
+import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
 import com.aliernfrog.pftool.ui.component.form.ButtonRow
 import com.aliernfrog.pftool.util.extension.showErrorToast
-import com.aliernfrog.pftool.util.getKoinInstance
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -43,6 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
@@ -57,9 +57,9 @@ class MapsViewModel(
         get() = prefs.pfMapsDir.value
     val exportedMapsDir: String
         get() = prefs.exportedMapsDir.value
-    lateinit var mapsFile: Any
+    lateinit var mapsFile: FileWrapper
         private set
-    lateinit var exportedMapsFile: Any
+    lateinit var exportedMapsFile: FileWrapper
         private set
 
     private var lastKnownStorageAccessType = prefs.storageAccessType.value
@@ -85,9 +85,9 @@ class MapsViewModel(
         try {
             val mapToChoose = when (map) {
                 is MapFile -> map
-                else -> if (map == null) null else MapFile(map)
+                is FileWrapper -> MapFile(map)
+                else -> if (map == null) null else MapFile(FileWrapper(map))
             }
-
             if (mapToChoose != null) mapNameEdit = mapToChoose.name
             chosenMap = mapToChoose
         } catch (e: Exception) {
@@ -173,7 +173,7 @@ class MapsViewModel(
         customDialogTitleAndText = contextUtils.getString(R.string.maps_actionFailed)
             .replace("{SUCCESSES}", successes.size.toString())
             .replace("{FAILS}", fails.size.toString()) to fails.joinToString("\n\n") {
-                "${it.first}: ${contextUtils.getString(it.second.messageId ?: R.string.warning_error)}"
+                "${it.first}: ${contextUtils.getString(it.second.message ?: R.string.warning_error)}"
             }
     }
 
@@ -193,26 +193,17 @@ class MapsViewModel(
      * Gets [DocumentFileCompat] to imported maps folder.
      * Use this before accessing [mapsFile], otherwise the app will crash.
      */
-    private fun getMapsFile(context: Context): Any {
+    private fun getMapsFile(context: Context): FileWrapper {
         val isUpToDate = if (!::mapsFile.isInitialized) false
         else if (lastKnownStorageAccessType != prefs.storageAccessType.value) false
-        else {
-            val existingPath = when (val file = mapsFile) {
-                is File -> file.absolutePath
-                is DocumentFileCompat -> file.uri
-                is ServiceFile -> file.path
-                else -> throw IllegalArgumentException("getMapsFile: received unknown class ${file.javaClass.name}")
-            }
-            mapsDir == existingPath
-        }
+        else mapsDir == mapsFile.path
         if (isUpToDate) return mapsFile
         val storageAccessType = prefs.storageAccessType.value
         lastKnownStorageAccessType = storageAccessType
         mapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
                 val treeUri = Uri.parse(mapsDir)
-                mapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
-                return mapsFile
+                DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
@@ -225,7 +216,7 @@ class MapsViewModel(
                 if (!file.isDirectory) file.mkdirs()
                 File(mapsDir)
             }
-        }
+        }.let { FileWrapper(it) }
         return mapsFile
     }
 
@@ -233,26 +224,17 @@ class MapsViewModel(
      * Gets [DocumentFileCompat] to exported maps folder.
      * Use this before accessing [exportedMapsFile], otherwise the app will crash.
      */
-    private fun getExportedMapsFile(context: Context): Any {
+    private fun getExportedMapsFile(context: Context): FileWrapper {
         val isUpToDate = if (!::exportedMapsFile.isInitialized) false
         else if (lastKnownStorageAccessType != prefs.storageAccessType.value) false
-        else {
-            val existingPath = when (val file = exportedMapsFile) {
-                is File -> file.absolutePath
-                is DocumentFileCompat -> file.uri
-                is ServiceFile -> file.path
-                else -> throw IllegalArgumentException("getExportedMapsFile: received unknown class ${file.javaClass.name}")
-            }
-            exportedMapsDir == existingPath
-        }
+        else exportedMapsDir == exportedMapsFile.path
         if (isUpToDate) return exportedMapsFile
         val storageAccessType = prefs.storageAccessType.value
         lastKnownStorageAccessType = storageAccessType
         exportedMapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
                 val treeUri = Uri.parse(exportedMapsDir)
-                exportedMapsFile = DocumentFileCompat.fromTreeUri(context, treeUri)!!
-                return exportedMapsFile
+                DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
                 val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
@@ -265,7 +247,7 @@ class MapsViewModel(
                 if (!file.isDirectory) file.mkdirs()
                 File(exportedMapsDir)
             }
-        }
+        }.let { FileWrapper(it) }
         return exportedMapsFile
     }
 
@@ -274,18 +256,10 @@ class MapsViewModel(
      */
     private suspend fun fetchImportedMaps() {
         withContext(Dispatchers.IO) {
-            importedMaps = when (val it = mapsFile) {
-                is File -> (it.listFiles() ?: arrayOf<File>())
-                    .filter { it.isDirectory }
-                    .map { MapFile(it) }
-                is DocumentFileCompat -> it.listFiles()
-                    .filter { it.isDirectory() }
-                    .map { MapFile(it) }
-                is ServiceFile -> (it.listFiles() ?: arrayOf())
-                    .filter { !it.isFile }
-                    .map { MapFile(it) }
-                else -> throw IllegalArgumentException("fetchImportedMaps: received unknown class ${it.javaClass.name}")
-            }.sortedBy { it.name.lowercase() }
+            importedMaps = mapsFile.listFiles()
+                .filter { !it.isFile }
+                .sortedBy { it.name.lowercase() }
+                .map { MapFile(it) }
         }
     }
 
@@ -294,18 +268,10 @@ class MapsViewModel(
      */
     private suspend fun fetchExportedMaps() {
         withContext(Dispatchers.IO) {
-            exportedMaps = when (val it = exportedMapsFile) {
-                is File -> (it.listFiles() ?: arrayOf<File>())
-                    .filter { it.isFile }
-                    .map { MapFile(it) }
-                is DocumentFileCompat -> it.listFiles()
-                    .filter { it.isFile() }
-                    .map { MapFile(it) }
-                is ServiceFile -> (it.listFiles() ?: arrayOf())
-                    .filter { it.isFile }
-                    .map { MapFile(it) }
-                else -> throw IllegalArgumentException("fetchExportedMaps: received unknown class ${it.javaClass.name}")
-            }.filter { it.isZip }.sortedBy { it.name.lowercase() }
+            exportedMaps = exportedMapsFile.listFiles()
+                .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
+                .sortedBy { it.name.lowercase() }
+                .map { MapFile(it) }
         }
     }
 }

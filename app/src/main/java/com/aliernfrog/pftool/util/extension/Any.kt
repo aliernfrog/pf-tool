@@ -1,6 +1,6 @@
 package com.aliernfrog.pftool.util.extension
 
-import com.aliernfrog.pftool.util.getKoinInstance
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.util.manager.ContextUtils
 
 fun Any.resolveString(): String {

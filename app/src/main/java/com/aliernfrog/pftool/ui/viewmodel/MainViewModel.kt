@@ -27,9 +27,10 @@ import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.data.MediaViewData
 import com.aliernfrog.pftool.data.ReleaseInfo
-import com.aliernfrog.pftool.di.get
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.githubRepoURL
+import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
@@ -197,8 +198,8 @@ class MainViewModel(
     }
 
     fun handleIntent(intent: Intent, context: Context) {
-        val mapsViewModel = get<MapsViewModel>()
-        val mapsListViewModel = get<MapsListViewModel>()
+        val mapsViewModel = getKoinInstance<MapsViewModel>()
+        val mapsListViewModel = getKoinInstance<MapsListViewModel>()
 
         try {
             val uris: MutableList<Uri> = intent.data?.let {
@@ -214,7 +215,7 @@ class MainViewModel(
             progressState.currentProgress = Progress(context.getString(R.string.info_pleaseWait))
             viewModelScope.launch(Dispatchers.IO) {
                 val cached = uris.map { uri ->
-                    MapFile(uri.cacheFile(context)!!)
+                    MapFile(FileWrapper(uri.cacheFile(context)!!))
                 }
                 if (cached.size <= 1) {
                     mapsViewModel.chooseMap(cached.first())

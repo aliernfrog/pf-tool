@@ -62,6 +62,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.MapsListSortingType
+import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
@@ -105,7 +106,7 @@ fun MapsListScreen(
                     parentName = "maps",
                     context = context
                 )
-                if (cachedFile != null) onMapPick(MapFile(cachedFile))
+                if (cachedFile != null) onMapPick(MapFile(FileWrapper(cachedFile)))
                 else mapsListViewModel.topToastState.showToast(
                     text = R.string.mapsList_pickMap_failed,
                     icon = Icons.Rounded.PriorityHigh,

@@ -10,9 +10,9 @@ import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.ServiceFile
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.extension.toPath
-import com.aliernfrog.pftool.util.getKoinInstance
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
