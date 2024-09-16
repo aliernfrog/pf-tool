@@ -10,21 +10,19 @@ interface IFileService {
 
     void copy(String sourcePath, String targetPath) = 2;
 
-    void delete(String path) = 3;
+    void createNewFile(String path) = 3;
+
+    void delete(String path) = 4;
     
-    boolean exists(String path) = 4;
+    boolean exists(String path) = 5;
 
-    ServiceFile getFile(String path) = 5;
+    ServiceFile getFile(String path) = 6;
 
-    ServiceFile[] listFiles(String path) = 6;
+    ServiceFile[] listFiles(String path) = 7;
 
-    void mkdirs(String path) = 7;
+    void mkdirs(String path) = 8;
 
-    void renameFile(String oldPath, String newPath) = 8;
+    void renameFile(String oldPath, String newPath) = 9;
 
-    void unzipMap(String path, String targetPath) = 9;
-
-    void zipMap(String path, String targetPath) = 10;
-
-    ParcelFileDescriptor getFd(String path) = 11;
+    ParcelFileDescriptor getFd(String path) = 10;
 }

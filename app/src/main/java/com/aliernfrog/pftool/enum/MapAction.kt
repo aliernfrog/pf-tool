@@ -75,13 +75,13 @@ enum class MapAction(
             first.runInIOThreadSafe {
                 val result = first.rename(newName = newName)
                 if (!result.successful) return@runInIOThreadSafe first.topToastState.showErrorToast(
-                    text = result.messageId ?: R.string.warning_error
+                    text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
                     first.mapsViewModel.chooseMap(it)
                 }
                 first.topToastState.showToast(
-                    text = context.getString(result.messageId ?: R.string.maps_renamed)
+                    text = context.getString(result.message ?: R.string.maps_renamed)
                         .replace("{NAME}", newName),
                     icon = Icons.Rounded.Edit
                 )
@@ -107,13 +107,13 @@ enum class MapAction(
             first.runInIOThreadSafe {
                 val result = first.duplicate(context, newName = newName)
                 if (!result.successful) return@runInIOThreadSafe first.topToastState.showErrorToast(
-                    text = result.messageId ?: R.string.warning_error
+                    text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
                     first.mapsViewModel.chooseMap(it)
                 }
                 first.topToastState.showToast(
-                    text = context.getString(result.messageId ?: R.string.maps_duplicated)
+                    text = context.getString(result.message ?: R.string.maps_duplicated)
                         .replace("{NAME}", newName),
                     icon = Icons.Rounded.FileCopy
                 )
@@ -249,7 +249,7 @@ private suspend fun runIOAction(
                 text = context.getString(singleSuccessMessageId).replace("{NAME}", mapName),
                 icon = successIcon
             ) else first.topToastState.showErrorToast(
-                text = context.getString(result.messageId ?: R.string.warning_error)
+                text = context.getString(result.message ?: R.string.warning_error)
             )
             result.newFile?.let { first.mapsViewModel.chooseMap(it) }
         } else {
