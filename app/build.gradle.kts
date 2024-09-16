@@ -7,10 +7,10 @@ plugins {
     id("com.mikepenz.aboutlibraries.plugin")
 }
 
-val composeMaterialVersion = "1.7.0-beta06"
-val composeMaterial3Version = "1.3.0-beta05"
-val composeCompilerVersion = "1.5.14"
-val lifecycleVersion = "2.8.4"
+val composeMaterialVersion = "1.7.1"
+val composeMaterial3Version = "1.3.0"
+val composeCompilerVersion = "1.5.15"
+val lifecycleVersion = "2.8.5"
 val shizukuVersion = "13.1.5"
 
 android {
@@ -128,16 +128,16 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:$composeMaterial3Version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
-    implementation("androidx.activity:activity-compose:1.9.1")
-    implementation("androidx.navigation:navigation-compose:2.8.0-beta06")
-    implementation("com.mikepenz:aboutlibraries-core:11.2.2")
+    implementation("androidx.activity:activity-compose:1.9.2")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
+    implementation("com.mikepenz:aboutlibraries-core:11.2.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.6")
-    implementation("com.github.aliernfrog:top-toast-compose:2.1.0-alpha01")
+    implementation("com.github.aliernfrog:top-toast-compose:2.1.0")
     implementation("com.lazygeniouz:dfc:1.0.8")
     implementation("dev.rikka.shizuku:api:$shizukuVersion")
     implementation("dev.rikka.shizuku:provider:$shizukuVersion")
     implementation("io.coil-kt:coil-compose:2.7.0")
-    implementation("com.github.jeziellago:compose-markdown:0.5.2")
+    implementation("com.github.jeziellago:compose-markdown:0.5.4")
     implementation("net.engawapg.lib:zoomable:1.6.2")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 }
