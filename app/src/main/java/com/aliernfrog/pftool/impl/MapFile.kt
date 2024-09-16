@@ -90,6 +90,10 @@ class MapFile(
         newName: String = resolveMapNameInput()
     ): MapActionResult {
         val toName = fileName.replace(name, newName)
+        if (file.parentFile?.findFile(toName)?.exists() == true) return MapActionResult(
+            successful = false,
+            message = R.string.maps_alreadyExists
+        )
         val newFile = file.rename(toName)
         return MapActionResult(
             successful = true,
