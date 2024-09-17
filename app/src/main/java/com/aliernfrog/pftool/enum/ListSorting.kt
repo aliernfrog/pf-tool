@@ -17,7 +17,7 @@ enum class ListSorting(
     ALPHABETICAL(
         label = R.string.list_sorting_name,
         iconVector = Icons.Default.SortByAlpha,
-        comparator = compareBy(FileWrapper::name)
+        comparator = compareBy { it.name.lowercase() }
     ),
 
     DATE(
