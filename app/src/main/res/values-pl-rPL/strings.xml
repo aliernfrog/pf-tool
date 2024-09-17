@@ -68,10 +68,10 @@
     <string name="mapsList_search_clear">Wyczyść wyszukiwanie</string>
     <string name="mapsList_count">{COUNT} map</string>
     <string name="mapsList_sorting">Sortuj</string>
-    <string name="mapsList_sorting_name">Według nazwy</string>
-    <string name="mapsList_sorting_date">Według daty</string>
-    <string name="mapsList_sorting_size">Według rozmiaru</string>
-    <string name="mapsList_sorting_reverse">Na odwrót</string>
+    <string name="list_sorting_name">Według nazwy</string>
+    <string name="list_sorting_date">Według daty</string>
+    <string name="list_sorting_size">Według rozmiaru</string>
+    <string name="list_sorting_reverse">Na odwrót</string>
     <string name="mapsList_storage">Pamięć</string>
     <string name="mapsList_imported">Twoje mapy</string>
     <string name="mapsList_exported">Wyeksportowane mapy</string>
