@@ -2,6 +2,8 @@ package com.aliernfrog.pftool.util.manager
 
 import android.content.Context
 import android.os.Environment
+import com.aliernfrog.pftool.enum.ListSorting
+import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -26,6 +28,11 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val pfMapsDir = stringPreference("mapsDir", "${externalStorageRoot}Android/data/com.MA.Polyfield/files/editor", experimental = true)
     val exportedMapsDir = stringPreference("mapsExportDir", "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported", experimental = true)
     val storageAccessType = intPreference("storageAccessType", StorageAccessType.SAF.ordinal, includeInDebugInfo = true)
+
+    // Maps list
+    val mapsListSorting = intPreference("mapsListSorting", ListSorting.ALPHABETICAL.ordinal)
+    val mapsListSortingReversed = booleanPreference("mapsListSortingReversed", false)
+    val mapsListStyle = intPreference("mapsListStyle", ListStyle.LIST.ordinal)
 
     // Other options
     val showMapNameFieldGuide = booleanPreference("showMapNameFieldGuide", true, experimental = true, includeInDebugInfo = false)

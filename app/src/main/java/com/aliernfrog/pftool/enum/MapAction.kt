@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.enum
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Download
@@ -24,17 +25,17 @@ enum class MapAction(
     /**
      * Resource ID to use as a short label. This can be used for one or multiple maps.
      */
-    val shortLabelId: Int,
+    @StringRes val shortLabel: Int,
 
     /**
      * Resource ID to use as a long label. This should be used for only one map.
      */
-    val longLabelId: Int = shortLabelId,
+    @StringRes val longLabel: Int = shortLabel,
 
     /**
      * Resource ID to use as a description. This should be used for only one map.
      */
-    val descriptionId: Int? = null,
+    @StringRes val description: Int? = null,
 
     /**
      * Icon of the action.
@@ -57,7 +58,7 @@ enum class MapAction(
     val availableFor: (map: MapFile) -> Boolean
 ) {
     RENAME(
-        shortLabelId = R.string.maps_rename,
+        shortLabel = R.string.maps_rename,
         icon = Icons.Rounded.Edit,
         availableForMultiSelection = false,
         availableFor = {
@@ -91,7 +92,7 @@ enum class MapAction(
     },
 
     DUPLICATE(
-        shortLabelId = R.string.maps_duplicate,
+        shortLabel = R.string.maps_duplicate,
         icon = Icons.Rounded.FileCopy,
         availableForMultiSelection = false,
         availableFor = RENAME.availableFor
@@ -123,8 +124,8 @@ enum class MapAction(
     },
 
     IMPORT(
-        shortLabelId = R.string.maps_import_short,
-        longLabelId = R.string.maps_import,
+        shortLabel = R.string.maps_import_short,
+        longLabel = R.string.maps_import,
         icon = Icons.Rounded.Download,
         availableFor = {
             it.isZip && it.importedState != MapImportedState.IMPORTED
@@ -145,9 +146,9 @@ enum class MapAction(
     },
 
     EXPORT(
-        shortLabelId = R.string.maps_export_short,
-        longLabelId = R.string.maps_export,
-        descriptionId = R.string.maps_export_description,
+        shortLabel = R.string.maps_export_short,
+        longLabel = R.string.maps_export,
+        description = R.string.maps_export_description,
         icon = Icons.Rounded.Upload,
         availableFor = {
             !it.isZip && it.importedState == MapImportedState.IMPORTED
@@ -168,8 +169,8 @@ enum class MapAction(
     },
 
     SHARE(
-        shortLabelId = R.string.maps_share_short,
-        longLabelId = R.string.maps_share,
+        shortLabel = R.string.maps_share_short,
+        longLabel = R.string.maps_share,
         icon = Icons.Rounded.Share,
         availableFor = {
             it.isZip
@@ -189,8 +190,8 @@ enum class MapAction(
     },
 
     DELETE(
-        shortLabelId = R.string.maps_delete_short,
-        longLabelId = R.string.maps_delete,
+        shortLabel = R.string.maps_delete_short,
+        longLabel = R.string.maps_delete,
         icon = Icons.Rounded.Delete,
         destructive = true,
         availableFor = {
