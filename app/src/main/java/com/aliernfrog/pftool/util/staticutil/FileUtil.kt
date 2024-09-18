@@ -4,16 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
-import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.ServiceFile
-import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
+import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.util.extension.toPath
-import com.aliernfrog.pftool.util.getKoinInstance
-import com.lazygeniouz.dfc.file.DocumentFileCompat
 import java.io.File
 
 class FileUtil {
@@ -73,20 +69,7 @@ class FileUtil {
             }
         }
 
-        fun copyDirectory(source: DocumentFileCompat, target: DocumentFileCompat, context: Context) {
-            source.listFiles().forEach { file ->
-                val targetFile = if (file.isDirectory()) target.createDirectory(file.name)
-                else target.createFile("", file.name)
-                if (file.isDirectory()) copyDirectory(file, targetFile!!, context)
-                else context.contentResolver.openInputStream(file.uri).use { inputStream ->
-                    context.contentResolver.openOutputStream(targetFile!!.uri).use { outputStream ->
-                        inputStream!!.copyTo(outputStream!!)
-                    }
-                }
-            }
-        }
-
-        fun shareFiles(vararg files: Any, context: Context, title: String = context.getString(R.string.action_share)) {
+        fun shareFiles(vararg files: FileWrapper, context: Context, title: String = context.getString(R.string.action_share)) {
             val isSingle = files.size <= 1
             val sharedFileUris = files.map {
                 FileProvider.getUriForFile(context, "${context.packageName}.provider", moveToSharedCache(it, context))
@@ -102,23 +85,9 @@ class FileUtil {
             context.startActivity(Intent.createChooser(intent, title))
         }
 
-        private fun moveToSharedCache(file: Any, context: Context): File {
-            val fileName = when (file) {
-                is DocumentFileCompat -> file.name
-                is File -> file.name
-                is ServiceFile -> file.name
-                else -> throw IllegalArgumentException()
-            }
-            val inputStream = when(file) {
-                is DocumentFileCompat -> context.contentResolver.openInputStream(file.uri)
-                is File -> file.inputStream()
-                is ServiceFile -> {
-                    val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
-                    val fd = shizukuViewModel.fileService!!.getFd(file.path)
-                    ParcelFileDescriptor.AutoCloseInputStream(fd)
-                }
-                else -> throw IllegalArgumentException()
-            }
+        private fun moveToSharedCache(file: FileWrapper, context: Context): File {
+            val fileName = file.name
+            val inputStream = file.inputStream(context)
             val targetFile = File("${context.externalCacheDir}/shared/$fileName")
             targetFile.parentFile?.mkdirs()
             if (targetFile.isFile) targetFile.delete()

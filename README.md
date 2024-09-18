@@ -21,7 +21,7 @@
 </div>
 
 ## 🌍 Translations
-You can help translate PF Tool in [Crowdin](https://crowdin.com/project/pf-tool).
+You can help translate PF Tool on [Crowdin](https://crowdin.com/project/pf-tool).
 
 [![Crowdin](https://badges.crowdin.net/pf-tool/localized.svg)](https://crowdin.com/project/pf-tool)
 
@@ -39,7 +39,7 @@ Shizuku method will automatically be enabled if there is no other way for the ap
   - Fork the repository
   - Add environment variables required for signing from **Repository settings > Secrets and variables > Actions > Repository secrets**:
     - `KEYSTORE_ALIAS`
-    - `KEYSTORE_BASE64` this can be obtained using `openssl base64 keystore.jks`
+    - `KEYSTORE_BASE64` this can be obtained using `openssl base64 -in keystore.jks`
     - `KEYSTORE_PASSWORD`
     - `KEY_PASSWORD`
   - Enable workflows

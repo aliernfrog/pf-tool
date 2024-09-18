@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -13,13 +14,18 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aliernfrog.pftool.ui.component.InsetsObserver
+import com.aliernfrog.pftool.ui.component.MediaView
 import com.aliernfrog.pftool.ui.screen.MainScreen
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -44,14 +50,15 @@ class MainActivity : AppCompatActivity() {
         val context = LocalContext.current
         val view = LocalView.current
         val scope = rememberCoroutineScope()
-        val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme)
+        val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme.value)
+        var isAppInitialized by rememberSaveable { mutableStateOf(false) }
 
         @Composable
         fun AppTheme(content: @Composable () -> Unit) {
             PFToolTheme(
                 darkTheme = useDarkTheme,
-                dynamicColors = mainViewModel.prefs.materialYou,
-                pitchBlack = mainViewModel.prefs.pitchBlack,
+                dynamicColors = mainViewModel.prefs.materialYou.value,
+                pitchBlack = mainViewModel.prefs.pitchBlack.value,
                 content = content
             )
         }
@@ -60,6 +67,12 @@ class MainActivity : AppCompatActivity() {
             InsetsObserver()
             AppContainer {
                 MainScreen()
+                Crossfade(mainViewModel.mediaViewData) { data ->
+                    if (data != null) MediaView(
+                        data = data,
+                        onDismissRequest = { mainViewModel.dismissMediaView() }
+                    )
+                }
                 TopToastHost(mainViewModel.topToastState)
             }
         }
@@ -67,13 +80,14 @@ class MainActivity : AppCompatActivity() {
         LaunchedEffect(Unit) {
             mainViewModel.scope = scope
             mainViewModel.topToastState.setComposeView(view)
+            if (isAppInitialized) return@LaunchedEffect
+
             mainViewModel.topToastState.setAppTheme { AppTheme(it) }
-
-            if (mainViewModel.prefs.autoCheckUpdates) mainViewModel.checkUpdates()
-
+            if (mainViewModel.prefs.autoCheckUpdates.value) mainViewModel.checkUpdates()
             this@MainActivity.intent?.let {
                 mainViewModel.handleIntent(it, context = context)
             }
+            isAppInitialized = true
         }
     }
 

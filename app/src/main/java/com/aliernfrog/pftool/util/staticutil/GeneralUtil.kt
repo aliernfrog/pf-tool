@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.di.appModules
-import com.aliernfrog.pftool.documentsUIPackageName
 import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.ui.activity.MainActivity
 import org.koin.core.context.GlobalContext.loadKoinModules
@@ -15,10 +14,29 @@ import java.util.Locale
 
 class GeneralUtil {
     companion object {
-        fun filesAppRestrictsAndroidData(context: Context): Boolean {
+        private const val DOCUMENTS_UI_PACKAGE = "com.android.documentsui"
+        private const val GOOGLE_DOCUMENTS_UI_PACKAGE = "com.google.android.documentsui"
+
+        fun documentsUIRestrictsAndroidData(context: Context): Boolean {
             if (!hasAndroidDataRestrictions) return false
-            val packageInfo = context.packageManager.getPackageInfo(documentsUIPackageName, 0)
-            return packageInfo.longVersionCode >= 340916000
+            val documentsUIPackage = getDocumentsUIPackage(context)
+            return documentsUIPackage?.let {
+                it.longVersionCode >= when (it.packageName) {
+                    DOCUMENTS_UI_PACKAGE -> 14
+                    GOOGLE_DOCUMENTS_UI_PACKAGE -> 340916000
+                    else -> Long.MAX_VALUE
+                }
+            } ?: false
+        }
+
+        fun getDocumentsUIPackage(context: Context) = try {
+            context.packageManager.getPackageInfo(GOOGLE_DOCUMENTS_UI_PACKAGE, 0)
+        } catch (_: Exception) {
+            try {
+                context.packageManager.getPackageInfo(DOCUMENTS_UI_PACKAGE, 0)
+            } catch (_: Exception) {
+                null
+            }
         }
 
         fun getAppVersionName(context: Context): String {

@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
+import com.aliernfrog.pftool.data.requiresAndroidData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.ui.component.CardWithActions
@@ -41,7 +42,6 @@ import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
-import com.aliernfrog.pftool.util.extension.requiresAndroidData
 import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -55,7 +55,7 @@ fun SAFPermissionsScreen(
 ) {
     val context = LocalContext.current
     val requiresAndroidData = permissionsData.any { it.requiresAndroidData }
-    val needsToDowngradeFiles = requiresAndroidData && GeneralUtil.filesAppRestrictsAndroidData(context)
+    val needsToDowngradeFiles = requiresAndroidData && GeneralUtil.documentsUIRestrictsAndroidData(context)
 
     AnimatedContent(needsToDowngradeFiles) {
         if (it) DowngradeFiles()
@@ -75,7 +75,7 @@ private fun DowngradeFiles(
             .verticalScroll(rememberScrollState())
     ) {
         CardWithActions(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             title = stringResource(R.string.permissions_downgradeFilesApp),
             buttons = {
                 TextButton(
@@ -119,7 +119,7 @@ private fun SAFPermissionsList(
 
     fun takePersistableUriPermissions(uri: Uri) {
         uri.takePersistablePermissions(context)
-        activePermissionData?.onUriUpdate?.invoke(uri)
+        activePermissionData?.pref?.value = uri.toString()
         onUpdateState()
     }
 

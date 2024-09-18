@@ -1,32 +1,46 @@
 package com.aliernfrog.pftool.util.manager
 
 import android.content.Context
-import com.aliernfrog.pftool.ConfigKey
+import android.os.Environment
+import com.aliernfrog.pftool.enum.ListSorting
+import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.enum.StorageAccessType
+import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 
 class PreferenceManager(context: Context) : BasePreferenceManager(
-    prefs = context.getSharedPreferences(ConfigKey.PREF_NAME, Context.MODE_PRIVATE)
+    prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)
 ) {
     // Appearance options
-    var theme by intPreference(ConfigKey.KEY_APP_THEME, Theme.SYSTEM.ordinal)
-    var materialYou by booleanPreference(ConfigKey.KEY_APP_MATERIAL_YOU, true)
-    var pitchBlack by booleanPreference("pitchBlack", false)
+    val theme = intPreference("appTheme", Theme.SYSTEM.ordinal)
+    val materialYou = booleanPreference("materialYou", true)
+    val pitchBlack = booleanPreference("pitchBlack", false)
 
     // General options
-    var showChosenMapThumbnail by booleanPreference(ConfigKey.KEY_SHOW_CHOSEN_MAP_THUMBNAIL, true)
-    var showMapThumbnailsInList by booleanPreference(ConfigKey.KEY_SHOW_MAP_THUMBNAILS_LIST, true)
-    var language by stringPreference(ConfigKey.KEY_APP_LANGUAGE, "") // follow system if blank
+    val showChosenMapThumbnail = booleanPreference("showChosenMapThumbnail", true)
+    val showMapThumbnailsInList = booleanPreference("showMapThumbnailsList", true)
+    val language = stringPreference("appLanguage", "") // follow system if blank
+    val autoCheckUpdates = booleanPreference("autoUpdates", true)
 
     // Storage options
-    var pfMapsDir by stringPreference(ConfigKey.KEY_MAPS_DIR, ConfigKey.RECOMMENDED_MAPS_DIR)
-    var exportedMapsDir by stringPreference(ConfigKey.KEY_EXPORTED_MAPS_DIR, ConfigKey.RECOMMENDED_EXPORTED_MAPS_DIR)
-    var storageAccessType by intPreference("storageAccessType", StorageAccessType.SAF.ordinal)
+    val pfMapsDir = stringPreference("mapsDir", "${externalStorageRoot}Android/data/com.MA.Polyfield/files/editor", experimental = true)
+    val exportedMapsDir = stringPreference("mapsExportDir", "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/PFTool/exported", experimental = true)
+    val storageAccessType = intPreference("storageAccessType", StorageAccessType.SAF.ordinal, includeInDebugInfo = true)
+
+    // Maps list
+    val mapsListSorting = intPreference("mapsListSorting", ListSorting.ALPHABETICAL.ordinal)
+    val mapsListSortingReversed = booleanPreference("mapsListSortingReversed", false)
+    val mapsListStyle = intPreference("mapsListStyle", ListStyle.LIST.ordinal)
+
+    // Other options
+    val showMapNameFieldGuide = booleanPreference("showMapNameFieldGuide", true, experimental = true, includeInDebugInfo = false)
+    val showMediaViewGuide = booleanPreference("showMediaViewGuide", true, experimental = true, includeInDebugInfo = false)
 
     // Experimental (developer) options
-    var experimentalOptionsEnabled by booleanPreference("experimentalOptionsEnabled", false)
-    var showMapNameFieldGuide by booleanPreference("showMapNameFieldGuide", true)
-    var autoCheckUpdates by booleanPreference(ConfigKey.KEY_APP_AUTO_UPDATES, true)
-    var updatesURL by stringPreference(ConfigKey.KEY_APP_UPDATES_URL, ConfigKey.DEFAULT_UPDATES_URL)
+    val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
+    val shizukuNeverLoad = booleanPreference("shizukuNeverLoad", false, experimental = true, includeInDebugInfo = false)
+    val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", GeneralUtil.getAppVersionCode(context), experimental = true, includeInDebugInfo = false)
+    val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/pftool/latest.json", experimental = true, includeInDebugInfo = false)
 }

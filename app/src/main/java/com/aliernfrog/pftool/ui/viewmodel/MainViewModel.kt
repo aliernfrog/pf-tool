@@ -21,14 +21,16 @@ import androidx.core.app.LocaleManagerCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.Language
+import com.aliernfrog.pftool.data.MediaViewData
 import com.aliernfrog.pftool.data.ReleaseInfo
-import com.aliernfrog.pftool.di.get
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.githubRepoURL
+import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
@@ -38,7 +40,6 @@ import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.extension.toLanguage
-import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -58,15 +59,24 @@ class MainViewModel(
     context: Context,
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
-    val progressState: ProgressState,
-    private val contextUtils: ContextUtils
+    val progressState: ProgressState
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
 
-    val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
-    val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
+    private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
+    private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
     private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
+    val applicationVersionLabel = "$applicationVersionName (${
+        BuildConfig.GIT_COMMIT.ifBlank { applicationVersionCode.toString() }
+    }${
+        if (BuildConfig.GIT_LOCAL_CHANGES) "*" else ""
+    }${
+        BuildConfig.GIT_BRANCH.let {
+            if (it == applicationVersionName) ""
+            else " - ${it.ifBlank { "local" }}"
+        }
+    })"
 
     private val defaultLanguage = GeneralUtil.getLanguageFromCode("en-US")!!
     val deviceLanguage = LocaleManagerCompat.getSystemLocales(context)[0]?.toLanguage() ?: defaultLanguage
@@ -75,7 +85,7 @@ class MainViewModel(
     var appLanguage: Language?
         get() = _appLanguage ?: deviceLanguage.getAvailableLanguage() ?: defaultLanguage
         set(language) {
-            prefs.language = language?.fullCode ?: ""
+            prefs.language.value = language?.fullCode ?: ""
             val localeListCompat = if (language == null) LocaleListCompat.getEmptyLocaleList()
             else LocaleListCompat.forLanguageTags(language.languageCode)
             AppCompatDelegate.setApplicationLocales(localeListCompat)
@@ -96,18 +106,21 @@ class MainViewModel(
 
     val debugInfo: String
         get() = arrayOf(
-            "PF Tool $applicationVersionName ($applicationVersionCode)",
+            "PF Tool $applicationVersionLabel",
             "Android API ${Build.VERSION.SDK_INT}",
-            "Storage access type ${prefs.storageAccessType}",
-            SettingsConstant.experimentalPrefOptions.joinToString("\n") {
-                "${contextUtils.getString(it.labelResourceId)}: ${it.getValue(prefs)}"
+            prefs.debugInfoPrefs.joinToString("\n") {
+                "${it.key}: ${it.value}"
             }
         ).joinToString("\n")
 
+    var mediaViewData by mutableStateOf<MediaViewData?>(null)
+        private set
+
     init {
-        if (!supportsPerAppLanguagePreferences && prefs.language.isNotBlank()) runBlocking {
-            appLanguage = GeneralUtil.getLanguageFromCode(prefs.language)?.getAvailableLanguage()
+        if (!supportsPerAppLanguagePreferences && prefs.language.value.isNotBlank()) runBlocking {
+            appLanguage = GeneralUtil.getLanguageFromCode(prefs.language.value)?.getAvailableLanguage()
         }
+        prefs.lastKnownInstalledVersion.value = applicationVersionCode
     }
 
     suspend fun checkUpdates(
@@ -116,7 +129,7 @@ class MainViewModel(
     ) {
         withContext(Dispatchers.IO) {
             try {
-                val updatesURL = prefs.updatesURL
+                val updatesURL = prefs.updatesURL.value
                 val responseJson = JSONObject(URL(updatesURL).readText())
                 val json = responseJson.getJSONObject(
                     if (applicationIsPreRelease && responseJson.has("preRelease")) "preRelease" else "stable"
@@ -176,9 +189,17 @@ class MainViewModel(
         )
     }
 
+    fun showMediaView(data: MediaViewData) {
+        mediaViewData = data
+    }
+
+    fun dismissMediaView() {
+        mediaViewData = null
+    }
+
     fun handleIntent(intent: Intent, context: Context) {
-        val mapsViewModel = get<MapsViewModel>()
-        val mapsListViewModel = get<MapsListViewModel>()
+        val mapsViewModel = getKoinInstance<MapsViewModel>()
+        val mapsListViewModel = getKoinInstance<MapsListViewModel>()
 
         try {
             val uris: MutableList<Uri> = intent.data?.let {
@@ -194,7 +215,7 @@ class MainViewModel(
             progressState.currentProgress = Progress(context.getString(R.string.info_pleaseWait))
             viewModelScope.launch(Dispatchers.IO) {
                 val cached = uris.map { uri ->
-                    MapFile(uri.cacheFile(context)!!)
+                    MapFile(FileWrapper(uri.cacheFile(context)!!))
                 }
                 if (cached.size <= 1) {
                     mapsViewModel.chooseMap(cached.first())

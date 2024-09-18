@@ -28,6 +28,9 @@
     <string name="permissions_exportedMaps">Folder eksportowanych map</string>
     <string name="permissions_exportedMaps_description">Musisz wybrać folder, w którym chcesz zapisywać eksportowane mapy</string>
     <string name="permissions_exportedMaps_recommended">PF Tool używał tego folderu w starszych wersjach, wybierz ten folder jeśli chcesz uzyskać dostęp do map, które wyeksportowałeś/aś wcześniej</string>
+    <string name="list_sorting_name">Według nazwy</string>
+    <string name="list_sorting_date">Według daty</string>
+    <string name="list_sorting_size">Według rozmiaru</string>
     <string name="maps">Mapy</string>
     <string name="maps_alreadyExists">Mapa o tej nazwie już istnieje, wybierz inną nazwę</string>
     <string name="maps_actionFailed">{SUCCESSES} się powiodło, {FAILS} nie się powiodło</string>
@@ -67,11 +70,6 @@
     <string name="mapsList_search">Wyszukaj mapy..</string>
     <string name="mapsList_search_clear">Wyczyść wyszukiwanie</string>
     <string name="mapsList_count">{COUNT} map</string>
-    <string name="mapsList_sorting">Sortuj</string>
-    <string name="mapsList_sorting_name">Według nazwy</string>
-    <string name="mapsList_sorting_date">Według daty</string>
-    <string name="mapsList_sorting_size">Według rozmiaru</string>
-    <string name="mapsList_sorting_reverse">Na odwrót</string>
     <string name="mapsList_storage">Pamięć</string>
     <string name="mapsList_imported">Twoje mapy</string>
     <string name="mapsList_exported">Wyeksportowane mapy</string>
@@ -116,7 +114,6 @@
     <string name="settings_experimental">Ustawienia eksperymentalne</string>
     <string name="settings_experimental_enabled">Ustawienia eksperymentalne włączone!</string>
     <string name="settings_experimental_description">Te ustawienia nie są przeznaczone do normalnego użytku i mogą zepsuć PF Tool w przypadku niewłaściwego użycia</string>
-    <string name="settings_experimental_updatesURL">Aktualizacje URL</string>
     <string name="updates_updateAvailable">Dostępna jest aktualizacja PF Tool! Kliknij, aby uzyskać więcej informacji</string>
     <string name="updates_noUpdates">Brak dostępnych aktualizacji</string>
     <string name="updates_error">Coś poszło nie tak podczas szukania aktualizacji</string>
