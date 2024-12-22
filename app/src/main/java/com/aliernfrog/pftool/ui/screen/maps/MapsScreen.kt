@@ -79,7 +79,12 @@ fun MapsScreen(
     ) {
         Crossfade(targetState = mapsViewModel.chosenMap) { chosenMap ->
             if (chosenMap == null) return@Crossfade
-            Column(Modifier.fillMaxSize().verticalScroll(mapsViewModel.scrollState)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(mapsViewModel.scrollState)
+                    .navigationBarsPadding()
+            ) {
                 PickMapButton(
                     chosenMap = chosenMap,
                     showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value,

@@ -42,7 +42,10 @@ fun AllFilesPermissionsScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
     ) {
         CardWithActions(
             title = stringResource(R.string.permissions_allFiles_title),

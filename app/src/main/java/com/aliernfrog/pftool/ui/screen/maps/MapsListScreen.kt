@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -73,6 +74,7 @@ import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
+import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
@@ -281,7 +283,9 @@ fun MapsListScreen(
                             MapItem(it, isGrid = true)
                         }
 
-                        item { Footer() }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Footer()
+                        }
                     }
                 }
             }
@@ -339,7 +343,7 @@ private fun Header(
 
 @Composable
 private fun Footer() {
-    Spacer(Modifier.navigationBarsPadding().padding(bottom = 70.dp))
+    Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
