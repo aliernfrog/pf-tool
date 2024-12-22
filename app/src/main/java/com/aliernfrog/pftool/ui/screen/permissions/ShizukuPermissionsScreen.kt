@@ -61,6 +61,7 @@ fun ShizukuPermissionsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
         ) {
             if (isLoading) {
                 CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
