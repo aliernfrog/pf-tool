@@ -38,7 +38,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.ImageButtonInfo
 import com.aliernfrog.pftool.ui.theme.AppComponentShape

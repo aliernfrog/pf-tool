@@ -50,7 +50,9 @@ fun PFToolTheme(
         WindowCompat.setDecorFitsSystemWindows(activity.window, false)
 
         if (Build.VERSION.SDK_INT >= 23) Color.Transparent.toArgb().let {
+            @Suppress("DEPRECATION")
             activity.window.statusBarColor = it
+            @Suppress("DEPRECATION")
             if (Build.VERSION.SDK_INT >= 24) activity.window.navigationBarColor = it
         }
 
