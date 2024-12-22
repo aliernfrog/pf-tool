@@ -19,10 +19,12 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val pitchBlack = booleanPreference("pitchBlack", false)
 
     // General options
-    val showChosenMapThumbnail = booleanPreference("showChosenMapThumbnail", true)
-    val showMapThumbnailsInList = booleanPreference("showMapThumbnailsList", true)
     val language = stringPreference("appLanguage", "") // follow system if blank
     val autoCheckUpdates = booleanPreference("autoUpdates", true)
+
+    // Maps options
+    val showChosenMapThumbnail = booleanPreference("showChosenMapThumbnail", true)
+    val showMapThumbnailsInList = booleanPreference("showMapThumbnailsList", true)
 
     // Storage options
     val pfMapsDir = stringPreference("mapsDir", "${externalStorageRoot}Android/data/com.MA.Polyfield/files/editor", experimental = true)

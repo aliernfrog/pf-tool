@@ -88,10 +88,10 @@
     <string name="settings_appearance_theme_dark">Ciemny</string>
     <string name="settings_appearance_materialYou">Material You</string>
     <string name="settings_appearance_materialYou_description">Motyw oparty na kolorach twojego urządzenia</string>
-    <string name="settings_maps_showChosenMapThumbnail">Pokaż miniaturkę wybranej mapy</string>
-    <string name="settings_maps_showChosenMapThumbnail_description">Wiedz, na której mapie jesteś</string>
-    <string name="settings_maps_showMapThumbnailsInList">Pokazuj miniaturki na liście map</string>
-    <string name="settings_maps_showMapThumbnailsInList_description">Łatwo identyfikuj mapy które posiadasz</string>
+    <string name="settings_maps_thumbnails_chosen">Pokaż miniaturkę wybranej mapy</string>
+    <string name="settings_maps_thumbnails_chosen_description">Wiedz, na której mapie jesteś</string>
+    <string name="settings_maps_thumbnails_list">Pokazuj miniaturki na liście map</string>
+    <string name="settings_maps_thumbnails_list_description">Łatwo identyfikuj mapy które posiadasz</string>
     <string name="settings_storage">Pamięć</string>
     <string name="settings_storage_folders">Konfiguracja folderu</string>
     <string name="settings_storage_folders_notSet">Nieskonfigurowany</string>
