@@ -17,7 +17,9 @@ import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.rounded.TextFields
 import androidx.compose.material.icons.rounded.TipsAndUpdates
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +49,8 @@ import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.component.maps.PickMapButton
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.VerticalSegmentor
-import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import kotlinx.coroutines.launch
@@ -100,6 +103,7 @@ fun MapsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Actions(
     chosenMap: MapFile,
@@ -176,6 +180,7 @@ private fun Actions(
                 onClick = { scope.launch {
                     MapAction.DUPLICATE.execute(context, chosenMap)
                 } },
+                shapes = ButtonDefaults.shapes(),
                 enabled = buttonsEnabled
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.FileCopy))
@@ -185,6 +190,7 @@ private fun Actions(
                 onClick = { scope.launch {
                     MapAction.RENAME.execute(context, chosenMap)
                 } },
+                shapes = ButtonDefaults.shapes(),
                 enabled = buttonsEnabled
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Edit))
@@ -203,10 +209,16 @@ private fun Actions(
         action != MapAction.RENAME && action != MapAction.DUPLICATE
     }.map { action -> {
         FadeVisibility(visible = action.availableFor(chosenMap)) {
-            ButtonRow(
+            ExpressiveButtonRow(
                 title = stringResource(action.longLabel),
                 description = action.description?.let { stringResource(it) },
-                painter = rememberVectorPainter(action.icon),
+                icon = {
+                    ExpressiveRowIcon(
+                        painter = rememberVectorPainter(action.icon),
+                        containerColor = if (action.destructive) MaterialTheme.colorScheme.error
+                        else MaterialTheme.colorScheme.primaryContainer
+                    )
+                },
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 contentColor = if (action.destructive) MaterialTheme.colorScheme.error
                 else contentColorFor(MaterialTheme.colorScheme.surfaceContainerHigh)
@@ -218,6 +230,7 @@ private fun Actions(
 
     VerticalSegmentor(
         *actions.toTypedArray(),
+        dynamic = true,
         modifier = Modifier.padding(8.dp)
     )
 

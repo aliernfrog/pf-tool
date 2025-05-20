@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,9 +38,10 @@ import com.aliernfrog.pftool.data.requiresAndroidData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.ui.component.CardWithActions
-import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.VerticalSegmentor
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.pftool.ui.component.form.DividerRow
-import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
@@ -65,6 +68,7 @@ fun SAFPermissionsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DowngradeFiles(
     permissionsViewModel: PermissionsViewModel = koinViewModel()
@@ -80,6 +84,7 @@ private fun DowngradeFiles(
             title = stringResource(R.string.permissions_downgradeFilesApp),
             buttons = {
                 TextButton(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         permissionsViewModel.showShizukuIntroDialog = true
                         StorageAccessType.SHIZUKU.enable(permissionsViewModel.prefs)
@@ -88,6 +93,7 @@ private fun DowngradeFiles(
                     Text(stringResource(R.string.permissions_downgradeFilesApp_cant))
                 }
                 Button(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = { permissionsViewModel.showFilesDowngradeDialog = true }
                 ) {
                     Text(stringResource(R.string.permissions_downgradeFilesApp_uninstall))
@@ -99,6 +105,7 @@ private fun DowngradeFiles(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SAFPermissionsList(
     vararg permissionsData: PermissionData,
@@ -183,6 +190,7 @@ private fun SAFPermissionsList(
 
                         Button(
                             onClick = ::onClick,
+                            shapes = ButtonDefaults.shapes(),
                             modifier = Modifier
                                 .align(Alignment.End)
                                 .padding(top = 4.dp)
@@ -196,17 +204,17 @@ private fun SAFPermissionsList(
         }
 
         if (StorageAccessType.ALL_FILES.isCompatible()) item {
-            FormSection(
-                title = stringResource(R.string.permissions_other),
-                topDivider = true,
-                bottomDivider = false
+            ExpressiveSection(
+                title = stringResource(R.string.permissions_other)
             ) {
-                ButtonRow(
-                    title = stringResource(R.string.permissions_saf_allFiles),
-                    description = stringResource(R.string.permissions_saf_allFiles_description)
-                ) {
-                    StorageAccessType.ALL_FILES.enable(permissionsViewModel.prefs)
-                }
+                VerticalSegmentor({
+                    ExpressiveButtonRow(
+                        title = stringResource(R.string.permissions_saf_allFiles),
+                        description = stringResource(R.string.permissions_saf_allFiles_description)
+                    ) {
+                        StorageAccessType.ALL_FILES.enable(permissionsViewModel.prefs)
+                    }
+                })
             }
         }
 

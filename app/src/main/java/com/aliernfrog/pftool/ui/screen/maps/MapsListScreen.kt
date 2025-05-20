@@ -37,8 +37,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
@@ -84,7 +86,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MapsListScreen(
     title: String = stringResource(R.string.mapsList_pickMap),
@@ -147,6 +149,7 @@ fun MapsListScreen(
                     actions = {
                         if (multiSelecting && showMultiSelectionOptions) Box {
                             IconButton(
+                                shapes = IconButtonDefaults.shapes(),
                                 onClick = {
                                     multiSelectionDropdownShown = true
                                 }
@@ -171,6 +174,7 @@ fun MapsListScreen(
                                     modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
                                 else IconButton(
+                                    shapes = IconButtonDefaults.shapes(),
                                     onClick = {
                                         scope.launch {
                                             mapsViewModel.loadMaps(context)
@@ -346,7 +350,7 @@ private fun Footer() {
     Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Search(
     searchQuery: String,
@@ -363,7 +367,8 @@ private fun Search(
                 onExpandedChange = {},
                 leadingIcon = {
                     if (searchQuery.isNotEmpty()) IconButton(
-                        onClick = { onSearchQueryChange("") }
+                        onClick = { onSearchQueryChange("") },
+                        shapes = IconButtonDefaults.shapes()
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
@@ -377,7 +382,8 @@ private fun Search(
                 trailingIcon = {
                     var sortingOptionsShown by rememberSaveable { mutableStateOf(false) }
                     IconButton(
-                        onClick = { sortingOptionsShown = true }
+                        onClick = { sortingOptionsShown = true },
+                        shapes = IconButtonDefaults.shapes()
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Sort,

@@ -172,14 +172,14 @@
     <string name="settings_language_help">PF Tool çevirilerine yardım edin</string>
     <string name="settings_language_help_deviceNotAvailable">Cihazınızdaki dil şu an mevcut değil</string>
     <string name="settings_language_help_description">Buraya tıklayarak Crowdin\'de çevirilere katkıda bulunabilirsiniz</string>
-    <string name="settings_language_system">Sistemi takip et</string>
+    <string name="settings_language_system_follow">Sistemi takip et</string>
     <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} mevcut değil</string>
     <string name="settings_language_selected">Seçili</string>
     <string name="settings_about">Hakkında</string>
     <string name="settings_about_changelog">Değişiklik günlüğü</string>
     <string name="settings_about_update">Güncelle</string>
-    <string name="settings_about_autoCheckUpdates">Güncellemeleri otomatik olarak denetle</string>
-    <string name="settings_about_autoCheckUpdates_description">PF Tool başlatıldığında otomatik olarak güncellemeleri denetle</string>
+    <string name="settings_about_updates_autoCheckUpdates">Güncellemeleri otomatik olarak denetle</string>
+    <string name="settings_about_updates_autoCheckUpdates_description">PF Tool başlatıldığında otomatik olarak güncellemeleri denetle</string>
     <string name="settings_about_credits">Emeği geçenler</string>
     <string name="settings_about_libs">Kütüphaneler</string>
     <string name="settings_about_libs_description">PF Tool\'u yapmak için kullanılan kütüphaneler</string>

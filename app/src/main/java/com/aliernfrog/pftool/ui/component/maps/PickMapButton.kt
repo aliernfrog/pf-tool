@@ -11,8 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.clickableWithColor
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PickMapButton(
     chosenMap: MapFile?,
@@ -82,6 +85,7 @@ fun PickMapButton(
                     .weight(1f)
             )
             IconButton(
+                shapes = IconButtonDefaults.shapes(),
                 onClick = onClickThumbnailActions
             ) {
                 Icon(

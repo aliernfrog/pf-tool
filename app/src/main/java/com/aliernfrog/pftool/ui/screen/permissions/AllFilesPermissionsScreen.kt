@@ -13,6 +13,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,12 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.component.CardWithActions
-import com.aliernfrog.pftool.ui.component.form.ButtonRow
-import com.aliernfrog.pftool.ui.component.form.FormSection
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.toptoast.enum.TopToastColor
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AllFilesPermissionsScreen(
     permissionsViewModel: PermissionsViewModel = koinViewModel(),
@@ -51,6 +55,7 @@ fun AllFilesPermissionsScreen(
             title = stringResource(R.string.permissions_allFiles_title),
             buttons = {
                 Button(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     }
@@ -63,14 +68,13 @@ fun AllFilesPermissionsScreen(
             Text(stringResource(R.string.permissions_allFiles_description))
         }
 
-        FormSection(
-            title = stringResource(R.string.permissions_other),
-            topDivider = true,
-            bottomDivider = false
+        ExpressiveSection(
+            title = stringResource(R.string.permissions_other)
         ) {
-            ButtonRow(
+            ExpressiveButtonRow(
                 title = stringResource(R.string.permissions_allFiles_saf),
-                description = stringResource(R.string.permissions_allFiles_saf_description)
+                description = stringResource(R.string.permissions_allFiles_saf_description),
+                modifier = Modifier.verticalSegmentedShape()
             ) {
                 StorageAccessType.SAF.enable(permissionsViewModel.prefs)
             }

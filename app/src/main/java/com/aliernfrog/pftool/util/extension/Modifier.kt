@@ -1,13 +1,11 @@
 package com.aliernfrog.pftool.util.extension
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ripple
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -19,27 +17,22 @@ fun Modifier.clickableWithColor(
     color: Color,
     interactionSource: MutableInteractionSource? = null,
     onClick: () -> Unit
-): Modifier = composed {
-    this.clickable(
-        interactionSource = interactionSource,
-        indication = ripple(color = color),
-        onClick = onClick
-    )
-}
+): Modifier = this.clickable(
+    interactionSource = interactionSource,
+    indication = ripple(color = color),
+    onClick = onClick
+)
 
-@OptIn(ExperimentalFoundationApi::class)
 fun Modifier.combinedClickableWithColor(
     color: Color,
     onLongClick: () -> Unit,
     onClick: () -> Unit
-): Modifier = composed {
-    this.combinedClickable(
-        interactionSource = null,
-        indication = ripple(color = color),
-        onLongClick = onLongClick,
-        onClick = onClick
-    )
-}
+): Modifier = this.combinedClickable(
+    interactionSource = null,
+    indication = ripple(color = color),
+    onLongClick = onLongClick,
+    onClick = onClick
+)
 
 fun Modifier.horizontalFadingEdge(
     scrollState: ScrollState,

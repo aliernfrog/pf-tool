@@ -11,7 +11,6 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,6 +33,7 @@ import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
 import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
+import com.aliernfrog.pftool.ui.component.createSheetStateWithDensity
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
@@ -61,7 +61,7 @@ class MainViewModel(
     val progressState: ProgressState
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
-    val updateSheetState = SheetState(skipPartiallyExpanded = false, Density(context))
+    val updateSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
 
     private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
     private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)

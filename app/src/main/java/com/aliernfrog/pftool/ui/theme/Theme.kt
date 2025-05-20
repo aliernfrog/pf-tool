@@ -5,11 +5,13 @@ import android.app.Activity
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -22,6 +24,7 @@ import com.aliernfrog.pftool.ui.activity.MainActivity
 
 val supportsMaterialYou = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("NewApi")
 @Composable
 fun PFToolTheme(
@@ -35,7 +38,7 @@ fun PFToolTheme(
         useDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
         useDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
         darkTheme -> darkColorScheme()
-        else -> lightColorScheme()
+        else -> expressiveLightColorScheme()
     }.let {
         if (darkTheme && pitchBlack) it.copy(background = Color.Black, surface = Color.Black)
         else it
@@ -64,10 +67,11 @@ fun PFToolTheme(
         insetsController.isAppearanceLightNavigationBars = !darkTheme
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colors,
-        typography = Typography,
+        motionScheme = MotionScheme.expressive(),
         shapes = Shapes,
+        typography = Typography,
         content = content
     )
 }

@@ -1,7 +1,6 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
@@ -16,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
@@ -29,7 +29,8 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
-import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
@@ -148,9 +149,11 @@ class MapsViewModel(
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
 
-                ButtonRow(
+                ExpressiveButtonRow(
                     title = stringResource(R.string.maps_thumbnail_share),
-                    painter = rememberVectorPainter(Icons.Default.Share)
+                    icon = {
+                        ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Share))
+                    }
                 ) {
                     scope.launch {
                         activeProgress = Progress(context.getString(R.string.info_sharing))
@@ -201,7 +204,7 @@ class MapsViewModel(
         lastKnownStorageAccessType = storageAccessType
         mapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
-                val treeUri = Uri.parse(mapsDir)
+                val treeUri = mapsDir.toUri()
                 DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
@@ -232,7 +235,7 @@ class MapsViewModel(
         lastKnownStorageAccessType = storageAccessType
         exportedMapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
-                val treeUri = Uri.parse(exportedMapsDir)
+                val treeUri = exportedMapsDir.toUri()
                 DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
