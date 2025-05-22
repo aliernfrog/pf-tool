@@ -130,11 +130,15 @@ fun HorizontalSegmentor(
     }
 }
 
-fun Modifier.verticalSegmentedShape(index: Int = 0, totalSize: Int = 1): Modifier = composed {
+fun Modifier.verticalSegmentedShape(
+    index: Int = 0,
+    totalSize: Int = 1,
+    spacing: Dp = SEGMENTOR_SPACING
+): Modifier = composed {
     val isStart = index == 0
     val isEnd = index == totalSize - 1
     Modifier
-        .padding(top = if (isStart) 0.dp else SEGMENTOR_SPACING)
+        .padding(top = if (isStart) 0.dp else spacing)
         .padding(horizontal = 12.dp)
         .clip(RoundedCornerShape(
             topStart = if (isStart) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS,

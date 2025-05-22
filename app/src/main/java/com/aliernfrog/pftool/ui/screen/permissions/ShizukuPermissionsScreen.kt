@@ -16,8 +16,8 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -67,7 +67,9 @@ fun ShizukuPermissionsScreen(
                 .navigationBarsPadding()
         ) {
             if (isLoading) {
-                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                LoadingIndicator(
+                    Modifier.align(Alignment.CenterHorizontally)
+                )
                 Text(
                     text = stringResource(R.string.permissions_shizuku_waitingService),
                     modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 8.dp)

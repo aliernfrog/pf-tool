@@ -157,7 +157,7 @@ private fun FolderConfiguration(
 
     AnimatedContent(useRawPathInputs) { rawPathInput ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             SettingsConstant.folders.forEach { prefEditItem ->
                 val pref = prefEditItem.preference(prefs)

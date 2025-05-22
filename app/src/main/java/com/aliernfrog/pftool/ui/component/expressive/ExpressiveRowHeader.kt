@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ fun ExpressiveRowHeader(
     title: String,
     modifier: Modifier = Modifier,
     description: String? = null,
+    textShadow: Shadow? = null,
     icon: (@Composable () -> Unit)? = null,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     iconSize: Dp = ROW_DEFAULT_ICON_SIZE,
@@ -46,7 +48,8 @@ fun ExpressiveRowHeader(
                 color = contentColor,
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Normal,
-                    fontSize = 19.sp
+                    fontSize = 19.sp,
+                    shadow = textShadow
                 ),
                 modifier = Modifier.animateContentSize()
             )
@@ -54,7 +57,9 @@ fun ExpressiveRowHeader(
                 Text(
                     text = description,
                     color = contentColor,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        shadow = textShadow
+                    ),
                     modifier = Modifier
                         .alpha(0.7f)
                         .animateContentSize()

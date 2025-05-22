@@ -126,7 +126,7 @@ private fun Actions(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(vertical = 8.dp, horizontal = 12.dp)
             .clip(AppComponentShape)
     )
 
@@ -135,7 +135,7 @@ private fun Actions(
             onClick = { mapsViewModel.prefs.showMapNameFieldGuide.value = false },
             shape = AppComponentShape,
             modifier = Modifier.padding(
-                horizontal = 8.dp,
+                horizontal = 12.dp,
                 vertical = 4.dp
             )
         ) {
@@ -170,7 +170,7 @@ private fun Actions(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 8.dp,
+                    horizontal = 12.dp,
                     vertical = 4.dp
                 ),
             verticalAlignment = Alignment.CenterVertically,
@@ -231,7 +231,10 @@ private fun Actions(
     VerticalSegmentor(
         *actions.toTypedArray(),
         dynamic = true,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(
+            vertical = 8.dp,
+            horizontal = 12.dp
+        )
     )
 
     Spacer(Modifier.navigationBarsPadding())

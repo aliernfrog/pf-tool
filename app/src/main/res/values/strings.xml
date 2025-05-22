@@ -22,8 +22,8 @@
     <string name="permissions_other">Other options</string>
     <string name="permissions_downgradeFilesApp">Files app updates</string>
     <string name="permissions_downgradeFilesApp_description">Files app on your device prevents PF Tool from requesting access to Polyfield data. This may be resolvable by uninstalling updates of the Files app</string>
-    <string name="permissions_downgradeFilesApp_uninstall">Uninstall updates</string>
-    <string name="permissions_downgradeFilesApp_cant">Can\'t uninstall?</string>
+    <string name="permissions_downgradeFilesApp_uninstall">Try uninstalling updates</string>
+    <string name="permissions_downgradeFilesApp_cant">Doesn\'t work?</string>
     <string name="permissions_downgradeFilesApp_guide">Look for an option to uninstall updates of the Files app in the next screen.\nIf you are not able to uninstall updates or it still won\'t work after uninstalling updates, click \"{CANT_UNINSTALL_TEXT}\"</string>
     <string name="permissions_chooseFolder">Choose folder</string>
     <string name="permissions_recommendedFolder">Recommended folder</string>

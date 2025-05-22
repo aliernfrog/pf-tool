@@ -20,8 +20,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,10 +38,10 @@ import com.aliernfrog.pftool.data.requiresAndroidData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.ui.component.CardWithActions
-import com.aliernfrog.pftool.ui.component.VerticalSegmentor
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.pftool.ui.component.form.DividerRow
+import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
@@ -80,23 +80,30 @@ private fun DowngradeFiles(
             .navigationBarsPadding()
     ) {
         CardWithActions(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            modifier = Modifier.padding(
+                vertical = 8.dp,
+                horizontal = 12.dp
+            ),
             title = stringResource(R.string.permissions_downgradeFilesApp),
             buttons = {
-                TextButton(
-                    shapes = ButtonDefaults.shapes(),
-                    onClick = {
-                        permissionsViewModel.showShizukuIntroDialog = true
-                        StorageAccessType.SHIZUKU.enable(permissionsViewModel.prefs)
+                Column {
+                    Button(
+                        shapes = ButtonDefaults.shapes(),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { permissionsViewModel.showFilesDowngradeDialog = true }
+                    ) {
+                        Text(stringResource(R.string.permissions_downgradeFilesApp_uninstall))
                     }
-                ) {
-                    Text(stringResource(R.string.permissions_downgradeFilesApp_cant))
-                }
-                Button(
-                    shapes = ButtonDefaults.shapes(),
-                    onClick = { permissionsViewModel.showFilesDowngradeDialog = true }
-                ) {
-                    Text(stringResource(R.string.permissions_downgradeFilesApp_uninstall))
+                    OutlinedButton(
+                        shapes = ButtonDefaults.shapes(),
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            permissionsViewModel.showShizukuIntroDialog = true
+                            StorageAccessType.SHIZUKU.enable(permissionsViewModel.prefs)
+                        }
+                    ) {
+                        Text(stringResource(R.string.permissions_downgradeFilesApp_cant))
+                    }
                 }
             }
         ) {
@@ -207,14 +214,13 @@ private fun SAFPermissionsList(
             ExpressiveSection(
                 title = stringResource(R.string.permissions_other)
             ) {
-                VerticalSegmentor({
-                    ExpressiveButtonRow(
-                        title = stringResource(R.string.permissions_saf_allFiles),
-                        description = stringResource(R.string.permissions_saf_allFiles_description)
-                    ) {
-                        StorageAccessType.ALL_FILES.enable(permissionsViewModel.prefs)
-                    }
-                })
+                ExpressiveButtonRow(
+                    title = stringResource(R.string.permissions_saf_allFiles),
+                    description = stringResource(R.string.permissions_saf_allFiles_description),
+                    modifier = Modifier.verticalSegmentedShape()
+                ) {
+                    StorageAccessType.ALL_FILES.enable(permissionsViewModel.prefs)
+                }
             }
         }
 

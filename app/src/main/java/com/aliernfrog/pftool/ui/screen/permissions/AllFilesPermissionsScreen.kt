@@ -63,7 +63,10 @@ fun AllFilesPermissionsScreen(
                     Text(stringResource(R.string.permissions_allFiles_grant))
                 }
             },
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier.fillMaxWidth().padding(
+                vertical = 8.dp,
+                horizontal = 12.dp
+            )
         ) {
             Text(stringResource(R.string.permissions_allFiles_description))
         }

@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -33,7 +33,6 @@ import androidx.compose.material.icons.outlined.SdCard
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +40,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
@@ -76,6 +76,7 @@ import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
+import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -170,7 +171,7 @@ fun MapsListScreen(
                             )
                         } else {
                             Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
-                                if (showLoading) CircularProgressIndicator(
+                                if (showLoading) LoadingIndicator(
                                     modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
                                 else IconButton(
@@ -222,7 +223,7 @@ fun MapsListScreen(
         }
     ) {
         @Composable
-        fun MapItem(map: MapFile, isGrid: Boolean) {
+        fun MapItem(map: MapFile, isGrid: Boolean, modifier: Modifier = Modifier) {
             val selected = if (isMultiSelecting) mapsListViewModel.isMapSelected(map) else null
             fun toggleSelection() {
                 mapsListViewModel.selectedMaps.run {
@@ -230,12 +231,14 @@ fun MapsListScreen(
                 }
             }
 
+            // TODO fix padding with grids
             if (isGrid) GridMapItem(
                 map = map,
                 selected = selected,
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
-                onLongClick = { toggleSelection() }
+                onLongClick = { toggleSelection() },
+                modifier = modifier
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -245,7 +248,8 @@ fun MapsListScreen(
                 selected = selected,
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
-                onLongClick = { toggleSelection() }
+                onLongClick = { toggleSelection() },
+                modifier = modifier
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -268,8 +272,15 @@ fun MapsListScreen(
                             Header(segment, page, mapsToShow)
                         }
 
-                        items(mapsToShow) {
-                            MapItem(it, isGrid = false)
+                        itemsIndexed(mapsToShow) { index, map ->
+                            MapItem(
+                                map, isGrid = false,
+                                modifier = Modifier.verticalSegmentedShape(
+                                    index = index,
+                                    totalSize = mapsToShow.size,
+                                    spacing = 4.dp
+                                )
+                            )
                         }
 
                         item {
@@ -297,6 +308,7 @@ fun MapsListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Header(
     segment: MapsListSegment,
@@ -318,7 +330,7 @@ private fun Header(
             selectedIndex = segmentIndex,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(horizontal = 12.dp)
         ) { scope.launch {
             mapsListViewModel.pagerState.animateScrollToPage(it, animationSpec = tween(300))
         } }
@@ -327,7 +339,7 @@ private fun Header(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CircularProgressIndicator(strokeWidth = 3.dp)
+                LoadingIndicator()
             }
             else ErrorWithIcon(
                 error = stringResource(
@@ -340,7 +352,10 @@ private fun Header(
         } else Text(
             text = stringResource(R.string.mapsList_count)
                 .replace("{COUNT}", mapsToShow.size.toString()),
-            modifier = Modifier.padding(horizontal = 20.dp)
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 4.dp)
         )
     }
 }
@@ -409,10 +424,7 @@ private fun Search(
         modifier = Modifier
             .fillMaxWidth()
             .offset(y = (-12).dp)
-            .padding(
-                start = 8.dp,
-                end = 8.dp
-            )
+            .padding(horizontal = 12.dp)
     )
 }
 

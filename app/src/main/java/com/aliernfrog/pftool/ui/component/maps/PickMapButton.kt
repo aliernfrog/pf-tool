@@ -45,7 +45,10 @@ fun PickMapButton(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
-            .padding(8.dp)
+            .padding(
+                horizontal = 12.dp,
+                vertical = 8.dp
+            )
             .clip(AppComponentShape)
             .background(MaterialTheme.colorScheme.primary)
             .clickableWithColor(
@@ -71,13 +74,14 @@ fun PickMapButton(
                         Color.Transparent
                     )
                 ))
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             MapHeader(
                 title = chosenMap?.name ?: "",
                 description = chosenMap?.details,
                 painter = rememberVectorPainter(Icons.Rounded.LocationOn),
+                iconContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .fillMaxWidth()

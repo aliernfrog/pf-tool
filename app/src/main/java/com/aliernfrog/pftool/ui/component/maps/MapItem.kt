@@ -49,6 +49,7 @@ fun ListMapItem(
     map: MapFile,
     selected: Boolean?,
     showMapThumbnail: Boolean,
+    modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentColor: Color = contentColorFor(containerColor),
     onSelectedChange: (Boolean) -> Unit,
@@ -64,10 +65,8 @@ fun ListMapItem(
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clip(AppComponentShape)
             .background(containerColor)
             .combinedClickableWithColor(
                 color = contentColor,
@@ -97,6 +96,7 @@ fun ListMapItem(
                 title = map.name,
                 description = map.details,
                 painter = rememberVectorPainter(Icons.Outlined.PinDrop),
+                textShadowColor = containerColor,
                 modifier = Modifier
                     .onSizeChanged {
                         density.run {
@@ -104,7 +104,7 @@ fun ListMapItem(
                         }
                     }
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .padding(horizontal = 18.dp, vertical = 4.dp)
                     .weight(1f)
             )
             selected?.let { isSelected ->
@@ -123,6 +123,7 @@ fun GridMapItem(
     map: MapFile,
     selected: Boolean?,
     showMapThumbnail: Boolean,
+    modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentColor: Color = contentColorFor(containerColor),
     onSelectedChange: (Boolean) -> Unit,
@@ -131,7 +132,7 @@ fun GridMapItem(
 ) {
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .aspectRatio(1f)
                 .padding(8.dp)
                 .clip(AppComponentShape)
