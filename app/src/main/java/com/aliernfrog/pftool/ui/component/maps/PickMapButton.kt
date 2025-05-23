@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,6 +66,7 @@ fun PickMapButton(
         }
         Row(
             modifier = Modifier
+                .heightIn(56.dp)
                 .background(Brush.verticalGradient(
                     listOf(
                         MaterialTheme.colorScheme.primary,
@@ -80,12 +81,11 @@ fun PickMapButton(
             MapHeader(
                 title = chosenMap?.name ?: "",
                 description = chosenMap?.details,
-                painter = rememberVectorPainter(Icons.Rounded.LocationOn),
+                painter = rememberVectorPainter(Icons.Outlined.PinDrop),
                 iconContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(56.dp)
                     .weight(1f)
             )
             IconButton(

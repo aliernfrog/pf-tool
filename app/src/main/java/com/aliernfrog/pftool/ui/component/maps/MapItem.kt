@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PinDrop
@@ -86,11 +87,13 @@ fun ListMapItem(
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(Brush.horizontalGradient(
-                invertIfRTL(
-                    listOf(containerColor, Color.Transparent)
-                )
-            ))
+            modifier = Modifier
+                .heightIn(56.dp)
+                .background(Brush.horizontalGradient(
+                    invertIfRTL(
+                        listOf(containerColor, Color.Transparent)
+                    )
+                ))
         ) {
             MapHeader(
                 title = map.name,
