@@ -88,7 +88,6 @@ fun ListMapItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .heightIn(56.dp)
                 .background(Brush.horizontalGradient(
                     invertIfRTL(
                         listOf(containerColor, Color.Transparent)
@@ -101,6 +100,7 @@ fun ListMapItem(
                 painter = rememberVectorPainter(Icons.Outlined.PinDrop),
                 textShadowColor = containerColor,
                 modifier = Modifier
+                    .heightIn(56.dp)
                     .onSizeChanged {
                         density.run {
                             headerHeight = it.height.toDp()
