@@ -107,7 +107,7 @@ fun ListMapItem(
                         }
                     }
                     .fillMaxWidth()
-                    .padding(horizontal = 18.dp, vertical = 4.dp)
+                    .padding(horizontal = 18.dp, vertical = 8.dp)
                     .weight(1f)
             )
             selected?.let { isSelected ->
