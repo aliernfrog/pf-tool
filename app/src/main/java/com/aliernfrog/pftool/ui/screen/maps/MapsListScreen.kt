@@ -34,6 +34,7 @@ import androidx.compose.material.icons.outlined.SdCard
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material.icons.rounded.SearchOff
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -355,14 +356,17 @@ private fun Header(
             ) {
                 LoadingIndicator()
             }
-            else ErrorWithIcon(
-                error = stringResource(
-                    if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
-                    else segment.noMapsTextId
-                ),
-                painter = rememberVectorPainter(Icons.Rounded.LocationOff),
-                modifier = Modifier.fillMaxWidth()
-            )
+            else AnimatedContent(mapsListViewModel.searchQuery.isNotEmpty()) { searching ->
+                ErrorWithIcon(
+                    error = stringResource(
+                        if (searching) R.string.mapsList_searchNoMatches else segment.noMapsTextId
+                    ),
+                    painter = rememberVectorPainter(
+                        if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         } else Text(
             text = stringResource(R.string.mapsList_count)
                 .replace("{COUNT}", mapsToShow.size.toString()),
