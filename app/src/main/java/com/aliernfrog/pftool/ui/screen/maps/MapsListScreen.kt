@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,7 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.icons.Icons
@@ -61,6 +62,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
@@ -231,7 +233,6 @@ fun MapsListScreen(
                 }
             }
 
-            // TODO fix padding with grids
             if (isGrid) GridMapItem(
                 map = map,
                 selected = selected,
@@ -275,11 +276,13 @@ fun MapsListScreen(
                         itemsIndexed(mapsToShow) { index, map ->
                             MapItem(
                                 map, isGrid = false,
-                                modifier = Modifier.verticalSegmentedShape(
-                                    index = index,
-                                    totalSize = mapsToShow.size,
-                                    spacing = 4.dp
-                                )
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .verticalSegmentedShape(
+                                        index = index,
+                                        totalSize = mapsToShow.size,
+                                        spacing = 4.dp
+                                    )
                             )
                         }
 
@@ -294,8 +297,19 @@ fun MapsListScreen(
                             Header(segment, page, mapsToShow)
                         }
 
-                        items(mapsToShow) {
-                            MapItem(it, isGrid = true)
+                        itemsIndexed(mapsToShow) { index, map ->
+                            val isStart = index%maxLineSpan == 0
+                            val isEnd = index%maxLineSpan == maxLineSpan-1
+                            Log.d(TAG, "MapsListScreen: start: $isStart end: $isEnd index: $index")
+                            MapItem(
+                                map = map,
+                                isGrid = true,
+                                modifier = Modifier.padding(
+                                    start = if (isStart) 12.dp else 4.dp,
+                                    end = if (isEnd) 12.dp else 4.dp,
+                                    top = 4.dp, bottom = 4.dp
+                                )
+                            )
                         }
 
                         item(span = { GridItemSpan(maxLineSpan) }) {

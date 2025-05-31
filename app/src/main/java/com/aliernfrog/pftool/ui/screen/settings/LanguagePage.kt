@@ -125,7 +125,9 @@ fun LanguagePage(
             itemsIndexed(languages) { index, language ->
                 LanguageButton(
                     language = language,
-                    modifier = Modifier.verticalSegmentedShape(index = index, totalSize = languages.size)
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .verticalSegmentedShape(index = index, totalSize = languages.size)
                 )
             }
 

@@ -139,7 +139,6 @@ fun Modifier.verticalSegmentedShape(
     val isEnd = index == totalSize - 1
     Modifier
         .padding(top = if (isStart) 0.dp else spacing)
-        .padding(horizontal = 12.dp)
         .clip(RoundedCornerShape(
             topStart = if (isStart) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS,
             topEnd = if (isStart) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS,

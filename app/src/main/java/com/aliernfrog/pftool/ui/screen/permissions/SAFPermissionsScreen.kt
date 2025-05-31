@@ -217,7 +217,9 @@ private fun SAFPermissionsList(
                 ExpressiveButtonRow(
                     title = stringResource(R.string.permissions_saf_allFiles),
                     description = stringResource(R.string.permissions_saf_allFiles_description),
-                    modifier = Modifier.verticalSegmentedShape()
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .verticalSegmentedShape()
                 ) {
                     StorageAccessType.ALL_FILES.enable(permissionsViewModel.prefs)
                 }

@@ -28,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -135,9 +137,9 @@ fun GridMapItem(
 ) {
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .aspectRatio(1f)
-                .padding(8.dp)
+                .then(modifier)
                 .clip(AppComponentShape)
                 .background(containerColor)
                 .combinedClickableWithColor(
@@ -175,7 +177,6 @@ fun GridMapItem(
                     .fillMaxWidth()
                     .background(Brush.verticalGradient(listOf(
                         Color.Transparent,
-                        containerColor,
                         containerColor
                     )))
                     .padding(
@@ -189,7 +190,14 @@ fun GridMapItem(
                     text = map.name,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        shadow = Shadow(
+                            color = containerColor,
+                            offset = Offset(2f, 3f),
+                            blurRadius = 25f,
+
+                        )
+                    )
                 )
                 ImageButtonInfo(
                     text = map.readableSize
