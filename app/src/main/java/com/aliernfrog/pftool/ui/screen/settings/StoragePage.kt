@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -56,6 +57,7 @@ import com.aliernfrog.pftool.ui.component.VerticalSegmentor
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowHeader
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.pftool.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
@@ -89,10 +91,13 @@ fun StoragePage(
                 ExpandableRow(
                     expanded = storageAccessTypesExpanded,
                     title = stringResource(R.string.settings_storage_storageAccessType),
+                    description = stringResource(selectedStorageAccessType.label),
                     icon = {
-                        ExpressiveRowIcon(rememberVectorPainter(Icons.Outlined.FolderOpen))
+                        ExpressiveRowIcon(
+                            painter = rememberVectorPainter(Icons.Outlined.FolderOpen),
+                            containerColor = Color.Blue.toRowFriendlyColor
+                        )
                     },
-                    minimizedHeaderTrailingButtonText = stringResource(selectedStorageAccessType.label),
                     onClickHeader = { storageAccessTypesExpanded = !storageAccessTypesExpanded }
                 ) {
                     val choices: List<@Composable () -> Unit> = StorageAccessType.entries.filter { it.isCompatible() }.map { type -> {
