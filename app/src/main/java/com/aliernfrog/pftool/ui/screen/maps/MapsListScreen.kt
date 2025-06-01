@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,6 +65,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
@@ -247,8 +249,8 @@ fun MapsListScreen(
                 }
             }
 
-            val padding by animateDpAsState(
-                if (selected == true) 4.dp else 0.dp
+            val scale by animateFloatAsState(
+                if (selected == true) 0.95f else 1f
             )
             val roundness by animateDpAsState(
                 if (selected == true) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS
@@ -260,7 +262,7 @@ fun MapsListScreen(
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
-                modifier = modifier.padding(padding).clip(RoundedCornerShape(roundness))
+                modifier = modifier.scale(scale).clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -271,7 +273,7 @@ fun MapsListScreen(
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
-                modifier = modifier.padding(horizontal = padding).clip(RoundedCornerShape(roundness))
+                modifier = modifier.scale(scale).clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
