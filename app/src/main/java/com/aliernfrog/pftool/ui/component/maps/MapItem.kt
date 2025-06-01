@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.component.maps
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.ImageButtonInfo
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.util.extension.combinedClickableWithColor
 
 @Composable
@@ -112,10 +111,10 @@ fun ListMapItem(
                     .padding(horizontal = 18.dp, vertical = 8.dp)
                     .weight(1f)
             )
-            selected?.let { isSelected ->
-                Checkbox(
+            AnimatedContent(selected != null) {
+                if (it) Checkbox(
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    checked = isSelected,
+                    checked = selected == true,
                     onCheckedChange = onSelectedChange
                 )
             }
@@ -137,10 +136,8 @@ fun GridMapItem(
 ) {
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .aspectRatio(1f)
-                .then(modifier)
-                .clip(AppComponentShape)
                 .background(containerColor)
                 .combinedClickableWithColor(
                     onClick = onClick,
@@ -193,9 +190,8 @@ fun GridMapItem(
                     style = MaterialTheme.typography.titleSmall.copy(
                         shadow = Shadow(
                             color = containerColor,
-                            offset = Offset(2f, 3f),
-                            blurRadius = 25f,
-
+                            offset = Offset(5f, 4f),
+                            blurRadius = 25f
                         )
                     )
                 )
@@ -204,12 +200,14 @@ fun GridMapItem(
                 )
             }
 
-            selected?.let { isSelected ->
-                Checkbox(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp),
-                    checked = isSelected,
+            AnimatedContent(
+                targetState = selected != null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+            ) {
+                if (it) Checkbox(
+                    checked = selected == true,
                     onCheckedChange = onSelectedChange
                 )
             }

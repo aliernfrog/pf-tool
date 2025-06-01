@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
@@ -130,14 +129,16 @@ fun HorizontalSegmentor(
     }
 }
 
+@Composable
 fun Modifier.verticalSegmentedShape(
     index: Int = 0,
     totalSize: Int = 1,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     spacing: Dp = SEGMENTOR_SPACING
-): Modifier = composed {
+): Modifier {
     val isStart = index == 0
     val isEnd = index == totalSize - 1
-    Modifier
+    return this
         .padding(top = if (isStart) 0.dp else spacing)
         .clip(RoundedCornerShape(
             topStart = if (isStart) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS,
@@ -145,5 +146,5 @@ fun Modifier.verticalSegmentedShape(
             bottomStart = if (isEnd) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS,
             bottomEnd = if (isEnd) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS
         ))
-        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+        .background(containerColor)
 }

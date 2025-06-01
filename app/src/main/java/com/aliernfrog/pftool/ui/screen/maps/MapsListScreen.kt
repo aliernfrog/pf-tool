@@ -1,12 +1,13 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
+import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,9 +21,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -48,6 +50,9 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,12 +63,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
@@ -75,8 +81,11 @@ import com.aliernfrog.pftool.ui.component.ErrorWithIcon
 import com.aliernfrog.pftool.ui.component.FloatingActionButton
 import com.aliernfrog.pftool.ui.component.LazyAdaptiveVerticalGrid
 import com.aliernfrog.pftool.ui.component.ListViewOptionsDropdown
+import com.aliernfrog.pftool.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
+import com.aliernfrog.pftool.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.SettingsButton
+import com.aliernfrog.pftool.ui.component.getMaxLineSpan
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
 import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
@@ -90,7 +99,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun MapsListScreen(
     title: String = stringResource(R.string.mapsList_pickMap),
@@ -108,6 +118,9 @@ fun MapsListScreen(
     val listStyle = ListStyle.entries[mapsListViewModel.prefs.mapsListStyle.value]
     val showMapThumbnails = mapsListViewModel.prefs.showMapThumbnailsInList.value
     var multiSelectionDropdownShown by remember { mutableStateOf(false) }
+
+    val windowSizeClass = calculateWindowSizeClass(context as Activity)
+    val isCompact = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -234,13 +247,20 @@ fun MapsListScreen(
                 }
             }
 
+            val padding by animateDpAsState(
+                if (selected == true) 4.dp else 0.dp
+            )
+            val roundness by animateDpAsState(
+                if (selected == true) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS
+            )
+
             if (isGrid) GridMapItem(
                 map = map,
                 selected = selected,
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
-                modifier = modifier
+                modifier = modifier.padding(padding).clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -251,7 +271,7 @@ fun MapsListScreen(
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
-                modifier = modifier
+                modifier = modifier.padding(horizontal = padding).clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -271,7 +291,7 @@ fun MapsListScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         item {
-                            Header(segment, page, mapsToShow)
+                            Header(segment, page, mapsToShow, Modifier.padding(horizontal = 12.dp))
                         }
 
                         itemsIndexed(mapsToShow) { index, map ->
@@ -282,7 +302,8 @@ fun MapsListScreen(
                                     .verticalSegmentedShape(
                                         index = index,
                                         totalSize = mapsToShow.size,
-                                        spacing = 4.dp
+                                        spacing = 4.dp,
+                                        containerColor = Color.Transparent
                                     )
                             )
                         }
@@ -292,24 +313,22 @@ fun MapsListScreen(
                         }
                     }
                     ListStyle.GRID -> LazyAdaptiveVerticalGrid(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 10.dp),
+                        maxLineSpan = getMaxLineSpan(
+                            if (isCompact) 2 else Int.MAX_VALUE
+                        )
                     ) { maxLineSpan: Int ->
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            Header(segment, page, mapsToShow)
+                            Header(segment, page, mapsToShow, Modifier.padding(horizontal = 2.dp))
                         }
 
-                        itemsIndexed(mapsToShow) { index, map ->
-                            val isStart = index%maxLineSpan == 0
-                            val isEnd = index%maxLineSpan == maxLineSpan-1
-                            Log.d(TAG, "MapsListScreen: start: $isStart end: $isEnd index: $index")
+                        items(mapsToShow) { map ->
                             MapItem(
                                 map = map,
                                 isGrid = true,
-                                modifier = Modifier.padding(
-                                    start = if (isStart) 12.dp else 4.dp,
-                                    end = if (isEnd) 12.dp else 4.dp,
-                                    top = 4.dp, bottom = 4.dp
-                                )
+                                modifier = Modifier.padding(2.dp)
                             )
                         }
 
@@ -329,11 +348,12 @@ private fun Header(
     segment: MapsListSegment,
     segmentIndex: Int,
     mapsToShow: List<MapFile>,
+    modifier: Modifier = Modifier,
     mapsViewModel: MapsViewModel = koinViewModel(),
     mapsListViewModel: MapsListViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
-    Column {
+    Column(modifier) {
         Search(
             searchQuery = mapsListViewModel.searchQuery,
             onSearchQueryChange = { mapsListViewModel.searchQuery = it }
@@ -343,9 +363,7 @@ private fun Header(
                 stringResource(it.labelId)
             },
             selectedIndex = segmentIndex,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
+            modifier = Modifier.fillMaxWidth()
         ) { scope.launch {
             mapsListViewModel.pagerState.animateScrollToPage(it, animationSpec = tween(300))
         } }
@@ -372,7 +390,7 @@ private fun Header(
                 .replace("{COUNT}", mapsToShow.size.toString()),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 6.dp)
                 .padding(bottom = 4.dp)
         )
     }
@@ -442,7 +460,6 @@ private fun Search(
         modifier = Modifier
             .fillMaxWidth()
             .offset(y = (-12).dp)
-            .padding(horizontal = 12.dp)
     )
 }
 
