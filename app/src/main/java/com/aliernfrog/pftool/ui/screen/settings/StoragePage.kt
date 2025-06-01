@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
@@ -272,7 +273,12 @@ fun FolderCard(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 2.dp)
             )
-            Text(path, fontFamily = FontFamily.Monospace)
+            Text(
+                text = path,
+                fontFamily = FontFamily.Monospace,
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 13.sp
+            )
 
             if (!usingRecommendedPath) {
                 Text(
@@ -280,7 +286,12 @@ fun FolderCard(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = 8.dp)
                 )
-                Text(recommendedPath, fontFamily = FontFamily.Monospace)
+                Text(
+                    text = recommendedPath,
+                    fontFamily = FontFamily.Monospace,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 13.sp
+                )
             }
 
             Row(
