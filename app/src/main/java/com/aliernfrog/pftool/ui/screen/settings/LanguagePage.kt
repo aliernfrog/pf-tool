@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.PhoneAndroid
@@ -34,8 +34,11 @@ import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.languages
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppSmallTopBar
-import com.aliernfrog.pftool.ui.component.form.ButtonRow
-import com.aliernfrog.pftool.ui.component.form.DividerRow
+import com.aliernfrog.pftool.ui.component.VerticalSegmentor
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
@@ -53,6 +56,7 @@ fun LanguagePage(
 
     @Composable
     fun LanguageButton(
+        modifier: Modifier = Modifier,
         language: Language? = null,
         title: String = language?.localizedName.toString(),
         description: String = language?.fullCode.toString(),
@@ -62,17 +66,20 @@ fun LanguagePage(
             mainViewModel.appLanguage = language
         }
     ) {
-        ButtonRow(
+        ExpressiveButtonRow(
             title = title,
             description = description,
-            painter = painter,
+            icon = {
+                ExpressiveRowIcon(painter)
+            },
             trailingComponent = {
                 RadioButton(
                     selected = selected,
                     onClick = onClick
                 )
             },
-            onClick = onClick
+            onClick = onClick,
+            modifier = modifier
         )
     }
 
@@ -92,23 +99,36 @@ fun LanguagePage(
             }
 
             item {
-                LanguageButton(
-                    title = stringResource(R.string.settings_language_system),
-                    description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_language_system_notAvailable)
-                        .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
-                            mainViewModel.deviceLanguage.getNameIn(it.languageCode, it.countryCode)
-                        } ?: ""),
-                    painter = rememberVectorPainter(Icons.Default.PhoneAndroid),
-                    selected = currentLanguage.isBlank(),
-                    onClick = {
-                        mainViewModel.appLanguage = null
-                    }
-                )
-                DividerRow()
+                ExpressiveSection(stringResource(R.string.settings_language_system)) {
+                    VerticalSegmentor(
+                        {
+                            LanguageButton(
+                                title = stringResource(R.string.settings_language_system_follow),
+                                description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_language_system_notAvailable)
+                                    .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
+                                        mainViewModel.deviceLanguage.getNameIn(it.languageCode, it.countryCode)
+                                    } ?: ""),
+                                painter = rememberVectorPainter(Icons.Default.PhoneAndroid),
+                                selected = currentLanguage.isBlank(),
+                                onClick = {
+                                    mainViewModel.appLanguage = null
+                                }
+                            )
+                        },
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    )
+                }
+
+                ExpressiveSection(stringResource(R.string.settings_language_other)) {}
             }
 
-            items(languages) {
-                LanguageButton(language = it)
+            itemsIndexed(languages) { index, language ->
+                LanguageButton(
+                    language = language,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .verticalSegmentedShape(index = index, totalSize = languages.size)
+                )
             }
 
             item {
@@ -125,7 +145,12 @@ fun TranslationHelp(
     val uriHandler = LocalUriHandler.current
     Card(
         shape = AppComponentShape,
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 12.dp,
+                vertical = 8.dp
+            ),
         onClick = { uriHandler.openUri(crowdinURL) }
     ) {
         Column(

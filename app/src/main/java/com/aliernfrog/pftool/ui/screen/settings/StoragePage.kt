@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +21,10 @@ import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -34,12 +37,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.data.PrefEditItem
@@ -47,11 +54,12 @@ import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
-import com.aliernfrog.pftool.ui.component.FadeVisibility
-import com.aliernfrog.pftool.ui.component.form.DividerRow
+import com.aliernfrog.pftool.ui.component.VerticalSegmentor
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowHeader
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
+import com.aliernfrog.pftool.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.pftool.ui.component.form.ExpandableRow
-import com.aliernfrog.pftool.ui.component.form.FormHeader
-import com.aliernfrog.pftool.ui.component.form.FormSection
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
@@ -79,42 +87,57 @@ fun StoragePage(
         title = stringResource(R.string.settings_storage),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        ExpandableRow(
-            expanded = storageAccessTypesExpanded,
-            title = stringResource(R.string.settings_storage_storageAccessType),
-            painter = rememberVectorPainter(Icons.Outlined.FolderOpen),
-            trailingButtonText = stringResource(selectedStorageAccessType.label),
-            onClickHeader = { storageAccessTypesExpanded = !storageAccessTypesExpanded }
-        ) {
-            StorageAccessType.entries.filter { it.isCompatible() }.forEach { type ->
-                val selected = settingsViewModel.prefs.storageAccessType.value == type.ordinal
-                fun onSelect() {
-                    if (!selected) type.enable(settingsViewModel.prefs)
-                }
-                if (type.ordinal != 0) DividerRow()
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = ::onSelect)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+        VerticalSegmentor(
+            {
+                ExpandableRow(
+                    expanded = storageAccessTypesExpanded,
+                    title = stringResource(R.string.settings_storage_storageAccessType),
+                    description = stringResource(selectedStorageAccessType.label),
+                    icon = {
+                        ExpressiveRowIcon(
+                            painter = rememberVectorPainter(Icons.Outlined.FolderOpen),
+                            containerColor = Color.Blue.toRowFriendlyColor
+                        )
+                    },
+                    onClickHeader = { storageAccessTypesExpanded = !storageAccessTypesExpanded }
                 ) {
-                    RadioButton(
-                        selected = selected,
-                        onClick = ::onSelect
-                    )
-                    FormHeader(
-                        title = stringResource(type.label),
-                        description = stringResource(type.description)
+                    val choices: List<@Composable () -> Unit> = StorageAccessType.entries.filter { it.isCompatible() }.map { type -> {
+                        val selected = settingsViewModel.prefs.storageAccessType.value == type.ordinal
+                        fun onSelect() {
+                            if (!selected) type.enable(settingsViewModel.prefs)
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(onClick = ::onSelect)
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selected,
+                                onClick = ::onSelect
+                            )
+                            ExpressiveRowHeader(
+                                title = stringResource(type.label),
+                                description = stringResource(type.description)
+                            )
+                        }
+                    } }
+                    VerticalSegmentor(
+                        *choices.toTypedArray(),
+                        modifier = Modifier.padding(
+                            start = 12.dp,
+                            end = 12.dp,
+                            top = 4.dp,
+                            bottom = 8.dp
+                        )
                     )
                 }
-            }
-        }
-        FormSection(
-            title = stringResource(R.string.settings_storage_folders),
-            topDivider = true,
-            bottomDivider = false
-        ) {
+            },
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+
+        ExpressiveSection(stringResource(R.string.settings_storage_folders)) {
             FolderConfiguration(
                 useRawPathInputs = selectedStorageAccessType != StorageAccessType.SAF
             )
@@ -139,7 +162,9 @@ private fun FolderConfiguration(
     })
 
     AnimatedContent(useRawPathInputs) { rawPathInput ->
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             SettingsConstant.folders.forEach { prefEditItem ->
                 val pref = prefEditItem.preference(prefs)
                 val label = prefEditItem.label(prefs).resolveString()
@@ -165,6 +190,7 @@ private fun FolderConfiguration(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun RawPathInput(
     label: String,
@@ -181,18 +207,15 @@ fun RawPathInput(
         label = {
             Text(label)
         },
-        supportingText = {
-            FadeVisibility(!isDefault) {
-                Text(
-                    stringResource(R.string.settings_storage_folders_default).replace("%s", pref.defaultValue)
-                )
-            }
-        },
+        supportingText = if (!isDefault) { {
+            Text(stringResource(R.string.settings_storage_folders_default).replace("%s", pref.defaultValue))
+        } } else null,
         trailingIcon = {
             Row {
                 Crossfade(!isDefault) { enabled ->
                     IconButton(
                         onClick = { pref.value = pref.defaultValue },
+                        shapes = IconButtonDefaults.shapes(),
                         enabled = enabled
                     ) {
                         Icon(
@@ -202,6 +225,7 @@ fun RawPathInput(
                     }
                 }
                 IconButton(
+                    shapes = IconButtonDefaults.shapes(),
                     onClick = { onPickFolderRequest() }
                 ) {
                     Icon(
@@ -213,8 +237,9 @@ fun RawPathInput(
         },
         singleLine = true,
         modifier = Modifier
+            .animateContentSize()
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 12.dp)
     )
 }
 
@@ -232,7 +257,7 @@ fun FolderCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(horizontal = 12.dp),
         shape = AppComponentShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -240,13 +265,20 @@ fun FolderCard(
         )
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 2.dp)
             )
-            Text(path)
+            Text(
+                text = path,
+                fontFamily = FontFamily.Monospace,
+                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 13.sp
+            )
 
             if (!usingRecommendedPath) {
                 Text(
@@ -254,7 +286,12 @@ fun FolderCard(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = 8.dp)
                 )
-                Text(recommendedPath)
+                Text(
+                    text = recommendedPath,
+                    fontFamily = FontFamily.Monospace,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 13.sp
+                )
             }
 
             Row(
@@ -300,7 +337,7 @@ fun FolderCard(
 private fun getFolderDescription(path: String): String {
     var text = path
     if (text.isNotEmpty()) try {
-        text = Uri.parse(text).toPath().removePrefix(externalStorageRoot)
+        text = text.toUri().toPath().removePrefix(externalStorageRoot)
     } catch (_: Exception) {}
     return text.ifEmpty { stringResource(R.string.settings_storage_folders_notSet) }
 }

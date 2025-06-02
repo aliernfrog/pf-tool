@@ -15,7 +15,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -39,6 +41,7 @@ import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShizukuPermissionsScreen(
     shizukuViewModel: ShizukuViewModel = koinViewModel(),
@@ -64,7 +67,9 @@ fun ShizukuPermissionsScreen(
                 .navigationBarsPadding()
         ) {
             if (isLoading) {
-                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                LoadingIndicator(
+                    Modifier.align(Alignment.CenterHorizontally)
+                )
                 Text(
                     text = stringResource(R.string.permissions_shizuku_waitingService),
                     modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 8.dp)
@@ -81,6 +86,7 @@ fun ShizukuPermissionsScreen(
                             .padding(16.dp),
                         buttons = {
                             if (shizukuViewModel.managerInstalled) TextButton(
+                                shapes = ButtonDefaults.shapes(),
                                 onClick = {
                                     shizukuViewModel.launchManager(context)
                                 }
@@ -89,6 +95,7 @@ fun ShizukuPermissionsScreen(
                                 Text(stringResource(R.string.permissions_shizuku_openShizuku))
                             }
                             Button(
+                                shapes = ButtonDefaults.shapes(),
                                 onClick = {
                                     shizukuViewModel.prefs.shizukuNeverLoad.value = false
                                     GeneralUtil.restartApp(context)
@@ -107,6 +114,7 @@ fun ShizukuPermissionsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ShizukuSetupGuide(
     shizukuViewModel: ShizukuViewModel = koinViewModel()
@@ -136,6 +144,7 @@ private fun ShizukuSetupGuide(
         val button: @Composable () -> Unit = { when (status) {
             ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> {
                 Button(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         shizukuViewModel.launchManager(context)
                     }
@@ -146,6 +155,7 @@ private fun ShizukuSetupGuide(
             }
             ShizukuStatus.WAITING_FOR_BINDER -> {
                 Button(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         shizukuViewModel.launchManager(context)
                     }
@@ -156,6 +166,7 @@ private fun ShizukuSetupGuide(
             }
             ShizukuStatus.UNAUTHORIZED -> {
                 Button(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = { Shizuku.requestPermission(0) }
                 ) {
                     Text(stringResource(R.string.permissions_shizuku_permission_grant))
@@ -185,6 +196,7 @@ private fun ShizukuSetupGuide(
             title = stringResource(R.string.permissions_shizuku_rooted),
             buttons = {
                 OutlinedButton(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         uriHandler.openUri(ShizukuViewModel.SUI_GITHUB)
                     }
@@ -193,6 +205,7 @@ private fun ShizukuSetupGuide(
                     Text(stringResource(R.string.permissions_shizuku_sui))
                 }
                 Button(
+                    shapes = ButtonDefaults.shapes(),
                     onClick = {
                         shizukuViewModel.launchManager(context)
                     }
