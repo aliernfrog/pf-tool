@@ -12,15 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsButton(
     modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel = koinViewModel(),
     onClick: () -> Unit
 ) {
-    val hasNotification = Destination.SETTINGS.hasNotification.value
+    val hasNotification = mainViewModel.showUpdateNotification
 
     @Composable
     fun SettingsIcon() {
@@ -35,7 +37,7 @@ fun SettingsButton(
         modifier = modifier,
         onClick = {
             onClick()
-            Destination.SETTINGS.hasNotification.value = false
+            mainViewModel.showUpdateNotification = false
         }
     ) {
         if (hasNotification) BadgedBox(

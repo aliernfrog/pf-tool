@@ -12,6 +12,7 @@ import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
@@ -34,7 +35,7 @@ import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
 import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
 import com.aliernfrog.pftool.ui.component.createSheetStateWithDensity
-import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.NavigationConstant
 import com.aliernfrog.pftool.util.extension.cacheFile
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -62,6 +63,10 @@ class MainViewModel(
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     val updateSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
+
+    val navigationBackStack = mutableStateListOf<Any>(
+        NavigationConstant.INITIAL_DESTINATION
+    )
 
     private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
     private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
@@ -102,6 +107,8 @@ class MainViewModel(
 
     var updateAvailable by mutableStateOf(false)
         private set
+
+    var showUpdateNotification by mutableStateOf(updateAvailable)
 
     val debugInfo: String
         get() = arrayOf(
@@ -149,7 +156,7 @@ class MainViewModel(
                         updateSheetState.show()
                     } else {
                         showUpdateToast()
-                        Destination.SETTINGS.hasNotification.value = true
+                        showUpdateNotification = true
                     }
                 } else {
                     if (manuallyTriggered) withContext(Dispatchers.Main) {
