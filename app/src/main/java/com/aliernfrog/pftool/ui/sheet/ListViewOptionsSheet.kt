@@ -130,8 +130,8 @@ fun ListViewOptionsSheet(
                         Slider(
                             value = gridMaxLineSpan.toFloat(),
                             onValueChange = { onGridMaxLineSpanChange(it.toInt()) },
-                            valueRange = 1f..10f,
-                            steps = 8,
+                            valueRange = 1f..6f,
+                            steps = 4,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 12.dp, end = 4.dp)
