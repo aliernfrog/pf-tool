@@ -1,30 +1,48 @@
 package com.aliernfrog.pftool.ui.screen.settings
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -43,6 +61,7 @@ import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.getNameIn
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,21 +85,43 @@ fun LanguagePage(
             mainViewModel.appLanguage = language
         }
     ) {
-        ExpressiveButtonRow(
-            title = title,
-            description = description,
-            icon = {
-                ExpressiveRowIcon(painter)
-            },
-            trailingComponent = {
-                RadioButton(
-                    selected = selected,
-                    onClick = onClick
-                )
-            },
-            onClick = onClick,
-            modifier = modifier
-        )
+        Box(modifier) {
+            ExpressiveButtonRow(
+                title = title,
+                description = description,
+                icon = {
+                    val density = LocalDensity.current
+                    var iconWidth by remember { mutableStateOf(0.dp) }
+                    Box {
+                        ExpressiveRowIcon(
+                            painter = painter,
+                            modifier = Modifier.onSizeChanged {
+                                iconWidth = with(density) {
+                                    it.width.toDp()
+                                }
+                            }
+                        )
+                        language?.let {
+                            TranslationProgressIndicator(
+                                progress = it.translationProgress,
+                                isBase = mainViewModel.baseLanguage.languageCode == language.languageCode,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .align(Alignment.BottomStart)
+                                    .size(iconWidth)
+                            )
+                        }
+                    }
+                },
+                trailingComponent = {
+                    RadioButton(
+                        selected = selected,
+                        onClick = onClick
+                    )
+                },
+                onClick = onClick
+            )
+        }
     }
 
     AppScaffold(
@@ -103,6 +144,7 @@ fun LanguagePage(
                     VerticalSegmentor(
                         {
                             LanguageButton(
+                                language = mainViewModel.deviceLanguage,
                                 title = stringResource(R.string.settings_language_system_follow),
                                 description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_language_system_notAvailable)
                                     .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
@@ -135,6 +177,47 @@ fun LanguagePage(
                 Spacer(Modifier.navigationBarsPadding())
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TranslationProgressIndicator(
+    progress: Float,
+    isBase: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val state = rememberTooltipState()
+    val tooltipText = remember {
+        if (isBase) context.getString(R.string.settings_language_progress_base)
+        else context.getString(R.string.settings_language_progress_percent)
+            .replace("{PERCENT}", (progress*100).toInt().toString())
+    }
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+        tooltip = {
+            PlainTooltip {
+                Text(tooltipText)
+            }
+        },
+        state = state
+    ) {
+        CircularProgressIndicator(
+            progress = { progress },
+            strokeWidth = 2.dp,
+            modifier = modifier
+                .combinedClickable(
+                    onLongClick = {
+                        scope.launch { state.show() }
+                    },
+                    onClick = {
+                        scope.launch { state.show() }
+                    }
+                )
+        )
     }
 }
 
