@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.aliernfrog.pftool"
-    compileSdk = 35
+    compileSdk = 36
     buildToolsVersion = "35.0.1"
 
     defaultConfig {
@@ -107,10 +107,12 @@ fun exec(vararg command: String) = try {
 
 dependencies {
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ktx)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.lifecycle.ktx)
-    implementation(libs.androidx.navigation)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.splashscreen)
 
     implementation(libs.compose.ui)
