@@ -38,8 +38,6 @@ import com.aliernfrog.pftool.ui.component.CardWithActions
 import com.aliernfrog.pftool.ui.component.FadeVisibility
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
 
@@ -52,9 +50,7 @@ fun ShizukuPermissionsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            shizukuViewModel.checkAvailability(context)
-        }
+        shizukuViewModel.checkAvailability(context)
     }
 
     LaunchedEffect(shizukuViewModel.fileServiceRunning) {
