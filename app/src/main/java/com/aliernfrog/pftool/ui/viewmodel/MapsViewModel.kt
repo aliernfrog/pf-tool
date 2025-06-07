@@ -183,12 +183,18 @@ class MapsViewModel(
      * Loads all imported and exported maps. [isLoadingMaps] will be true while this is in action.
      */
     suspend fun loadMaps(context: Context) {
-        isLoadingMaps = true
+        withContext(Dispatchers.Main) {
+            isLoadingMaps = true
+        }
         getMapsFile(context)
         getExportedMapsFile(context)
-        fetchImportedMaps()
-        fetchExportedMaps()
-        isLoadingMaps = false
+        val imported = fetchImportedMaps()
+        val exported = fetchExportedMaps()
+        withContext(Dispatchers.Main) {
+            importedMaps = imported
+            exportedMaps = exported
+            isLoadingMaps = false
+        }
     }
 
     /**
@@ -256,24 +262,20 @@ class MapsViewModel(
     /**
      * Fetches imported maps from [mapsFile].
      */
-    private suspend fun fetchImportedMaps() {
-        withContext(Dispatchers.IO) {
-            importedMaps = mapsFile.listFiles()
-                .filter { !it.isFile }
-                .sortedBy { it.name.lowercase() }
-                .map { MapFile(it) }
-        }
+    private fun fetchImportedMaps(): List<MapFile> {
+        return mapsFile.listFiles()
+            .filter { !it.isFile }
+            .sortedBy { it.name.lowercase() }
+            .map { MapFile(it) }
     }
 
     /**
      * Fetches exported maps from [exportedMapsFile].
      */
-    private suspend fun fetchExportedMaps() {
-        withContext(Dispatchers.IO) {
-            exportedMaps = exportedMapsFile.listFiles()
-                .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
-                .sortedBy { it.name.lowercase() }
-                .map { MapFile(it) }
-        }
+    private fun fetchExportedMaps(): List<MapFile> {
+        return exportedMapsFile.listFiles()
+            .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
+            .sortedBy { it.name.lowercase() }
+            .map { MapFile(it) }
     }
 }

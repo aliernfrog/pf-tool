@@ -37,6 +37,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material.icons.rounded.SearchOff
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -135,7 +136,9 @@ fun MapsListScreen(
     }
 
     LaunchedEffect(Unit) {
-        mapsViewModel.loadMaps(context)
+        withContext(Dispatchers.IO) {
+            mapsViewModel.loadMaps(context)
+        }
     }
 
     BackHandler(
@@ -186,7 +189,7 @@ fun MapsListScreen(
                             )
                         } else {
                             Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
-                                if (showLoading) LoadingIndicator(
+                                if (showLoading) CircularProgressIndicator(
                                     modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
                                 else IconButton(
