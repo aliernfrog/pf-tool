@@ -3,24 +3,32 @@ package com.aliernfrog.pftool.ui.screen.maps
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileCopy
+import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.outlined.HideImage
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.rounded.TextFields
 import androidx.compose.material.icons.rounded.TipsAndUpdates
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -120,7 +128,15 @@ private fun MapSheetContent(
             showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value,
             onViewThumbnailRequest = {
                 mapsViewModel.openMapThumbnailViewer(chosenMap)
-            }
+            },
+            onMinimizeRequest = {
+                scope.launch {
+                    sheetState.hide()
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .heightIn(min = 150.dp, max = 150.dp)
         )
 
         TextField(
@@ -250,20 +266,16 @@ private fun MapSheetContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MapCard(
+private fun MapCard(
     chosenMap: MapFile,
     showMapThumbnail: Boolean,
-    onViewThumbnailRequest: () -> Unit
+    onViewThumbnailRequest: () -> Unit,
+    onMinimizeRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    GridMapItem(
-        map = chosenMap,
-        selected = null,
-        showMapThumbnail = showMapThumbnail,
-        onSelectedChange = {},
-        onLongClick = {},
-        onClick = onViewThumbnailRequest,
-        aspectRatio = null,
+    Box(
         modifier = Modifier
             .padding(horizontal = 12.dp)
             .clip(AppComponentShape)
@@ -271,5 +283,43 @@ fun MapCard(
                 color = MaterialTheme.colorScheme.onSurface,
                 onClick = onViewThumbnailRequest
             )
-    )
+    ) {
+        GridMapItem(
+            map = chosenMap,
+            selected = null,
+            showMapThumbnail = showMapThumbnail,
+            onSelectedChange = {},
+            onLongClick = {},
+            onClick = onViewThumbnailRequest,
+            aspectRatio = null,
+            placeholderIcon = if (chosenMap.thumbnailModel != null) Icons.Outlined.Image else Icons.Outlined.HideImage,
+            modifier = modifier
+        )
+        if (chosenMap.thumbnailModel != null && showMapThumbnail) FilledIconButton(
+            onClick = onViewThumbnailRequest,
+            shapes = IconButtonDefaults.shapes(),
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)
+            ),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Fullscreen,
+                contentDescription = stringResource(R.string.maps_thumbnail)
+            )
+        }
+        FilledIconButton(
+            onClick = onMinimizeRequest,
+            shapes = IconButtonDefaults.shapes(),
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)
+            ),
+            modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.action_close)
+            )
+        }
+    }
 }

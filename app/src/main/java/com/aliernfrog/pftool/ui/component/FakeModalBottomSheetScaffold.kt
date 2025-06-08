@@ -37,8 +37,7 @@ fun FakeModalBottomSheetScaffold(
             Box {
                 content(it)
                 AnimatedVisibility(
-                    visible = scaffoldState.bottomSheetState.currentValue != SheetValue.Hidden
-                            || scaffoldState.bottomSheetState.targetValue != SheetValue.Hidden,
+                    visible = scaffoldState.bottomSheetState.targetValue != SheetValue.Hidden,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
