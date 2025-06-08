@@ -42,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -123,39 +122,42 @@ private fun MapSheetContent(
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
     ) {
-        MapCard(
-            chosenMap = chosenMap,
-            showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value,
-            onViewThumbnailRequest = {
-                mapsViewModel.openMapThumbnailViewer(chosenMap)
-            },
-            onMinimizeRequest = {
-                scope.launch {
-                    sheetState.hide()
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .heightIn(min = 150.dp, max = 150.dp)
-        )
-
-        TextField(
-            value = mapsViewModel.mapNameEdit,
-            onValueChange = { mapsViewModel.mapNameEdit = it },
-            label = { Text(stringResource(R.string.maps_mapName)) },
-            placeholder = { Text(chosenMap.name) },
-            singleLine = true,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Rounded.TextFields,
-                    contentDescription = null
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 12.dp)
-                .clip(AppComponentShape)
-        )
+        VerticalSegmentor({
+            MapCard(
+                chosenMap = chosenMap,
+                showMapThumbnail = mapsViewModel.prefs.showChosenMapThumbnail.value,
+                onViewThumbnailRequest = {
+                    mapsViewModel.openMapThumbnailViewer(chosenMap)
+                },
+                onMinimizeRequest = {
+                    scope.launch {
+                        sheetState.hide()
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .heightIn(min = 150.dp, max = 150.dp)
+            )
+        }, {
+            TextField(
+                value = mapsViewModel.mapNameEdit,
+                onValueChange = { mapsViewModel.mapNameEdit = it },
+                label = { Text(stringResource(R.string.maps_mapName)) },
+                placeholder = { Text(chosenMap.name) },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.TextFields,
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }, modifier = Modifier.padding(
+            start = 12.dp,
+            end = 12.dp,
+            bottom = 8.dp
+        ))
 
         FadeVisibility(visible = mapsViewModel.prefs.showMapNameFieldGuide.value) {
             OutlinedCard(
@@ -276,13 +278,10 @@ private fun MapCard(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .clip(AppComponentShape)
-            .clickableWithColor(
-                color = MaterialTheme.colorScheme.onSurface,
-                onClick = onViewThumbnailRequest
-            )
+        modifier = Modifier.clickableWithColor(
+            color = MaterialTheme.colorScheme.onSurface,
+            onClick = onViewThumbnailRequest
+        )
     ) {
         GridMapItem(
             map = chosenMap,
