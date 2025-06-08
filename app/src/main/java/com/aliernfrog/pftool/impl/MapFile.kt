@@ -216,7 +216,7 @@ class MapFile(
         return if (mapsViewModel.chosenMap?.path == path) mapsViewModel.resolveMapNameInput() else name
     }
 
-    suspend fun runInIOThreadSafe(block: () -> Unit) {
+    suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
             try {
                 block()

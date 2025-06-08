@@ -2,12 +2,10 @@ package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -15,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
@@ -29,6 +28,7 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
+import com.aliernfrog.pftool.ui.component.createSheetStateWithDensity
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -37,6 +37,7 @@ import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,10 +49,10 @@ class MapsViewModel(
     private val topToastState: TopToastState,
     private val progressState: ProgressState,
     private val contextUtils: ContextUtils,
-    val prefs: PreferenceManager
+    val prefs: PreferenceManager,
+    context: Context
 ) : ViewModel() {
-    val topAppBarState = TopAppBarState(0F, 0F, 0F)
-    val scrollState = ScrollState(0)
+    val mapSheetState = createSheetStateWithDensity(skipPartiallyExpanded = true, Density(context))
 
     val mapsDir: String
         get() = prefs.pfMapsDir.value
@@ -71,17 +72,13 @@ class MapsViewModel(
     var chosenMap by mutableStateOf<MapFile?>(null)
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
     var mapNameEdit by mutableStateOf("")
-    var mapListShown by mutableStateOf(true)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
 
     var activeProgress: Progress?
         get() = progressState.currentProgress
         set(value) { progressState.currentProgress = value }
 
-    val mapListBackButtonShown
-        get() = chosenMap != null
-
-    fun chooseMap(map: Any?) {
+    suspend fun viewMap(map: Any?) {
         try {
             val mapToChoose = when (map) {
                 is MapFile -> map
@@ -89,10 +86,14 @@ class MapsViewModel(
                 else -> if (map == null) null else MapFile(FileWrapper(map))
             }
             if (mapToChoose != null) mapNameEdit = mapToChoose.name
-            chosenMap = mapToChoose
-        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                chosenMap = mapToChoose
+                mapSheetState.expand()
+            }
+        } catch (_: CancellationException) {}
+        catch (e: Exception) {
             topToastState.showErrorToast()
-            Log.e(TAG, "chooseMap: ", e)
+            Log.e(TAG, "viewMap: ", e)
         }
     }
 
@@ -130,7 +131,7 @@ class MapsViewModel(
                 )
             }
             chosenMap?.path?.let { path ->
-                if (maps.map { it.path }.contains(path)) chooseMap(null)
+                if (maps.map { it.path }.contains(path)) viewMap(null)
             }
         }
         mapsPendingDelete = null

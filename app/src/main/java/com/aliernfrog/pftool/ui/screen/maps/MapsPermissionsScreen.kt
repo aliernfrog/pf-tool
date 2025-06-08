@@ -1,6 +1,5 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.Text
@@ -53,21 +52,9 @@ fun MapsPermissionsScreen(
         title = stringResource(R.string.maps),
         onNavigateSettingsRequest = onNavigateSettingsRequest
     ) {
-        AnimatedContent(mapsViewModel.mapListShown) { showMapList ->
-            if (showMapList) MapsListScreen(
-                onNavigateSettingsRequest = onNavigateSettingsRequest,
-                onBackClick = if (mapsViewModel.mapListBackButtonShown) {
-                    { mapsViewModel.mapListShown = false }
-                } else null,
-                onMapPick = {
-                    mapsViewModel.chooseMap(it)
-                    mapsViewModel.mapListShown = false
-                }
-            )
-            else MapsScreen(
-                onNavigateSettingsRequest = onNavigateSettingsRequest
-            )
-        }
+        MapsScreen(
+            onNavigateSettingsRequest = onNavigateSettingsRequest
+        )
     }
 
     mapsViewModel.customDialogTitleAndText?.let { (title, text) ->

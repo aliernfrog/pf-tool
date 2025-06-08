@@ -262,7 +262,10 @@ fun MapsListScreen(
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
-                modifier = modifier.scale(scale).clip(RoundedCornerShape(roundness))
+                aspectRatio = 1f,
+                modifier = modifier
+                    .scale(scale)
+                    .clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)

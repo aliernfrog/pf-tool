@@ -79,7 +79,7 @@ enum class MapAction(
                     text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
-                    first.mapsViewModel.chooseMap(it)
+                    first.mapsViewModel.viewMap(it)
                 }
                 first.topToastState.showToast(
                     text = context.getString(result.message ?: R.string.maps_renamed)
@@ -111,7 +111,7 @@ enum class MapAction(
                     text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
-                    first.mapsViewModel.chooseMap(it)
+                    first.mapsViewModel.viewMap(it)
                 }
                 first.topToastState.showToast(
                     text = context.getString(result.message ?: R.string.maps_duplicated)
@@ -252,7 +252,7 @@ private suspend fun runIOAction(
             ) else first.topToastState.showErrorToast(
                 text = context.getString(result.message ?: R.string.warning_error)
             )
-            result.newFile?.let { first.mapsViewModel.chooseMap(it) }
+            result.newFile?.let { first.mapsViewModel.viewMap(it) }
         } else {
             val successes = results.filter { it.second.successful }
             val fails = results.filter { !it.second.successful }

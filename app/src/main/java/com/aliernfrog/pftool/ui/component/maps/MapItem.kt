@@ -128,6 +128,7 @@ fun GridMapItem(
     selected: Boolean?,
     showMapThumbnail: Boolean,
     modifier: Modifier = Modifier,
+    aspectRatio: Float? = 1f,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentColor: Color = contentColorFor(containerColor),
     onSelectedChange: (Boolean) -> Unit,
@@ -137,7 +138,10 @@ fun GridMapItem(
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Box(
             modifier = modifier
-                .aspectRatio(1f)
+                .then(
+                    if (aspectRatio != null) Modifier.aspectRatio(aspectRatio)
+                    else Modifier
+                )
                 .background(containerColor)
                 .combinedClickableWithColor(
                     onClick = onClick,
@@ -149,7 +153,10 @@ fun GridMapItem(
                 imageVector = Icons.Outlined.PinDrop,
                 contentDescription = null,
                 modifier = Modifier
-                    .aspectRatio(1f)
+                    .then(
+                        if (aspectRatio != null) Modifier.aspectRatio(aspectRatio)
+                        else Modifier
+                    )
                     .fillMaxWidth()
                     .padding(
                         top = 16.dp,
