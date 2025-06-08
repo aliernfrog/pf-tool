@@ -1,3 +1,7 @@
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import javax.xml.parsers.DocumentBuilderFactory
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -56,21 +60,62 @@ android {
     }
 }
 
+val languages = mutableListOf<String>()
+val translationProgresses = mutableListOf<Float>()
+val resDirPath = "src/main/res"
+val baseStrings = "$resDirPath/values/strings.xml"
+var translatableStringsCount = 0
+
+// Get translatable strings count from base strings.xml
+val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+val baseStringsDoc = documentBuilder.parse(project.file(baseStrings))
+baseStringsDoc.documentElement.normalize()
+val baseStringsNodeList = baseStringsDoc.getElementsByTagName("string")
+for (i in 0 until baseStringsNodeList.length) {
+    val node = baseStringsNodeList.item(i)
+    if (node.nodeType == Node.ELEMENT_NODE) {
+        val element = node as Element
+        val translatable = element.getAttribute("translatable")
+        if (translatable.isNullOrEmpty() || !translatable.equals("false", ignoreCase = true)) {
+            translatableStringsCount++
+        }
+    }
+}
+
 // Get available languages and save it in "LANGUAGES" field of BuildConfig.
 // https://stackoverflow.com/a/36047987
-val languages = mutableListOf<String>()
-fileTree("src/main/res").visit {
+fileTree(resDirPath).visit {
     if (file.path.endsWith("strings.xml")) languages.add(
         file.parentFile.name.let {
-            if (it == "values") "en-US"
-            else file.parentFile.name
+            val localeName = if (it == "values") "en-US" else file.parentFile.name
                 .removePrefix("values-")
-                .replace("-r","-") // "zh-rCN" -> "zh-CN"
+                .replace("-r", "-") // "zh-rCN" -> "zh-CN"
+
+            var translatedStringsCount = 0
+            try {
+                val doc = documentBuilder.parse(file)
+                doc.documentElement.normalize()
+                val nodeList = doc.getElementsByTagName("string")
+                for (i in 0 until nodeList.length) {
+                    val node = nodeList.item(i)
+                    if (node.nodeType == Node.ELEMENT_NODE) {
+                        translatedStringsCount++
+                    }
+                }
+            } catch (e: Exception) {
+                logger.error("Failed to resolve translated strings count for locale $localeName", e)
+            }
+
+            translationProgresses.add(translatedStringsCount.toFloat() / translatableStringsCount.toFloat())
+            localeName
         }
     )
 }
 android.defaultConfig.buildConfigField("String[]", "LANGUAGES", "new String[]{${
     languages.joinToString(",") { "\"$it\"" }
+}}")
+android.defaultConfig.buildConfigField("float[]", "TRANSLATION_PROGRESSES", "new float[]{${
+    translationProgresses.joinToString(",") { "${it}f" }
 }}")
 
 // Utilities to get git environment information
