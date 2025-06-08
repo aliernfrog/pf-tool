@@ -88,6 +88,7 @@ enum class MapAction(
                 )
             }
             first.mapsViewModel.activeProgress = null
+            first.mapsViewModel.loadMaps(context)
         }
     },
 
@@ -120,6 +121,7 @@ enum class MapAction(
                 )
             }
             first.mapsViewModel.activeProgress = null
+            first.mapsViewModel.loadMaps(context)
         }
     },
 

@@ -85,10 +85,15 @@ class MapsViewModel(
                 is FileWrapper -> MapFile(map)
                 else -> if (map == null) null else MapFile(FileWrapper(map))
             }
-            if (mapToChoose != null) mapNameEdit = mapToChoose.name
             withContext(Dispatchers.Main) {
-                chosenMap = mapToChoose
-                mapSheetState.expand()
+                if (mapToChoose != null) {
+                    chosenMap = mapToChoose
+                    mapNameEdit = mapToChoose.name
+                    mapSheetState.expand()
+                } else {
+                    mapSheetState.hide()
+                    chosenMap = null
+                }
             }
         } catch (_: CancellationException) {}
         catch (e: Exception) {
@@ -99,6 +104,7 @@ class MapsViewModel(
 
     suspend fun deletePendingMaps(context: Context) {
         mapsPendingDelete?.let { maps ->
+            mapsPendingDelete = null
             if (maps.isEmpty()) return@let
             val first = maps.first()
             val total = maps.size
@@ -134,7 +140,6 @@ class MapsViewModel(
                 if (maps.map { it.path }.contains(path)) viewMap(null)
             }
         }
-        mapsPendingDelete = null
         loadMaps(context)
         activeProgress = null
     }
