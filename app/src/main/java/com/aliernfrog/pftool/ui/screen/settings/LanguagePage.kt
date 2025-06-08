@@ -18,8 +18,10 @@ import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.WavyProgressIndicatorDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,6 +62,7 @@ import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
+import com.aliernfrog.pftool.util.extension.copy
 import com.aliernfrog.pftool.util.extension.getAvailableLanguage
 import com.aliernfrog.pftool.util.extension.getNameIn
 import kotlinx.coroutines.launch
@@ -85,43 +89,41 @@ fun LanguagePage(
             mainViewModel.appLanguage = language
         }
     ) {
-        Box(modifier) {
-            ExpressiveButtonRow(
-                title = title,
-                description = description,
-                icon = {
-                    val density = LocalDensity.current
-                    var iconWidth by remember { mutableStateOf(0.dp) }
-                    Box {
-                        ExpressiveRowIcon(
-                            painter = painter,
-                            modifier = Modifier.onSizeChanged {
-                                iconWidth = with(density) {
-                                    it.width.toDp()
-                                }
+        ExpressiveButtonRow(
+            title = title,
+            description = description,
+            icon = {
+                val density = LocalDensity.current
+                var iconWidth by remember { mutableStateOf(0.dp) }
+                Box {
+                    ExpressiveRowIcon(
+                        painter = painter,
+                        modifier = Modifier.onSizeChanged {
+                            iconWidth = with(density) {
+                                it.width.toDp()
                             }
-                        )
-                        language?.let {
-                            TranslationProgressIndicator(
-                                progress = it.translationProgress,
-                                isBase = mainViewModel.baseLanguage.languageCode == language.languageCode,
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .align(Alignment.BottomStart)
-                                    .size(iconWidth)
-                            )
                         }
-                    }
-                },
-                trailingComponent = {
-                    RadioButton(
-                        selected = selected,
-                        onClick = onClick
                     )
-                },
-                onClick = onClick
-            )
-        }
+                    language?.let {
+                        TranslationProgressIndicator(
+                            progress = it.translationProgress,
+                            isBase = mainViewModel.baseLanguage.languageCode == language.languageCode,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .size(iconWidth)
+                        )
+                    }
+                }
+            },
+            trailingComponent = {
+                RadioButton(
+                    selected = selected,
+                    onClick = onClick
+                )
+            },
+            onClick = onClick,
+            modifier = modifier
+        )
     }
 
     AppScaffold(
@@ -180,7 +182,7 @@ fun LanguagePage(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TranslationProgressIndicator(
     progress: Float,
@@ -188,8 +190,9 @@ private fun TranslationProgressIndicator(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
-    val state = rememberTooltipState()
+    val state = rememberTooltipState(isPersistent = true)
     val tooltipText = remember {
         if (isBase) context.getString(R.string.settings_language_progress_base)
         else context.getString(R.string.settings_language_progress_percent)
@@ -205,9 +208,17 @@ private fun TranslationProgressIndicator(
         },
         state = state
     ) {
-        CircularProgressIndicator(
+        CircularWavyProgressIndicator(
             progress = { progress },
-            strokeWidth = 2.dp,
+            stroke = WavyProgressIndicatorDefaults.circularIndicatorStroke.copy(
+                width = with(density) {
+                    2.dp.toPx()
+                }
+            ),
+            amplitude = {
+                if (state.isVisible) 0.8f else 0f
+            },
+            waveSpeed = 5.dp,
             modifier = modifier
                 .combinedClickable(
                     onLongClick = {
@@ -228,6 +239,10 @@ fun TranslationHelp(
     val uriHandler = LocalUriHandler.current
     Card(
         shape = AppComponentShape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(
