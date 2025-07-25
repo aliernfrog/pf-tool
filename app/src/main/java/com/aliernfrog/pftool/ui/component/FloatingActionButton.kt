@@ -1,13 +1,15 @@
 package com.aliernfrog.pftool.ui.component
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -16,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FloatingActionButton(
     icon: ImageVector,
@@ -33,7 +36,7 @@ fun FloatingActionButton(
         contentColor = contentColor
     ) {
         Icon(imageVector = icon, contentDescription = null, tint = contentColor)
-    } else ExtendedFloatingActionButton(
+    } else MediumExtendedFloatingActionButton(
         onClick = onClick,
         modifier = modifier.systemBarsPadding(),
         shape = RoundedCornerShape(16.dp),
@@ -43,7 +46,7 @@ fun FloatingActionButton(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier.padding(end = 12.dp).size(28.dp)
         )
         Text(text)
     }

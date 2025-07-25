@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.rounded.TextFields
@@ -33,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.contentColorFor
@@ -62,7 +66,7 @@ import com.aliernfrog.pftool.util.extension.clickableWithColor
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MapsScreen(
     mapsViewModel: MapsViewModel = koinViewModel(),
@@ -94,6 +98,24 @@ fun MapsScreen(
             title = stringResource(R.string.maps),
             onBackClick = null,
             onNavigateSettingsRequest = onNavigateSettingsRequest,
+            smallFloatingActionButton = {
+                mapsViewModel.chosenMap.let {
+                    AnimatedVisibility(it != null) {
+                        SmallExtendedFloatingActionButton(
+                            onClick = { scope.launch {
+                                mapsViewModel.mapSheetState.expand()
+                            } }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowUp,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 8.dp).size(24.dp)
+                            )
+                            Text(it?.name ?: "")
+                        }
+                    }
+                }
+            },
             onMapPick = {
                 chooseMap(it)
             }
@@ -129,9 +151,10 @@ private fun MapSheetContent(
                 onViewThumbnailRequest = {
                     mapsViewModel.openMapThumbnailViewer(chosenMap)
                 },
-                onMinimizeRequest = {
+                onCloseRequest = {
                     scope.launch {
                         sheetState.hide()
+                        mapsViewModel.chosenMap = null
                     }
                 },
                 modifier = Modifier
@@ -274,7 +297,7 @@ private fun MapCard(
     chosenMap: MapFile,
     showMapThumbnail: Boolean,
     onViewThumbnailRequest: () -> Unit,
-    onMinimizeRequest: () -> Unit,
+    onCloseRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -308,7 +331,7 @@ private fun MapCard(
             )
         }
         FilledIconButton(
-            onClick = onMinimizeRequest,
+            onClick = onCloseRequest,
             shapes = IconButtonDefaults.shapes(),
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)

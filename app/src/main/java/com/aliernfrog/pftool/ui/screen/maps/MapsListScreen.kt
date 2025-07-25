@@ -104,6 +104,7 @@ fun MapsListScreen(
     mapsViewModel: MapsViewModel = koinViewModel(),
     showMultiSelectionOptions: Boolean = true,
     multiSelectFloatingActionButton: @Composable (selectedMaps: List<MapFile>, clearSelection: () -> Unit) -> Unit = { _, _ -> },
+    smallFloatingActionButton: @Composable () -> Unit = {},
     onNavigateSettingsRequest: (() -> Unit)? = null,
     onBackClick: (() -> Unit)?,
     onMapPick: (MapFile) -> Unit
@@ -215,26 +216,32 @@ fun MapsListScreen(
             }
         },
         floatingActionButton = {
-            AnimatedContent(
-                targetState = !isMultiSelecting,
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
-                    .offset(x = 16.dp, y = 16.dp)
-            ) { showStorage ->
-                Box(
-                    // padding so that FAB shadow doesnt get cropped
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    if (showStorage) FloatingActionButton(
-                        icon = Icons.Outlined.SdCard,
-                        text = stringResource(R.string.mapsList_storage),
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-                            launcher.launch(intent)
+            Column {
+                AnimatedContent(
+                    targetState = !isMultiSelecting,
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
+                        .offset(x = 16.dp, y = 16.dp)
+                ) { showStorage ->
+                    Column(
+                        // padding so that FAB shadow doesnt get cropped
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        if (showStorage) {
+                            smallFloatingActionButton()
+                            FloatingActionButton(icon = Icons.Outlined.SdCard,
+                                text = stringResource(R.string.mapsList_storage),
+                                onClick = {
+                                    val intent =
+                                        Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+                                    launcher.launch(intent)
+                                }
+                            )
+                        } else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
+                            mapsListViewModel.selectedMaps.clear()
                         }
-                    ) else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
-                        mapsListViewModel.selectedMaps.clear()
                     }
                 }
             }
