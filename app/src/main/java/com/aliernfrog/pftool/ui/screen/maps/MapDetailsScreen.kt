@@ -75,7 +75,7 @@ fun MapDetailsScreen(
     val scope = rememberCoroutineScope()
 
     val mapNameEdit = rememberSaveable {
-        mutableStateOf(map.name)
+        mutableStateOf(map.name.replace("\n",""))
     }
 
     val isSameName = mapNameEdit.value.let {
@@ -114,7 +114,9 @@ fun MapDetailsScreen(
             }, {
                 TextField(
                     value = mapNameEdit.value,
-                    onValueChange = { mapNameEdit.value = it },
+                    onValueChange = {
+                        mapNameEdit.value = it.replace("\n", "")
+                    },
                     label = { Text(stringResource(R.string.maps_mapName)) },
                     placeholder = { Text(map.name) },
                     singleLine = true,

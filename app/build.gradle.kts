@@ -49,10 +49,8 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
-            optIn.addAll(
-                "kotlin.RequiresOptIn",
-                "-Xannotation-default-target=param-property"
-            )
+            optIn.add("kotlin.RequiresOptIn")
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
         }
     }
 

@@ -222,8 +222,9 @@ enum class MapAction(
 }
 
 private fun resolveMapNameFromArgs(args: List<Any>, fallback: String): String {
-    if (args.isEmpty()) return fallback
-    return (args[0] as String?)?.ifBlank { fallback } ?: fallback
+    val str = if (args.isEmpty()) fallback
+    else (args[0] as String?)?.ifBlank { fallback } ?: fallback
+    return str.replace("\n", "")
 }
 
 private suspend fun runIOAction(
