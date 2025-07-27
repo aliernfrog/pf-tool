@@ -116,6 +116,8 @@ fun MainScreen(
     )
 
     mainViewModel.progressState.currentProgress?.let {
-        ProgressDialog(it) {}
+        ProgressDialog(it) {
+            mainViewModel.progressState.currentProgress = null
+        }
     }
 }

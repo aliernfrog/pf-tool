@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.ui.component.VerticalSegmentor
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
@@ -74,6 +75,21 @@ fun ExperimentalPage(
                 .clip(AppComponentShape)
         ) {
             mainViewModel.prefs.experimentalOptionsEnabled.value = it
+        }
+
+        ExpressiveSection(title = "Progress") {
+            VerticalSegmentor(
+                {
+                    ExpressiveButtonRow(
+                        title = "Set indeterminate progress"
+                    ) {
+                        mainViewModel.progressState.currentProgress = Progress(
+                            description = context.getString(R.string.info_pleaseWait)
+                        )
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
         }
 
         ExpressiveSection(title = "Updates") {
