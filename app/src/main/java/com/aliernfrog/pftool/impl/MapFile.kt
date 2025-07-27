@@ -4,12 +4,15 @@ import android.content.Context
 import android.util.Log
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.data.MapActionResult
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.MapImportedState
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -195,6 +198,36 @@ class MapFile(
         return MapActionResult(
             successful = true,
             newFile = mapsViewModel.exportedMapsFile.findFile(zipName)
+        )
+    }
+
+    suspend fun exportToCustomLocation(
+        context: Context,
+        withName: String
+    ): MapActionResult {
+        val uri = getKoinInstance<MainViewModel>().safZipFileCreator.createFile(suggestedName = withName)
+        if (uri == null) return MapActionResult(
+            successful = false,
+            message = R.string.maps_exportCustomTarget_cancelled
+        )
+        if (this.isZip) file.inputStream(context).use { input ->
+            context.contentResolver.openOutputStream(uri)!!.use { output ->
+                input?.copyTo(output)
+            }
+        } else context.contentResolver.openOutputStream(uri)!!.use { os ->
+            ZipOutputStream(os).use { zos ->
+                file.listFiles().filter {
+                    it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase())
+                }.forEach { file ->
+                    val entry = ZipEntry(file.name)
+                    zos.putNextEntry(entry)
+                    file.inputStream(context)!!.use { it.copyTo(zos) }
+                }
+            }
+        }
+        return MapActionResult(
+            successful = true,
+            newFile = DocumentFileCompat.fromSingleUri(context, uri)
         )
     }
 

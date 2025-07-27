@@ -100,6 +100,10 @@
     <string name="maps_export">Export this map</string>
     <string name="maps_export_short">Export</string>
     <string name="maps_export_description">Export your map and optionally share it</string>
+    <string name="maps_exportCustomTarget">Export to custom location</string>
+    <string name="maps_exportCustomTarget_exported">Exported {NAME} to custom location</string>
+    <string name="maps_exportCustomTarget_exporting">Exporting {NAME}..</string>
+    <string name="maps_exportCustomTarget_cancelled">Export cancelled</string>
     <string name="maps_exported_single">Exported as {NAME}</string>
     <string name="maps_exported_multiple">Exported {COUNT} maps</string>
     <string name="maps_exporting_single">Exporting {NAME} as {NEW_NAME}..</string>
