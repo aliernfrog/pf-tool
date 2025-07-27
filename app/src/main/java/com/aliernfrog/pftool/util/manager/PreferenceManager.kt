@@ -23,6 +23,7 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // Maps options
     val showChosenMapThumbnail = booleanPreference("showChosenMapThumbnail", true)
     val showMapThumbnailsInList = booleanPreference("showMapThumbnailsList", true)
+    val stackupMaps = booleanPreference("stackupMaps", false)
 
     // Storage options
     val pfMapsDir = stringPreference("mapsDir", "${externalStorageRoot}Android/data/com.MA.Polyfield/files/editor", experimental = true)

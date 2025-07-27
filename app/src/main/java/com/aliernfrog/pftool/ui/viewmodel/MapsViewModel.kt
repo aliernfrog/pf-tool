@@ -2,12 +2,9 @@ package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.ScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,22 +34,20 @@ import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
-@OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
     private val progressState: ProgressState,
     private val contextUtils: ContextUtils,
+    private val mainViewModel: MainViewModel,
     val prefs: PreferenceManager
 ) : ViewModel() {
-    val topAppBarState = TopAppBarState(0F, 0F, 0F)
-    val scrollState = ScrollState(0)
-
     val mapsDir: String
         get() = prefs.pfMapsDir.value
     val exportedMapsDir: String
@@ -68,36 +63,36 @@ class MapsViewModel(
     var importedMaps by mutableStateOf(emptyList<MapFile>())
     var exportedMaps by mutableStateOf(emptyList<MapFile>())
     var sharedMaps by mutableStateOf(emptyList<MapFile>())
-    var chosenMap by mutableStateOf<MapFile?>(null)
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
-    var mapNameEdit by mutableStateOf("")
-    var mapListShown by mutableStateOf(true)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
 
     var activeProgress: Progress?
         get() = progressState.currentProgress
         set(value) { progressState.currentProgress = value }
 
-    val mapListBackButtonShown
-        get() = chosenMap != null
-
-    fun chooseMap(map: Any?) {
+    fun viewMapDetails(map: Any) {
         try {
-            val mapToChoose = when (map) {
+            val mapFile = when (map) {
                 is MapFile -> map
                 is FileWrapper -> MapFile(map)
-                else -> if (map == null) null else MapFile(FileWrapper(map))
+                else -> MapFile(FileWrapper(map))
             }
-            if (mapToChoose != null) mapNameEdit = mapToChoose.name
-            chosenMap = mapToChoose
-        } catch (e: Exception) {
+            mainViewModel.navigationBackStack.add(mapFile)
+            if (!mainViewModel.prefs.stackupMaps.value) {
+                mainViewModel.navigationBackStack.removeIf {
+                    it is MapFile && it.path != mapFile.path
+                }
+            }
+        } catch (_: CancellationException) {}
+        catch (e: Exception) {
             topToastState.showErrorToast()
-            Log.e(TAG, "chooseMap: ", e)
+            Log.e(TAG, "viewMapDetails: ", e)
         }
     }
 
     suspend fun deletePendingMaps(context: Context) {
         mapsPendingDelete?.let { maps ->
+            mapsPendingDelete = null
             if (maps.isEmpty()) return@let
             val first = maps.first()
             val total = maps.size
@@ -129,11 +124,12 @@ class MapsViewModel(
                     icon = Icons.Rounded.Delete
                 )
             }
-            chosenMap?.path?.let { path ->
-                if (maps.map { it.path }.contains(path)) chooseMap(null)
+            mainViewModel.navigationBackStack.removeIf {
+                it is MapFile && maps.any { map ->
+                    map.path == it.path
+                }
             }
         }
-        mapsPendingDelete = null
         loadMaps(context)
         activeProgress = null
     }
@@ -165,10 +161,6 @@ class MapsViewModel(
                 }
             } }
         ))
-    }
-
-    fun resolveMapNameInput(): String {
-        return mapNameEdit.ifBlank { chosenMap?.name ?: "" }
     }
 
     fun showActionFailedDialog(successes: List<Pair<String, MapActionResult>>, fails: List<Pair<String, MapActionResult>>) {

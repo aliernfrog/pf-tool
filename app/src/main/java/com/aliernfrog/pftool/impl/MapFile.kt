@@ -97,9 +97,9 @@ class MapFile(
      * Renames the map.
      */
     fun rename(
-        newName: String = resolveMapNameInput()
+        newName: String
     ): MapActionResult {
-        val toName = fileName.replace(name, newName)
+        val toName = fileName.replaceFirst(name, newName)
         if (file.parentFile?.findFile(toName)?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
@@ -116,7 +116,7 @@ class MapFile(
      */
     fun duplicate(
         context: Context,
-        newName: String = mapsViewModel.resolveMapNameInput()
+        newName: String
     ): MapActionResult {
         val outputName = fileName.replace(name, newName)
         if (file.parentFile?.findFile(outputName)?.exists() == true) return MapActionResult(
@@ -138,7 +138,7 @@ class MapFile(
      */
     fun import(
         context: Context,
-        withName: String = resolveMapNameInput()
+        withName: String = this.name
     ): MapActionResult {
         if (importedState == MapImportedState.IMPORTED) return MapActionResult(successful = false)
         var outputFolder = mapsViewModel.mapsFile.findFile(withName)
@@ -171,7 +171,7 @@ class MapFile(
      */
     fun export(
         context: Context,
-        withName: String = resolveMapNameInput()
+        withName: String = this.name
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
         val zipName = "$withName.zip"
@@ -209,14 +209,7 @@ class MapFile(
     fun getThumbnailFile() = if (importedState != MapImportedState.IMPORTED) null
     else file.findFile(thumbnailFileName)
 
-    /**
-     * Returns the user-provided map name if this map is chosen.
-     */
-    fun resolveMapNameInput(): String {
-        return if (mapsViewModel.chosenMap?.path == path) mapsViewModel.resolveMapNameInput() else name
-    }
-
-    suspend fun runInIOThreadSafe(block: () -> Unit) {
+    suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
             try {
                 block()
