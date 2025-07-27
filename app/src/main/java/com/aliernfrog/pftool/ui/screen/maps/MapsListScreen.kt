@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,10 +56,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -92,6 +96,8 @@ import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
@@ -110,12 +116,15 @@ fun MapsListScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
     val isMultiSelecting = mapsListViewModel.selectedMaps.isNotEmpty()
     val listStylePref = mapsListViewModel.prefs.mapsListViewOptions.styleGroup.getCurrent()
     val gridMaxLineSpanPref = mapsListViewModel.prefs.mapsListViewOptions.gridMaxLineSpanGroup.getCurrent()
     val listStyle = ListStyle.entries[listStylePref.value]
     val showMapThumbnails = mapsListViewModel.prefs.showMapThumbnailsInList.value
     var multiSelectionDropdownShown by remember { mutableStateOf(false) }
+
+    var firstVisibleItemIndex by remember { mutableIntStateOf(0) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -215,31 +224,29 @@ fun MapsListScreen(
             }
         },
         floatingActionButton = {
-            Column {
-                AnimatedContent(
-                    targetState = !isMultiSelecting,
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
-                        .offset(x = 16.dp, y = 16.dp)
-                ) { showStorage ->
-                    Column(
-                        // padding so that FAB shadow doesnt get cropped
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        if (showStorage) {
-                            FloatingActionButton(icon = Icons.Outlined.SdCard,
-                                text = stringResource(R.string.mapsList_storage),
-                                onClick = {
-                                    val intent =
-                                        Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-                                    launcher.launch(intent)
-                                }
-                            )
-                        } else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
-                            mapsListViewModel.selectedMaps.clear()
-                        }
+            AnimatedContent(
+                targetState = !isMultiSelecting,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
+                    .offset(x = 16.dp, y = 16.dp)
+            ) { showStorage ->
+                Box(
+                    // padding so that FAB shadow doesnt get cropped
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    if (showStorage) {
+                        FloatingActionButton(icon = Icons.Outlined.SdCard,
+                            text = stringResource(R.string.mapsList_storage),
+                            showText = firstVisibleItemIndex < 1,
+                            onClick = {
+                                val intent =
+                                    Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+                                launcher.launch(intent)
+                            }
+                        )
+                    } else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
+                        mapsListViewModel.selectedMaps.clear()
                     }
                 }
             }
@@ -292,13 +299,29 @@ fun MapsListScreen(
             state = mapsListViewModel.pagerState,
             beyondViewportPageCount = 1
         ) { page ->
+            val lazyListState = rememberLazyListState()
+            val lazyGridState = rememberLazyGridState()
+
             val segment = mapsListViewModel.availableSegments[page]
             val mapsToShow = mapsListViewModel.getFilteredMaps(segment)
+
+            LaunchedEffect(lazyListState) {
+                snapshotFlow { lazyListState.firstVisibleItemIndex }
+                    .distinctUntilChanged()
+                    .collectLatest { firstVisibleItemIndex = it }
+            }
+
+            LaunchedEffect(lazyGridState) {
+                snapshotFlow { lazyGridState.firstVisibleItemIndex }
+                    .distinctUntilChanged()
+                    .collectLatest { firstVisibleItemIndex = it }
+            }
 
             AnimatedContent(targetState = listStyle) { style ->
                 when (style) {
                     ListStyle.LIST -> LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        state = lazyListState
                     ) {
                         item {
                             Header(segment, page, mapsToShow, Modifier.padding(horizontal = 12.dp))
@@ -326,6 +349,7 @@ fun MapsListScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 10.dp),
+                        state = lazyGridState,
                         maxLineSpan = gridMaxLineSpanPref.value
                     ) { maxLineSpan: Int ->
                         item(span = { GridItemSpan(maxLineSpan) }) {
