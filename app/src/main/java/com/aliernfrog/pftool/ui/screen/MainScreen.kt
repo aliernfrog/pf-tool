@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
+import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
 import com.aliernfrog.pftool.ui.screen.settings.SettingsDestination
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
@@ -26,12 +28,40 @@ import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@Suppress("MoveLambdaOutsideParentheses")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
+
+    val onNavigateSettingsRequest: () -> Unit = {
+        mainViewModel.navigationBackStack.add(SettingsDestination.ROOT)
+    }
+    val onNavigateBackRequest: () -> Unit = {
+        mainViewModel.navigationBackStack.removeLastIfMultiple()
+    }
+
+    val slideTransitionMetadata = NavDisplay.transitionSpec {
+        slideIntoContainer(
+            AnimatedContentTransitionScope.SlideDirection.Start
+        ) + fadeIn() togetherWith slideOutOfContainer(
+            AnimatedContentTransitionScope.SlideDirection.Start
+        ) + fadeOut()
+    } + NavDisplay.popTransitionSpec {
+        slideIntoContainer(
+            AnimatedContentTransitionScope.SlideDirection.End
+        ) togetherWith slideOutOfContainer(
+            AnimatedContentTransitionScope.SlideDirection.End
+        )
+    } + NavDisplay.predictivePopTransitionSpec {
+        slideIntoContainer(
+            AnimatedContentTransitionScope.SlideDirection.End
+        ) togetherWith slideOutOfContainer(
+            AnimatedContentTransitionScope.SlideDirection.End
+        )
+    }
 
     BaseScaffold { paddingValues ->
         NavDisplay(
@@ -46,42 +76,30 @@ fun MainScreen(
                     when (destination) {
                         Destination.MAPS -> {
                             MapsPermissionsScreen(
-                                onNavigateSettingsRequest = {
-                                    mainViewModel.navigationBackStack.add(SettingsDestination.ROOT)
-                                }
+                                onNavigateSettingsRequest = onNavigateSettingsRequest
                             )
                         }
                     }
                 }
 
                 entry<SettingsDestination>(
-                    metadata = NavDisplay.transitionSpec {
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Start
-                        ) + fadeIn() togetherWith slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Start
-                        ) + fadeOut()
-                    } + NavDisplay.popTransitionSpec {
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.End
-                        ) togetherWith slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.End
-                        )
-                    } + NavDisplay.predictivePopTransitionSpec {
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.End
-                        ) togetherWith slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.End
-                        )
-                    }
+                    metadata = slideTransitionMetadata
                 ) { destination ->
                     destination.content(
-                        /* onNavigateBackRequest = */ {
-                            mainViewModel.navigationBackStack.removeLastIfMultiple()
-                        },
-                        /* onNavigateRequest */ {
+                        /* onNavigateBackRequest = */ onNavigateBackRequest,
+                        /* onNavigateRequest = */ {
                             mainViewModel.navigationBackStack.add(it)
                         }
+                    )
+                }
+
+                entry<MapFile>(
+                    metadata = slideTransitionMetadata
+                ) { map ->
+                    MapsScreen(
+                        map = map,
+                        onNavigateSettingsRequest = onNavigateSettingsRequest,
+                        onNavigateBackRequest = onNavigateBackRequest
                     )
                 }
             }

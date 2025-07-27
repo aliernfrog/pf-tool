@@ -62,12 +62,12 @@ enum class MapAction(
         icon = Icons.Rounded.Edit,
         availableForMultiSelection = false,
         availableFor = {
-            it.importedState != MapImportedState.NONE && it.resolveMapNameInput() != it.name
+            it.importedState != MapImportedState.NONE
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
             val first = maps.first()
-            val newName = first.resolveMapNameInput()
+            val newName = resolveMapNameFromArgs(args, first.name)
             first.mapsViewModel.activeProgress = Progress(
                 description = context.getString(R.string.maps_renaming)
                     .replace("{NAME}", first.name)
@@ -79,7 +79,7 @@ enum class MapAction(
                     text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
-                    first.mapsViewModel.viewMap(it)
+                    first.mapsViewModel.viewMapDetails(it)
                 }
                 first.topToastState.showToast(
                     text = context.getString(result.message ?: R.string.maps_renamed)
@@ -98,9 +98,9 @@ enum class MapAction(
         availableForMultiSelection = false,
         availableFor = RENAME.availableFor
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
             val first = maps.first()
-            val newName = first.resolveMapNameInput()
+            val newName = resolveMapNameFromArgs(args, first.name)
             first.mapsViewModel.activeProgress = Progress(
                 description = context.getString(R.string.maps_duplicating)
                     .replace("{NAME}", first.name)
@@ -112,7 +112,7 @@ enum class MapAction(
                     text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
-                    first.mapsViewModel.viewMap(it)
+                    first.mapsViewModel.viewMapDetails(it)
                 }
                 first.topToastState.showToast(
                     text = context.getString(result.message ?: R.string.maps_duplicated)
@@ -133,17 +133,22 @@ enum class MapAction(
             it.isZip && it.importedState != MapImportedState.IMPORTED
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
             runIOAction(
                 *maps,
+                context = context,
                 singleSuccessMessageId = R.string.maps_imported_single,
                 multipleSuccessMessageId = R.string.maps_imported_multiple,
                 singleProcessingMessageId = R.string.maps_importing_single,
                 multipleProcessingMessageId = R.string.maps_importing_multiple,
                 successIcon = icon,
-                result = { it.import(context) },
-                context = context
-            )
+                newName = resolveMapNameFromArgs(args, maps.first().name)
+            ) { map ->
+                map.import(
+                    context,
+                    withName = resolveMapNameFromArgs(args, map.name)
+                )
+            }
         }
     },
 
@@ -156,17 +161,22 @@ enum class MapAction(
             !it.isZip && it.importedState == MapImportedState.IMPORTED
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
             runIOAction(
                 *maps,
+                context = context,
                 singleSuccessMessageId = R.string.maps_exported_single,
                 multipleSuccessMessageId = R.string.maps_exported_multiple,
                 singleProcessingMessageId = R.string.maps_exporting_single,
                 multipleProcessingMessageId = R.string.maps_exporting_multiple,
                 successIcon = icon,
-                result = { it.export(context) },
-                context = context
-            )
+                newName = resolveMapNameFromArgs(args, maps.first().name)
+            ) { map ->
+                map.export(
+                    context,
+                    withName = resolveMapNameFromArgs(args, map.name)
+                )
+            }
         }
     },
 
@@ -178,7 +188,7 @@ enum class MapAction(
             it.isZip
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
             val first = maps.first()
             val files = maps.map { it.file }
             first.mapsViewModel.activeProgress = Progress(
@@ -200,7 +210,7 @@ enum class MapAction(
             it.importedState != MapImportedState.NONE
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
             maps.first().mapsViewModel.mapsPendingDelete = maps.toList()
         }
     };
@@ -208,18 +218,24 @@ enum class MapAction(
     /**
      * Executes the action for [maps].
      */
-    abstract suspend fun execute(context: Context, vararg maps: MapFile)
+    abstract suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any> = emptyList())
+}
+
+private fun resolveMapNameFromArgs(args: List<Any>, fallback: String): String {
+    if (args.isEmpty()) return fallback
+    return (args[0] as String?)?.ifBlank { fallback } ?: fallback
 }
 
 private suspend fun runIOAction(
     vararg maps: MapFile,
+    context: Context,
     singleSuccessMessageId: Int,
     multipleSuccessMessageId: Int,
     singleProcessingMessageId: Int,
     multipleProcessingMessageId: Int,
     successIcon: ImageVector,
-    result: (MapFile) -> MapActionResult,
-    context: Context
+    newName: String,
+    result: (MapFile) -> MapActionResult
 ) {
     val first = maps.first()
     val total = maps.size
@@ -230,7 +246,7 @@ private suspend fun runIOAction(
         return Progress(
             description = if (isSingle) context.getString(singleProcessingMessageId)
                 .replace("{NAME}", first.name)
-                .replace("{NEW_NAME}", first.resolveMapNameInput())
+                .replace("{NEW_NAME}", newName)
             else context.getString(multipleProcessingMessageId)
                 .replace("{DONE}", passedProgress.toString())
                 .replace("{TOTAL}", total.toString()),
@@ -245,7 +261,7 @@ private suspend fun runIOAction(
             val executionResult = result(it)
             passedProgress++
             first.mapsViewModel.activeProgress = getProgress()
-            it.resolveMapNameInput() to executionResult
+            it.name to executionResult
         }
         if (isSingle) results.first().let { (mapName, result) ->
             if (result.successful) first.topToastState.showToast(
@@ -254,7 +270,7 @@ private suspend fun runIOAction(
             ) else first.topToastState.showErrorToast(
                 text = context.getString(result.message ?: R.string.warning_error)
             )
-            result.newFile?.let { first.mapsViewModel.viewMap(it) }
+            result.newFile?.let { first.mapsViewModel.viewMapDetails(it) }
         } else {
             val successes = results.filter { it.second.successful }
             val fails = results.filter { !it.second.successful }

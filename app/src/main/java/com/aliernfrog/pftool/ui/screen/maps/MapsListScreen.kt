@@ -104,7 +104,6 @@ fun MapsListScreen(
     mapsViewModel: MapsViewModel = koinViewModel(),
     showMultiSelectionOptions: Boolean = true,
     multiSelectFloatingActionButton: @Composable (selectedMaps: List<MapFile>, clearSelection: () -> Unit) -> Unit = { _, _ -> },
-    smallFloatingActionButton: @Composable () -> Unit = {},
     onNavigateSettingsRequest: (() -> Unit)? = null,
     onBackClick: (() -> Unit)?,
     onMapPick: (MapFile) -> Unit
@@ -230,7 +229,6 @@ fun MapsListScreen(
                         horizontalAlignment = Alignment.End
                     ) {
                         if (showStorage) {
-                            smallFloatingActionButton()
                             FloatingActionButton(icon = Icons.Outlined.SdCard,
                                 text = stringResource(R.string.mapsList_storage),
                                 onClick = {

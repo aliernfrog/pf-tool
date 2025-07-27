@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -13,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Density
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
@@ -28,7 +26,6 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
-import com.aliernfrog.pftool.ui.component.createSheetStateWithDensity
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -44,16 +41,13 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
-@OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
     private val progressState: ProgressState,
     private val contextUtils: ContextUtils,
-    val prefs: PreferenceManager,
-    context: Context
+    private val mainViewModel: MainViewModel,
+    val prefs: PreferenceManager
 ) : ViewModel() {
-    val mapSheetState = createSheetStateWithDensity(skipPartiallyExpanded = true, Density(context))
-
     val mapsDir: String
         get() = prefs.pfMapsDir.value
     val exportedMapsDir: String
@@ -69,36 +63,25 @@ class MapsViewModel(
     var importedMaps by mutableStateOf(emptyList<MapFile>())
     var exportedMaps by mutableStateOf(emptyList<MapFile>())
     var sharedMaps by mutableStateOf(emptyList<MapFile>())
-    var chosenMap by mutableStateOf<MapFile?>(null)
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
-    var mapNameEdit by mutableStateOf("")
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
 
     var activeProgress: Progress?
         get() = progressState.currentProgress
         set(value) { progressState.currentProgress = value }
 
-    suspend fun viewMap(map: Any?) {
+    fun viewMapDetails(map: Any) {
         try {
-            val mapToChoose = when (map) {
+            val mapFile = when (map) {
                 is MapFile -> map
                 is FileWrapper -> MapFile(map)
-                else -> if (map == null) null else MapFile(FileWrapper(map))
+                else -> MapFile(FileWrapper(map))
             }
-            withContext(Dispatchers.Main) {
-                if (mapToChoose != null) {
-                    chosenMap = mapToChoose
-                    mapNameEdit = mapToChoose.name
-                    mapSheetState.expand()
-                } else {
-                    mapSheetState.hide()
-                    chosenMap = null
-                }
-            }
+            mainViewModel.navigationBackStack.add(mapFile)
         } catch (_: CancellationException) {}
         catch (e: Exception) {
             topToastState.showErrorToast()
-            Log.e(TAG, "viewMap: ", e)
+            Log.e(TAG, "viewMapDetails: ", e)
         }
     }
 
@@ -136,8 +119,10 @@ class MapsViewModel(
                     icon = Icons.Rounded.Delete
                 )
             }
-            chosenMap?.path?.let { path ->
-                if (maps.map { it.path }.contains(path)) viewMap(null)
+            mainViewModel.navigationBackStack.removeIf {
+                it is MapFile && maps.any { map ->
+                    map.path == it.path
+                }
             }
         }
         loadMaps(context)
@@ -171,10 +156,6 @@ class MapsViewModel(
                 }
             } }
         ))
-    }
-
-    fun resolveMapNameInput(): String {
-        return mapNameEdit.ifBlank { chosenMap?.name ?: "" }
     }
 
     fun showActionFailedDialog(successes: List<Pair<String, MapActionResult>>, fails: List<Pair<String, MapActionResult>>) {

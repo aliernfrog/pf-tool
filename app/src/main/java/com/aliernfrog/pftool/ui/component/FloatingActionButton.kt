@@ -9,7 +9,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumExtendedFloatingActionButton
+import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -36,7 +36,7 @@ fun FloatingActionButton(
         contentColor = contentColor
     ) {
         Icon(imageVector = icon, contentDescription = null, tint = contentColor)
-    } else MediumExtendedFloatingActionButton(
+    } else SmallExtendedFloatingActionButton(
         onClick = onClick,
         modifier = modifier.systemBarsPadding(),
         shape = RoundedCornerShape(16.dp),
@@ -46,7 +46,7 @@ fun FloatingActionButton(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.padding(end = 12.dp).size(28.dp)
+            modifier = Modifier.padding(end = 8.dp).size(24.dp)
         )
         Text(text)
     }
