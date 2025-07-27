@@ -1,5 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 plugins {
@@ -18,7 +22,7 @@ android {
     defaultConfig {
         applicationId = "com.aliernfrog.pftool"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 110100
         versionName = "1.10.1"
         vectorDrawables { useSupportLibrary = true }
@@ -42,9 +46,14 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+            optIn.addAll(
+                "kotlin.RequiresOptIn",
+                "-Xannotation-default-target=param-property"
+            )
+        }
     }
 
     buildFeatures {
@@ -67,10 +76,10 @@ val baseStrings = "$resDirPath/values/strings.xml"
 var translatableStringsCount = 0
 
 // Get translatable strings count from base strings.xml
-val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-val baseStringsDoc = documentBuilder.parse(project.file(baseStrings))
+val documentBuilder: DocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+val baseStringsDoc: Document = documentBuilder.parse(project.file(baseStrings))
 baseStringsDoc.documentElement.normalize()
-val baseStringsNodeList = baseStringsDoc.getElementsByTagName("string")
+val baseStringsNodeList: NodeList = baseStringsDoc.getElementsByTagName("string")
 for (i in 0 until baseStringsNodeList.length) {
     val node = baseStringsNodeList.item(i)
     if (node.nodeType == Node.ELEMENT_NODE) {
