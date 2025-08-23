@@ -32,6 +32,10 @@ Shizuku method in PF Tool can be enabled or disabled anytime from settings.
 
 Shizuku method will automatically be enabled if there is no other way for the app to access Polyfield data. The app will guide you to setup Shizuku if this mode is enabled.
 
+## ⚖️ License
+Since commit [`dfc783f`](https://github.com/aliernfrog/pf-tool/commit/dfc783f9b0740e357f229175c0be94d1bdeadda5), PF Tool is licensed under the GPLv3 license.<br />
+You must keep the source code public if you are distributing your own version of PF Tool. See [LICENSE.md](LICENSE.md) file for more details.
+
 ## 🔧 Building
 <details>
   <summary>Using GitHub Actions</summary>
