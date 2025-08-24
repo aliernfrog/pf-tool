@@ -202,6 +202,7 @@ enum class MapAction(
                     icon = Icons.AutoMirrored.Filled.AddToHomeScreen
                 )
                 else first.topToastState.showErrorToast(result.message ?: R.string.warning_error)
+                result.newFile?.let { first.mapsViewModel.viewMapDetails(it) }
             }
             first.mapsViewModel.activeProgress = null
         }
