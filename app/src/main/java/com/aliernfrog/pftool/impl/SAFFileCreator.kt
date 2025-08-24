@@ -6,11 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resumeWithException
 
-class SAFZipFileCreator(activity: AppCompatActivity) {
+class SAFFileCreator(activity: AppCompatActivity, mimeType: String) {
     private var continuation: ((Uri?) -> Unit)? = null
 
     private val createDocumentLauncher = activity.registerForActivityResult(
-        ActivityResultContracts.CreateDocument("application/zip")
+        ActivityResultContracts.CreateDocument(mimeType)
     ) { uri ->
         continuation?.invoke(uri)
         continuation = null
