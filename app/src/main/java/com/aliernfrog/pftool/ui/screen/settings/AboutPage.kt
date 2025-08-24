@@ -112,8 +112,11 @@ fun AboutPage(
                             Text(
                                 text = mainViewModel.applicationVersionLabel,
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.clickable {
-                                    settingsViewModel.onAboutClick()
+                                modifier = Modifier.let {
+                                    if (settingsViewModel.prefs.experimentalOptionsEnabled.value) it
+                                    else it.clickable {
+                                        settingsViewModel.onAboutClick()
+                                    }
                                 }
                             )
                         }

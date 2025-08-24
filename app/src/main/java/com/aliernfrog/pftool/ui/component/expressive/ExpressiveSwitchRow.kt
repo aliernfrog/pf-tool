@@ -1,11 +1,6 @@
 package com.aliernfrog.pftool.ui.component.expressive
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.contentColorFor
@@ -14,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun ExpressiveSwitchRow(
@@ -44,14 +38,7 @@ fun ExpressiveSwitchRow(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 enabled = enabled,
-                interactionSource = interactionSource,
-                thumbContent = if (checked) { {
-                    Icon(
-                        imageVector = if (checked) Icons.Default.Check else Icons.Default.Close,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                    )
-                } } else null
+                interactionSource = interactionSource
             )
         },
         containerColor = containerColor,
