@@ -33,6 +33,7 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
+import com.aliernfrog.pftool.impl.SAFFileCreator
 import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
 import com.aliernfrog.pftool.ui.component.createSheetStateWithDensity
 import com.aliernfrog.pftool.util.NavigationConstant
@@ -62,6 +63,7 @@ class MainViewModel(
     val progressState: ProgressState
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
+    lateinit var safZipFileCreator: SAFFileCreator
     val updateSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
 
     val navigationBackStack = mutableStateListOf<Any>(
@@ -71,6 +73,8 @@ class MainViewModel(
     private val applicationVersionName = "v${GeneralUtil.getAppVersionName(context)}"
     private val applicationVersionCode = GeneralUtil.getAppVersionCode(context)
     private val applicationIsPreRelease = applicationVersionName.contains("-alpha")
+
+    @Suppress("KotlinConstantConditions")
     val applicationVersionLabel = "$applicationVersionName (${
         BuildConfig.GIT_COMMIT.ifBlank { applicationVersionCode.toString() }
     }${

@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.enum
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.AddToHomeScreen
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Edit
@@ -177,6 +178,33 @@ enum class MapAction(
                     withName = resolveMapNameFromArgs(args, map.name)
                 )
             }
+        }
+    },
+
+    EXPORT_CUSTOM_TARGET(
+        shortLabel = R.string.maps_exportCustomTarget,
+        icon = Icons.AutoMirrored.Filled.AddToHomeScreen,
+        availableForMultiSelection = false,
+        availableFor = { true }
+    ) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+            val first = maps.first()
+            val withName = resolveMapNameFromArgs(args, first.name)
+            first.mapsViewModel.activeProgress = Progress(
+                description = context.getString(R.string.maps_exportCustomTarget_exporting)
+                    .replace("{NAME}", first.name)
+            )
+            first.runInIOThreadSafe {
+                val result = first.exportToCustomLocation(context, withName)
+                if (result.successful) first.topToastState.showToast(
+                    text = context.getString(R.string.maps_exportCustomTarget_exported)
+                        .replace("{NAME}", first.name),
+                    icon = Icons.AutoMirrored.Filled.AddToHomeScreen
+                )
+                else first.topToastState.showErrorToast(result.message ?: R.string.warning_error)
+                result.newFile?.let { first.mapsViewModel.viewMapDetails(it) }
+            }
+            first.mapsViewModel.activeProgress = null
         }
     },
 
