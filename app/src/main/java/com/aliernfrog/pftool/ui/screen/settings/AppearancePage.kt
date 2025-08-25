@@ -2,10 +2,16 @@ package com.aliernfrog.pftool.ui.screen.settings
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Contrast
 import androidx.compose.material3.Icon
@@ -21,10 +28,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -60,45 +71,79 @@ fun AppearancePage(
             ) {
                 Theme.entries.forEach { theme ->
                     val selected = settingsViewModel.prefs.theme.value == theme.ordinal
-                    val containerColor = animateColorAsState(
+                    val isLightThemeItem = theme == Theme.LIGHT
+                    val containerColor by animateColorAsState(
                         if (selected) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.surfaceContainerHigh
                     )
-                    val contentColor = animateColorAsState(
+                    val contentColor by animateColorAsState(
                         if (selected) MaterialTheme.colorScheme.onPrimary
                         else MaterialTheme.colorScheme.onSurface
                     )
-                    val shape = animateDpAsState(
-                        if (selected) AppRoundnessSize+16.dp else AppRoundnessSize
+                    val roundness by animateDpAsState(
+                        if (selected) AppRoundnessSize else AppRoundnessSize+16.dp
                     )
 
-                    CompositionLocalProvider(LocalContentColor provides contentColor.value) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(shape.value))
-                                .background(containerColor.value)
-                                .clickable {
-                                    settingsViewModel.prefs.theme.value = theme.ordinal
-                                }
-                                .padding(vertical = 32.dp)
+                    val rotation = remember { Animatable(
+                        if (isLightThemeItem && selected) 90f else 0f
+                    ) }
+
+                    LaunchedEffect(selected) {
+                        if (isLightThemeItem) rotation.animateTo(
+                            targetValue = if (selected) 90f else 0f,
+                            animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+                        )
+                    }
+
+                    CompositionLocalProvider(LocalContentColor provides contentColor) {
+                        Box(
+                            Modifier.weight(1f)
                         ) {
-                            AnimatedContent(
-                                targetState = selected
-                            ) { useFilled ->
-                                Icon(
-                                    imageVector = if (useFilled) theme.filledIcon else theme.outlinedIcon,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(32.dp)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(roundness))
+                                    .background(containerColor)
+                                    .clickable {
+                                        settingsViewModel.prefs.theme.value = theme.ordinal
+                                    }
+                                    .padding(vertical = 32.dp)
+                            ) {
+                                AnimatedContent(
+                                    targetState = selected
+                                ) { useFilled ->
+                                    Icon(
+                                        imageVector = if (useFilled) theme.filledIcon else theme.outlinedIcon,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .graphicsLayer {
+                                                rotationZ = rotation.value
+                                            }
+                                    )
+                                }
+                                Text(
+                                    text = stringResource(theme.label),
+                                    style = MaterialTheme.typography.labelLarge
                                 )
                             }
-                            Text(
-                                text = stringResource(theme.label),
-                                style = MaterialTheme.typography.labelLarge
-                            )
+
+                            androidx.compose.animation.AnimatedVisibility(
+                                visible = selected,
+                                enter = fadeIn(),
+                                exit = fadeOut(),
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.RadioButtonChecked,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
                 }
