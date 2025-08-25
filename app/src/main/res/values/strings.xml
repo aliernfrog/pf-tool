@@ -168,11 +168,11 @@
     <string name="settings_storage_storageAccessType_allFiles">All files access (legacy)</string>
     <string name="settings_storage_storageAccessType_allFiles_description">Access all files, this may be easier to setup</string>
     <string name="settings_storage_folders">Folders</string>
-    <string name="settings_storage_folders_default">Default: %s</string>
     <string name="settings_storage_folders_notSet">Not configured</string>
     <string name="settings_storage_folders_recommendedFolder">Recommended folder</string>
     <string name="settings_storage_folders_choose">Choose folder</string>
     <string name="settings_storage_folders_openRecommended">Open recommended folder</string>
+    <string name="settings_storage_folders_openCurrent">Open current folder</string>
     <string name="settings_storage_folders_openAndroidData">Open Android/data folder</string>
     <string name="settings_storage_folders_restoreDefault">Restore default</string>
     <string name="settings_storage_folders_maps">Maps folder</string>
