@@ -111,9 +111,8 @@ fun AppearancePage(
                                     }
                                     .padding(vertical = 32.dp)
                             ) {
-                                AnimatedContent(
-                                    targetState = selected
-                                ) { useFilled ->
+                                @Composable
+                                fun ThemeIcon(useFilled: Boolean) {
                                     Icon(
                                         imageVector = if (useFilled) theme.filledIcon else theme.outlinedIcon,
                                         contentDescription = null,
@@ -124,6 +123,14 @@ fun AppearancePage(
                                             }
                                     )
                                 }
+
+                                if (isLightThemeItem) ThemeIcon(useFilled = selected)
+                                else AnimatedContent(
+                                    targetState = selected
+                                ) { useFilled ->
+                                    ThemeIcon(useFilled = useFilled)
+                                }
+
                                 Text(
                                     text = stringResource(theme.label),
                                     style = MaterialTheme.typography.labelLarge
