@@ -153,7 +153,7 @@ private fun FolderConfiguration(
             val pref = prefEditItem.preference(prefs)
             val label = prefEditItem.label(prefs).resolveString()
 
-            if (rawPathInput) RawPathInput(
+            if (rawPathInput) RawPathItem(
                 label = label,
                 pref = pref,
                 onPickFolderRequest = {
@@ -181,7 +181,7 @@ private fun FolderConfiguration(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun RawPathInput(
+fun RawPathItem(
     label: String,
     pref: BasePreferenceManager.Preference<String>,
     onPickFolderRequest: () -> Unit
@@ -209,7 +209,7 @@ fun RawPathInput(
         )
 
         FadeVisibility(!isDefault) {
-            if (!isDefault) SuggestionCard(
+            SuggestionCard(
                 title = stringResource(R.string.settings_storage_folders_restoreDefault),
                 description = pref.defaultValue
             ) {
