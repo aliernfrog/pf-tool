@@ -8,7 +8,9 @@
   <br>
 
   [![Download](https://img.shields.io/github/v/tag/aliernfrog/pf-tool?style=for-the-badge&label=Download)](https://github.com/aliernfrog/pf-tool/releases/latest/download/pftool.apk)
-
+  
+  <i style="font-size: 0.7rem;">At least <b>Android 5.0</b> is required</i>
+  
   <br>
 
   ![Download count](https://img.shields.io/github/downloads/aliernfrog/pf-tool/total?style=for-the-badge&label=Download%20Count)
@@ -16,7 +18,8 @@
 
   ---
   
-  <img alt="PF Tool screenshot" src="images/maps.jpg" width="200px"/>
+  <img alt="PF Tool screenshot (dark)" src="images/maps.jpg" width="150px"/>
+  <img alt="PF Tool screenshot (light)" src="images/maps_light.jpg" width="150px" style="margin-left: 16px;"/>
   
 </div>
 
