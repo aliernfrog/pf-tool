@@ -158,7 +158,6 @@
     <string name="settings_storage_storageAccessType_allFiles">所有文件访问（遗留）</string>
     <string name="settings_storage_storageAccessType_allFiles_description">访问所有文件，这可能更容易设置</string>
     <string name="settings_storage_folders">文件夹设置</string>
-    <string name="settings_storage_folders_default">默认值：%s</string>
     <string name="settings_storage_folders_notSet">未配置</string>
     <string name="settings_storage_folders_recommendedFolder">推荐的文件夹</string>
     <string name="settings_storage_folders_choose">选择文件夹</string>

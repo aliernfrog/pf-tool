@@ -24,9 +24,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -58,13 +57,15 @@ import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSwitchRow
 import com.aliernfrog.pftool.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
+import com.aliernfrog.pftool.ui.component.expressive.toRowFriendlyColor
+import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.extension.resolveString
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutPage(
     mainViewModel: MainViewModel = koinViewModel(),
@@ -84,82 +85,80 @@ fun AboutPage(
         title = stringResource(R.string.settings_about),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        VerticalSegmentor(
-            {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .clip(AppComponentShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .padding(vertical = 8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    bitmap = appIcon,
+                    contentDescription = stringResource(R.string.app_name),
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .size(72.dp)
+                )
+                Column {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleLargeEmphasized
+                    )
+                    Text(
+                        text = mainViewModel.applicationVersionLabel,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.let {
+                            if (settingsViewModel.prefs.experimentalOptionsEnabled.value) it
+                            else it.clickable {
+                                settingsViewModel.onAboutClick()
+                            }
+                        }
+                    )
+                }
+            }
+
+            ChangelogButton(
+                updateAvailable = mainViewModel.updateAvailable
+            ) { scope.launch {
+                mainViewModel.updateSheetState.show()
+            } }
+
+            val socialButtons: List<@Composable () -> Unit> = SettingsConstant.socials.map { social -> {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .clickable {
+                            uriHandler.openUri(social.url)
+                        }
                         .padding(vertical = 8.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            bitmap = appIcon,
-                            contentDescription = stringResource(R.string.app_name),
-                            modifier = Modifier
-                                .padding(end = 16.dp)
-                                .size(72.dp)
-                        )
-                        Column {
-                            Text(
-                                text = stringResource(R.string.app_name),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = mainViewModel.applicationVersionLabel,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.let {
-                                    if (settingsViewModel.prefs.experimentalOptionsEnabled.value) it
-                                    else it.clickable {
-                                        settingsViewModel.onAboutClick()
-                                    }
-                                }
-                            )
-                        }
-                    }
-                    ChangelogButton(
-                        updateAvailable = mainViewModel.updateAvailable
-                    ) { scope.launch {
-                        mainViewModel.updateSheetState.show()
-                    } }
+                    ExpressiveRowIcon(
+                        painter = when (val icon = social.icon) {
+                            is Int -> painterResource(icon)
+                            is ImageVector -> rememberVectorPainter(icon)
+                            else -> throw IllegalArgumentException("unexpected class for social icon")
+                        },
+                        containerColor = social.iconContainerColor.toRowFriendlyColor
+                    )
+                    Text(social.label)
                 }
-            }, {
-                val socialButtons: List<@Composable () -> Unit> = SettingsConstant.socials.map { social -> {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .clickable {
-                                uriHandler.openUri(social.url)
-                            }
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Icon(
-                            painter = when (val icon = social.icon) {
-                                is Int -> painterResource(icon)
-                                is ImageVector -> rememberVectorPainter(icon)
-                                else -> throw IllegalArgumentException("unexpected class for social icon")
-                            },
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(social.label)
-                    }
-                } }
+            } }
 
-                HorizontalSegmentor(
-                    *socialButtons.toTypedArray(),
-                    roundness = 0.dp
-                )
-            },
-            itemContainerColor = Color.Transparent,
-            modifier = Modifier.padding(horizontal = 12.dp)
-        )
+            HorizontalSegmentor(
+                *socialButtons.toTypedArray(),
+                itemContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .padding(horizontal = 8.dp)
+            )
+        }
 
         ExpressiveSection(
             title = stringResource(R.string.settings_about_updates),
@@ -275,7 +274,7 @@ private fun ChangelogButton(
             )
             Text(stringResource(R.string.settings_about_update))
         }
-        else OutlinedButton(
+        else FilledTonalButton(
             shapes = ButtonDefaults.shapes(),
             onClick = { onClick() }
         ) {

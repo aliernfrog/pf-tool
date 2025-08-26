@@ -158,7 +158,6 @@
     <string name="settings_storage_storageAccessType_allFiles">Bütün dosyalara erişim (eski)</string>
     <string name="settings_storage_storageAccessType_allFiles_description">Bütün dosyalara eriş, bunun kurulumu daha kolay olabilir</string>
     <string name="settings_storage_folders">Klasör yapılandırması</string>
-    <string name="settings_storage_folders_default">Varsayılan: %s</string>
     <string name="settings_storage_folders_notSet">Ayarlanmadı</string>
     <string name="settings_storage_folders_recommendedFolder">Önerilen klasör</string>
     <string name="settings_storage_folders_choose">Klasör seç</string>
