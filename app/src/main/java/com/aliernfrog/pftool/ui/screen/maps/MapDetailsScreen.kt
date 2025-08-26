@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapAction
+import com.aliernfrog.pftool.impl.MapActionArguments
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppSmallTopBar
@@ -184,7 +185,7 @@ fun MapDetailsScreen(
                 ) {
                     OutlinedButton(
                         onClick = { scope.launch {
-                            MapAction.DUPLICATE.execute(context, map, args = listOf(mapNameEdit.value))
+                            MapAction.DUPLICATE.execute(context, map, args = MapActionArguments(mapName = mapNameEdit.value))
                         } },
                         shapes = ButtonDefaults.shapes(),
                         enabled = buttonsEnabled
@@ -194,7 +195,7 @@ fun MapDetailsScreen(
                     }
                     Button(
                         onClick = { scope.launch {
-                            MapAction.RENAME.execute(context, map, args = listOf(mapNameEdit.value))
+                            MapAction.RENAME.execute(context, map, args = MapActionArguments(mapName = mapNameEdit.value))
                         } },
                         shapes = ButtonDefaults.shapes(),
                         enabled = buttonsEnabled
@@ -229,7 +230,7 @@ fun MapDetailsScreen(
                         contentColor = if (action.destructive) MaterialTheme.colorScheme.error
                         else contentColorFor(MaterialTheme.colorScheme.surfaceContainerHigh)
                     ) { scope.launch {
-                        action.execute(context = context, map, args = listOf(mapNameEdit.value))
+                        action.execute(context = context, map, args = MapActionArguments(mapName = mapNameEdit.value))
                     } }
                 }
             } }
