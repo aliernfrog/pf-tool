@@ -121,7 +121,7 @@ class MapFile(
         context: Context,
         newName: String
     ): MapActionResult {
-        val outputName = fileName.replace(name, newName)
+        val outputName = fileName.replaceFirst(name, newName)
         if (file.parentFile?.findFile(outputName)?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapActionResult
+import com.aliernfrog.pftool.impl.MapActionArguments
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -66,9 +67,9 @@ enum class MapAction(
             it.importedState != MapImportedState.NONE
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             val first = maps.first()
-            val newName = resolveMapNameFromArgs(args, first.name)
+            val newName = args.resolveMapName(fallback = first.name)
             first.mapsViewModel.activeProgress = Progress(
                 description = context.getString(R.string.maps_renaming)
                     .replace("{NAME}", first.name)
@@ -99,9 +100,9 @@ enum class MapAction(
         availableForMultiSelection = false,
         availableFor = RENAME.availableFor
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             val first = maps.first()
-            val newName = resolveMapNameFromArgs(args, first.name)
+            val newName = args.resolveMapName(fallback = first.name)
             first.mapsViewModel.activeProgress = Progress(
                 description = context.getString(R.string.maps_duplicating)
                     .replace("{NAME}", first.name)
@@ -134,7 +135,7 @@ enum class MapAction(
             it.isZip && it.importedState != MapImportedState.IMPORTED
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             runIOAction(
                 *maps,
                 context = context,
@@ -143,11 +144,11 @@ enum class MapAction(
                 singleProcessingMessageId = R.string.maps_importing_single,
                 multipleProcessingMessageId = R.string.maps_importing_multiple,
                 successIcon = icon,
-                newName = resolveMapNameFromArgs(args, maps.first().name)
+                newName = args.resolveMapName(fallback = maps.first().name)
             ) { map ->
                 map.import(
                     context,
-                    withName = resolveMapNameFromArgs(args, map.name)
+                    withName = args.resolveMapName(fallback = map.name)
                 )
             }
         }
@@ -162,7 +163,7 @@ enum class MapAction(
             !it.isZip && it.importedState == MapImportedState.IMPORTED
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             runIOAction(
                 *maps,
                 context = context,
@@ -171,11 +172,11 @@ enum class MapAction(
                 singleProcessingMessageId = R.string.maps_exporting_single,
                 multipleProcessingMessageId = R.string.maps_exporting_multiple,
                 successIcon = icon,
-                newName = resolveMapNameFromArgs(args, maps.first().name)
+                newName = args.resolveMapName(fallback = maps.first().name)
             ) { map ->
                 map.export(
                     context,
-                    withName = resolveMapNameFromArgs(args, map.name)
+                    withName = args.resolveMapName(fallback = map.name)
                 )
             }
         }
@@ -187,9 +188,9 @@ enum class MapAction(
         availableForMultiSelection = false,
         availableFor = { true }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             val first = maps.first()
-            val withName = resolveMapNameFromArgs(args, first.name)
+            val withName = args.resolveMapName(fallback = first.name)
             first.mapsViewModel.activeProgress = Progress(
                 description = context.getString(R.string.maps_exportCustomTarget_exporting)
                     .replace("{NAME}", first.name)
@@ -216,7 +217,7 @@ enum class MapAction(
             it.isZip
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             val first = maps.first()
             val files = maps.map { it.file }
             first.mapsViewModel.activeProgress = Progress(
@@ -238,7 +239,7 @@ enum class MapAction(
             it.importedState != MapImportedState.NONE
         }
     ) {
-        override suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any>) {
+        override suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments) {
             maps.first().mapsViewModel.mapsPendingDelete = maps.toList()
         }
     };
@@ -246,13 +247,7 @@ enum class MapAction(
     /**
      * Executes the action for [maps].
      */
-    abstract suspend fun execute(context: Context, vararg maps: MapFile, args: List<Any> = emptyList())
-}
-
-private fun resolveMapNameFromArgs(args: List<Any>, fallback: String): String {
-    val str = if (args.isEmpty()) fallback
-    else (args[0] as String?)?.ifBlank { fallback } ?: fallback
-    return str.replace("\n", "")
+    abstract suspend fun execute(context: Context, vararg maps: MapFile, args: MapActionArguments = MapActionArguments())
 }
 
 private suspend fun runIOAction(
