@@ -2,6 +2,7 @@ package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
@@ -9,9 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
@@ -26,6 +29,7 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
+import com.aliernfrog.pftool.ui.component.VerticalSegmentor
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
 import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -145,20 +149,27 @@ class MapsViewModel(
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
 
-                ExpressiveButtonRow(
-                    title = stringResource(R.string.maps_thumbnail_share),
-                    icon = {
-                        ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Share))
-                    }
-                ) {
-                    scope.launch {
-                        activeProgress = Progress(context.getString(R.string.info_sharing))
-                        map.runInIOThreadSafe {
-                            FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
+                VerticalSegmentor(
+                    {
+                        ExpressiveButtonRow(
+                            title = stringResource(R.string.maps_thumbnail_share),
+                            icon = {
+                                ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Share))
+                            }
+                        ) {
+                            scope.launch {
+                                activeProgress = Progress(context.getString(R.string.info_sharing))
+                                map.runInIOThreadSafe {
+                                    FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
+                                }
+                                activeProgress = null
+                            }
                         }
-                        activeProgress = null
-                    }
-                }
+                    },
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .padding(bottom = 12.dp)
+                )
             } }
         ))
     }
