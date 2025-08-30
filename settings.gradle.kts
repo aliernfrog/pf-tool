@@ -13,5 +13,5 @@ dependencyResolutionManagement {
         maven(url = "https://jitpack.io")
     }
 }
-rootProject.name = "PFTool"
+rootProject.name = "PF Tool"
 include(":app")

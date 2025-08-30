@@ -1,21 +1,21 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
-import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
@@ -29,29 +29,29 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.impl.ProgressState
-import com.aliernfrog.pftool.ui.component.form.ButtonRow
+import com.aliernfrog.pftool.ui.component.VerticalSegmentor
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
-@OptIn(ExperimentalMaterial3Api::class)
 class MapsViewModel(
     private val topToastState: TopToastState,
     private val progressState: ProgressState,
     private val contextUtils: ContextUtils,
+    private val mainViewModel: MainViewModel,
     val prefs: PreferenceManager
 ) : ViewModel() {
-    val topAppBarState = TopAppBarState(0F, 0F, 0F)
-    val scrollState = ScrollState(0)
-
     val mapsDir: String
         get() = prefs.pfMapsDir.value
     val exportedMapsDir: String
@@ -67,36 +67,36 @@ class MapsViewModel(
     var importedMaps by mutableStateOf(emptyList<MapFile>())
     var exportedMaps by mutableStateOf(emptyList<MapFile>())
     var sharedMaps by mutableStateOf(emptyList<MapFile>())
-    var chosenMap by mutableStateOf<MapFile?>(null)
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
-    var mapNameEdit by mutableStateOf("")
-    var mapListShown by mutableStateOf(true)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
 
     var activeProgress: Progress?
         get() = progressState.currentProgress
         set(value) { progressState.currentProgress = value }
 
-    val mapListBackButtonShown
-        get() = chosenMap != null
-
-    fun chooseMap(map: Any?) {
+    fun viewMapDetails(map: Any) {
         try {
-            val mapToChoose = when (map) {
+            val mapFile = when (map) {
                 is MapFile -> map
                 is FileWrapper -> MapFile(map)
-                else -> if (map == null) null else MapFile(FileWrapper(map))
+                else -> MapFile(FileWrapper(map))
             }
-            if (mapToChoose != null) mapNameEdit = mapToChoose.name
-            chosenMap = mapToChoose
-        } catch (e: Exception) {
+            mainViewModel.navigationBackStack.add(mapFile)
+            if (!mainViewModel.prefs.stackupMaps.value) {
+                mainViewModel.navigationBackStack.removeIf {
+                    it is MapFile && it.path != mapFile.path
+                }
+            }
+        } catch (_: CancellationException) {}
+        catch (e: Exception) {
             topToastState.showErrorToast()
-            Log.e(TAG, "chooseMap: ", e)
+            Log.e(TAG, "viewMapDetails: ", e)
         }
     }
 
     suspend fun deletePendingMaps(context: Context) {
         mapsPendingDelete?.let { maps ->
+            mapsPendingDelete = null
             if (maps.isEmpty()) return@let
             val first = maps.first()
             val total = maps.size
@@ -128,11 +128,12 @@ class MapsViewModel(
                     icon = Icons.Rounded.Delete
                 )
             }
-            chosenMap?.path?.let { path ->
-                if (maps.map { it.path }.contains(path)) chooseMap(null)
+            mainViewModel.navigationBackStack.removeIf {
+                it is MapFile && maps.any { map ->
+                    map.path == it.path
+                }
             }
         }
-        mapsPendingDelete = null
         loadMaps(context)
         activeProgress = null
     }
@@ -148,24 +149,29 @@ class MapsViewModel(
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
 
-                ButtonRow(
-                    title = stringResource(R.string.maps_thumbnail_share),
-                    painter = rememberVectorPainter(Icons.Default.Share)
-                ) {
-                    scope.launch {
-                        activeProgress = Progress(context.getString(R.string.info_sharing))
-                        map.runInIOThreadSafe {
-                            FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
+                VerticalSegmentor(
+                    {
+                        ExpressiveButtonRow(
+                            title = stringResource(R.string.maps_thumbnail_share),
+                            icon = {
+                                ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Share))
+                            }
+                        ) {
+                            scope.launch {
+                                activeProgress = Progress(context.getString(R.string.info_sharing))
+                                map.runInIOThreadSafe {
+                                    FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
+                                }
+                                activeProgress = null
+                            }
                         }
-                        activeProgress = null
-                    }
-                }
+                    },
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .padding(bottom = 12.dp)
+                )
             } }
         ))
-    }
-
-    fun resolveMapNameInput(): String {
-        return mapNameEdit.ifBlank { chosenMap?.name ?: "" }
     }
 
     fun showActionFailedDialog(successes: List<Pair<String, MapActionResult>>, fails: List<Pair<String, MapActionResult>>) {
@@ -180,12 +186,25 @@ class MapsViewModel(
      * Loads all imported and exported maps. [isLoadingMaps] will be true while this is in action.
      */
     suspend fun loadMaps(context: Context) {
-        isLoadingMaps = true
+        withContext(Dispatchers.Main) {
+            isLoadingMaps = true
+        }
+        checkAndUpdateMapsFiles(context)
+        val imported = fetchImportedMaps()
+        val exported = fetchExportedMaps()
+        withContext(Dispatchers.Main) {
+            importedMaps = imported
+            exportedMaps = exported
+            isLoadingMaps = false
+        }
+    }
+
+    /**
+     * Makes sure [mapsFile] and [exportedMapsFile] are initialized and are up to date.
+     */
+    fun checkAndUpdateMapsFiles(context: Context) {
         getMapsFile(context)
         getExportedMapsFile(context)
-        fetchImportedMaps()
-        fetchExportedMaps()
-        isLoadingMaps = false
     }
 
     /**
@@ -201,7 +220,7 @@ class MapsViewModel(
         lastKnownStorageAccessType = storageAccessType
         mapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
-                val treeUri = Uri.parse(mapsDir)
+                val treeUri = mapsDir.toUri()
                 DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
@@ -232,7 +251,7 @@ class MapsViewModel(
         lastKnownStorageAccessType = storageAccessType
         exportedMapsFile = when (StorageAccessType.entries[storageAccessType]) {
             StorageAccessType.SAF -> {
-                val treeUri = Uri.parse(exportedMapsDir)
+                val treeUri = exportedMapsDir.toUri()
                 DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
@@ -253,24 +272,20 @@ class MapsViewModel(
     /**
      * Fetches imported maps from [mapsFile].
      */
-    private suspend fun fetchImportedMaps() {
-        withContext(Dispatchers.IO) {
-            importedMaps = mapsFile.listFiles()
-                .filter { !it.isFile }
-                .sortedBy { it.name.lowercase() }
-                .map { MapFile(it) }
-        }
+    private fun fetchImportedMaps(): List<MapFile> {
+        return mapsFile.listFiles()
+            .filter { !it.isFile }
+            .sortedBy { it.name.lowercase() }
+            .map { MapFile(it) }
     }
 
     /**
      * Fetches exported maps from [exportedMapsFile].
      */
-    private suspend fun fetchExportedMaps() {
-        withContext(Dispatchers.IO) {
-            exportedMaps = exportedMapsFile.listFiles()
-                .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
-                .sortedBy { it.name.lowercase() }
-                .map { MapFile(it) }
-        }
+    private fun fetchExportedMaps(): List<MapFile> {
+        return exportedMapsFile.listFiles()
+            .filter { it.isFile && it.name.lowercase().endsWith(".zip") }
+            .sortedBy { it.name.lowercase() }
+            .map { MapFile(it) }
     }
 }

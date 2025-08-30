@@ -6,6 +6,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,25 +22,34 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Deselect
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.outlined.SdCard
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.PriorityHigh
+import androidx.compose.material.icons.rounded.SearchOff
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
@@ -47,13 +58,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -69,22 +84,27 @@ import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.ErrorWithIcon
 import com.aliernfrog.pftool.ui.component.FloatingActionButton
 import com.aliernfrog.pftool.ui.component.LazyAdaptiveVerticalGrid
-import com.aliernfrog.pftool.ui.component.ListViewOptionsDropdown
+import com.aliernfrog.pftool.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
+import com.aliernfrog.pftool.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
+import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
+import com.aliernfrog.pftool.ui.sheet.ListViewOptionsSheet
 import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MapsListScreen(
     title: String = stringResource(R.string.mapsList_pickMap),
@@ -98,10 +118,16 @@ fun MapsListScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
     val isMultiSelecting = mapsListViewModel.selectedMaps.isNotEmpty()
-    val listStyle = ListStyle.entries[mapsListViewModel.prefs.mapsListStyle.value]
+    val listStylePref = mapsListViewModel.prefs.mapsListViewOptions.styleGroup.getCurrent()
+    val gridMaxLineSpanPref = mapsListViewModel.prefs.mapsListViewOptions.gridMaxLineSpanGroup.getCurrent()
+    val listStyle = ListStyle.entries[listStylePref.value]
     val showMapThumbnails = mapsListViewModel.prefs.showMapThumbnailsInList.value
     var multiSelectionDropdownShown by remember { mutableStateOf(false) }
+    var areAllShownMapsSelected by remember { mutableStateOf(false) }
+
+    var firstVisibleItemIndex by remember { mutableIntStateOf(0) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -122,7 +148,17 @@ fun MapsListScreen(
     }
 
     LaunchedEffect(Unit) {
-        mapsViewModel.loadMaps(context)
+        withContext(Dispatchers.IO) {
+            mapsViewModel.loadMaps(context)
+        }
+    }
+
+    if (isMultiSelecting) LaunchedEffect(
+        mapsListViewModel.pagerState.currentPage,
+        mapsListViewModel.selectedMaps.size
+    ) {
+        val shownMaps = mapsListViewModel.getCurrentlyShownMaps()
+        areAllShownMapsSelected = mapsListViewModel.selectedMaps.containsAll(shownMaps)
     }
 
     BackHandler(
@@ -131,6 +167,11 @@ fun MapsListScreen(
         if (isMultiSelecting) mapsListViewModel.selectedMaps.clear()
         else onBackClick?.invoke()
     }
+
+    ListViewOptionsSheet(
+        sheetState = mapsListViewModel.listViewOptionsSheetState,
+        listViewOptionsPreference = mapsListViewModel.prefs.mapsListViewOptions
+    )
 
     AppScaffold(
         topBar = { scrollBehavior ->
@@ -145,32 +186,51 @@ fun MapsListScreen(
                         mapsListViewModel.selectedMaps.clear()
                     } } else onBackClick,
                     actions = {
-                        if (multiSelecting && showMultiSelectionOptions) Box {
+                        if (multiSelecting && showMultiSelectionOptions) {
                             IconButton(
+                                shapes = IconButtonDefaults.shapes(),
                                 onClick = {
-                                    multiSelectionDropdownShown = true
+                                    val shownMaps = mapsListViewModel.getCurrentlyShownMaps()
+                                    if (areAllShownMapsSelected) mapsListViewModel.selectedMaps.removeAll(shownMaps)
+                                    else mapsListViewModel.selectedMaps.addAll(
+                                        shownMaps.filter { !mapsListViewModel.selectedMaps.contains(it) }
+                                    )
                                 }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = stringResource(R.string.action_more)
+                                    imageVector = if (areAllShownMapsSelected) Icons.Default.Deselect else Icons.Default.SelectAll,
+                                    contentDescription = stringResource(
+                                        if (areAllShownMapsSelected) R.string.action_select_deselectAll else R.string.action_select_selectAll
+                                    )
                                 )
                             }
-                            MultiSelectionDropdown(
-                                expanded = multiSelectionDropdownShown,
-                                maps = mapsListViewModel.selectedMaps,
-                                actions = mapsListViewModel.selectedMapsActions,
-                                onDismissRequest = { clearSelection ->
-                                    multiSelectionDropdownShown = false
-                                    if (clearSelection) mapsListViewModel.selectedMaps.clear()
+                            Box {
+                                IconButton(
+                                    shapes = IconButtonDefaults.shapes(),
+                                    onClick = { multiSelectionDropdownShown = true }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = stringResource(R.string.action_more)
+                                    )
                                 }
-                            )
+                                MultiSelectionDropdown(
+                                    expanded = multiSelectionDropdownShown,
+                                    maps = mapsListViewModel.selectedMaps,
+                                    actions = mapsListViewModel.selectedMapsActions,
+                                    onDismissRequest = { clearSelection ->
+                                        multiSelectionDropdownShown = false
+                                        if (clearSelection) mapsListViewModel.selectedMaps.clear()
+                                    }
+                                )
+                            }
                         } else {
                             Crossfade(mapsViewModel.isLoadingMaps) { showLoading ->
                                 if (showLoading) CircularProgressIndicator(
                                     modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
                                 else IconButton(
+                                    shapes = IconButtonDefaults.shapes(),
                                     onClick = {
                                         scope.launch {
                                             mapsViewModel.loadMaps(context)
@@ -203,14 +263,17 @@ fun MapsListScreen(
                     // padding so that FAB shadow doesnt get cropped
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    if (showStorage) FloatingActionButton(
-                        icon = Icons.Outlined.SdCard,
-                        text = stringResource(R.string.mapsList_storage),
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
-                            launcher.launch(intent)
-                        }
-                    ) else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
+                    if (showStorage) {
+                        FloatingActionButton(icon = Icons.Outlined.SdCard,
+                            text = stringResource(R.string.mapsList_storage),
+                            showText = firstVisibleItemIndex < 1,
+                            onClick = {
+                                val intent =
+                                    Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+                                launcher.launch(intent)
+                            }
+                        )
+                    } else multiSelectFloatingActionButton(mapsListViewModel.selectedMaps) {
                         mapsListViewModel.selectedMaps.clear()
                     }
                 }
@@ -218,7 +281,7 @@ fun MapsListScreen(
         }
     ) {
         @Composable
-        fun MapItem(map: MapFile, isGrid: Boolean) {
+        fun MapItem(map: MapFile, isGrid: Boolean, modifier: Modifier = Modifier) {
             val selected = if (isMultiSelecting) mapsListViewModel.isMapSelected(map) else null
             fun toggleSelection() {
                 mapsListViewModel.selectedMaps.run {
@@ -226,12 +289,23 @@ fun MapsListScreen(
                 }
             }
 
+            val scale by animateFloatAsState(
+                if (selected == true) 0.95f else 1f
+            )
+            val roundness by animateDpAsState(
+                if (selected == true) SEGMENTOR_DEFAULT_ROUNDNESS else SEGMENTOR_SMALL_ROUNDNESS
+            )
+
             if (isGrid) GridMapItem(
                 map = map,
                 selected = selected,
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
-                onLongClick = { toggleSelection() }
+                onLongClick = { toggleSelection() },
+                aspectRatio = 1f,
+                modifier = modifier
+                    .scale(scale)
+                    .clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -241,7 +315,8 @@ fun MapsListScreen(
                 selected = selected,
                 showMapThumbnail = showMapThumbnails,
                 onSelectedChange = { toggleSelection() },
-                onLongClick = { toggleSelection() }
+                onLongClick = { toggleSelection() },
+                modifier = modifier.scale(scale).clip(RoundedCornerShape(roundness))
             ) {
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
@@ -252,20 +327,46 @@ fun MapsListScreen(
             state = mapsListViewModel.pagerState,
             beyondViewportPageCount = 1
         ) { page ->
+            val lazyListState = rememberLazyListState()
+            val lazyGridState = rememberLazyGridState()
+
             val segment = mapsListViewModel.availableSegments[page]
             val mapsToShow = mapsListViewModel.getFilteredMaps(segment)
+
+            LaunchedEffect(lazyListState) {
+                snapshotFlow { lazyListState.firstVisibleItemIndex }
+                    .distinctUntilChanged()
+                    .collectLatest { firstVisibleItemIndex = it }
+            }
+
+            LaunchedEffect(lazyGridState) {
+                snapshotFlow { lazyGridState.firstVisibleItemIndex }
+                    .distinctUntilChanged()
+                    .collectLatest { firstVisibleItemIndex = it }
+            }
 
             AnimatedContent(targetState = listStyle) { style ->
                 when (style) {
                     ListStyle.LIST -> LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        state = lazyListState
                     ) {
                         item {
-                            Header(segment, page, mapsToShow)
+                            Header(segment, page, mapsToShow, Modifier.padding(horizontal = 12.dp))
                         }
 
-                        items(mapsToShow) {
-                            MapItem(it, isGrid = false)
+                        itemsIndexed(mapsToShow) { index, map ->
+                            MapItem(
+                                map, isGrid = false,
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .verticalSegmentedShape(
+                                        index = index,
+                                        totalSize = mapsToShow.size,
+                                        spacing = 4.dp,
+                                        containerColor = Color.Transparent
+                                    )
+                            )
                         }
 
                         item {
@@ -273,14 +374,22 @@ fun MapsListScreen(
                         }
                     }
                     ListStyle.GRID -> LazyAdaptiveVerticalGrid(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 10.dp),
+                        state = lazyGridState,
+                        maxLineSpan = gridMaxLineSpanPref.value
                     ) { maxLineSpan: Int ->
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            Header(segment, page, mapsToShow)
+                            Header(segment, page, mapsToShow, Modifier.padding(horizontal = 2.dp))
                         }
 
-                        items(mapsToShow) {
-                            MapItem(it, isGrid = true)
+                        items(mapsToShow) { map ->
+                            MapItem(
+                                map = map,
+                                isGrid = true,
+                                modifier = Modifier.padding(2.dp)
+                            )
                         }
 
                         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -293,16 +402,18 @@ fun MapsListScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Header(
     segment: MapsListSegment,
     segmentIndex: Int,
     mapsToShow: List<MapFile>,
+    modifier: Modifier = Modifier,
     mapsViewModel: MapsViewModel = koinViewModel(),
     mapsListViewModel: MapsListViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
-    Column {
+    Column(modifier) {
         Search(
             searchQuery = mapsListViewModel.searchQuery,
             onSearchQueryChange = { mapsListViewModel.searchQuery = it }
@@ -312,31 +423,36 @@ private fun Header(
                 stringResource(it.labelId)
             },
             selectedIndex = segmentIndex,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
+            modifier = Modifier.fillMaxWidth()
         ) { scope.launch {
             mapsListViewModel.pagerState.animateScrollToPage(it, animationSpec = tween(300))
         } }
         if (mapsToShow.isEmpty()) {
-            if (mapsViewModel.isLoadingMaps) Column(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 18.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator(strokeWidth = 3.dp)
+            if (mapsViewModel.isLoadingMaps) Box(Modifier.fillMaxSize()) {
+                ContainedLoadingIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(vertical = 24.dp)
+                )
             }
-            else ErrorWithIcon(
-                error = stringResource(
-                    if (mapsListViewModel.searchQuery.isNotEmpty()) R.string.mapsList_searchNoMatches
-                    else segment.noMapsTextId
-                ),
-                painter = rememberVectorPainter(Icons.Rounded.LocationOff),
-                modifier = Modifier.fillMaxWidth()
-            )
+            else AnimatedContent(mapsListViewModel.searchQuery.isNotEmpty()) { searching ->
+                ErrorWithIcon(
+                    error = stringResource(
+                        if (searching) R.string.mapsList_searchNoMatches else segment.noMapsTextId
+                    ),
+                    painter = rememberVectorPainter(
+                        if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         } else Text(
             text = stringResource(R.string.mapsList_count)
                 .replace("{COUNT}", mapsToShow.size.toString()),
-            modifier = Modifier.padding(horizontal = 20.dp)
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier
+                .padding(horizontal = 6.dp)
+                .padding(bottom = 4.dp)
         )
     }
 }
@@ -346,13 +462,14 @@ private fun Footer() {
     Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Search(
     searchQuery: String,
-    onSearchQueryChange: (String) -> Unit
+    onSearchQueryChange: (String) -> Unit,
+    mapsListViewModel: MapsListViewModel = koinViewModel()
 ) {
-    val mapsListViewModel = koinViewModel<MapsListViewModel>()
+    val scope = rememberCoroutineScope()
     SearchBar(
         inputField = {
             SearchBarDefaults.InputField(
@@ -363,7 +480,8 @@ private fun Search(
                 onExpandedChange = {},
                 leadingIcon = {
                     if (searchQuery.isNotEmpty()) IconButton(
-                        onClick = { onSearchQueryChange("") }
+                        onClick = { onSearchQueryChange("") },
+                        shapes = IconButtonDefaults.shapes()
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
@@ -375,22 +493,17 @@ private fun Search(
                     )
                 },
                 trailingIcon = {
-                    var sortingOptionsShown by rememberSaveable { mutableStateOf(false) }
                     IconButton(
-                        onClick = { sortingOptionsShown = true }
+                        onClick = { scope.launch {
+                            mapsListViewModel.listViewOptionsSheetState.show()
+                        } },
+                        shapes = IconButtonDefaults.shapes()
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = stringResource(R.string.list_sorting)
+                            contentDescription = stringResource(R.string.list_options)
                         )
                     }
-                    ListViewOptionsDropdown(
-                        expanded = sortingOptionsShown,
-                        onDismissRequest = { sortingOptionsShown = false },
-                        sortingPref = mapsListViewModel.prefs.mapsListSorting,
-                        sortingReversedPref = mapsListViewModel.prefs.mapsListSortingReversed,
-                        stylePref = mapsListViewModel.prefs.mapsListStyle
-                    )
                 },
                 placeholder = {
                     Text(stringResource(R.string.mapsList_search))
@@ -403,10 +516,6 @@ private fun Search(
         modifier = Modifier
             .fillMaxWidth()
             .offset(y = (-12).dp)
-            .padding(
-                start = 8.dp,
-                end = 8.dp
-            )
     )
 }
 

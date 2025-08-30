@@ -4,12 +4,15 @@ import android.content.Context
 import android.util.Log
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.data.MapActionResult
+import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.MapImportedState
+import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.ContextUtils
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -97,9 +100,9 @@ class MapFile(
      * Renames the map.
      */
     fun rename(
-        newName: String = resolveMapNameInput()
+        newName: String
     ): MapActionResult {
-        val toName = fileName.replace(name, newName)
+        val toName = fileName.replaceFirst(name, newName)
         if (file.parentFile?.findFile(toName)?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
@@ -116,9 +119,9 @@ class MapFile(
      */
     fun duplicate(
         context: Context,
-        newName: String = mapsViewModel.resolveMapNameInput()
+        newName: String
     ): MapActionResult {
-        val outputName = fileName.replace(name, newName)
+        val outputName = fileName.replaceFirst(name, newName)
         if (file.parentFile?.findFile(outputName)?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
@@ -138,7 +141,7 @@ class MapFile(
      */
     fun import(
         context: Context,
-        withName: String = resolveMapNameInput()
+        withName: String = this.name
     ): MapActionResult {
         if (importedState == MapImportedState.IMPORTED) return MapActionResult(successful = false)
         var outputFolder = mapsViewModel.mapsFile.findFile(withName)
@@ -171,7 +174,7 @@ class MapFile(
      */
     fun export(
         context: Context,
-        withName: String = resolveMapNameInput()
+        withName: String = this.name
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
         val zipName = "$withName.zip"
@@ -198,6 +201,36 @@ class MapFile(
         )
     }
 
+    suspend fun exportToCustomLocation(
+        context: Context,
+        withName: String
+    ): MapActionResult {
+        val uri = getKoinInstance<MainViewModel>().safZipFileCreator.createFile(suggestedName = withName)
+        if (uri == null) return MapActionResult(
+            successful = false,
+            message = R.string.maps_exportCustomTarget_cancelled
+        )
+        if (this.isZip) file.inputStream(context).use { input ->
+            context.contentResolver.openOutputStream(uri)!!.use { output ->
+                input?.copyTo(output)
+            }
+        } else context.contentResolver.openOutputStream(uri)!!.use { os ->
+            ZipOutputStream(os).use { zos ->
+                file.listFiles().filter {
+                    it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase())
+                }.forEach { file ->
+                    val entry = ZipEntry(file.name)
+                    zos.putNextEntry(entry)
+                    file.inputStream(context)!!.use { it.copyTo(zos) }
+                }
+            }
+        }
+        return MapActionResult(
+            successful = true,
+            newFile = DocumentFileCompat.fromSingleUri(context, uri)
+        )
+    }
+
     /**
      * Deletes the map without confirmation.
      */
@@ -209,14 +242,7 @@ class MapFile(
     fun getThumbnailFile() = if (importedState != MapImportedState.IMPORTED) null
     else file.findFile(thumbnailFileName)
 
-    /**
-     * Returns the user-provided map name if this map is chosen.
-     */
-    fun resolveMapNameInput(): String {
-        return if (mapsViewModel.chosenMap?.path == path) mapsViewModel.resolveMapNameInput() else name
-    }
-
-    suspend fun runInIOThreadSafe(block: () -> Unit) {
+    suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
             try {
                 block()

@@ -2,8 +2,6 @@ package com.aliernfrog.pftool.util.manager
 
 import android.content.Context
 import android.os.Environment
-import com.aliernfrog.pftool.enum.ListSorting
-import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.theme.Theme
@@ -25,6 +23,7 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // Maps options
     val showChosenMapThumbnail = booleanPreference("showChosenMapThumbnail", true)
     val showMapThumbnailsInList = booleanPreference("showMapThumbnailsList", true)
+    val stackupMaps = booleanPreference("stackupMaps", false)
 
     // Storage options
     val pfMapsDir = stringPreference("mapsDir", "${externalStorageRoot}Android/data/com.MA.Polyfield/files/editor", experimental = true)
@@ -32,9 +31,9 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     val storageAccessType = intPreference("storageAccessType", StorageAccessType.SAF.ordinal, includeInDebugInfo = true)
 
     // Maps list
-    val mapsListSorting = intPreference("mapsListSorting", ListSorting.ALPHABETICAL.ordinal)
-    val mapsListSortingReversed = booleanPreference("mapsListSortingReversed", false)
-    val mapsListStyle = intPreference("mapsListStyle", ListStyle.LIST.ordinal)
+    val mapsListViewOptions = listViewOptionsPreference("mapsList", defaultGridMaxLineSpans = WindowSizeClassValueGroup(
+        compact = 2, medium = 4, expanded = 5
+    ))
 
     // Other options
     val showMapNameFieldGuide = booleanPreference("showMapNameFieldGuide", true, experimental = true, includeInDebugInfo = false)

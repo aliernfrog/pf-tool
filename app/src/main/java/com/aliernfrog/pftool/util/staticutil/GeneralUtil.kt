@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.di.appModules
 import com.aliernfrog.pftool.hasAndroidDataRestrictions
@@ -63,17 +64,26 @@ class GeneralUtil {
             val languageCode = split.getOrNull(0) ?: return null
             val countryCode = split.getOrNull(1)
             val locale = getLocale(languageCode, countryCode)
+            var translationProgress = 0f
+            try {
+                val index = BuildConfig.LANGUAGES.indexOf(code)
+                if (index != -1) {
+                    translationProgress = BuildConfig.TRANSLATION_PROGRESSES[index]
+                }
+            } catch (_: Exception) {}
             return Language(
                 languageCode = languageCode,
                 countryCode = countryCode,
                 fullCode = code,
-                localizedName = locale.getDisplayName(locale)
+                localizedName = locale.getDisplayName(locale),
+                translationProgress = translationProgress
             )
         }
 
         fun getLocale(language: String, country: String? = null): Locale {
-            return if (country != null) Locale(language, country)
-            else Locale(language)
+            val builder = Locale.Builder().setLanguage(language)
+            if (country != null) builder.setRegion(country)
+            return builder.build()
         }
 
         fun restartApp(context: Context, withModules: Boolean = true) {

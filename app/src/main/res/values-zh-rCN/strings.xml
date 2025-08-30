@@ -158,7 +158,6 @@
     <string name="settings_storage_storageAccessType_allFiles">所有文件访问（遗留）</string>
     <string name="settings_storage_storageAccessType_allFiles_description">访问所有文件，这可能更容易设置</string>
     <string name="settings_storage_folders">文件夹设置</string>
-    <string name="settings_storage_folders_default">默认值：%s</string>
     <string name="settings_storage_folders_notSet">未配置</string>
     <string name="settings_storage_folders_recommendedFolder">推荐的文件夹</string>
     <string name="settings_storage_folders_choose">选择文件夹</string>
@@ -172,14 +171,14 @@
     <string name="settings_language_help">帮助PF工具翻译</string>
     <string name="settings_language_help_deviceNotAvailable">您设备的语言尚不可用</string>
     <string name="settings_language_help_description">您可以通过 Crowdin 来贡献翻译</string>
-    <string name="settings_language_system">跟随系统</string>
+    <string name="settings_language_system_follow">跟随系统</string>
     <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} 暂不可用</string>
     <string name="settings_language_selected">已选择</string>
     <string name="settings_about">关于</string>
     <string name="settings_about_changelog">更新日志</string>
     <string name="settings_about_update">更新</string>
-    <string name="settings_about_autoCheckUpdates">自动检查更新</string>
-    <string name="settings_about_autoCheckUpdates_description">启动时自动检查 PF 工具更新</string>
+    <string name="settings_about_updates_autoCheckUpdates">自动检查更新</string>
+    <string name="settings_about_updates_autoCheckUpdates_description">启动时自动检查 PF 工具更新</string>
     <string name="settings_about_credits">Credits</string>
     <string name="settings_about_libs">使用的库</string>
     <string name="settings_about_libs_description">用于制作PF Tool的库</string>
