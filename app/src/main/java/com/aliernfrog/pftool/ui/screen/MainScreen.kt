@@ -18,7 +18,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.dialog.ProgressDialog
-import com.aliernfrog.pftool.ui.screen.maps.MapsPermissionsScreen
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
 import com.aliernfrog.pftool.ui.screen.settings.SettingsDestination
 import com.aliernfrog.pftool.ui.sheet.UpdateSheet
@@ -75,8 +74,10 @@ fun MainScreen(
                 entry<Destination> { destination ->
                     when (destination) {
                         Destination.MAPS -> {
-                            MapsPermissionsScreen(
-                                onNavigateSettingsRequest = onNavigateSettingsRequest
+                            MapsScreen(
+                                map = null,
+                                onNavigateSettingsRequest = onNavigateSettingsRequest,
+                                onNavigateBackRequest = null
                             )
                         }
                     }

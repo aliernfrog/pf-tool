@@ -189,8 +189,7 @@ class MapsViewModel(
         withContext(Dispatchers.Main) {
             isLoadingMaps = true
         }
-        getMapsFile(context)
-        getExportedMapsFile(context)
+        checkAndUpdateMapsFiles(context)
         val imported = fetchImportedMaps()
         val exported = fetchExportedMaps()
         withContext(Dispatchers.Main) {
@@ -198,6 +197,14 @@ class MapsViewModel(
             exportedMaps = exported
             isLoadingMaps = false
         }
+    }
+
+    /**
+     * Makes sure [mapsFile] and [exportedMapsFile] are initialized and are up to date.
+     */
+    fun checkAndUpdateMapsFiles(context: Context) {
+        getMapsFile(context)
+        getExportedMapsFile(context)
     }
 
     /**
