@@ -10,6 +10,8 @@
     <string name="action_share">Paylaş</string>
     <string name="action_delete">Sil</string>
     <string name="action_more">Daha fazla</string>
+    <string name="action_select_selectAll">Tümünü seç</string>
+    <string name="action_select_deselectAll">Tüm seçimleri kaldır</string>
     <string name="intent_openMap">Harita aç</string>
     <string name="intent_downloadMap">Harita indir</string>
     <string name="warning_error">Bir şeyler ters gitti</string>
@@ -22,8 +24,8 @@
     <string name="permissions_other">Diğer seçenekler</string>
     <string name="permissions_downgradeFilesApp">Dosyalar uygulaması güncellemeleri</string>
     <string name="permissions_downgradeFilesApp_description">Cihazınızdaki Dosyalar uygulaması PF Tool\'un Polyfield verilerine erişim izni almasını engelliyor. Bu sorun, Dosyalar uygulamasının güncellemelerinin kaldırılmasıyla çözülebilir</string>
-    <string name="permissions_downgradeFilesApp_uninstall">Güncellemeleri kaldır</string>
-    <string name="permissions_downgradeFilesApp_cant">Kaldırılamıyor mu?</string>
+    <string name="permissions_downgradeFilesApp_uninstall">Güncellemeleri kaldırmayı dene</string>
+    <string name="permissions_downgradeFilesApp_cant">Çalışmıyor mu?</string>
     <string name="permissions_downgradeFilesApp_guide">Bir sonraki ekranda, Dosyalar uygulamasının güncellemelerini kaldırmak için bir seçenek arayın.\nEğer güncellemeleri kaldıramıyorsanız veya kaldırdıktan sonra hâlâ çalışmıyorsa \"{CANT_UNINSTALL_TEXT}\" seçeneğine tıklayın</string>
     <string name="permissions_chooseFolder">Klasör seç</string>
     <string name="permissions_recommendedFolder">Önerilen klasör</string>
@@ -56,7 +58,7 @@
     <string name="permissions_shizuku_permission_description">PF Tool\'un Shizuku kullanması için gerekli izinleri yok</string>
     <string name="permissions_shizuku_permission_grant">İzin ver</string>
     <string name="permissions_shizuku_rooted">Shizuku\'yu otomatik olarak başlat</string>
-    <string name="permissions_shizuku_rooted_description">Rootlu cihazlarda, Shizuku\'yu cihazınız açıldığında otomatik olarak başlayacak şekilde ayarlayabilirsiniz; bu ayarı Shizuku\'da bulabilirsiniz\nAlternatif olarak, benzer şekilde çalışan Shizuku\'nun \"Sui\" Magisk modülünü kullanabilirsiniz</string>
+    <string name="permissions_shizuku_rooted_description">Rootlu cihazlarda, Shizuku\'yu cihazınız açıldığında otomatik olarak başlayacak şekilde ayarlayabilirsiniz; bu ayarı Shizuku\'da bulabilirsiniz\nAlternatif olarak, benzer şekilde çalışan Shizuku\'nun \"Sui\" Zygisk modülünü kullanabilirsiniz</string>
     <string name="permissions_shizuku_sui">Sui</string>
     <string name="permissions_shizuku_waitingService">Dosya hizmeti bekleniyor..</string>
     <string name="permissions_shizuku_waitingService_timedOut">Uzun mu sürüyor? PF Tool\'u yeniden başlatmayı deneyin</string>
@@ -67,7 +69,7 @@
     <string name="permissions_allFiles_denied">İzin reddedildi</string>
     <string name="permissions_allFiles_saf">Belirli klasörlere eriş</string>
     <string name="permissions_allFiles_saf_description">PF Tool\'un sadece ihtiyacı olan klasörlere erişmesine izin verir, bunun kurulumu karmaşık olabilir</string>
-    <string name="list_options">Liste seçenekleri</string>
+    <string name="list_options">Sıralama ve tasarım</string>
     <string name="list_sorting">Sıralama</string>
     <string name="list_sorting_name">İsme göre</string>
     <string name="list_sorting_date">Tarihe göre</string>
@@ -76,6 +78,7 @@
     <string name="list_style">Tasarım</string>
     <string name="list_style_list">Liste</string>
     <string name="list_style_grid">Izgara</string>
+    <string name="list_style_gridMaxLineSpan">Satır başına öğe sayısı</string>
     <string name="maps">Haritalar</string>
     <string name="maps_alreadyExists">Bu adda bir harita zaten var, başka bir ad seçin</string>
     <string name="maps_actionFailed">{SUCCESSES} başarılı, {FAILS} başarısız</string>
@@ -99,6 +102,10 @@
     <string name="maps_export">Bu haritayı dışa aktar</string>
     <string name="maps_export_short">Dışa aktar</string>
     <string name="maps_export_description">Haritanızı dışa aktarın ve isterseniz paylaşın</string>
+    <string name="maps_exportCustomTarget">Özel konuma aktar</string>
+    <string name="maps_exportCustomTarget_exported">{NAME} özel konuma aktarıldı</string>
+    <string name="maps_exportCustomTarget_exporting">{NAME} dışa aktarılıyor..</string>
+    <string name="maps_exportCustomTarget_cancelled">Dışa aktarma iptal edildi</string>
     <string name="maps_exported_single">{NAME} adıyla dışa aktarıldı</string>
     <string name="maps_exported_multiple">{COUNT} tane harita dışa aktarıldı</string>
     <string name="maps_exporting_single">{NAME}, {NEW_NAME} adıyla dışa aktarılıyor..</string>
@@ -127,6 +134,8 @@
     <string name="mapsList_noSharedMaps">PF Tool ile herhangi bir harita paylaşmadınız</string>
     <string name="mapsList_searchNoMatches">Eşleşen harita bulunamadı</string>
     <string name="settings">Ayarlar</string>
+    <string name="settings_category_polyfield">Polyfield</string>
+    <string name="settings_category_app">Uygulama</string>
     <string name="settings_updateNotification_updateAvailable">Güncelleme mevcut: {VERSION}</string>
     <string name="settings_updateNotification_description">Daha fazla detay ve işlem için tıklayın</string>
     <string name="settings_appearance">Görünüm</string>
@@ -148,6 +157,9 @@
     <string name="settings_maps_thumbnails_chosen_description">Hangi haritada olduğunuzu bilin</string>
     <string name="settings_maps_thumbnails_list">Harita listesinde resimleri göster</string>
     <string name="settings_maps_thumbnails_list_description">Haritalarınızı kolayca ayırt edin</string>
+    <string name="settings_maps_behavior">Davranış</string>
+    <string name="settings_maps_behavior_stackup">Önceki haritaları açık tut</string>
+    <string name="settings_maps_behavior_stackup_description">Etkinleştirildiğinde; haritaları dışa aktarmak, içe aktarmak veya çoğaltmak önceki haritaları gezinme yığınında tutar, bu sayede geri düğmesini kullanarak onlara geri dönebilirsiniz</string>
     <string name="settings_storage">Depolama</string>
     <string name="settings_storage_description">PF Tool\'un depolamayla nasıl etkileşime gireceğini ayarlayın</string>
     <string name="settings_storage_storageAccessType">Depolama erişimi tipi</string>
@@ -162,6 +174,7 @@
     <string name="settings_storage_folders_recommendedFolder">Önerilen klasör</string>
     <string name="settings_storage_folders_choose">Klasör seç</string>
     <string name="settings_storage_folders_openRecommended">Önerilen klasörü aç</string>
+    <string name="settings_storage_folders_openCurrent">Şimdiki klasörü aç</string>
     <string name="settings_storage_folders_openAndroidData">Android/data klasörünü aç</string>
     <string name="settings_storage_folders_restoreDefault">Varsayılana sıfırla</string>
     <string name="settings_storage_folders_maps">Haritalar klasörü</string>
@@ -171,12 +184,17 @@
     <string name="settings_language_help">PF Tool çevirilerine yardım edin</string>
     <string name="settings_language_help_deviceNotAvailable">Cihazınızdaki dil şu an mevcut değil</string>
     <string name="settings_language_help_description">Buraya tıklayarak Crowdin\'de çevirilere katkıda bulunabilirsiniz</string>
+    <string name="settings_language_system">Sistem dili</string>
     <string name="settings_language_system_follow">Sistemi takip et</string>
     <string name="settings_language_system_notAvailable">{SYSTEM_LANGUAGE} mevcut değil</string>
+    <string name="settings_language_other">Diğer diller</string>
     <string name="settings_language_selected">Seçili</string>
+    <string name="settings_language_progress_percent">%{PERCENT} çevrilmiş</string>
+    <string name="settings_language_progress_base">Temel dil</string>
     <string name="settings_about">Hakkında</string>
     <string name="settings_about_changelog">Değişiklik günlüğü</string>
     <string name="settings_about_update">Güncelle</string>
+    <string name="settings_about_updates">Güncellemeler</string>
     <string name="settings_about_updates_autoCheckUpdates">Güncellemeleri otomatik olarak denetle</string>
     <string name="settings_about_updates_autoCheckUpdates_description">PF Tool başlatıldığında otomatik olarak güncellemeleri denetle</string>
     <string name="settings_about_credits">Emeği geçenler</string>
@@ -193,6 +211,7 @@
     <string name="settings_about_other">Diğer</string>
     <string name="settings_about_other_copyDebugInfo">Hata ayıklama bilgilerini kopyala</string>
     <string name="settings_about_other_copyDebugInfo_description">Hata ayıklamak için kullanışlı bilgileri içerir. Bunun hata raporlarına dahil edilmesi önerilir</string>
+    <string name="settings_about_other_copyDebugInfo_clipLabel">PF Tool hata ayıklama bilgileri</string>
     <string name="settings_about_other_copyDebugInfo_copied">Hata ayıklama bilgileri kopyalandı</string>
     <string name="settings_experimental">Deneysel ayarlar</string>
     <string name="settings_experimental_enabled">Deneysel ayarlar açıldı!</string>
