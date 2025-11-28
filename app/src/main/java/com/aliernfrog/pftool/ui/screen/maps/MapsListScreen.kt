@@ -81,22 +81,22 @@ import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppTopBar
-import com.aliernfrog.pftool.ui.component.ErrorWithIcon
-import com.aliernfrog.pftool.ui.component.FloatingActionButton
-import com.aliernfrog.pftool.ui.component.LazyAdaptiveVerticalGrid
-import com.aliernfrog.pftool.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
-import com.aliernfrog.pftool.ui.component.SEGMENTOR_SMALL_ROUNDNESS
-import com.aliernfrog.pftool.ui.component.SegmentedButtons
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
-import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.sheet.ListViewOptionsSheet
 import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
+import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
+import io.github.aliernfrog.pftool_shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.pftool_shared.ui.component.LazyAdaptiveVerticalGrid
+import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
+import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
+import io.github.aliernfrog.pftool_shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -418,8 +418,8 @@ private fun Header(
             searchQuery = mapsListViewModel.searchQuery,
             onSearchQueryChange = { mapsListViewModel.searchQuery = it }
         )
-        SegmentedButtons(
-            options = mapsListViewModel.availableSegments.map {
+        SingleChoiceConnectedButtonGroup(
+            choices = mapsListViewModel.availableSegments.map {
                 stringResource(it.labelId)
             },
             selectedIndex = segmentIndex,

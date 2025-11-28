@@ -15,9 +15,9 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.impl.MapActionArguments
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.impl.Progress
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.staticutil.FileUtil
+import io.github.aliernfrog.pftool_shared.impl.Progress
 
 /**
  * Contains map actions.

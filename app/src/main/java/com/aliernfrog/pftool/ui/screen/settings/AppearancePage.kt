@@ -40,15 +40,15 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.component.VerticalSegmentor
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSwitchRow
-import com.aliernfrog.pftool.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.pftool.ui.theme.AppRoundnessSize
 import com.aliernfrog.pftool.ui.theme.Theme
 import com.aliernfrog.pftool.ui.theme.supportsMaterialYou
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
+import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSwitchRow
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.toRowFriendlyColor
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

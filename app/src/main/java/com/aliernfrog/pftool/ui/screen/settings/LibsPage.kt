@@ -49,12 +49,12 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.component.AppModalBottomSheet
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppSmallTopBar
-import com.aliernfrog.pftool.ui.component.ButtonIcon
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.pftool.ui.component.form.DividerRow
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
-import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import com.mikepenz.aboutlibraries.entity.Library
+import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
+import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

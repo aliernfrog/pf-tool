@@ -1,8 +1,8 @@
 package com.aliernfrog.pftool.util.extension
 
-import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.languages
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import io.github.aliernfrog.pftool_shared.data.Language
 
 /**
  * Checks if the language is supported by the app and returns the [Language] if available.

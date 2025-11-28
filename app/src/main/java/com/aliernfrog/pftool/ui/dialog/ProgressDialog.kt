@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.impl.Progress
+import io.github.aliernfrog.pftool_shared.impl.Progress
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -67,7 +67,7 @@ fun ProgressDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isIndeterminate) CircularProgressIndicator()
-                else progress.percentage.toFloat().let {
+                else progress.percentage!!.toFloat().let {
                     val animated by animateFloatAsState(it/100)
                     CircularProgressIndicator(
                         progress = { animated }

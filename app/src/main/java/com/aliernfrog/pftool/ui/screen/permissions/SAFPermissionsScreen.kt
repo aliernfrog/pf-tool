@@ -37,11 +37,6 @@ import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.data.requiresAndroidData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
-import com.aliernfrog.pftool.ui.component.CardWithActions
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.pftool.ui.component.form.DividerRow
-import com.aliernfrog.pftool.ui.component.verticalSegmentedShape
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
 import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
@@ -49,6 +44,11 @@ import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import io.github.aliernfrog.pftool_shared.ui.component.CardWithActions
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
+import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

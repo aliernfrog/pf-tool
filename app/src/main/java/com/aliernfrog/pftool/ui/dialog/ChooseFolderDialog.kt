@@ -30,7 +30,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

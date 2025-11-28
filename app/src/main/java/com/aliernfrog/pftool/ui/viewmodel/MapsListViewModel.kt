@@ -15,9 +15,9 @@ import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.enum.ListSorting
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.createSheetStateWithDensity
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.pftool_shared.ui.component.createSheetStateWithDensity
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

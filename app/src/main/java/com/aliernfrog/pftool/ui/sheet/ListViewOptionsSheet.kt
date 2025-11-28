@@ -27,10 +27,10 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.ListSorting
 import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.ui.component.AppModalBottomSheet
-import com.aliernfrog.pftool.ui.component.FadeVisibility
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
+import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

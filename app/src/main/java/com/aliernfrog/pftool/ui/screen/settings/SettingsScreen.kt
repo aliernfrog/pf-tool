@@ -37,17 +37,17 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.AppScaffold
 import com.aliernfrog.pftool.ui.component.AppSmallTopBar
 import com.aliernfrog.pftool.ui.component.AppTopBar
-import com.aliernfrog.pftool.ui.component.VerticalSegmentor
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveButtonRow
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowIcon
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.pftool.ui.component.expressive.toRowFriendlyColor
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
+import io.github.aliernfrog.pftool_shared.data.ReleaseInfo
+import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.toRowFriendlyColor
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

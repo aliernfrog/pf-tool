@@ -48,20 +48,20 @@ import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.folderPickerSupportsInitialUri
-import com.aliernfrog.pftool.ui.component.ButtonIcon
-import com.aliernfrog.pftool.ui.component.FadeVisibility
-import com.aliernfrog.pftool.ui.component.VerticalSegmentor
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveRowHeader
-import com.aliernfrog.pftool.ui.component.expressive.ExpressiveSection
-import com.aliernfrog.pftool.ui.component.form.ExpandableRow
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
-import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import com.aliernfrog.pftool.util.extension.resolveString
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
+import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
+import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
+import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowHeader
+import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.pftool_shared.ui.component.form.ExpandableRow
+import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

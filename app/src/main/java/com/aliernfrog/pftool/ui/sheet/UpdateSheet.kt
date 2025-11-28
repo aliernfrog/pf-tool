@@ -35,12 +35,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.ReleaseInfo
 import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
-import com.aliernfrog.pftool.ui.component.ButtonIcon
-import com.aliernfrog.pftool.ui.component.form.DividerRow
-import com.aliernfrog.pftool.util.extension.horizontalFadingEdge
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import io.github.aliernfrog.pftool_shared.data.ReleaseInfo
+import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
+import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
+import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

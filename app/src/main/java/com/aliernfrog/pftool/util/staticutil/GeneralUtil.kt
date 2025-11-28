@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.aliernfrog.pftool.BuildConfig
-import com.aliernfrog.pftool.data.Language
 import com.aliernfrog.pftool.di.appModules
 import com.aliernfrog.pftool.hasAndroidDataRestrictions
 import com.aliernfrog.pftool.ui.activity.MainActivity
+import io.github.aliernfrog.pftool_shared.data.Language
 import org.koin.core.context.GlobalContext.loadKoinModules
 import org.koin.core.context.GlobalContext.unloadKoinModules
 import java.util.Locale
