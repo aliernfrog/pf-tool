@@ -21,6 +21,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
+          ./gradlew :pftool-shared:publish
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/key.jks
           ./gradlew packageReleaseUniversalApk -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/key.jks -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.KEYSTORE_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
