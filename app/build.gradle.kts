@@ -203,6 +203,7 @@ tasks.register("checkSharedStrings") {
     group = "verification"
     description = "Checks that all strings from pftool-shared are present in this app."
     outputs.upToDateWhen { false }
+    dependsOn(":pftool-shared:bundleDebugAar", ":pftool-shared:bundleReleaseAar")
 
     doLast {
         val libraryName = "pftool-shared"
