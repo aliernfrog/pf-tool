@@ -214,7 +214,12 @@ tasks.register("checkSharedStrings") {
             .find { it.dependencyProject.path == ":$libraryName" }
             ?: throw GradleException("Could not find a project dependency on ':$libraryName'")
 
-        val sharedLibAar = projectDependency.dependencyProject.tasks.getByName("bundleDebugAar").outputs.files.singleFile
+        val sharedLibAar = projectDependency.dependencyProject.tasks.let { tasks ->
+            tasks.getByName("bundleDebugAar").outputs.files.singleFile.let {
+                if (it.exists()) it
+                else tasks.getByName("bundleReleaseAar").outputs.files.singleFile
+            }
+        }
 
         val zipFile = ZipFile(sharedLibAar)
         val entry = "res/raw/shared_strings.txt".let {
