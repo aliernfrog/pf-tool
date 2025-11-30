@@ -1,22 +1,21 @@
-package com.aliernfrog.pftool.enum
+package io.github.aliernfrog.pftool_shared.enum
 
-import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.ViewStream
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.aliernfrog.pftool.R
+import io.github.aliernfrog.pftool_shared.util.SharedString
 
 enum class ListStyle(
-    @StringRes val label: Int,
+    val label: SharedString,
     val iconVector: ImageVector
 ) {
     LIST(
-        label = R.string.list_style_list,
+        label = SharedString.LIST_STYLE_LIST,
         iconVector = Icons.Default.ViewStream
     ),
     GRID(
-        label = R.string.list_style_grid,
+        label = SharedString.LIST_STYLE_GRID,
         iconVector = Icons.Default.GridView
     )
 }

@@ -1,3 +1,4 @@
+import org.apache.commons.compress.archivers.zip.ZipFile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -195,4 +196,61 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling.preview)
 
     coreLibraryDesugaring(libs.android.desugar)
+}
+
+@Suppress("DEPRECATION")
+tasks.register("checkSharedStrings") {
+    group = "verification"
+    description = "Checks that all strings from pftool-shared are present in this app."
+    outputs.upToDateWhen { false }
+
+    doLast {
+        val libraryName = "pftool-shared"
+        project.logger.lifecycle("Executing shared string checks for library: $libraryName")
+
+        val projectDependency = project.configurations.getByName("debugRuntimeClasspath")
+            .allDependencies
+            .filterIsInstance<ProjectDependency>()
+            .find { it.dependencyProject.path == ":$libraryName" }
+            ?: throw GradleException("Could not find a project dependency on ':$libraryName'")
+
+        val sharedLibAar = projectDependency.dependencyProject.tasks.getByName("bundleDebugAar").outputs.files.singleFile
+
+        val zipFile = ZipFile(sharedLibAar)
+        val entry = "res/raw/shared_strings.txt".let {
+            zipFile.getEntry(it)
+                ?: throw GradleException("Could not find '$it' inside '${sharedLibAar.name}'")
+        }
+
+        val stringKeys = zipFile.getInputStream(entry).bufferedReader().readLines()
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+        zipFile.close()
+
+        if (stringKeys.isEmpty()) {
+            logger.warn("No string keys found in shared_strings.txt, skipping shared string check")
+            return@doLast
+        }
+
+        project.logger.lifecycle("Checking for required string keys: ${stringKeys.joinToString(", ")}")
+
+        val stringsFile = project.projectDir.resolve("src/main/res/values/strings.xml")
+        if (!stringsFile.exists()) return@doLast project.logger.warn("Strings file not found, skipping shared string check")
+
+        project.logger.lifecycle("Checking for missing string keys in ${stringsFile.path}")
+
+        val stringsContent = stringsFile.readText()
+        val missingKeys = stringKeys.filter { key ->
+            !stringsContent.contains("<string name=\"$key\"")
+        }
+
+        if (missingKeys.isNotEmpty())
+            throw GradleException("Missing string keys in ${stringsFile.path}: ${missingKeys.joinToString(", ")}")
+
+        project.logger.lifecycle("All required string keys are present in ${stringsFile.path}, passed shared string check")
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn(tasks.named("checkSharedStrings"))
 }

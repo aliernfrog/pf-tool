@@ -74,7 +74,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.ListStyle
 import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.impl.FileWrapper
@@ -90,6 +89,7 @@ import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
+import io.github.aliernfrog.pftool_shared.enum.ListStyle
 import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.pftool_shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.pftool_shared.ui.component.LazyAdaptiveVerticalGrid

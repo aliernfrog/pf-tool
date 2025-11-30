@@ -1,16 +1,12 @@
-package com.aliernfrog.pftool.ui.dialog
+package io.github.aliernfrog.pftool_shared.ui.dialog
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.R
 import io.github.aliernfrog.pftool_shared.impl.Progress
+import io.github.aliernfrog.pftool_shared.ui.component.HorizontalProgressIndicatorWithText
+import io.github.aliernfrog.pftool_shared.util.SharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -62,22 +59,10 @@ fun ProgressDialog(
             )
     ) {
         Column(Modifier.animateContentSize()) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (isIndeterminate) CircularProgressIndicator()
-                else progress.percentage!!.toFloat().let {
-                    val animated by animateFloatAsState(it/100)
-                    CircularProgressIndicator(
-                        progress = { animated }
-                    )
-                }
-                Text(
-                    text = progress?.description ?: stringResource(R.string.info_pleaseWait),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            HorizontalProgressIndicatorWithText(
+                progress = progress,
+                textColor = MaterialTheme.colorScheme.onSurface
+            )
             if (showDismissButton) TextButton(
                 onClick = ::dismissDialog,
                 colors = ButtonDefaults.textButtonColors(
@@ -85,7 +70,7 @@ fun ProgressDialog(
                 ),
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text(stringResource(R.string.action_cancel))
+                Text(sharedStringResource(SharedString.ACTION_CANCEL))
             }
         }
     }

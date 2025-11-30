@@ -10,8 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
-import com.aliernfrog.pftool.enum.ListSorting
-import com.aliernfrog.pftool.enum.ListStyle
+import io.github.aliernfrog.pftool_shared.enum.ListSorting
+import io.github.aliernfrog.pftool_shared.enum.ListStyle
 import kotlin.reflect.KProperty
 
 @Suppress("SameParameterValue", "MemberVisibilityCanBePrivate")

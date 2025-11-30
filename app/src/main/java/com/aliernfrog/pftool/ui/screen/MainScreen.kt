@@ -17,13 +17,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.BaseScaffold
-import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
 import com.aliernfrog.pftool.ui.screen.settings.SettingsDestination
-import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
+import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
+import io.github.aliernfrog.pftool_shared.ui.sheet.UpdateSheet
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    `maven-publish`
 }
 
 android {
@@ -22,6 +23,10 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+
+    sourceSets.getByName("main") {
+        res.srcDirs(layout.buildDirectory.dir("generated/pftool_shared/res"))
     }
 
     compileOptions {
@@ -60,9 +65,48 @@ dependencies {
     implementation(libs.aboutlibraries)
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
+    implementation(libs.koin)
     implementation(libs.markdown)
     implementation(libs.zoomable)
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
+}
+
+tasks.register("generateSharedStringsTxt") {
+    val enumFile = file("src/main/java/io/github/aliernfrog/pftool_shared/util/SharedString.kt")
+    inputs.file(enumFile)
+
+    val outputDir = layout.buildDirectory.dir("generated/pftool_shared/res/raw")
+    val outputFile = outputDir.map { it.file("shared_strings.txt") }
+    outputs.file(outputFile)
+
+    doLast {
+        if (!enumFile.exists())
+            throw GradleException("SharedString.kt file not found at: ${enumFile.path}")
+
+        val pattern = """^\s*([A-Z_]+)\("([^"]+)"\)""".toRegex(RegexOption.MULTILINE)
+
+        val keys = enumFile.readText().let { content ->
+            pattern.findAll(content).map { it.groupValues[2] }.toList()
+        }
+
+        val targetFile = outputFile.get().asFile
+        targetFile.parentFile.mkdirs()
+        targetFile.writeText(keys.joinToString("\n"))
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn(tasks.named("generateSharedStringsTxt"))
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            register("release", MavenPublication::class) {
+                from(components["release"])
+            }
+        }
+    }
 }

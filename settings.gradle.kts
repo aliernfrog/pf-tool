@@ -17,3 +17,4 @@ rootProject.name = "PF Tool"
 include(":app")
 include(":pftool-shared")
 include(":pftool-shared")
+include(":pftool-shared-lint")

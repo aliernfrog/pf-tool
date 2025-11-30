@@ -21,16 +21,16 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.InsetsViewModel
 import io.github.aliernfrog.pftool_shared.util.extension.isAnyVisible
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppModalBottomSheet(
     title: String? = null,
     sheetState: SheetState,
-    topPadding: Dp,
-    bottomPadding: Dp,
     sheetScrollState: ScrollState = rememberScrollState(),
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     sheetContent: @Composable ColumnScope.() -> Unit
@@ -38,8 +38,6 @@ fun AppModalBottomSheet(
     BaseModalBottomSheet(
         sheetState = sheetState,
         dragHandle = dragHandle,
-        topPadding = topPadding,
-        bottomPadding = bottomPadding,
     ) { bottomPadding ->
         Column(
             modifier = Modifier
@@ -63,8 +61,7 @@ fun AppModalBottomSheet(
 @Composable
 fun BaseModalBottomSheet(
     sheetState: SheetState,
-    topPadding: Dp,
-    bottomPadding: Dp,
+    insetsViewModel: InsetsViewModel = koinViewModel(),
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     content: @Composable ColumnScope.(bottomPadding: Dp) -> Unit
 ) {
@@ -73,13 +70,12 @@ fun BaseModalBottomSheet(
         onDismissRequest = { scope.launch {
             sheetState.hide()
         } },
-        modifier = Modifier
-            .padding(top = topPadding),
+        modifier = Modifier.padding(top = insetsViewModel.topPadding),
         sheetState = sheetState,
         dragHandle = dragHandle,
         contentWindowInsets = { WindowInsets(0.dp) }
     ) {
-        content(bottomPadding)
+        content(insetsViewModel.bottomPadding)
     }
 }
 

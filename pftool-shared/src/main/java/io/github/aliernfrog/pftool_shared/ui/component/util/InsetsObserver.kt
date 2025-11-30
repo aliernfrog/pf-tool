@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.component
+package io.github.aliernfrog.pftool_shared.ui.component.util
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.imePadding
@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.aliernfrog.pftool.ui.viewmodel.InsetsViewModel
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.InsetsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

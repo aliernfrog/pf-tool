@@ -61,11 +61,11 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.data.MediaViewData
-import com.aliernfrog.pftool.ui.viewmodel.InsetsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
 import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.InsetsViewModel
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import kotlinx.coroutines.launch
@@ -127,7 +127,7 @@ fun MediaView(
 
     BottomSheetScaffold(
         sheetContent = {
-            data.options?.let {
+            data.options?.let { options ->
                 Column(
                     modifier = Modifier
                         .onSizeChanged {
@@ -139,7 +139,7 @@ fun MediaView(
                         .imePadding()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    it.invoke()
+                    options.invoke()
                 }
             }
         },

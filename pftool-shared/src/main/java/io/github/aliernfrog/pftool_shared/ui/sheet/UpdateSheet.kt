@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.sheet
+package io.github.aliernfrog.pftool_shared.ui.sheet
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.horizontalScroll
@@ -30,17 +30,18 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.component.BaseModalBottomSheet
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import io.github.aliernfrog.pftool_shared.R
 import io.github.aliernfrog.pftool_shared.data.ReleaseInfo
+import io.github.aliernfrog.pftool_shared.ui.component.BaseModalBottomSheet
 import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
 import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
+import io.github.aliernfrog.pftool_shared.util.SharedString
 import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -51,8 +52,9 @@ fun UpdateSheet(
     onCheckUpdatesRequest: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
+
     BaseModalBottomSheet(
-        sheetState = sheetState
+        sheetState = sheetState,
     ) { bottomPadding ->
         Actions(
             versionName = latestVersionInfo.versionName,
@@ -95,7 +97,7 @@ fun UpdateSheet(
                     painter = painterResource(R.drawable.github)
                 )
                 Text(
-                    text = stringResource(R.string.updates_openInGithub)
+                    text = sharedStringResource(SharedString.UPDATES_OPEN_IN_GITHUB)
                 )
             }
         }
@@ -141,9 +143,9 @@ private fun Actions(
                 )
             }
             Text(
-                text = stringResource(
-                    if (preRelease) R.string.updates_preRelease
-                    else R.string.updates_stable
+                text = sharedStringResource(
+                    if (preRelease) SharedString.UPDATES_PRERELEASE
+                    else SharedString.UPDATES_STABLE
                 ),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Light,
@@ -160,7 +162,7 @@ private fun Actions(
                 ButtonIcon(
                     painter = rememberVectorPainter(Icons.Default.Update)
                 )
-                Text(stringResource(R.string.updates_update))
+                Text(sharedStringResource(SharedString.UPDATES_UPDATE))
             }
             else OutlinedButton(
                 onClick = onCheckUpdatesRequest,
@@ -169,7 +171,7 @@ private fun Actions(
                 ButtonIcon(
                     painter = rememberVectorPainter(Icons.Default.Refresh)
                 )
-                Text(stringResource(R.string.updates_checkUpdates))
+                Text(sharedStringResource(SharedString.UPDATES_CHECK_UPDATES))
             }
         }
     }

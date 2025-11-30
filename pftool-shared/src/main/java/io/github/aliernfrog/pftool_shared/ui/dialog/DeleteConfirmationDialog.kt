@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.dialog
+package io.github.aliernfrog.pftool_shared.ui.dialog
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,8 +15,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.stringResource
-import com.aliernfrog.pftool.R
+import io.github.aliernfrog.pftool_shared.util.SharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -36,7 +36,7 @@ fun DeleteConfirmationDialog(
                     contentColor = MaterialTheme.colorScheme.onError
                 )
             ) {
-                Text(stringResource(R.string.action_delete))
+                Text(sharedStringResource(SharedString.ACTION_DELETE))
             }
         },
         dismissButton = {
@@ -44,7 +44,7 @@ fun DeleteConfirmationDialog(
                 onClick = onDismissRequest,
                 shapes = ButtonDefaults.shapes()
             ) {
-                Text(stringResource(R.string.action_cancel))
+                Text(sharedStringResource(SharedString.ACTION_CANCEL))
             }
         },
         icon = {
@@ -55,7 +55,7 @@ fun DeleteConfirmationDialog(
         },
         text = {
             Text(
-                text = stringResource(R.string.info_deleteQuestion).replace("{NAME}", name),
+                text = sharedStringResource(SharedString.INFO_DELETE_QUESTION).replace("{NAME}", name),
                 modifier = Modifier.verticalScroll(rememberScrollState())
             )
         }

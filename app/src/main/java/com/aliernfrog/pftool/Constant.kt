@@ -36,13 +36,13 @@ object SettingsConstant {
     val socials = listOf(
         Social(
             label = "Polyfield",
-            icon = R.drawable.discord,
+            icon = io.github.aliernfrog.pftool_shared.R.drawable.discord,
             iconContainerColor = Color(0xFF5865F2),
             url = "https://discord.gg/X6WzGpCgDJ"
         ),
         Social(
             label = "PF Tool",
-            icon = R.drawable.github,
+            icon = io.github.aliernfrog.pftool_shared.R.drawable.github,
             iconContainerColor = Color(0xFF104C35),
             url = githubRepoURL
         ),

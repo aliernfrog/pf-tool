@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.viewmodel
+package io.github.aliernfrog.pftool_shared.ui.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,4 +18,7 @@ class InsetsViewModel : ViewModel() {
     var bottomPadding
         get() = if (imePadding == 0.dp) internalBottomPadding else 0.dp
         set(value) { internalBottomPadding = value }
+
+    val isImeVisible: Boolean
+        get() = imePadding > 0.dp
 }
