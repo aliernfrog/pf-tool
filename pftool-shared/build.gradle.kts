@@ -14,7 +14,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -22,6 +21,13 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
         }
     }
 
@@ -104,8 +110,11 @@ tasks.named("preBuild") {
 afterEvaluate {
     publishing {
         publications {
-            register("release", MavenPublication::class) {
+            register<MavenPublication>("release") {
                 from(components["release"])
+
+                groupId = "io.github.aliernfrog"
+                artifactId = "pftool-shared"
             }
         }
     }
