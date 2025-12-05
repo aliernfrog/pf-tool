@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
-import com.aliernfrog.pftool.data.MediaViewData
 import com.aliernfrog.pftool.data.exists
 import com.aliernfrog.pftool.data.mkdirs
 import com.aliernfrog.pftool.di.getKoinInstance
@@ -33,6 +32,7 @@ import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.pftool_shared.data.MediaOverlayData
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
@@ -141,11 +141,11 @@ class MapsViewModel(
     fun openMapThumbnailViewer(map: MapFile) {
         val mainViewModel = getKoinInstance<MainViewModel>()
         val hasThumbnail = map.thumbnailModel != null
-        mainViewModel.showMediaView(MediaViewData(
+        mainViewModel.showMediaView(MediaOverlayData(
             model = map.thumbnailModel,
             title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
             zoomEnabled = hasThumbnail,
-            options = if (!hasThumbnail) null else { {
+            optionsSheetContent = if (!hasThumbnail) null else { {
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
 

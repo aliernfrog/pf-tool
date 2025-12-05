@@ -1,9 +1,9 @@
-package com.aliernfrog.pftool.data
+package io.github.aliernfrog.pftool_shared.data
 
 import android.os.Environment
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
 
 data class PermissionData(
     @StringRes val title: Int,

@@ -5,8 +5,8 @@ import android.os.Environment
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.externalStorageRoot
 import com.aliernfrog.pftool.ui.theme.Theme
-import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
 
 class PreferenceManager(context: Context) : BasePreferenceManager(
     prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)

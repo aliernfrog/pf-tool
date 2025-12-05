@@ -29,13 +29,13 @@ import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
-import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSwitchRow
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

@@ -23,7 +23,6 @@ import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
-import com.aliernfrog.pftool.data.MediaViewData
 import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.githubRepoURL
@@ -40,6 +39,7 @@ import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.Language
+import io.github.aliernfrog.pftool_shared.data.MediaOverlayData
 import io.github.aliernfrog.pftool_shared.data.ReleaseInfo
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
@@ -123,7 +123,7 @@ class MainViewModel(
             }
         ).joinToString("\n")
 
-    var mediaViewData by mutableStateOf<MediaViewData?>(null)
+    var mediaOverlayData by mutableStateOf<MediaOverlayData?>(null)
         private set
 
     init {
@@ -199,12 +199,12 @@ class MainViewModel(
         )
     }
 
-    fun showMediaView(data: MediaViewData) {
-        mediaViewData = data
+    fun showMediaView(data: MediaOverlayData) {
+        mediaOverlayData = data
     }
 
     fun dismissMediaView() {
-        mediaViewData = null
+        mediaOverlayData = null
     }
 
     fun handleIntent(intent: Intent, context: Context) {

@@ -220,10 +220,10 @@
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">Not intended for normal usage, might break the app when misused</string>
-    <string name="mediaView_guide">Help</string>
-    <string name="mediaView_guide_toggleOverlay">Tap to view the image fully, tap again to show the options</string>
-    <string name="mediaView_guide_toggleZoom">Rapidly tap twice to toggle zoom</string>
-    <string name="mediaView_guide_zoom">Pinch fingers to zoom-in and zoom-out, drag fingers to move</string>
+    <string name="mediaOverlay_guide">Help</string>
+    <string name="mediaOverlay_guide_toggleOverlay">Tap to view the image fully, tap again to show the options</string>
+    <string name="mediaOverlay_guide_toggleZoom">Rapidly tap twice to toggle zoom</string>
+    <string name="mediaOverlay_guide_zoom">Pinch fingers to zoom-in and zoom-out, drag fingers to move</string>
     <string name="updates_updateAvailable">PF Tool update available! Click for more details</string>
     <string name="updates_noUpdates">No updates available</string>
     <string name="updates_error">Something went wrong while checking for updates</string>

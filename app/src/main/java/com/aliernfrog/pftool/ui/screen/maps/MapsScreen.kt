@@ -10,10 +10,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.screen.permissions.PermissionsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
 import io.github.aliernfrog.pftool_shared.ui.dialog.DeleteConfirmationDialog
 import kotlinx.coroutines.launch

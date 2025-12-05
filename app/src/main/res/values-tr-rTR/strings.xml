@@ -220,10 +220,10 @@
     <string name="settings_experimental">Deneysel ayarlar</string>
     <string name="settings_experimental_enabled">Deneysel ayarlar açıldı!</string>
     <string name="settings_experimental_description">Normal kullanım için değildir, yanlış kullanıldığında uygulamayı bozabilir</string>
-    <string name="mediaView_guide">Yardım</string>
-    <string name="mediaView_guide_toggleOverlay">Resmi tamamen görmek için dokunun, seçenekleri göstermek için tekrar dokunun</string>
-    <string name="mediaView_guide_toggleZoom">Yakınlaştırmayı açıp kapatmak için hızlıca iki defa dokunun</string>
-    <string name="mediaView_guide_zoom">Yakınlaştırmak ve uzaklaştırmak için parmaklarınızı sıkıştırın, hareket ettirmek için parmaklarınızı sürükleyin</string>
+    <string name="mediaOverlay_guide">Yardım</string>
+    <string name="mediaOverlay_guide_toggleOverlay">Resmi tamamen görmek için dokunun, seçenekleri göstermek için tekrar dokunun</string>
+    <string name="mediaOverlay_guide_toggleZoom">Yakınlaştırmayı açıp kapatmak için hızlıca iki defa dokunun</string>
+    <string name="mediaOverlay_guide_zoom">Yakınlaştırmak ve uzaklaştırmak için parmaklarınızı sıkıştırın, hareket ettirmek için parmaklarınızı sürükleyin</string>
     <string name="updates_updateAvailable">PF Tool güncellemesi mevcut! Daha fazla detay için tıklayın</string>
     <string name="updates_noUpdates">Güncelleme yok</string>
     <string name="updates_error">Güncellemeleri denetlerken bir şeyler ters gitti</string>

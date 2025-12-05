@@ -29,6 +29,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.pftool_shared.util.SharedString
 import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,4 +149,32 @@ fun ListViewOptionsSheet(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ListViewOptionsSheet(
+    sheetState: SheetState,
+    listViewOptionsPreference: BasePreferenceManager.ListViewOptionsPreference
+) {
+    val listStylePref = listViewOptionsPreference.styleGroup.getCurrent()
+    val gridMaxLineSpanPref = listViewOptionsPreference.gridMaxLineSpanGroup.getCurrent()
+
+    ListViewOptionsSheet(
+        sheetState = sheetState,
+        sorting = listViewOptionsPreference.sorting.let {
+            ListSorting.entries[it.value]
+        },
+        onSortingChange = listViewOptionsPreference.sorting.let { pref -> {
+            pref.value = it.ordinal
+        } },
+        sortingReversed = listViewOptionsPreference.sortingReversed.value,
+        onSortingReversedChange = listViewOptionsPreference.sortingReversed.let { pref ->{
+            pref.value = it
+        } },
+        style = ListStyle.entries[listStylePref.value],
+        onStyleChange = { listStylePref.value = it.ordinal },
+        gridMaxLineSpan = gridMaxLineSpanPref.value,
+        onGridMaxLineSpanChange = { gridMaxLineSpanPref.value = it }
+    )
 }

@@ -53,7 +53,6 @@ import com.aliernfrog.pftool.util.extension.resolveString
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import com.aliernfrog.pftool.util.manager.base.BasePreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
 import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
@@ -62,6 +61,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowH
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.pftool_shared.ui.component.form.ExpandableRow
 import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 

@@ -83,7 +83,6 @@ import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
-import com.aliernfrog.pftool.ui.sheet.ListViewOptionsSheet
 import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -97,6 +96,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNE
 import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.pftool_shared.ui.component.SingleChoiceConnectedButtonGroup
 import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.pftool_shared.ui.sheet.ListViewOptionsSheet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged

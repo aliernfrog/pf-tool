@@ -1,8 +1,13 @@
-package com.aliernfrog.pftool.ui.component
+package io.github.aliernfrog.pftool_shared.ui.component
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -16,6 +21,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,6 +36,7 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -53,39 +60,37 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.MediaViewData
-import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
-import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
-import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
+import io.github.aliernfrog.pftool_shared.data.MediaOverlayData
 import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.InsetsViewModel
+import io.github.aliernfrog.pftool_shared.util.SharedString
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun MediaView(
-    data: MediaViewData,
+fun MediaOverlay(
+    data: MediaOverlayData,
+    showMediaOverlayGuidePref: BasePreferenceManager.Preference<Boolean>,
     onDismissRequest: () -> Unit
 ) {
-    val mainViewModel = koinViewModel<MainViewModel>()
     val insetsViewModel = koinViewModel<InsetsViewModel>()
 
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val zoomState = rememberZoomState()
     val isZoomedIn = zoomState.scale > 1f
-    val isIMEShown = insetsViewModel.imePadding > 0.dp
+    val isImeVisible = insetsViewModel.isImeVisible
     val bottomSheetState = rememberStandardBottomSheetState(
         skipHiddenState = false
     )
@@ -111,36 +116,37 @@ fun MediaView(
 
     LaunchedEffect(overlayCanBeShown) {
         showOverlay = overlayCanBeShown
-        if (data.options != null && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
+        if (data.optionsSheetContent != null && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
     }
 
     LaunchedEffect(showOverlay) {
-        if (data.options == null) return@LaunchedEffect bottomSheetState.hide()
+        if (data.optionsSheetContent == null) return@LaunchedEffect bottomSheetState.hide()
         if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
         else if (!showOverlay && bottomSheetState.targetValue != SheetValue.Hidden) bottomSheetState.hide()
     }
 
     // Expand sheet to add IME padding, if IME is shown
-    LaunchedEffect(isIMEShown) {
-        if (isIMEShown) bottomSheetState.expand()
+    LaunchedEffect(isImeVisible) {
+        if (isImeVisible) bottomSheetState.expand()
     }
 
     BottomSheetScaffold(
         sheetContent = {
-            data.options?.let { options ->
+            data.optionsSheetContent?.let {
                 Column(
                     modifier = Modifier
-                        .onSizeChanged {
+                        .onSizeChanged { size ->
                             with(density) {
-                                optionsHeight = it.height.toDp()+48.dp // 48dp drag handle height
+                                optionsHeight =
+                                    size.height.toDp() + 48.dp // 48dp drag handle height
                             }
                         }
+                        .padding(bottom = 8.dp)
                         .navigationBarsPadding()
                         .imePadding()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    options.invoke()
-                }
+                        .verticalScroll(rememberScrollState()),
+                    content = it
+                )
             }
         },
         sheetPeekHeight = sheetPeekHeight,
@@ -171,7 +177,9 @@ fun MediaView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
@@ -181,7 +189,7 @@ fun MediaView(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = stringResource(R.string.action_close)
+                                contentDescription = sharedStringResource(SharedString.ACTION_CLOSE)
                             )
                         }
                         data.title?.let {
@@ -195,12 +203,12 @@ fun MediaView(
                     }
                     IconButton(
                         shapes = IconButtonDefaults.shapes(),
-                        onClick = { mainViewModel.prefs.showMediaViewGuide.value = true },
+                        onClick = { showMediaOverlayGuidePref.value = true },
                         modifier = Modifier.padding(8.dp)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.HelpOutline,
-                            contentDescription = stringResource(R.string.mediaView_guide)
+                            contentDescription = sharedStringResource(SharedString.MEDIA_OVERLAY_GUIDE)
                         )
                     }
                 }
@@ -212,9 +220,13 @@ fun MediaView(
                     .offset { IntOffset(x = 0, y = animatedOffsetY.roundToPx()) }
                     .pointerInput(Unit) {
                         if (!isZoomedIn) detectVerticalDragGestures(
-                            onDragEnd =  {
-                                if (zoomState.scale <= 1f && offsetY.value.absoluteValue > viewportHeight.value/7) onDismissRequest()
-                                offsetY = 0.dp
+                            onDragEnd = {
+                                if (zoomState.scale <= 1f && offsetY.value.absoluteValue > viewportHeight.value / 6) {
+                                    val isPositiveOffset = offsetY.value > 0
+                                    val absOffsetToSet = (viewportHeight/(1.6.dp)).dp
+                                    onDismissRequest()
+                                    offsetY = if (isPositiveOffset) absOffsetToSet else -absOffsetToSet
+                                } else offsetY = 0.dp
                             },
                             onVerticalDrag = { _, dragAmount ->
                                 if (zoomState.scale <= 1f) with(density) {
@@ -264,12 +276,28 @@ fun MediaView(
                     )
                 }
             }
+            data.toolbarContent?.let { toolbarContent ->
+                AnimatedVisibility(
+                    visible = showOverlay,
+                    enter = slideInVertically { it } + fadeIn(),
+                    exit = slideOutVertically { it } + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .systemBarsPadding()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                ) {
+                    HorizontalFloatingToolbar(
+                        expanded = true,
+                        content = toolbarContent
+                    )
+                }
+            }
         }
     }
 
-    if (mainViewModel.prefs.showMediaViewGuide.value) GuideDialog(
+    if (showMediaOverlayGuidePref.value) GuideDialog(
         onDismissRequest = {
-            mainViewModel.prefs.showMediaViewGuide.value = false
+            showMediaOverlayGuidePref.value = false
         }
     )
 }
@@ -286,15 +314,15 @@ private fun GuideDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onDismissRequest
             ) {
-                Text(stringResource(R.string.action_ok))
+                Text(sharedStringResource(SharedString.ACTION_OK))
             }
         },
         text = {
             Column {
                 listOf(
-                    Icons.Default.TouchApp to R.string.mediaView_guide_toggleOverlay,
-                    Icons.Default.ZoomInMap to R.string.mediaView_guide_toggleZoom,
-                    Icons.Default.Pinch to R.string.mediaView_guide_zoom
+                    Icons.Default.TouchApp to SharedString.MEDIA_OVERLAY_GUIDE_TOGGLE_OVERLAY,
+                    Icons.Default.ZoomInMap to SharedString.MEDIA_OVERLAY_GUIDE_TOGGLE_ZOOM,
+                    Icons.Default.Pinch to SharedString.MEDIA_OVERLAY_GUIDE_ZOOM
                 ).forEachIndexed { index, pair ->
                     if (index != 0) DividerRow(Modifier.fillMaxWidth())
                     Row(
@@ -306,7 +334,7 @@ private fun GuideDialog(
                             contentDescription = null,
                             modifier = Modifier.padding(end = 16.dp)
                         )
-                        Text(stringResource(pair.second))
+                        Text(sharedStringResource(pair.second))
                     }
                 }
             }

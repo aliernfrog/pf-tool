@@ -2,17 +2,17 @@ package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.pftool_shared.data.PermissionData
+import androidx.core.net.toUri
 
 class PermissionsViewModel(
     val topToastState: TopToastState,
@@ -47,7 +47,7 @@ class PermissionsViewModel(
         context: Context
     ): List<PermissionData> {
         return permissionsData.filter {
-            !Uri.parse(it.pref.value).appHasPermissions(context)
+            !it.pref.value.toUri().appHasPermissions(context)
         }
     }
 }

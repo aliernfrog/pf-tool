@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.util.manager.base
+package io.github.aliernfrog.pftool_shared.util.manager.base
 
 import android.content.SharedPreferences
 import androidx.activity.compose.LocalActivity

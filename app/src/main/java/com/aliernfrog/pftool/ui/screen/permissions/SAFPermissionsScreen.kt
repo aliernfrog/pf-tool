@@ -33,8 +33,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.PermissionData
-import com.aliernfrog.pftool.data.requiresAndroidData
 import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.enum.isCompatible
 import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
@@ -44,6 +42,8 @@ import com.aliernfrog.pftool.util.extension.toPath
 import com.aliernfrog.pftool.util.extension.takePersistablePermissions
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import io.github.aliernfrog.pftool_shared.data.PermissionData
+import io.github.aliernfrog.pftool_shared.data.requiresAndroidData
 import io.github.aliernfrog.pftool_shared.ui.component.CardWithActions
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
