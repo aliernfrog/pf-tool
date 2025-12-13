@@ -39,6 +39,7 @@ enum class SharedString(val key: String) {
     SETTINGS_ABOUT_CREDITS("settings_about_credits"),
     SETTINGS_ABOUT_LIBS("settings_about_libs"),
     SETTINGS_ABOUT_LIBS_DESCRIPTION("settings_about_libs_description"),
+    SETTINGS_ABOUT_LIBS_LICENSE("settings_about_libs_license"),
     SETTINGS_ABOUT_LIBS_WEBSITE("settings_about_libs_website"),
     SETTINGS_ABOUT_LIBS_ORGANIZATION("settings_about_libs_organization"),
     SETTINGS_ABOUT_OTHER("settings_about_other"),

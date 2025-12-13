@@ -204,6 +204,7 @@
     <string name="settings_about_credits">Credits</string>
     <string name="settings_about_libs">Libraries</string>
     <string name="settings_about_libs_description">Libraries used to make PF Tool</string>
+    <string name="settings_about_libs_license">License</string>
     <string name="settings_about_libs_website">Website</string>
     <string name="settings_about_libs_organization">Organization</string>
     <string name="settings_about_credits_pfDev">Polyfield developer</string>

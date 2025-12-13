@@ -19,8 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.aliernfrog.pftool.ui.activity.MainActivity
-
-val supportsMaterialYou = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+import io.github.aliernfrog.pftool_shared.ui.theme.supportsMaterialYou
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("NewApi")

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.CorporateFare
 import androidx.compose.material.icons.filled.Engineering
 import androidx.compose.material3.Button
@@ -22,9 +23,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -34,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,17 +87,34 @@ fun LibsPage(
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(vm.libraries) { index, lib ->
-                if (index != 0) DividerRow()
-                ListItem(
-                    headlineContent = { Text(lib.name) },
-                    supportingContent = lib.description?.let { { Text(it) } },
-                    overlineContent = {
-                        Text(lib.developers.joinToString(", ") { it.name.toString() })
-                    },
-                    modifier = Modifier.clickable { scope.launch {
+                val onClick: () -> Unit = {
+                    scope.launch {
                         selectedLibrary = lib
                         librarySheetState.show()
-                    } }
+                    }
+                }
+
+                val licenses = rememberSaveable {
+                    lib.licenses.joinToString(", ") { it.name }
+                }
+
+                if (index != 0) DividerRow()
+                ListItem(
+                    overlineContent = { Text(lib.name) },
+                    headlineContent = { lib.description?.let { Text(it) } },
+                    supportingContent = {
+                        SuggestionChip(
+                            onClick = onClick,
+                            label = { Text(licenses) },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Balance,
+                                    contentDescription = sharedStringResource(SharedString.SETTINGS_ABOUT_LIBS_LICENSE)
+                                )
+                            }
+                        )
+                    },
+                    modifier = Modifier.clickable(onClick = onClick)
                 )
             }
 

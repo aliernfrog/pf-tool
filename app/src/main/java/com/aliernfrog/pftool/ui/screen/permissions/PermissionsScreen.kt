@@ -20,13 +20,13 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
+import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
+import io.github.aliernfrog.pftool_shared.ui.component.AppTopBar
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import org.koin.androidx.compose.koinViewModel

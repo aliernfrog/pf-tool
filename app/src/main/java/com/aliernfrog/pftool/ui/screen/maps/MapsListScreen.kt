@@ -78,8 +78,6 @@ import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.enum.MapsListSegment
 import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.AppTopBar
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
@@ -88,6 +86,8 @@ import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
+import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
+import io.github.aliernfrog.pftool_shared.ui.component.AppTopBar
 import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.pftool_shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.pftool_shared.ui.component.LazyAdaptiveVerticalGrid

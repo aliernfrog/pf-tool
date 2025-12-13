@@ -49,12 +49,12 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.impl.MapActionArguments
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.AppSmallTopBar
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
+import io.github.aliernfrog.pftool_shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
 import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
 import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
