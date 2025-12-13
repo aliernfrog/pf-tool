@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.util.manager
+package io.github.aliernfrog.pftool_shared.impl
 
 import android.content.Context
 

@@ -1,15 +1,14 @@
-package com.aliernfrog.pftool.util.extension
+package io.github.aliernfrog.pftool_shared.util.extension
 
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
-import com.aliernfrog.pftool.externalStorageRoot
-import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import java.io.File
-
 
 fun Uri.appHasPermissions(context: Context): Boolean {
     val hasPermissions = context.checkUriPermission(
@@ -24,7 +23,7 @@ fun Uri.appHasPermissions(context: Context): Boolean {
 }
 
 fun Uri.cacheFile(context: Context): File? {
-    return UriUtil.cacheFile(
+    return PFToolSharedUtil.cacheFile(
         uri = this,
         parentName = "cache",
         context = context

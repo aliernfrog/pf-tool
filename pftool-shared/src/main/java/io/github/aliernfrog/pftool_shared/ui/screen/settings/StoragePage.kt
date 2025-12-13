@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.screen.settings
+package io.github.aliernfrog.pftool_shared.ui.screen.settings
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,64 +35,60 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.SettingsConstant
-import com.aliernfrog.pftool.data.PrefEditItem
-import com.aliernfrog.pftool.enum.StorageAccessType
-import com.aliernfrog.pftool.enum.isCompatible
-import com.aliernfrog.pftool.externalStorageRoot
-import com.aliernfrog.pftool.folderPickerSupportsInitialUri
-import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
-import com.aliernfrog.pftool.util.extension.resolveString
-import com.aliernfrog.pftool.util.extension.takePersistablePermissions
-import com.aliernfrog.pftool.util.extension.toPath
-import com.aliernfrog.pftool.util.manager.PreferenceManager
-import com.aliernfrog.pftool.util.staticutil.FileUtil
+import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
 import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
 import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowHeader
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.pftool_shared.ui.component.form.ExpandableRow
+import io.github.aliernfrog.pftool_shared.util.SharedString
 import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
+import io.github.aliernfrog.pftool_shared.util.extension.toPath
+import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
+import io.github.aliernfrog.pftool_shared.util.folderPickerSupportsInitialUri
 import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 
 @Composable
 fun StoragePage(
-    settingsViewModel: SettingsViewModel = koinViewModel(),
+    storageAccessTypePref: BasePreferenceManager.Preference<Int>,
+    folderPrefs: Map<String, BasePreferenceManager.Preference<String>>,
+    onEnableStorageAccessTypeRequest: (StorageAccessType) -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
     var storageAccessTypesExpanded by rememberSaveable {
         mutableStateOf(false)
     }
 
-    val selectedStorageAccessType = StorageAccessType.entries[settingsViewModel.prefs.storageAccessType.value]
+    val selectedStorageAccessType = StorageAccessType.entries[storageAccessTypePref.value]
 
     SettingsPageContainer(
-        title = stringResource(R.string.settings_storage),
+        title = sharedStringResource(SharedString.SETTINGS_STORAGE),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         VerticalSegmentor(
             {
                 ExpandableRow(
                     expanded = storageAccessTypesExpanded,
-                    title = stringResource(R.string.settings_storage_storageAccessType),
-                    description = stringResource(selectedStorageAccessType.label),
+                    title = sharedStringResource(SharedString.SETTINGS_STORAGE_STORAGE_ACCESS_TYPE),
+                    description = sharedStringResource(selectedStorageAccessType.label),
                     onClickHeader = { storageAccessTypesExpanded = !storageAccessTypesExpanded }
                 ) {
                     val choices: List<@Composable () -> Unit> = StorageAccessType.entries.filter { it.isCompatible() }.map { type -> {
-                        val selected = settingsViewModel.prefs.storageAccessType.value == type.ordinal
+                        val selected = storageAccessTypePref.value == type.ordinal
+
                         fun onSelect() {
-                            if (!selected) type.enable(settingsViewModel.prefs)
+                            if (!selected) onEnableStorageAccessTypeRequest(type)
                         }
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -104,12 +100,13 @@ fun StoragePage(
                                 selected = selected,
                                 onClick = ::onSelect
                             )
-                            ExpressiveRowHeader(
-                                title = stringResource(type.label),
-                                description = stringResource(type.description)
-                            )
+                                ExpressiveRowHeader(
+                                    title = sharedStringResource(type.label),
+                                    description = sharedStringResource(type.description)
+                                )
+                            }
                         }
-                    } }
+                    }
                     VerticalSegmentor(
                         *choices.toTypedArray(),
                         modifier = Modifier.padding(
@@ -124,9 +121,12 @@ fun StoragePage(
             modifier = Modifier.padding(horizontal = 12.dp)
         )
 
-        ExpressiveSection(stringResource(R.string.settings_storage_folders)) {
+        ExpressiveSection(
+            title = sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS)
+        ) {
             FolderConfiguration(
-                useRawPathInputs = selectedStorageAccessType != StorageAccessType.SAF
+                useRawPathInputs = selectedStorageAccessType != StorageAccessType.SAF,
+                prefs = folderPrefs
             )
         }
     }
@@ -134,30 +134,32 @@ fun StoragePage(
 
 @Composable
 private fun FolderConfiguration(
-    prefs: PreferenceManager = koinInject(),
+    prefs: Map<String, BasePreferenceManager.Preference<String>>,
     useRawPathInputs: Boolean
 ) {
     val context = LocalContext.current
-    var activePref: PrefEditItem<String>? = remember { null }
-    val openFolderLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = { uri ->
-        if (uri == null) return@rememberLauncherForActivityResult
-        val pref = activePref ?: return@rememberLauncherForActivityResult
-        if (!useRawPathInputs) uri.takePersistablePermissions(context)
-        pref.preference(prefs).value = uri.toString().let {
-            if (useRawPathInputs) FileUtil.getFilePath(it) else it
+    var activePref: BasePreferenceManager.Preference<String>? = remember { null }
+
+    val openFolderLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
+        onResult = { uri ->
+            if (uri == null) return@rememberLauncherForActivityResult
+            val pref = activePref ?: return@rememberLauncherForActivityResult
+            if (!useRawPathInputs) uri.takePersistablePermissions(context)
+            pref.value = uri.toString().let {
+                if (useRawPathInputs) PFToolSharedUtil.getFilePath(it) else it
+            }
         }
-    })
+    )
 
     AnimatedContent(useRawPathInputs) { rawPathInput ->
-        val items: List<@Composable () -> Unit> = SettingsConstant.folders.map { prefEditItem -> {
-            val pref = prefEditItem.preference(prefs)
-            val label = prefEditItem.label(prefs).resolveString()
+        val items: List<@Composable () -> Unit> = prefs.map { (label, pref) -> {
 
             if (rawPathInput) RawPathItem(
                 label = label,
                 pref = pref,
                 onPickFolderRequest = {
-                    activePref = prefEditItem
+                    activePref = pref
                     openFolderLauncher.launch(null)
                 }
             )
@@ -166,7 +168,7 @@ private fun FolderConfiguration(
                 pref = pref,
                 path = getFolderDescription(pref.value),
                 onPickFolderRequest = { uri ->
-                    activePref = prefEditItem
+                    activePref = pref
                     openFolderLauncher.launch(uri)
                 }
             )
@@ -210,7 +212,7 @@ fun RawPathItem(
 
         FadeVisibility(!isDefault) {
             SuggestionCard(
-                title = stringResource(R.string.settings_storage_folders_restoreDefault),
+                title = sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_RESTORE_DEFAULT),
                 description = pref.defaultValue
             ) {
                 pref.value = pref.defaultValue
@@ -223,7 +225,7 @@ fun RawPathItem(
             modifier = Modifier.align(Alignment.End)
         ) {
             ButtonIcon(rememberVectorPainter(Icons.Default.FolderOpen))
-            Text(stringResource(R.string.settings_storage_folders_choose))
+            Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_CHOOSE))
         }
     }
 }
@@ -260,14 +262,14 @@ fun FolderConfigItem(
         )
 
         if (!usingRecommendedPath) SuggestionCard(
-            title = stringResource(
-                if (folderPickerSupportsInitialUri) R.string.settings_storage_folders_openRecommended
-                else R.string.settings_storage_folders_recommendedFolder
+            title = sharedStringResource(
+                if (folderPickerSupportsInitialUri) SharedString.SETTINGS_STORAGE_FOLDERS_OPEN_RECOMMENDED
+                else SharedString.SETTINGS_STORAGE_FOLDERS_RECOMMENDED_FOLDER
             ),
             description = recommendedPath,
             enabled = folderPickerSupportsInitialUri
         ) {
-            onPickFolderRequest(FileUtil.getUriForPath(pref.defaultValue))
+            onPickFolderRequest(PFToolSharedUtil.getUriForPath(pref.defaultValue))
         }
 
         Row(
@@ -283,25 +285,25 @@ fun FolderConfigItem(
             AssistChip(
                 onClick = { onPickFolderRequest(null) },
                 label = {
-                    Text(stringResource(R.string.settings_storage_folders_choose))
+                    Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_CHOOSE))
                 }
             )
 
             AssistChip(
                 onClick = {
-                    onPickFolderRequest(FileUtil.getUriForPath(path))
+                    onPickFolderRequest(PFToolSharedUtil.getUriForPath(path))
                 },
                 label = {
-                    Text(stringResource(R.string.settings_storage_folders_openCurrent))
+                    Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_OPEN_CURRENT))
                 }
             )
 
             if (folderPickerSupportsInitialUri) AssistChip(
                 onClick = {
-                    onPickFolderRequest(FileUtil.getUriForPath(dataFolderPath))
+                    onPickFolderRequest(PFToolSharedUtil.getUriForPath(dataFolderPath))
                 },
                 label = {
-                    Text(stringResource(R.string.settings_storage_folders_openAndroidData))
+                    Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_OPEN_ANDROID_DATA))
                 }
             )
         }
@@ -349,5 +351,7 @@ private fun getFolderDescription(path: String): String {
     if (text.isNotEmpty()) try {
         text = text.toUri().toPath().removePrefix(externalStorageRoot)
     } catch (_: Exception) {}
-    return text.ifEmpty { stringResource(R.string.settings_storage_folders_notSet) }
+    return text.ifEmpty {
+        sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_NOT_SET)
+    }
 }

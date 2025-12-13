@@ -2,60 +2,13 @@ package com.aliernfrog.pftool.util.staticutil
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.text.format.DateUtils
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.impl.FileWrapper
-import com.aliernfrog.pftool.util.extension.toPath
 import java.io.File
 
 class FileUtil {
     companion object {
-        fun removeExtension(path: String): String {
-            val extensionIndex = path.lastIndexOf(".")
-            if (extensionIndex == -1) return path
-            return path.substring(0, extensionIndex)
-        }
-
-        fun getFileName(path: String, removeExtension: Boolean = false): String {
-            val name = path.split("/").last()
-            return if (removeExtension) removeExtension(name)
-            else name
-        }
-
-        fun getFilePath(path: String): String {
-            return if (path.startsWith("/")) path
-            else Uri.parse(path).toPath()
-        }
-
-        fun getUriForPath(path: String): Uri {
-            return DocumentsContract.buildDocumentUri(
-                "com.android.externalstorage.documents",
-                "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
-            )
-        }
-
-        fun getTreeUriForPath(path: String): Uri {
-            return DocumentsContract.buildTreeDocumentUri(
-                "com.android.externalstorage.documents",
-                "primary:"+path.removePrefix("${Environment.getExternalStorageDirectory()}/")
-            )
-        }
-
-        fun lastModifiedFromLong(lastModified: Long?, context: Context): String {
-            val lastModifiedTime = lastModified ?: System.currentTimeMillis()
-            return DateUtils.getRelativeDateTimeString(
-                /* c = */ context,
-                /* time = */ lastModifiedTime,
-                /* minResolution = */ DateUtils.SECOND_IN_MILLIS,
-                /* transitionResolution = */ DateUtils.DAY_IN_MILLIS,
-                /* flags = */ 0
-            ).toString()
-        }
-
         fun copyDirectory(source: File, target: File) {
             if (!target.isDirectory) target.mkdirs()
             source.listFiles()!!.forEach { file ->

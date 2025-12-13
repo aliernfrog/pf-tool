@@ -1,7 +1,7 @@
-package com.aliernfrog.pftool.util.extension
+package io.github.aliernfrog.pftool_shared.util.extension
 
-import com.aliernfrog.pftool.di.getKoinInstance
-import com.aliernfrog.pftool.util.manager.ContextUtils
+import io.github.aliernfrog.pftool_shared.di.getKoinInstance
+import io.github.aliernfrog.pftool_shared.impl.ContextUtils
 
 fun Any.resolveString(throwOnUnknownClass: Boolean = false): String {
     val contextUtils = getKoinInstance<ContextUtils>()

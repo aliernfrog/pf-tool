@@ -21,9 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.StorageAccessType
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
+import com.aliernfrog.pftool.util.extension.enable
 import com.aliernfrog.toptoast.enum.TopToastColor
+import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.component.CardWithActions
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
@@ -81,7 +82,7 @@ fun AllFilesPermissionsScreen(
                     .padding(horizontal = 12.dp)
                     .verticalSegmentedShape()
             ) {
-                StorageAccessType.SAF.enable(permissionsViewModel.prefs)
+                StorageAccessType.SAF.enable()
             }
         }
 

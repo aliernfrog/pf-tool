@@ -71,8 +71,10 @@ dependencies {
     implementation(libs.aboutlibraries)
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
+    implementation(libs.dfc)
     implementation(libs.koin)
     implementation(libs.markdown)
+    implementation(libs.toptoast)
     implementation(libs.zoomable)
 
     debugImplementation(libs.compose.ui.tooling)

@@ -86,7 +86,6 @@ import com.aliernfrog.pftool.ui.component.maps.ListMapItem
 import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
-import com.aliernfrog.pftool.util.staticutil.UriUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
 import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
@@ -97,6 +96,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.pftool_shared.ui.component.SingleChoiceConnectedButtonGroup
 import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.pftool_shared.ui.sheet.ListViewOptionsSheet
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -132,7 +132,7 @@ fun MapsListScreen(
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
             withContext(Dispatchers.IO) {
-                val cachedFile = UriUtil.cacheFile(
+                val cachedFile = PFToolSharedUtil.cacheFile(
                     uri = it.data?.data!!,
                     parentName = "maps",
                     context = context

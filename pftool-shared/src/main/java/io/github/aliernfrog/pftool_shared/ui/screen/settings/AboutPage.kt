@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.screen.settings
+package io.github.aliernfrog.pftool_shared.ui.screen.settings
 
 import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
@@ -30,8 +30,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,16 +47,11 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil3.compose.AsyncImage
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.SettingsConstant
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
-import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
-import com.aliernfrog.pftool.util.extension.resolveString
+import io.github.aliernfrog.pftool_shared.data.Social
+import io.github.aliernfrog.pftool_shared.impl.CreditData
 import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
 import io.github.aliernfrog.pftool_shared.ui.component.HorizontalSegmentor
 import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
@@ -62,14 +61,27 @@ import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSect
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSwitchRow
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.toRowFriendlyColor
+import io.github.aliernfrog.pftool_shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.settings.AboutPageViewModel
+import io.github.aliernfrog.pftool_shared.util.SharedString
+import io.github.aliernfrog.pftool_shared.util.extension.resolveString
+import io.github.aliernfrog.pftool_shared.util.getSharedString
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutPage(
-    mainViewModel: MainViewModel = koinViewModel(),
-    settingsViewModel: SettingsViewModel = koinViewModel(),
+    vm: AboutPageViewModel = koinViewModel(),
+    socials: List<Social>,
+    credits: List<CreditData>,
+    debugInfo: String,
+    autoCheckUpdatesPref: BasePreferenceManager.Preference<Boolean>,
+    experimentalOptionsEnabled: Boolean,
+    onExperimentalOptionsEnabled: () -> Unit,
+    onShowUpdateSheetRequest: () -> Unit,
     onNavigateLibsRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
@@ -81,8 +93,12 @@ fun AboutPage(
         context.packageManager.getApplicationIcon(context.packageName).toBitmap().asImageBitmap()
     }
 
+    val updateAvailable = vm.updateAvailable.collectAsState()
+
+    var versionClicks by remember { mutableIntStateOf(0) }
+
     SettingsPageContainer(
-        title = stringResource(R.string.settings_about),
+        title = sharedStringResource(SharedString.SETTINGS_ABOUT),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         Column(
@@ -100,23 +116,24 @@ fun AboutPage(
             ) {
                 Image(
                     bitmap = appIcon,
-                    contentDescription = stringResource(R.string.app_name),
+                    contentDescription = sharedStringResource(SharedString.APP_NAME),
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .size(72.dp)
                 )
                 Column {
                     Text(
-                        text = stringResource(R.string.app_name),
+                        text = sharedStringResource(SharedString.APP_NAME),
                         style = MaterialTheme.typography.titleLargeEmphasized
                     )
                     Text(
-                        text = mainViewModel.applicationVersionLabel,
+                        text = vm.applicationVersionLabel,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.let {
-                            if (settingsViewModel.prefs.experimentalOptionsEnabled.value) it
+                            if (experimentalOptionsEnabled) it
                             else it.clickable {
-                                settingsViewModel.onAboutClick()
+                                versionClicks++
+                                if (versionClicks >= 10) onExperimentalOptionsEnabled()
                             }
                         }
                     )
@@ -124,12 +141,11 @@ fun AboutPage(
             }
 
             ChangelogButton(
-                updateAvailable = mainViewModel.updateAvailable
-            ) { scope.launch {
-                mainViewModel.updateSheetState.show()
-            } }
+                updateAvailable = updateAvailable.value,
+                onClick = onShowUpdateSheetRequest
+            )
 
-            val socialButtons: List<@Composable () -> Unit> = SettingsConstant.socials.map { social -> {
+            val socialButtons: List<@Composable () -> Unit> = socials.map { social -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -161,34 +177,33 @@ fun AboutPage(
         }
 
         ExpressiveSection(
-            title = stringResource(R.string.settings_about_updates),
+            title = sharedStringResource(SharedString.SETTINGS_ABOUT_UPDATES),
             modifier = Modifier.padding(top = 8.dp)
         ) {
             VerticalSegmentor(
                 {
                     ExpressiveSwitchRow(
-                        title = stringResource(R.string.settings_about_updates_autoCheckUpdates),
-                        description = stringResource(R.string.settings_about_updates_autoCheckUpdates_description),
+                        title = sharedStringResource(SharedString.SETTINGS_ABOUT_UPDATES_AUTO_CHECK_UPDATES),
+                        description = sharedStringResource(SharedString.SETTINGS_ABOUT_UPDATES_AUTO_CHECK_UPDATES_DESCRIPTION),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Schedule)) },
-                        checked = settingsViewModel.prefs.autoCheckUpdates.value
-                    ) {
-                        settingsViewModel.prefs.autoCheckUpdates.value = it
-                    }
+                        checked = autoCheckUpdatesPref.value,
+                        onCheckedChange = { autoCheckUpdatesPref.value = it }
+                    )
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
         }
 
         ExpressiveSection(
-            title = stringResource(R.string.settings_about_credits)
+            title = sharedStringResource(SharedString.SETTINGS_ABOUT_CREDITS)
         ) {
             LaunchedEffect(Unit) {
-                SettingsConstant.credits.forEach {
+                credits.forEach {
                     it.fetchAvatar()
                 }
             }
 
-            val creditsButtons: List<@Composable () -> Unit> = SettingsConstant.credits.map { credit -> {
+            val creditsButtons: List<@Composable () -> Unit> = credits.map { credit -> {
                 ExpressiveButtonRow(
                     title = credit.name.resolveString(),
                     description = credit.description.resolveString(),
@@ -214,8 +229,8 @@ fun AboutPage(
                 *creditsButtons.toTypedArray(),
                 {
                     ExpressiveButtonRow(
-                        title = stringResource(R.string.settings_about_libs),
-                        description = stringResource(R.string.settings_about_libs_description),
+                        title = sharedStringResource(SharedString.SETTINGS_ABOUT_LIBS),
+                        description = sharedStringResource(SharedString.SETTINGS_ABOUT_LIBS_DESCRIPTION),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Book)) },
                         trailingComponent = {
                             Icon(
@@ -231,22 +246,22 @@ fun AboutPage(
         }
 
         ExpressiveSection(
-            title = stringResource(R.string.settings_about_other)
+            title = sharedStringResource(SharedString.SETTINGS_ABOUT_OTHER)
         ) {
             VerticalSegmentor(
                 {
                     ExpressiveButtonRow(
-                        title = stringResource(R.string.settings_about_other_copyDebugInfo),
-                        description = stringResource(R.string.settings_about_other_copyDebugInfo_description),
+                        title = sharedStringResource(SharedString.SETTINGS_ABOUT_OTHER_COPY_DEBUG_INFO),
+                        description = sharedStringResource(SharedString.SETTINGS_ABOUT_OTHER_COPY_DEBUG_INFO_DESCRIPTION),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
                     ) {
                         scope.launch {
                             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
-                                context.getString(R.string.settings_about_other_copyDebugInfo_clipLabel),
-                                mainViewModel.debugInfo
+                                context.getSharedString(SharedString.SETTINGS_ABOUT_OTHER_COPY_DEBUG_INFO_CLIP_LABEL),
+                                debugInfo
                             )))
-                            settingsViewModel.topToastState.showToast(
-                                text = R.string.settings_about_other_copyDebugInfo_copied,
+                            vm.topToastState.showToast(
+                                text = context.getSharedString(SharedString.SETTINGS_ABOUT_OTHER_COPY_DEBUG_INFO_COPIED),
                                 icon = Icons.Rounded.CopyAll
                             )
                         }
@@ -267,21 +282,21 @@ private fun ChangelogButton(
     AnimatedContent(updateAvailable) {
         if (it) ElevatedButton(
             shapes = ButtonDefaults.shapes(),
-            onClick = { onClick() }
+            onClick = onClick
         ) {
             ButtonIcon(
                 rememberVectorPainter(Icons.Default.Update)
             )
-            Text(stringResource(R.string.settings_about_update))
+            Text(sharedStringResource(SharedString.SETTINGS_ABOUT_UPDATE))
         }
         else FilledTonalButton(
             shapes = ButtonDefaults.shapes(),
-            onClick = { onClick() }
+            onClick = onClick
         ) {
             ButtonIcon(
                 rememberVectorPainter(Icons.Default.Description)
             )
-            Text(stringResource(R.string.settings_about_changelog))
+            Text(sharedStringResource(SharedString.SETTINGS_ABOUT_CHANGELOG))
         }
     }
 }

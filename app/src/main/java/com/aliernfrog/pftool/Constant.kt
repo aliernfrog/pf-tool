@@ -1,11 +1,9 @@
 package com.aliernfrog.pftool
 
 import android.os.Build
-import android.os.Environment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.ui.graphics.Color
-import com.aliernfrog.pftool.data.PrefEditItem
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import io.github.aliernfrog.pftool_shared.data.Social
 import io.github.aliernfrog.pftool_shared.impl.CreditData
@@ -16,23 +14,9 @@ const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"
 
-val externalStorageRoot = Environment.getExternalStorageDirectory().toString()+"/"
 val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-val folderPickerSupportsInitialUri = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-val hasAndroidDataRestrictions = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 
 object SettingsConstant {
-    val folders = listOf(
-        PrefEditItem(
-            preference = { it.pfMapsDir },
-            label = { R.string.settings_storage_folders_maps }
-        ),
-        PrefEditItem(
-            preference = { it.exportedMapsDir },
-            label = { R.string.settings_storage_folders_exportedMaps }
-        )
-    )
-
     val socials = listOf(
         Social(
             label = "Polyfield",

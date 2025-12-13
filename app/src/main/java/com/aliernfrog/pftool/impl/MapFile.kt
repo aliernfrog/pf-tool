@@ -9,10 +9,10 @@ import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
-import com.aliernfrog.pftool.util.manager.ContextUtils
-import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.pftool_shared.impl.ContextUtils
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -88,7 +88,7 @@ class MapFile(
      * Readable last modified information of the map.
      */
     val readableLastModified = contextUtils.stringFunction { context ->
-        FileUtil.lastModifiedFromLong(this.lastModified, context)
+        PFToolSharedUtil.lastModifiedFromLong(this.lastModified, context)
     }
 
     /**
@@ -155,7 +155,7 @@ class MapFile(
         var currentEntry: ZipEntry?
         while ((zipInputStream.nextEntry.also { currentEntry = it }) != null) {
             currentEntry?.let { entry ->
-                val entryName = FileUtil.getFileName(entry.name)
+                val entryName = PFToolSharedUtil.getFileName(entry.name)
                 if (!allowedMapFiles.contains(entryName.lowercase())) return@let
                 val outputFile = outputFolder.createFile(entryName)
                 val outputStream = outputFile!!.outputStream(context)!!
@@ -187,7 +187,7 @@ class MapFile(
         outputFile.outputStream(context)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
-                    it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase())
+                    it.isFile && allowedMapFiles.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
                 }.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
@@ -217,7 +217,7 @@ class MapFile(
         } else context.contentResolver.openOutputStream(uri)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
-                    it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase())
+                    it.isFile && allowedMapFiles.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
                 }.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)

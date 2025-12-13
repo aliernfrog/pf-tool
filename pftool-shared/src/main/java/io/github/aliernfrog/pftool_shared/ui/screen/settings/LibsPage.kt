@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.screen.settings
+package io.github.aliernfrog.pftool_shared.ui.screen.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -40,28 +40,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.AppSmallTopBar
-import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.mikepenz.aboutlibraries.entity.Library
 import io.github.aliernfrog.pftool_shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
+import io.github.aliernfrog.pftool_shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.settings.LibsPageViewModel
+import io.github.aliernfrog.pftool_shared.util.SharedString
 import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LibsPage(
-    settingsViewModel: SettingsViewModel = koinViewModel(),
+    vm: LibsPageViewModel = koinViewModel(),
     onNavigateBackRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -72,7 +72,7 @@ fun LibsPage(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
-                title = stringResource(R.string.settings_about_libs),
+                title = sharedStringResource(SharedString.SETTINGS_ABOUT_LIBS),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
@@ -82,7 +82,7 @@ fun LibsPage(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(settingsViewModel.libraries) { index, lib ->
+            itemsIndexed(vm.libraries) { index, lib ->
                 if (index != 0) DividerRow()
                 ListItem(
                     headlineContent = { Text(lib.name) },
@@ -144,7 +144,7 @@ fun LibsPage(
                             onClick = { uriHandler.openUri(it) }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                            Text(stringResource(R.string.settings_about_libs_website))
+                            Text(sharedStringResource(SharedString.SETTINGS_ABOUT_LIBS_WEBSITE))
                         }
                     }
                     lib.organization?.url?.let {
@@ -155,7 +155,7 @@ fun LibsPage(
                             }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.CorporateFare))
-                            Text(stringResource(R.string.settings_about_libs_organization))
+                            Text(sharedStringResource(SharedString.SETTINGS_ABOUT_LIBS_ORGANIZATION))
                         }
                     }
                     lib.developers.forEach { dev ->

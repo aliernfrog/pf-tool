@@ -3,7 +3,7 @@ package com.aliernfrog.pftool.data
 import android.os.Parcelable
 import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
-import com.aliernfrog.pftool.util.staticutil.FileUtil
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -17,7 +17,7 @@ data class ServiceFile(
 ): Parcelable
 
 val ServiceFile.nameWithoutExtension
-    get() = FileUtil.removeExtension(this.name)
+    get() = PFToolSharedUtil.removeExtension(this.name)
 
 fun ServiceFile.delete() {
     val shizukuViewModel = getKoinInstance<ShizukuViewModel>()

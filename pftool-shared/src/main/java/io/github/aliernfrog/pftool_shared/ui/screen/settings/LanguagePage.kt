@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.screen.settings
+package io.github.aliernfrog.pftool_shared.ui.screen.settings
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,35 +47,40 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.crowdinURL
-import com.aliernfrog.pftool.languages
-import com.aliernfrog.pftool.ui.component.AppScaffold
-import com.aliernfrog.pftool.ui.component.AppSmallTopBar
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
-import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
-import com.aliernfrog.pftool.util.extension.copy
-import com.aliernfrog.pftool.util.extension.getAvailableLanguage
-import com.aliernfrog.pftool.util.extension.getNameIn
 import io.github.aliernfrog.pftool_shared.data.Language
+import io.github.aliernfrog.pftool_shared.data.getAvailableLanguage
+import io.github.aliernfrog.pftool_shared.data.getNameIn
+import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
+import io.github.aliernfrog.pftool_shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.pftool_shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.pftool_shared.util.SharedString
+import io.github.aliernfrog.pftool_shared.util.extension.copy
+import io.github.aliernfrog.pftool_shared.util.getSharedString
+import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguagePage(
-    mainViewModel: MainViewModel = koinViewModel(),
+    crowdinURL: String,
+    currentLanguagePref: BasePreferenceManager.Preference<String>,
+    languages: List<Language>,
+    appLanguage: Language?,
+    deviceLanguage: Language?,
+    baseLanguage: Language,
+    onSetLanguageRequest: (Language?) -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
-    val currentLanguage = mainViewModel.prefs.language.value
-    val availableDeviceLanguage = mainViewModel.deviceLanguage.getAvailableLanguage()
+    val availableDeviceLanguage = remember {
+        deviceLanguage?.getAvailableLanguage(languages = languages)
+    }
 
     @Composable
     fun LanguageButton(
@@ -84,9 +89,9 @@ fun LanguagePage(
         title: String = language?.localizedName.toString(),
         description: String = language?.fullCode.toString(),
         painter: Painter = rememberVectorPainter(Icons.Default.Translate),
-        selected: Boolean = language?.fullCode == currentLanguage,
+        selected: Boolean = language?.fullCode == currentLanguagePref.value,
         onClick: () -> Unit = {
-            mainViewModel.appLanguage = language
+            onSetLanguageRequest(language)
         }
     ) {
         ExpressiveButtonRow(
@@ -107,7 +112,7 @@ fun LanguagePage(
                     language?.let {
                         TranslationProgressIndicator(
                             progress = it.translationProgress,
-                            isBase = mainViewModel.baseLanguage.languageCode == language.languageCode,
+                            isBase = baseLanguage.languageCode == language.languageCode,
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .size(iconWidth)
@@ -129,7 +134,7 @@ fun LanguagePage(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
-                title = stringResource(R.string.settings_language),
+                title = sharedStringResource(SharedString.SETTINGS_LANGUAGE),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
@@ -138,24 +143,27 @@ fun LanguagePage(
     ) {
         LazyColumn {
             item {
-                TranslationHelp(isDeviceLanguageAvailable = availableDeviceLanguage != null)
+                TranslationHelp(
+                    isDeviceLanguageAvailable = availableDeviceLanguage != null,
+                    crowdinURL = crowdinURL
+                )
             }
 
             item {
-                ExpressiveSection(stringResource(R.string.settings_language_system)) {
+                ExpressiveSection(sharedStringResource(SharedString.SETTINGS_LANGUAGE_SYSTEM)) {
                     VerticalSegmentor(
                         {
                             LanguageButton(
-                                language = mainViewModel.deviceLanguage,
-                                title = stringResource(R.string.settings_language_system_follow),
-                                description = availableDeviceLanguage?.localizedName ?: stringResource(R.string.settings_language_system_notAvailable)
-                                    .replace("{SYSTEM_LANGUAGE}", mainViewModel.appLanguage?.let {
-                                        mainViewModel.deviceLanguage.getNameIn(it.languageCode, it.countryCode)
+                                language = deviceLanguage,
+                                title = sharedStringResource(SharedString.SETTINGS_LANGUAGE_SYSTEM_FOLLOW),
+                                description = availableDeviceLanguage?.localizedName ?: sharedStringResource(SharedString.SETTINGS_LANGUAGE_SYSTEM_NOT_AVAILABLE)
+                                    .replace("{SYSTEM_LANGUAGE}", appLanguage?.let {
+                                        deviceLanguage?.getNameIn(it.languageCode, it.countryCode)
                                     } ?: ""),
                                 painter = rememberVectorPainter(Icons.Default.PhoneAndroid),
-                                selected = currentLanguage.isBlank(),
+                                selected = currentLanguagePref.value.isBlank(),
                                 onClick = {
-                                    mainViewModel.appLanguage = null
+                                    onSetLanguageRequest(null)
                                 }
                             )
                         },
@@ -163,7 +171,7 @@ fun LanguagePage(
                     )
                 }
 
-                ExpressiveSection(stringResource(R.string.settings_language_other)) {}
+                ExpressiveSection(sharedStringResource(SharedString.SETTINGS_LANGUAGE_OTHER)) {}
             }
 
             itemsIndexed(languages) { index, language ->
@@ -194,8 +202,8 @@ private fun TranslationProgressIndicator(
     val scope = rememberCoroutineScope()
     val state = rememberTooltipState(isPersistent = true)
     val tooltipText = remember {
-        if (isBase) context.getString(R.string.settings_language_progress_base)
-        else context.getString(R.string.settings_language_progress_percent)
+        if (isBase) context.getSharedString(SharedString.SETTINGS_LANGUAGE_PROGRESS_BASE)
+        else context.getSharedString(SharedString.SETTINGS_LANGUAGE_PROGRESS_PERCENT)
             .replace("{PERCENT}", (progress*100).toInt().toString())
     }
 
@@ -234,7 +242,8 @@ private fun TranslationProgressIndicator(
 
 @Composable
 fun TranslationHelp(
-    isDeviceLanguageAvailable: Boolean
+    isDeviceLanguageAvailable: Boolean,
+    crowdinURL: String
 ) {
     val uriHandler = LocalUriHandler.current
     Card(
@@ -264,15 +273,15 @@ fun TranslationHelp(
                     modifier = Modifier.padding(end = 8.dp)
                 )
                 Text(
-                    text = stringResource(
-                        if (isDeviceLanguageAvailable) R.string.settings_language_help
-                        else R.string.settings_language_help_deviceNotAvailable
+                    text = sharedStringResource(
+                        if (isDeviceLanguageAvailable) SharedString.SETTINGS_LANGUAGE_HELP
+                        else SharedString.SETTINGS_LANGUAGE_HELP_DEVICE_NOT_AVAILABLE
                     ),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = stringResource(R.string.settings_language_help_description),
+                text = sharedStringResource(SharedString.SETTINGS_LANGUAGE_HELP_DESCRIPTION),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

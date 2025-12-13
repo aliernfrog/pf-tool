@@ -138,7 +138,7 @@
     <string name="mapsList_noSharedMaps">PF Tool ile herhangi bir harita paylaşmadınız</string>
     <string name="mapsList_searchNoMatches">Eşleşen harita bulunamadı</string>
     <string name="settings">Ayarlar</string>
-    <string name="settings_category_polyfield">Polyfield</string>
+    <string name="settings_category_game">Polyfield</string>
     <string name="settings_category_app">Uygulama</string>
     <string name="settings_updateNotification_updateAvailable">Güncelleme mevcut: {VERSION}</string>
     <string name="settings_updateNotification_description">Daha fazla detay ve işlem için tıklayın</string>

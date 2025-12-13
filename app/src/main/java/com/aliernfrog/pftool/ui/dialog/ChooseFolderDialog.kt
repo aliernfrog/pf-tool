@@ -27,10 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.externalStorageRoot
-import com.aliernfrog.pftool.folderPickerSupportsInitialUri
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
+import io.github.aliernfrog.pftool_shared.util.folderPickerSupportsInitialUri
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

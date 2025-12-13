@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entry
@@ -18,11 +19,12 @@ import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.BaseScaffold
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
-import com.aliernfrog.pftool.ui.screen.settings.SettingsDestination
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
+import com.aliernfrog.pftool.util.settingsRootDestination
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
+import io.github.aliernfrog.pftool_shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.pftool_shared.ui.sheet.UpdateSheet
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -31,15 +33,19 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel()
+    vm: MainViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
+    val updateAvailable = vm.updateAvailable.collectAsState()
+    val latestVersionInfo = vm.latestVersionInfo.collectAsState()
+
     val onNavigateSettingsRequest: () -> Unit = {
-        mainViewModel.navigationBackStack.add(SettingsDestination.ROOT)
+        vm.navigationBackStack.add(settingsRootDestination)
     }
+
     val onNavigateBackRequest: () -> Unit = {
-        mainViewModel.navigationBackStack.removeLastIfMultiple()
+        vm.navigationBackStack.removeLastIfMultiple()
     }
 
     val slideTransitionMetadata = NavDisplay.transitionSpec {
@@ -64,7 +70,7 @@ fun MainScreen(
 
     BaseScaffold { paddingValues ->
         NavDisplay(
-            backStack = mainViewModel.navigationBackStack,
+            backStack = vm.navigationBackStack,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -89,7 +95,7 @@ fun MainScreen(
                     destination.content(
                         /* onNavigateBackRequest = */ onNavigateBackRequest,
                         /* onNavigateRequest = */ {
-                            mainViewModel.navigationBackStack.add(it)
+                            vm.navigationBackStack.add(it)
                         }
                     )
                 }
@@ -108,17 +114,17 @@ fun MainScreen(
     }
 
     UpdateSheet(
-        sheetState = mainViewModel.updateSheetState,
-        latestVersionInfo = mainViewModel.latestVersionInfo,
-        updateAvailable = mainViewModel.updateAvailable,
+        sheetState = vm.updateSheetState,
+        latestVersionInfo = latestVersionInfo.value,
+        updateAvailable = updateAvailable.value,
         onCheckUpdatesRequest = { scope.launch {
-            mainViewModel.checkUpdates(manuallyTriggered = true)
+            vm.checkUpdates(manuallyTriggered = true)
         } }
     )
 
-    mainViewModel.progressState.currentProgress?.let {
+    vm.progressState.currentProgress?.let {
         ProgressDialog(it) {
-            mainViewModel.progressState.currentProgress = null
+            vm.progressState.currentProgress = null
         }
     }
 }

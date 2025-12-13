@@ -7,12 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import com.aliernfrog.pftool.enum.StorageAccessType
-import com.aliernfrog.pftool.util.extension.appHasPermissions
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import androidx.core.net.toUri
+import com.aliernfrog.pftool.util.extension.enable
+import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
+import io.github.aliernfrog.pftool_shared.util.extension.appHasPermissions
 
 class PermissionsViewModel(
     val topToastState: TopToastState,
@@ -20,7 +21,7 @@ class PermissionsViewModel(
 ) : ViewModel() {
     private var storageAccessType: StorageAccessType
         get() = StorageAccessType.entries[prefs.storageAccessType.value]
-        set(value) { value.enable(prefs) }
+        set(value) { value.enable() }
 
     var showShizukuIntroDialog by mutableStateOf(false)
     var showFilesDowngradeDialog by mutableStateOf(false)

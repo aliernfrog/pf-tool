@@ -138,7 +138,7 @@
     <string name="mapsList_noSharedMaps">You have not shared any maps to PF Tool</string>
     <string name="mapsList_searchNoMatches">No matching maps found</string>
     <string name="settings">Settings</string>
-    <string name="settings_category_polyfield">Polyfield</string>
+    <string name="settings_category_game">Polyfield</string>
     <string name="settings_category_app">App</string>
     <string name="settings_updateNotification_updateAvailable">Update available: {VERSION}</string>
     <string name="settings_updateNotification_description">Click to view more details and actions</string>
