@@ -25,8 +25,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.ui.component.HorizontalProgressIndicatorWithText
-import io.github.aliernfrog.pftool_shared.util.SharedString
-import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -65,12 +65,13 @@ fun ProgressDialog(
             )
             if (showDismissButton) TextButton(
                 onClick = ::dismissDialog,
+                shapes = ButtonDefaults.shapes(),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = MaterialTheme.colorScheme.error
                 ),
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text(sharedStringResource(SharedString.ACTION_CANCEL))
+                Text(sharedStringResource(SharedString.ActionCancel))
             }
         }
     }

@@ -4,7 +4,7 @@ import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
-import io.github.aliernfrog.pftool_shared.impl.VersionManager
+import io.github.aliernfrog.shared.impl.VersionManager
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 

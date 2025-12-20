@@ -25,10 +25,10 @@ import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
-import io.github.aliernfrog.pftool_shared.ui.component.AppTopBar
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppTopBar
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

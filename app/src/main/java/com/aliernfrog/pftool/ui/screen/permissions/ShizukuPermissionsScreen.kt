@@ -39,12 +39,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.enum.ShizukuStatus
-import com.aliernfrog.pftool.ui.theme.AppComponentShape
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
-import io.github.aliernfrog.pftool_shared.ui.component.CardWithActions
-import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.CardWithActions
+import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
 

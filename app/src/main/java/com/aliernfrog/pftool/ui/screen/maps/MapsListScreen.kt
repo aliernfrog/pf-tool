@@ -81,22 +81,22 @@ import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.component.maps.ListMapItem
-import com.aliernfrog.pftool.ui.theme.AppFABPadding
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
-import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
-import io.github.aliernfrog.pftool_shared.ui.component.AppTopBar
-import io.github.aliernfrog.pftool_shared.ui.component.ErrorWithIcon
-import io.github.aliernfrog.pftool_shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.pftool_shared.ui.component.LazyAdaptiveVerticalGrid
-import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
-import io.github.aliernfrog.pftool_shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
-import io.github.aliernfrog.pftool_shared.ui.component.SingleChoiceConnectedButtonGroup
-import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.pftool_shared.ui.sheet.ListViewOptionsSheet
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppTopBar
+import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
+import io.github.aliernfrog.shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
+import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
+import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -264,7 +264,8 @@ fun MapsListScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     if (showStorage) {
-                        FloatingActionButton(icon = Icons.Outlined.SdCard,
+                        FloatingActionButton(
+                            icon = Icons.Outlined.SdCard,
                             text = stringResource(R.string.mapsList_storage),
                             showText = firstVisibleItemIndex < 1,
                             onClick = {

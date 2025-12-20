@@ -1,7 +1,7 @@
 package com.aliernfrog.pftool.di
 
 import com.aliernfrog.pftool.ui.viewmodel.*
-import io.github.aliernfrog.pftool_shared.ui.viewmodel.InsetsViewModel
+import io.github.aliernfrog.shared.ui.viewmodel.InsetsViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 

@@ -51,19 +51,19 @@ import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.data.Language
 import io.github.aliernfrog.pftool_shared.data.getAvailableLanguage
 import io.github.aliernfrog.pftool_shared.data.getNameIn
-import io.github.aliernfrog.pftool_shared.ui.component.AppScaffold
-import io.github.aliernfrog.pftool_shared.ui.component.AppSmallTopBar
-import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowIcon
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
-import io.github.aliernfrog.pftool_shared.ui.theme.AppComponentShape
-import io.github.aliernfrog.pftool_shared.util.SharedString
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.copy
-import io.github.aliernfrog.pftool_shared.util.getSharedString
-import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
-import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.shared.util.getSharedString
+import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
+import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,7 +134,7 @@ fun LanguagePage(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
-                title = sharedStringResource(SharedString.SETTINGS_LANGUAGE),
+                title = sharedStringResource(PFToolSharedString.SettingsLanguage),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
@@ -150,13 +150,13 @@ fun LanguagePage(
             }
 
             item {
-                ExpressiveSection(sharedStringResource(SharedString.SETTINGS_LANGUAGE_SYSTEM)) {
+                ExpressiveSection(sharedStringResource(PFToolSharedString.SettingsLanguageSystem)) {
                     VerticalSegmentor(
                         {
                             LanguageButton(
                                 language = deviceLanguage,
-                                title = sharedStringResource(SharedString.SETTINGS_LANGUAGE_SYSTEM_FOLLOW),
-                                description = availableDeviceLanguage?.localizedName ?: sharedStringResource(SharedString.SETTINGS_LANGUAGE_SYSTEM_NOT_AVAILABLE)
+                                title = sharedStringResource(PFToolSharedString.SettingsLanguageSystemFollow),
+                                description = availableDeviceLanguage?.localizedName ?: sharedStringResource(PFToolSharedString.SettingsLanguageSystemNotAvailable)
                                     .replace("{SYSTEM_LANGUAGE}", appLanguage?.let {
                                         deviceLanguage?.getNameIn(it.languageCode, it.countryCode)
                                     } ?: ""),
@@ -171,7 +171,7 @@ fun LanguagePage(
                     )
                 }
 
-                ExpressiveSection(sharedStringResource(SharedString.SETTINGS_LANGUAGE_OTHER)) {}
+                ExpressiveSection(sharedStringResource(PFToolSharedString.SettingsLanguageOther)) {}
             }
 
             itemsIndexed(languages) { index, language ->
@@ -202,8 +202,8 @@ private fun TranslationProgressIndicator(
     val scope = rememberCoroutineScope()
     val state = rememberTooltipState(isPersistent = true)
     val tooltipText = remember {
-        if (isBase) context.getSharedString(SharedString.SETTINGS_LANGUAGE_PROGRESS_BASE)
-        else context.getSharedString(SharedString.SETTINGS_LANGUAGE_PROGRESS_PERCENT)
+        if (isBase) context.getSharedString(PFToolSharedString.SettingsLanguageProgressBase)
+        else context.getSharedString(PFToolSharedString.SettingsLanguageProgressPercent)
             .replace("{PERCENT}", (progress*100).toInt().toString())
     }
 
@@ -274,14 +274,14 @@ fun TranslationHelp(
                 )
                 Text(
                     text = sharedStringResource(
-                        if (isDeviceLanguageAvailable) SharedString.SETTINGS_LANGUAGE_HELP
-                        else SharedString.SETTINGS_LANGUAGE_HELP_DEVICE_NOT_AVAILABLE
+                        if (isDeviceLanguageAvailable) PFToolSharedString.SettingsLanguageHelp
+                        else PFToolSharedString.SettingsLanguageHelpDeviceNotAvailable
                     ),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = sharedStringResource(SharedString.SETTINGS_LANGUAGE_HELP_DESCRIPTION),
+                text = sharedStringResource(PFToolSharedString.SettingsLanguageHelpDescription),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

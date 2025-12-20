@@ -1,9 +1,9 @@
 package com.aliernfrog.pftool.util.extension
 
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import io.github.aliernfrog.pftool_shared.di.getKoinInstance
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.di.getKoinInstance
 
 fun StorageAccessType.enable() {
     val prefs = getKoinInstance<PreferenceManager>()

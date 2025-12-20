@@ -25,10 +25,10 @@ import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.util.extension.enable
 import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.ui.component.CardWithActions
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.ui.component.CardWithActions
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

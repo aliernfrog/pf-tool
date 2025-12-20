@@ -27,8 +27,8 @@ import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
 import com.aliernfrog.pftool.util.settingsRootDestination
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.SettingsDestination
-import io.github.aliernfrog.pftool_shared.ui.sheet.UpdateSheet
+import io.github.aliernfrog.shared.ui.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.sheet.UpdateSheet
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

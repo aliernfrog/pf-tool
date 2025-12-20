@@ -41,21 +41,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.ui.component.ButtonIcon
-import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
-import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowHeader
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.pftool_shared.ui.component.form.ExpandableRow
-import io.github.aliernfrog.pftool_shared.util.SharedString
-import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
 import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
 import io.github.aliernfrog.pftool_shared.util.folderPickerSupportsInitialUri
-import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
-import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
+import io.github.aliernfrog.shared.ui.settings.SettingsPageContainer
+import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @Composable
 fun StoragePage(
@@ -71,14 +72,14 @@ fun StoragePage(
     val selectedStorageAccessType = StorageAccessType.entries[storageAccessTypePref.value]
 
     SettingsPageContainer(
-        title = sharedStringResource(SharedString.SETTINGS_STORAGE),
+        title = sharedStringResource(PFToolSharedString.SettingsStorage),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         VerticalSegmentor(
             {
                 ExpandableRow(
                     expanded = storageAccessTypesExpanded,
-                    title = sharedStringResource(SharedString.SETTINGS_STORAGE_STORAGE_ACCESS_TYPE),
+                    title = sharedStringResource(PFToolSharedString.SettingsStorageStorageAccessType),
                     description = sharedStringResource(selectedStorageAccessType.label),
                     onClickHeader = { storageAccessTypesExpanded = !storageAccessTypesExpanded }
                 ) {
@@ -122,7 +123,7 @@ fun StoragePage(
         )
 
         ExpressiveSection(
-            title = sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS)
+            title = sharedStringResource(PFToolSharedString.SettingsStorageFolders)
         ) {
             FolderConfiguration(
                 useRawPathInputs = selectedStorageAccessType != StorageAccessType.SAF,
@@ -212,7 +213,7 @@ fun RawPathItem(
 
         FadeVisibility(!isDefault) {
             SuggestionCard(
-                title = sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_RESTORE_DEFAULT),
+                title = sharedStringResource(PFToolSharedString.SettingsStorageFoldersRestoreDefault),
                 description = pref.defaultValue
             ) {
                 pref.value = pref.defaultValue
@@ -225,7 +226,7 @@ fun RawPathItem(
             modifier = Modifier.align(Alignment.End)
         ) {
             ButtonIcon(rememberVectorPainter(Icons.Default.FolderOpen))
-            Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_CHOOSE))
+            Text(sharedStringResource(PFToolSharedString.SettingsStorageFoldersChoose))
         }
     }
 }
@@ -263,8 +264,8 @@ fun FolderConfigItem(
 
         if (!usingRecommendedPath) SuggestionCard(
             title = sharedStringResource(
-                if (folderPickerSupportsInitialUri) SharedString.SETTINGS_STORAGE_FOLDERS_OPEN_RECOMMENDED
-                else SharedString.SETTINGS_STORAGE_FOLDERS_RECOMMENDED_FOLDER
+                if (folderPickerSupportsInitialUri) PFToolSharedString.SettingsStorageFoldersOpenRecommended
+                else PFToolSharedString.SettingsStorageFoldersRecommendedFolder
             ),
             description = recommendedPath,
             enabled = folderPickerSupportsInitialUri
@@ -285,7 +286,7 @@ fun FolderConfigItem(
             AssistChip(
                 onClick = { onPickFolderRequest(null) },
                 label = {
-                    Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_CHOOSE))
+                    Text(sharedStringResource(PFToolSharedString.SettingsStorageFoldersChoose))
                 }
             )
 
@@ -294,7 +295,7 @@ fun FolderConfigItem(
                     onPickFolderRequest(PFToolSharedUtil.getUriForPath(path))
                 },
                 label = {
-                    Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_OPEN_CURRENT))
+                    Text(sharedStringResource(PFToolSharedString.SettingsStorageFoldersOpenCurrent))
                 }
             )
 
@@ -303,7 +304,7 @@ fun FolderConfigItem(
                     onPickFolderRequest(PFToolSharedUtil.getUriForPath(dataFolderPath))
                 },
                 label = {
-                    Text(sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_OPEN_ANDROID_DATA))
+                    Text(sharedStringResource(PFToolSharedString.SettingsStorageFoldersOpenAndroidData))
                 }
             )
         }
@@ -352,6 +353,6 @@ private fun getFolderDescription(path: String): String {
         text = text.toUri().toPath().removePrefix(externalStorageRoot)
     } catch (_: Exception) {}
     return text.ifEmpty {
-        sharedStringResource(SharedString.SETTINGS_STORAGE_FOLDERS_NOT_SET)
+        sharedStringResource(PFToolSharedString.SettingsStorageFoldersNotSet)
     }
 }

@@ -47,19 +47,6 @@ class PFToolSharedUtil {
             }
         }
 
-        fun getAppVersionName(context: Context): String {
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            return packageInfo.versionName.toString()
-        }
-
-        fun getAppVersionCode(context: Context): Long {
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {
-                @Suppress("DEPRECATION")
-                packageInfo.versionCode.toLong()
-            }
-        }
-
         /**
          * Gets [Language] from given language code.
          * [code] must either be a language code, or language and country code splitted by a "-" (e.g.: en-US, en)

@@ -4,15 +4,15 @@ import android.content.Context
 import android.util.Log
 import com.aliernfrog.pftool.*
 import com.aliernfrog.pftool.data.MapActionResult
-import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.enum.MapImportedState
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
-import io.github.aliernfrog.pftool_shared.impl.ContextUtils
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.di.getKoinInstance
+import io.github.aliernfrog.shared.impl.ContextUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent

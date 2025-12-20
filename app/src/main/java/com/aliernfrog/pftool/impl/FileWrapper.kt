@@ -8,11 +8,11 @@ import com.aliernfrog.pftool.data.exists
 import com.aliernfrog.pftool.data.listFiles
 import com.aliernfrog.pftool.data.nameWithoutExtension
 import com.aliernfrog.pftool.data.renameTo
-import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.extension.nameWithoutExtension
 import com.aliernfrog.pftool.util.extension.size
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.shared.di.getKoinInstance
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream

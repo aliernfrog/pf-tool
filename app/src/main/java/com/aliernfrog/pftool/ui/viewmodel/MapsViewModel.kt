@@ -22,7 +22,6 @@ import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.data.MapActionResult
 import com.aliernfrog.pftool.data.exists
 import com.aliernfrog.pftool.data.mkdirs
-import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.extension.showErrorToast
@@ -30,14 +29,15 @@ import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
-import io.github.aliernfrog.pftool_shared.data.MediaOverlayData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.impl.ContextUtils
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
-import io.github.aliernfrog.pftool_shared.ui.component.VerticalSegmentor
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.data.MediaOverlayData
+import io.github.aliernfrog.shared.di.getKoinInstance
+import io.github.aliernfrog.shared.impl.ContextUtils
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -145,12 +145,12 @@ class MapsViewModel(
             model = map.thumbnailModel,
             title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
             zoomEnabled = hasThumbnail,
-            optionsSheetContent = if (!hasThumbnail) null else { {
-                val context = LocalContext.current
-                val scope = rememberCoroutineScope()
+            optionsSheetContent = if (!hasThumbnail) null else {
+                {
+                    val context = LocalContext.current
+                    val scope = rememberCoroutineScope()
 
-                VerticalSegmentor(
-                    {
+                    VerticalSegmentor({
                         ExpressiveButtonRow(
                             title = stringResource(R.string.maps_thumbnail_share),
                             icon = {
@@ -165,13 +165,9 @@ class MapsViewModel(
                                 activeProgress = null
                             }
                         }
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(bottom = 12.dp)
-                )
-            } }
-        ))
+                    }, modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp))
+                }
+            }))
     }
 
     fun showActionFailedDialog(successes: List<Pair<String, MapActionResult>>, fails: List<Pair<String, MapActionResult>>) {

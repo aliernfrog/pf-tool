@@ -3,12 +3,12 @@ package com.aliernfrog.pftool.util.manager
 import android.content.Context
 import android.os.Environment
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.ui.theme.Theme
 import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
-import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
-import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
+import io.github.aliernfrog.shared.ui.theme.Theme
+import io.github.aliernfrog.shared.util.extension.getAppVersionCode
 
-class PreferenceManager(context: Context) : BasePreferenceManager(
+class PreferenceManager(context: Context) : PFToolBasePreferenceManager(
     prefs = context.getSharedPreferences("APP_CONFIG", Context.MODE_PRIVATE)
 ) {
     // Appearance options
@@ -42,6 +42,6 @@ class PreferenceManager(context: Context) : BasePreferenceManager(
     // Experimental (developer) options
     val experimentalOptionsEnabled = booleanPreference("experimentalOptionsEnabled", false)
     val shizukuNeverLoad = booleanPreference("shizukuNeverLoad", false, experimental = true, includeInDebugInfo = false)
-    val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", PFToolSharedUtil.getAppVersionCode(context), experimental = true, includeInDebugInfo = false)
+    val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", context.getAppVersionCode(), experimental = true, includeInDebugInfo = false)
     val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/pftool/latest.json", experimental = true, includeInDebugInfo = false)
 }

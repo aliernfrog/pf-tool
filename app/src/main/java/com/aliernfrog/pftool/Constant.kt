@@ -5,8 +5,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.ui.graphics.Color
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import io.github.aliernfrog.pftool_shared.data.Social
-import io.github.aliernfrog.pftool_shared.impl.CreditData
+import io.github.aliernfrog.shared.data.Social
+import io.github.aliernfrog.shared.impl.CreditData
 
 const val TAG = "PFToolLogs"
 
@@ -20,13 +20,13 @@ object SettingsConstant {
     val socials = listOf(
         Social(
             label = "Polyfield",
-            icon = io.github.aliernfrog.pftool_shared.R.drawable.discord,
+            icon = io.github.aliernfrog.shared.R.drawable.discord,
             iconContainerColor = Color(0xFF5865F2),
             url = "https://discord.gg/X6WzGpCgDJ"
         ),
         Social(
             label = "PF Tool",
-            icon = io.github.aliernfrog.pftool_shared.R.drawable.github,
+            icon = io.github.aliernfrog.shared.R.drawable.github,
             iconContainerColor = Color(0xFF104C35),
             url = githubRepoURL
         ),

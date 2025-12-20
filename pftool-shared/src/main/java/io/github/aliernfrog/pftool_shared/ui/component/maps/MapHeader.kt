@@ -7,8 +7,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.painter.Painter
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowHeader
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 
 @Composable
 fun MapHeader(

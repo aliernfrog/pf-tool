@@ -11,8 +11,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import io.github.aliernfrog.pftool_shared.util.SharedString
-import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -21,7 +21,7 @@ fun CustomMessageDialog(
     text: String?,
     icon: ImageVector? = null,
     confirmButton: (@Composable () -> Unit)? = null,
-    dismissButtonText: String = sharedStringResource(SharedString.ACTION_DISMISS),
+    dismissButtonText: String = sharedStringResource(SharedString.ActionDismiss),
     onDismissRequest: () -> Unit
 ) {
     @Composable

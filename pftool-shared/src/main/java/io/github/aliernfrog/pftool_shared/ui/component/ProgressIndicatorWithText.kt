@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.impl.Progress
-import io.github.aliernfrog.pftool_shared.util.SharedString
-import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @Composable
 fun HorizontalProgressIndicatorWithText(
@@ -37,7 +37,7 @@ fun HorizontalProgressIndicatorWithText(
             color = indicatorColor
         )
         Text(
-            text = progress?.description ?: sharedStringResource(SharedString.INFO_PLEASE_WAIT),
+            text = progress?.description ?: sharedStringResource(SharedString.InfoPleaseWait),
             color = textColor
         )
     }
@@ -60,7 +60,7 @@ fun VerticalProgressIndicatorWithText(
             color = indicatorColor
         )
         Text(
-            text = progress?.description ?: sharedStringResource(SharedString.INFO_PLEASE_WAIT),
+            text = progress?.description ?: sharedStringResource(SharedString.InfoPleaseWait),
             color = textColor,
             modifier = Modifier.padding(top = 8.dp)
         )

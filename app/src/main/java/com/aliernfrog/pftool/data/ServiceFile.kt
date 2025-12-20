@@ -1,9 +1,9 @@
 package com.aliernfrog.pftool.data
 
 import android.os.Parcelable
-import com.aliernfrog.pftool.di.getKoinInstance
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.di.getKoinInstance
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

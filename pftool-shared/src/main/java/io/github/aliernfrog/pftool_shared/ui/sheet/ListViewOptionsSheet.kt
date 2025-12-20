@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.enum.ListSorting
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
-import io.github.aliernfrog.pftool_shared.ui.component.AppModalBottomSheet
-import io.github.aliernfrog.pftool_shared.ui.component.FadeVisibility
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.pftool_shared.util.SharedString
-import io.github.aliernfrog.pftool_shared.util.extension.horizontalFadingEdge
-import io.github.aliernfrog.pftool_shared.util.manager.base.BasePreferenceManager
-import io.github.aliernfrog.pftool_shared.util.sharedStringResource
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
+import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
+import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +50,7 @@ fun ListViewOptionsSheet(
         sheetState = sheetState
     ) {
         if (isAnySortingOptionAvailable) ExpressiveSection(
-            title = sharedStringResource(SharedString.LIST_SORTING)
+            title = sharedStringResource(PFToolSharedString.ListSorting)
         ) {
             onSortingChange?.let { sortingChangeCallback ->
                 val filtersScrollState = rememberScrollState()
@@ -84,7 +84,7 @@ fun ListViewOptionsSheet(
                         selected = sortingReversed == true,
                         onClick = { sortingReversedChangeCallback(sortingReversed != true) },
                         label = {
-                            Text(sharedStringResource(SharedString.LIST_SORTING_REVERSED))
+                            Text(sharedStringResource(PFToolSharedString.ListSortingReversed))
                         },
                         leadingIcon = {
                             Icon(Icons.Default.SwapVert, null)
@@ -95,7 +95,7 @@ fun ListViewOptionsSheet(
             }
         }
 
-        ExpressiveSection(sharedStringResource(SharedString.LIST_STYLE)) {
+        ExpressiveSection(sharedStringResource(PFToolSharedString.ListStyle)) {
             val stylesScrollState = rememberScrollState()
             Row(
                 modifier = Modifier
@@ -124,7 +124,7 @@ fun ListViewOptionsSheet(
 
             FadeVisibility(style == ListStyle.GRID) {
                 ExpressiveSection(
-                    title = sharedStringResource(SharedString.LIST_STYLE_GRID_MAX_LINE_SPAN)
+                    title = sharedStringResource(PFToolSharedString.ListStyleGridMaxLineSpan)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -155,7 +155,7 @@ fun ListViewOptionsSheet(
 @Composable
 fun ListViewOptionsSheet(
     sheetState: SheetState,
-    listViewOptionsPreference: BasePreferenceManager.ListViewOptionsPreference
+    listViewOptionsPreference: PFToolBasePreferenceManager.ListViewOptionsPreference
 ) {
     val listStylePref = listViewOptionsPreference.styleGroup.getCurrent()
     val gridMaxLineSpanPref = listViewOptionsPreference.gridMaxLineSpanGroup.getCurrent()

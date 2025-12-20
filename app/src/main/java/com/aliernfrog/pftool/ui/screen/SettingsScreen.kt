@@ -1,6 +1,7 @@
 package com.aliernfrog.pftool.ui.screen
 
 import android.os.Build
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.Info
@@ -13,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant
 import com.aliernfrog.pftool.crowdinURL
@@ -23,15 +26,19 @@ import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.extension.enable
 import com.aliernfrog.pftool.util.settingsLibsDestination
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.AboutPage
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.AppearancePage
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.ExperimentalPage
+import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.ui.screen.settings.LanguagePage
 import io.github.aliernfrog.pftool_shared.ui.screen.settings.MapsPage
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.SettingsCategory
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.SettingsDestination
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.SettingsRootPage
 import io.github.aliernfrog.pftool_shared.ui.screen.settings.StoragePage
+import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.settings.AboutPage
+import io.github.aliernfrog.shared.ui.settings.AppearancePage
+import io.github.aliernfrog.shared.ui.settings.ExperimentalPage
+import io.github.aliernfrog.shared.ui.settings.SettingsCategory
+import io.github.aliernfrog.shared.ui.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.settings.SettingsRootPage
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -147,7 +154,21 @@ fun SettingsScreen(
                                 GeneralUtil.restartApp(context)
                             },
                             onNavigateBackRequest = onNavigateBackRequest
-                        )
+                        ) {
+                            ExpressiveSection(title = "Progress") {
+                                VerticalSegmentor(
+                                    {
+                                        ExpressiveButtonRow(
+                                            title = "Set indeterminate progress"
+                                        ) {
+                                            mainViewModel.progressState.currentProgress =
+                                                Progress(description = context.getString(R.string.info_pleaseWait))
+                                        }
+                                    },
+                                    modifier = Modifier.padding(horizontal = 12.dp)
+                                )
+                            }
+                        }
                     }
                 ),
                 SettingsDestination(

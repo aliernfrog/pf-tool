@@ -33,9 +33,9 @@ import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.toptoast.component.TopToastHost
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
-import io.github.aliernfrog.pftool_shared.ui.component.MediaOverlay
-import io.github.aliernfrog.pftool_shared.ui.component.util.InsetsObserver
-import io.github.aliernfrog.pftool_shared.ui.theme.Theme
+import io.github.aliernfrog.shared.ui.component.MediaOverlay
+import io.github.aliernfrog.shared.ui.component.util.InsetsObserver
+import io.github.aliernfrog.shared.ui.theme.Theme
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : AppCompatActivity() {

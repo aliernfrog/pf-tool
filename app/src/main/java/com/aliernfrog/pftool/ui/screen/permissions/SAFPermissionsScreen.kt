@@ -40,14 +40,14 @@ import com.aliernfrog.pftool.util.extension.enable
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.data.requiresAndroidData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.ui.component.CardWithActions
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.pftool_shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.pftool_shared.ui.component.form.DividerRow
-import io.github.aliernfrog.pftool_shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.ui.component.CardWithActions
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.form.DividerRow
+import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

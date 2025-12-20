@@ -180,6 +180,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.window)
 
+    implementation(project(":shared"))
     implementation(project(":pftool-shared"))
     implementation(libs.aboutlibraries)
     implementation(libs.coil)
@@ -212,10 +213,10 @@ tasks.register("checkSharedStrings") {
         val projectDependency = project.configurations.getByName("debugRuntimeClasspath")
             .allDependencies
             .filterIsInstance<ProjectDependency>()
-            .find { it.dependencyProject.path == ":$libraryName" }
+            .find { project.project(it.path).path == ":$libraryName" }
             ?: throw GradleException("Could not find a project dependency on ':$libraryName'")
 
-        val sharedLibAar = projectDependency.dependencyProject.tasks.let { tasks ->
+        val sharedLibAar = project.project(projectDependency.path).tasks.let { tasks ->
             tasks.getByName("bundleDebugAar").outputs.files.singleFile.let {
                 if (it.exists()) it
                 else tasks.getByName("bundleReleaseAar").outputs.files.singleFile
