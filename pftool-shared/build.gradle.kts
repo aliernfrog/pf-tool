@@ -82,7 +82,7 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling.preview)
 }
 
-tasks.register("generateSharedStringsTxt") {
+/*TODO tasks.register("generateSharedStringsTxt") {
     val enumFile = file("src/main/java/io/github/aliernfrog/pftool_shared/util/SharedString.kt")
     inputs.file(enumFile)
 
@@ -104,10 +104,10 @@ tasks.register("generateSharedStringsTxt") {
         targetFile.parentFile.mkdirs()
         targetFile.writeText(keys.joinToString("\n"))
     }
-}
+}*/
 
 tasks.named("preBuild") {
-    dependsOn(tasks.named("generateSharedStringsTxt"))
+    dependsOn(":shared:bundleDebugAar", ":shared:bundleReleaseAar")
 }
 
 afterEvaluate {

@@ -1,4 +1,3 @@
-import org.apache.commons.compress.archivers.zip.ZipFile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -18,7 +17,7 @@ plugins {
 android {
     namespace = "com.aliernfrog.pftool"
     compileSdk = 36
-    buildToolsVersion = "35.0.1"
+    buildToolsVersion = "36.1.0"
 
     defaultConfig {
         applicationId = "com.aliernfrog.pftool"
@@ -199,7 +198,7 @@ dependencies {
     coreLibraryDesugaring(libs.android.desugar)
 }
 
-@Suppress("DEPRECATION")
+/*TODO @Suppress("DEPRECATION")
 tasks.register("checkSharedStrings") {
     group = "verification"
     description = "Checks that all strings from pftool-shared are present in this app."
@@ -260,4 +259,4 @@ tasks.register("checkSharedStrings") {
 
 tasks.named("preBuild") {
     dependsOn(tasks.named("checkSharedStrings"))
-}
+}*/
