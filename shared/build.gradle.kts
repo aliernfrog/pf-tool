@@ -75,3 +75,16 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
+                from(components["release"])
+
+                groupId = "io.github.aliernfrog"
+                artifactId = "shared"
+            }
+        }
+    }
+}

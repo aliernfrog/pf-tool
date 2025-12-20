@@ -106,10 +106,6 @@ dependencies {
     }
 }*/
 
-tasks.named("preBuild") {
-    dependsOn(":shared:bundleDebugAar", ":shared:bundleReleaseAar")
-}
-
 afterEvaluate {
     publishing {
         publications {
