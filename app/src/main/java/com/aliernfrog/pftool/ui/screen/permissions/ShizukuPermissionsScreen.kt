@@ -38,34 +38,42 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.ShizukuStatus
 import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import io.github.aliernfrog.pftool_shared.enum.ShizukuStatus
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
+import androidx.compose.runtime.collectAsState
+import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShizukuPermissionsScreen(
-    shizukuViewModel: ShizukuViewModel = koinViewModel(),
+    vm: ShizukuViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
 
+    val fileServiceRunning = vm.shizukuManager.fileServiceRunning.collectAsState().value
+    val shizukuStatus = vm.shizukuManager.status.collectAsState().value
+    val shizukuInstalled = vm.shizukuManager.shizukuInstalled
+    val shizukuVersionProblematic = vm.shizukuManager.shizukuVersionProblematic.collectAsState().value
+    val timedOut = vm.shizukuManager.timedOut.collectAsState().value
+
     LaunchedEffect(Unit) {
-        shizukuViewModel.checkAvailability(context)
+        vm.shizukuManager.checkAvailability(context)
     }
 
-    LaunchedEffect(shizukuViewModel.fileServiceRunning) {
+    LaunchedEffect(fileServiceRunning) {
         onUpdateStateRequest()
     }
 
     AnimatedContent(
-        shizukuViewModel.status == ShizukuStatus.AVAILABLE
+        shizukuStatus == ShizukuStatus.AVAILABLE
     ) { isLoading ->
         Column(
             modifier = Modifier
@@ -91,14 +99,14 @@ fun ShizukuPermissionsScreen(
                     )
                 }
                 AnimatedVisibility(
-                    visible = shizukuViewModel.timedOut,
+                    visible = timedOut,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (shizukuViewModel.shizukuVersionProblematic) ProblematicManagerCard(
+                        if (shizukuVersionProblematic) ProblematicManagerCard(
                             modifier = Modifier
                                 .wrapContentWidth()
                                 .padding(16.dp)
@@ -110,10 +118,10 @@ fun ShizukuPermissionsScreen(
                                 .wrapContentWidth()
                                 .padding(16.dp),
                             buttons = {
-                                if (shizukuViewModel.shizukuInstalled) TextButton(
+                                if (shizukuInstalled) TextButton(
                                     shapes = ButtonDefaults.shapes(),
                                     onClick = {
-                                        shizukuViewModel.launchShizuku(context)
+                                        vm.shizukuManager.launchShizuku(context)
                                     }
                                 ) {
                                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
@@ -122,7 +130,7 @@ fun ShizukuPermissionsScreen(
                                 Button(
                                     shapes = ButtonDefaults.shapes(),
                                     onClick = {
-                                        shizukuViewModel.prefs.shizukuNeverLoad.value = false
+                                        vm.prefs.shizukuNeverLoad.value = false
                                         GeneralUtil.restartApp(context)
                                     }
                                 ) {
@@ -135,7 +143,14 @@ fun ShizukuPermissionsScreen(
                         }
                     }
                 }
-            } else ShizukuSetupGuide()
+            } else ShizukuSetupGuide(
+                status = shizukuStatus,
+                isShizukuInstalled = shizukuInstalled,
+                isDeviceRooted = vm.shizukuManager.deviceRooted,
+                onLaunchShizukuRequest = {
+                    vm.shizukuManager.launchShizuku(context)
+                }
+            )
         }
     }
 }
@@ -144,13 +159,14 @@ fun ShizukuPermissionsScreen(
 @Composable
 private fun ProblematicManagerCard(
     modifier: Modifier = Modifier,
-    shizukuViewModel: ShizukuViewModel = koinViewModel()
+    vm: ShizukuViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val currentManagerVersion = remember {
-        "v" + shizukuViewModel.getCurrentShizukuVersionNameSimplified(context)
+        "v" + vm.shizukuManager.getCurrentShizukuVersionNameSimplified(context)
     }
+
     CardWithActions(
         title = null,
         modifier = modifier,
@@ -158,7 +174,7 @@ private fun ProblematicManagerCard(
             TextButton(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {
-                    uriHandler.openUri(ShizukuViewModel.SHIZUKU_RELEASES_URL)
+                    uriHandler.openUri(ShizukuManager.SHIZUKU_RELEASES_URL)
                 }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.OpenInBrowser))
@@ -168,7 +184,7 @@ private fun ProblematicManagerCard(
             Button(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {
-                    uriHandler.openUri(ShizukuViewModel.SHIZUKU_RECOMMENDED_VERSION_DOWNLOAD_URL)
+                    uriHandler.openUri(ShizukuManager.SHIZUKU_RECOMMENDED_VERSION_DOWNLOAD_URL)
                 }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Download))
@@ -179,7 +195,7 @@ private fun ProblematicManagerCard(
         Text(
             text = stringResource(R.string.permissions_shizuku_problematicVersion)
                 .replace("{CURRENT_VERSION}", currentManagerVersion)
-                .replace("{RECOMMENDED_VERSION}", ShizukuViewModel.SHIZUKU_RECOMMENDED_VERSION_NAME)
+                .replace("{RECOMMENDED_VERSION}", ShizukuManager.SHIZUKU_RECOMMENDED_VERSION_NAME)
         )
         Text(
             text = stringResource(R.string.permissions_shizuku_problematicVersion_note)
@@ -192,18 +208,20 @@ private fun ProblematicManagerCard(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ShizukuSetupGuide(
-    shizukuViewModel: ShizukuViewModel = koinViewModel()
+    status: ShizukuStatus,
+    isShizukuInstalled: Boolean,
+    isDeviceRooted: Boolean,
+    onLaunchShizukuRequest: () -> Unit
 ) {
-    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
-    if (shizukuViewModel.shizukuInstalled) Text(
+    if (isShizukuInstalled) Text(
         text = stringResource(R.string.permissions_shizuku_introduction),
         style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier.padding(8.dp)
     )
 
-    AnimatedContent(shizukuViewModel.status) { status ->
+    AnimatedContent(status) { status ->
         val title = when (status) {
             ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> R.string.permissions_shizuku_install_title
             ShizukuStatus.WAITING_FOR_BINDER -> R.string.permissions_shizuku_notRunning
@@ -220,9 +238,7 @@ private fun ShizukuSetupGuide(
             ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> {
                 Button(
                     shapes = ButtonDefaults.shapes(),
-                    onClick = {
-                        shizukuViewModel.launchShizuku(context)
-                    }
+                    onClick = onLaunchShizukuRequest
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                     Text(stringResource(R.string.permissions_shizuku_installShizuku))
@@ -231,9 +247,7 @@ private fun ShizukuSetupGuide(
             ShizukuStatus.WAITING_FOR_BINDER -> {
                 Button(
                     shapes = ButtonDefaults.shapes(),
-                    onClick = {
-                        shizukuViewModel.launchShizuku(context)
-                    }
+                    onClick = onLaunchShizukuRequest
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                     Text(stringResource(R.string.permissions_shizuku_openShizuku))
@@ -265,7 +279,7 @@ private fun ShizukuSetupGuide(
     }
 
     FadeVisibility(
-        shizukuViewModel.deviceRooted && shizukuViewModel.status != ShizukuStatus.UNAUTHORIZED
+        isDeviceRooted && status != ShizukuStatus.UNAUTHORIZED
     ) {
         CardWithActions(
             title = stringResource(R.string.permissions_shizuku_rooted),
@@ -273,7 +287,7 @@ private fun ShizukuSetupGuide(
                 OutlinedButton(
                     shapes = ButtonDefaults.shapes(),
                     onClick = {
-                        uriHandler.openUri(ShizukuViewModel.SUI_GITHUB)
+                        uriHandler.openUri(ShizukuManager.SUI_GITHUB)
                     }
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
@@ -281,13 +295,11 @@ private fun ShizukuSetupGuide(
                 }
                 Button(
                     shapes = ButtonDefaults.shapes(),
-                    onClick = {
-                        shizukuViewModel.launchShizuku(context)
-                    }
+                    onClick = onLaunchShizukuRequest
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                     Text(stringResource(
-                        if (shizukuViewModel.shizukuInstalled) R.string.permissions_shizuku_openShizuku
+                        if (isShizukuInstalled) R.string.permissions_shizuku_openShizuku
                         else R.string.permissions_shizuku_installShizuku
                     ))
                 }

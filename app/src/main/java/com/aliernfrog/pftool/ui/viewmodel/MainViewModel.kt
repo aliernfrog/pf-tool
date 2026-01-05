@@ -20,8 +20,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
-import com.aliernfrog.pftool.enum.MapsListSegment
-import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.languages
 import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
@@ -34,6 +32,7 @@ import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.Language
 import io.github.aliernfrog.pftool_shared.data.getAvailableLanguage
+import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
@@ -148,7 +147,6 @@ class MainViewModel(
 
     fun handleIntent(intent: Intent, context: Context) {
         val mapsViewModel = getKoinInstance<MapsViewModel>()
-        val mapsListViewModel = getKoinInstance<MapsListViewModel>()
 
         try {
             val uris: MutableList<Uri> = intent.data?.let {
@@ -173,11 +171,7 @@ class MainViewModel(
                 } else if (cached.size > 1) {
                     mapsViewModel.sharedMaps = cached
                     withContext(Dispatchers.Main) {
-                        mapsListViewModel.availableSegments.indexOfFirst {
-                            it == MapsListSegment.SHARED
-                        }.let {
-                            if (it > 0) mapsListViewModel.pagerState.scrollToPage(it)
-                        }
+                        // TODO scroll pager to shared maps
                     }
                 }
                 progressState.currentProgress = null

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.impl.FileWrapper
+import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import java.io.File
 
 class FileUtil {

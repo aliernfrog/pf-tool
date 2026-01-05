@@ -46,9 +46,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.enum.MapAction
 import com.aliernfrog.pftool.impl.MapActionArguments
 import com.aliernfrog.pftool.impl.MapFile
+import com.aliernfrog.pftool.impl.mapActions
+import com.aliernfrog.pftool.impl.mapDuplicateAction
+import com.aliernfrog.pftool.impl.mapRenameAction
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
@@ -61,6 +63,7 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.util.extension.clickableWithColor
+import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -171,7 +174,7 @@ fun MapDetailsScreen(
             }
 
             Crossfade(
-                targetState = MapAction.RENAME.availableFor(map) && !isSameName
+                targetState = mapRenameAction.availableFor(map) && !isSameName
             ) { buttonsEnabled ->
                 Row(
                     modifier = Modifier
@@ -185,7 +188,7 @@ fun MapDetailsScreen(
                 ) {
                     OutlinedButton(
                         onClick = { scope.launch {
-                            MapAction.DUPLICATE.execute(context, map, args = MapActionArguments(mapName = mapNameEdit.value))
+                            mapDuplicateAction.execute(context, listOf(map), MapActionArguments(mapName = mapNameEdit.value))
                         } },
                         shapes = ButtonDefaults.shapes(),
                         enabled = buttonsEnabled
@@ -195,7 +198,7 @@ fun MapDetailsScreen(
                     }
                     Button(
                         onClick = { scope.launch {
-                            MapAction.RENAME.execute(context, map, args = MapActionArguments(mapName = mapNameEdit.value))
+                            mapRenameAction.execute(context, listOf(map), MapActionArguments(mapName = mapNameEdit.value))
                         } },
                         shapes = ButtonDefaults.shapes(),
                         enabled = buttonsEnabled
@@ -212,13 +215,13 @@ fun MapDetailsScreen(
                 color = MaterialTheme.colorScheme.surfaceVariant
             )
 
-            val actions: List<@Composable () -> Unit> = MapAction.entries.filter { action ->
-                action != MapAction.RENAME && action != MapAction.DUPLICATE
+            val actions: List<@Composable () -> Unit> = mapActions.filter { action ->
+                action != mapRenameAction && action != mapDuplicateAction
             }.map { action -> {
                 FadeVisibility(visible = action.availableFor(map)) {
                     ExpressiveButtonRow(
-                        title = stringResource(action.longLabel),
-                        description = action.description?.let { stringResource(it) },
+                        title = sharedStringResource(action.longLabel),
+                        description = action.description?.let { sharedStringResource(it) },
                         icon = {
                             ExpressiveRowIcon(
                                 painter = rememberVectorPainter(action.icon),
@@ -230,7 +233,7 @@ fun MapDetailsScreen(
                         contentColor = if (action.destructive) MaterialTheme.colorScheme.error
                         else contentColorFor(MaterialTheme.colorScheme.surfaceContainerHigh)
                     ) { scope.launch {
-                        action.execute(context = context, map, args = MapActionArguments(mapName = mapNameEdit.value))
+                        action.execute(context, listOf(map), MapActionArguments(mapName = mapNameEdit.value))
                     } }
                 }
             } }

@@ -1,7 +1,7 @@
-package com.aliernfrog.pftool;
+package io.github.aliernfrog.pftool_shared;
 
 import android.os.ParcelFileDescriptor;
-import com.aliernfrog.pftool.data.ServiceFile;
+import io.github.aliernfrog.pftool_shared.data.ServiceFile;
 
 interface IFileService {
     void destroy() = 16777114; // Destroy method defined by Shizuku server

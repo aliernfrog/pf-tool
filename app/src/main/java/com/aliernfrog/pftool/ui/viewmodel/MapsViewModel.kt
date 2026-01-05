@@ -19,19 +19,18 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
-import com.aliernfrog.pftool.data.MapActionResult
-import com.aliernfrog.pftool.data.exists
-import com.aliernfrog.pftool.data.mkdirs
-import com.aliernfrog.pftool.impl.FileWrapper
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.pftool_shared.enum.MapActionResult
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
+import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
+import io.github.aliernfrog.pftool_shared.repository.ServiceFileRepository
 import io.github.aliernfrog.shared.data.MediaOverlayData
 import io.github.aliernfrog.shared.di.getKoinInstance
 import io.github.aliernfrog.shared.impl.ContextUtils
@@ -220,10 +219,10 @@ class MapsViewModel(
                 DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
-                val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
-                val file = shizukuViewModel.fileService!!.getFile(mapsDir)!!
-                if (!file.exists()) file.mkdirs()
-                shizukuViewModel.fileService!!.getFile(mapsDir)
+                val serviceFileRepository = getKoinInstance<ServiceFileRepository>()
+                val file = serviceFileRepository.fileService.getFile(mapsDir)!!
+                if (!serviceFileRepository.fileExists(file)) serviceFileRepository.mkdirs(file)
+                serviceFileRepository.fileService.getFile(mapsDir)!!
             }
             StorageAccessType.ALL_FILES -> {
                 val file = File(mapsDir)
@@ -251,10 +250,10 @@ class MapsViewModel(
                 DocumentFileCompat.fromTreeUri(context, treeUri)!!
             }
             StorageAccessType.SHIZUKU -> {
-                val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
-                val file = shizukuViewModel.fileService!!.getFile(exportedMapsDir)
-                if (!file.exists()) file.mkdirs()
-                shizukuViewModel.fileService!!.getFile(exportedMapsDir)
+                val serviceFileRepository = getKoinInstance<ServiceFileRepository>()
+                val file = serviceFileRepository.fileService.getFile(exportedMapsDir)!!
+                if (!serviceFileRepository.fileExists(file)) serviceFileRepository.mkdirs(file)
+                serviceFileRepository.fileService.getFile(exportedMapsDir)!!
             }
             StorageAccessType.ALL_FILES -> {
                 val file = File(exportedMapsDir)

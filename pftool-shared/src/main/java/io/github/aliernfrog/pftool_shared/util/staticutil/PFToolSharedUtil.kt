@@ -122,6 +122,19 @@ class PFToolSharedUtil {
             ).toString()
         }
 
+        fun copyDirectory(source: File, target: File) {
+            if (!target.isDirectory) target.mkdirs()
+            source.listFiles()!!.forEach { file ->
+                val targetFile = File("${target.absolutePath}/${file.name}")
+                if (file.isDirectory) copyDirectory(file, targetFile)
+                else file.inputStream().use { inputStream ->
+                    targetFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+            }
+        }
+
         /**
          * Caches file from [uri] and returns cached [File].
          * @param uri [Uri] to cache.

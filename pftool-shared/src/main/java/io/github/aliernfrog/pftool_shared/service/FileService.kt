@@ -1,13 +1,14 @@
-package com.aliernfrog.pftool.service
+package io.github.aliernfrog.pftool_shared.service
 
 import android.os.ParcelFileDescriptor
-import com.aliernfrog.pftool.IFileService
-import com.aliernfrog.pftool.data.ServiceFile
-import com.aliernfrog.pftool.util.getServiceFile
-import com.aliernfrog.pftool.util.staticutil.FileUtil
+import androidx.annotation.Keep
+import io.github.aliernfrog.pftool_shared.IFileService
+import io.github.aliernfrog.pftool_shared.data.ServiceFile
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import java.io.File
 import kotlin.system.exitProcess
 
+@Keep
 class FileService : IFileService.Stub() {
     override fun destroy() {
         exitProcess(0)
@@ -25,7 +26,7 @@ class FileService : IFileService.Stub() {
                 inputStream.copyTo(outputStream)
             }
         }
-        else FileUtil.copyDirectory(source, output)
+        else PFToolSharedUtil.copyDirectory(source, output)
     }
 
     override fun createNewFile(path: String) {
@@ -43,13 +44,13 @@ class FileService : IFileService.Stub() {
     }
 
     override fun getFile(path: String): ServiceFile {
-        return getServiceFile(File(path))
+        return ServiceFile.fromFile(File(path))
     }
 
     override fun listFiles(path: String): Array<ServiceFile> {
         val files = File(path).listFiles() ?: emptyArray()
         return files.map {
-            getServiceFile(it)
+            ServiceFile.fromFile(it)
         }.toTypedArray()
     }
 

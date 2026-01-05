@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.enum
+package io.github.aliernfrog.pftool_shared.enum
 
 enum class ShizukuStatus {
     NOT_INSTALLED,

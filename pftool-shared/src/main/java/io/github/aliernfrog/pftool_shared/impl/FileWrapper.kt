@@ -1,17 +1,12 @@
-package com.aliernfrog.pftool.impl
+package io.github.aliernfrog.pftool_shared.impl
 
 import android.content.Context
 import android.os.ParcelFileDescriptor
-import com.aliernfrog.pftool.data.ServiceFile
-import com.aliernfrog.pftool.data.delete
-import com.aliernfrog.pftool.data.exists
-import com.aliernfrog.pftool.data.listFiles
-import com.aliernfrog.pftool.data.nameWithoutExtension
-import com.aliernfrog.pftool.data.renameTo
-import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
-import com.aliernfrog.pftool.util.extension.nameWithoutExtension
-import com.aliernfrog.pftool.util.extension.size
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.pftool_shared.data.ServiceFile
+import io.github.aliernfrog.pftool_shared.repository.ServiceFileRepository
+import io.github.aliernfrog.pftool_shared.util.extension.nameWithoutExtension
+import io.github.aliernfrog.pftool_shared.util.extension.size
 import io.github.aliernfrog.shared.di.getKoinInstance
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -23,7 +18,7 @@ import java.io.OutputStream
 class FileWrapper(
     val file: Any
 ) {
-    private val shizukuViewModel = getKoinInstance<ShizukuViewModel>()
+    val serviceFileRepository = getKoinInstance<ServiceFileRepository>()
     private val invalidFileClassException = IllegalArgumentException("FileWrapper: unknown class supplied: ${file.javaClass.name}")
 
     val name: String = when (file) {
@@ -72,7 +67,9 @@ class FileWrapper(
         get() = when (file) {
             is File -> file.parentFile
             is DocumentFileCompat -> file.parentFile
-            is ServiceFile -> shizukuViewModel.fileService?.getFile(file.parentPath)
+            is ServiceFile -> file.parentPath?.let {
+                serviceFileRepository.fileService.getFile(it)
+            }
             else -> throw invalidFileClassException
         }?.let { FileWrapper(it) }
 
@@ -80,7 +77,7 @@ class FileWrapper(
     private fun getByteArray(ignoreCache: Boolean = false): ByteArray? {
         if (file !is ServiceFile) return null
         if (!ignoreCache) cachedByteArray?.let { return it }
-        val fd = shizukuViewModel.fileService!!.getFd(path)
+        val fd = serviceFileRepository.fileService.getFd(path)
         val input = ParcelFileDescriptor.AutoCloseInputStream(fd)
         val output = ByteArrayOutputStream()
         input.copyTo(output)
@@ -102,7 +99,7 @@ class FileWrapper(
         val list: List<Any> = when (file) {
             is File -> file.listFiles()?.toList()
             is DocumentFileCompat -> file.listFiles()
-            is ServiceFile -> file.listFiles()?.toList()
+            is ServiceFile -> serviceFileRepository.listFiles(file)?.toList()
             else -> throw invalidFileClassException
         } ?: emptyList()
         return list.map { FileWrapper(it) }
@@ -112,7 +109,7 @@ class FileWrapper(
         return when (file) {
             is File -> File(file.absolutePath+"/"+name)
             is DocumentFileCompat -> file.findFile(name, ignoreCase = true)
-            is ServiceFile -> shizukuViewModel.fileService!!.getFile(file.path+"/"+name)
+            is ServiceFile -> serviceFileRepository.fileService.getFile(file.path+"/"+name)
             else -> throw invalidFileClassException
         }?.let { FileWrapper(it) }
     }
@@ -126,8 +123,8 @@ class FileWrapper(
             }
             is DocumentFileCompat -> file.createFile("", name)
             is ServiceFile -> {
-                shizukuViewModel.fileService!!.createNewFile(filePath)
-                shizukuViewModel.fileService!!.getFile(filePath)
+                serviceFileRepository.fileService.createNewFile(filePath)
+                serviceFileRepository.fileService.getFile(filePath)
             }
             else -> throw invalidFileClassException
         }?.let { FileWrapper(it) }
@@ -142,8 +139,8 @@ class FileWrapper(
             }
             is DocumentFileCompat -> file.createDirectory(name)
             is ServiceFile -> {
-                shizukuViewModel.fileService!!.mkdirs(filePath)
-                shizukuViewModel.fileService!!.getFile(filePath)
+                serviceFileRepository.fileService.mkdirs(filePath)
+                serviceFileRepository.fileService.getFile(filePath)
             }
             else -> throw invalidFileClassException
         }?.let { FileWrapper(it) }
@@ -162,8 +159,8 @@ class FileWrapper(
             }
             is ServiceFile -> {
                 val newPath = (file.parentPath?.plus("/") ?: "")+newName
-                file.renameTo(newPath)
-                shizukuViewModel.fileService!!.getFile(newPath)
+                serviceFileRepository.renameFile(file, newPath)
+                serviceFileRepository.fileService.getFile(newPath)
             }
             else -> throw invalidFileClassException
         }?.let { FileWrapper(it) }
@@ -173,7 +170,7 @@ class FileWrapper(
         return when (file) {
             is File -> file.exists()
             is DocumentFileCompat -> file.exists()
-            is ServiceFile -> file.exists()
+            is ServiceFile -> serviceFileRepository.fileExists(file)
             else -> throw invalidFileClassException
         }
     }
@@ -191,7 +188,7 @@ class FileWrapper(
         return when (file) {
             is File -> file.outputStream()
             is DocumentFileCompat -> context.contentResolver.openOutputStream(file.uri)
-            is ServiceFile -> shizukuViewModel.fileService?.getFd(file.path)?.fileDescriptor?.let {
+            is ServiceFile -> serviceFileRepository.fileService.getFd(file.path)?.fileDescriptor?.let {
                 FileOutputStream(it)
             }
             else -> throw invalidFileClassException
@@ -221,7 +218,7 @@ class FileWrapper(
         when (file) {
             is File -> file.deleteRecursively()
             is DocumentFileCompat -> file.delete()
-            is ServiceFile -> file.delete()
+            is ServiceFile -> serviceFileRepository.deleteFile(file)
         }
     }
 }

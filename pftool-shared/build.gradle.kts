@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.parcelize)
     `maven-publish`
 }
 
@@ -49,6 +50,7 @@ android {
     }
 
     buildFeatures {
+        aidl = true
         compose = true
     }
 }
@@ -75,6 +77,8 @@ dependencies {
     implementation(libs.dfc)
     implementation(libs.koin)
     implementation(libs.markdown)
+    implementation(libs.shizuku.api)
+    implementation(libs.shizuku.provider)
     implementation(libs.toptoast)
     implementation(libs.zoomable)
 

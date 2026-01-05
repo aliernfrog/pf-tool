@@ -3,11 +3,24 @@ package io.github.aliernfrog.shared.util
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 
-open class SharedString(open val key: String) {
+/**
+ * Contains shared strings.
+ */
+open class SharedString(
+    /**
+     * Shared key to the string resource id.
+     */
+    open val key: String,
+
+    /**
+     * Resource id of the string. This can vary between apps. When this is specified, [key] will be ignored.
+     */
+    open val resId: Int? = null
+) {
     data object AppName : SharedString("app_name")
     data object ActionBack : SharedString("action_back")
     data object ActionCancel : SharedString("action_cancel")
@@ -68,24 +81,24 @@ open class SharedString(open val key: String) {
 @Composable
 fun sharedStringResource(sharedString: SharedString): String {
     val context = LocalContext.current
-    val id = remember {
-        context.resources.getIdentifier(
-            sharedString.key,
-            "string",
-            context.packageName
-        )
+    val id = rememberSaveable {
+        context.getSharedStringResId(sharedString)
     }
     return if (id == 0) "MISSING STRING: ${sharedString.key}"
     else stringResource(id)
 }
 
-@SuppressLint("LocalContextResourcesRead", "DiscouragedApi")
 fun Context.getSharedString(sharedString: SharedString): String {
-    val id = this.resources.getIdentifier(
+    val id = this.getSharedStringResId(sharedString)
+    return if (id == 0) "MISSING STRING: ${sharedString.key}"
+    else this.getString(id)
+}
+
+@SuppressLint("LocalContextResourcesRead", "DiscouragedApi")
+fun Context.getSharedStringResId(sharedString: SharedString): Int {
+    return sharedString.resId ?: this.resources.getIdentifier(
         sharedString.key,
         "string",
         this.packageName
     )
-    return if (id == 0) "MISSING STRING: ${sharedString.key}"
-    else this.getString(id)
 }

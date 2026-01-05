@@ -9,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
@@ -22,7 +23,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
-import com.aliernfrog.pftool.ui.viewmodel.ShizukuViewModel
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
@@ -36,17 +36,18 @@ import org.koin.androidx.compose.koinViewModel
 fun PermissionsScreen(
     vararg permissionsData: PermissionData,
     title: String,
-    permissionsViewModel: PermissionsViewModel = koinViewModel(),
-    shizukuViewModel: ShizukuViewModel = koinViewModel(),
+    vm: PermissionsViewModel = koinViewModel(),
     onNavigateSettingsRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
 
+    val isShizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsState().value
+
     fun hasPermissions(): Boolean {
-        return permissionsViewModel.hasPermissions(
+        return vm.hasPermissions(
             *permissionsData,
-            isShizukuFileServiceRunning = shizukuViewModel.fileServiceRunning,
+            isShizukuFileServiceRunning = isShizukuFileServiceRunning,
             context = context
         )
     }
@@ -58,7 +59,7 @@ fun PermissionsScreen(
     }
 
     AnimatedContent(
-        StorageAccessType.entries[permissionsViewModel.prefs.storageAccessType.value]
+        StorageAccessType.entries[vm.prefs.storageAccessType.value]
     ) { method ->
         AnimatedContent(permissionsGranted) { showContent ->
             if (showContent) content()
@@ -93,23 +94,23 @@ fun PermissionsScreen(
         }
     }
 
-    if (permissionsViewModel.showShizukuIntroDialog) CustomMessageDialog(
+    if (vm.showShizukuIntroDialog) CustomMessageDialog(
         title = stringResource(R.string.permissions_setupShizuku),
         text = stringResource(R.string.permissions_setupShizuku_description),
-        onDismissRequest = { permissionsViewModel.showShizukuIntroDialog = false }
+        onDismissRequest = { vm.showShizukuIntroDialog = false }
     )
 
-    if (permissionsViewModel.showFilesDowngradeDialog) CustomMessageDialog(
+    if (vm.showFilesDowngradeDialog) CustomMessageDialog(
         title = null,
         text = stringResource(R.string.permissions_downgradeFilesApp_guide)
             .replace("{CANT_UNINSTALL_TEXT}", stringResource(R.string.permissions_downgradeFilesApp_cant)),
-        onDismissRequest = { permissionsViewModel.showFilesDowngradeDialog = false },
+        onDismissRequest = { vm.showFilesDowngradeDialog = false },
         confirmButton = {
             Button(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {
                     val documentsUIPackage = PFToolSharedUtil.getDocumentsUIPackage(context) ?: return@Button
-                    permissionsViewModel.showFilesDowngradeDialog = false
+                    vm.showFilesDowngradeDialog = false
                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         data = "package:${documentsUIPackage.packageName}".toUri()

@@ -13,15 +13,20 @@ import io.github.aliernfrog.pftool_shared.data.PermissionData
 import androidx.core.net.toUri
 import com.aliernfrog.pftool.util.extension.enable
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
+import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.util.extension.appHasPermissions
 
 class PermissionsViewModel(
     val topToastState: TopToastState,
-    val prefs: PreferenceManager
+    val prefs: PreferenceManager,
+    val shizukuManager: ShizukuManager
 ) : ViewModel() {
     private var storageAccessType: StorageAccessType
         get() = StorageAccessType.entries[prefs.storageAccessType.value]
         set(value) { value.enable() }
+
+    val isShizukuFileServiceRunning
+        get() = shizukuManager.fileServiceRunning
 
     var showShizukuIntroDialog by mutableStateOf(false)
     var showFilesDowngradeDialog by mutableStateOf(false)
