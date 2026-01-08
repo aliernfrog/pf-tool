@@ -56,7 +56,7 @@ class ShizukuManager(
     val status = _status.asStateFlow()
     val shizukuInstalled: Boolean
         get() = !listOf(ShizukuStatus.NOT_INSTALLED, ShizukuStatus.UNKNOWN).any {
-            _status.value != it
+            _status.value == it
         }
 
     var fileService: IFileService? = null
