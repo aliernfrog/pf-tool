@@ -7,16 +7,15 @@ import io.github.aliernfrog.shared.di.getKoinInstance
 
 fun StorageAccessType.enable() {
     val prefs = getKoinInstance<PreferenceManager>()
-    prefs.storageAccessType.value = this.ordinal
+    val prefsToUpdate = listOf(
+        prefs.pfMapsDir, prefs.exportedMapsDir
+    )
 
-    when (this) {
-        StorageAccessType.SAF -> {
-            prefs.pfMapsDir.value = PFToolSharedUtil.getTreeUriForPath(prefs.pfMapsDir.value).toString()
-            prefs.exportedMapsDir.value = PFToolSharedUtil.getTreeUriForPath(prefs.exportedMapsDir.value).toString()
-        }
-        StorageAccessType.SHIZUKU, StorageAccessType.ALL_FILES -> {
-            prefs.pfMapsDir.value = PFToolSharedUtil.getFilePath(prefs.pfMapsDir.value)
-            prefs.exportedMapsDir.value = PFToolSharedUtil.getFilePath(prefs.exportedMapsDir.value)
+    prefs.storageAccessType.value = this.ordinal
+    prefsToUpdate.forEach { pref ->
+        pref.value = when (this) {
+            StorageAccessType.SAF -> PFToolSharedUtil.getTreeUriForPath(pref.value).toString()
+            StorageAccessType.SHIZUKU, StorageAccessType.ALL_FILES -> PFToolSharedUtil.getFilePath(pref.value)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.screen.permissions
+package io.github.aliernfrog.pftool_shared.ui.screen.permissions
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -15,11 +15,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,32 +37,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.dialog.ChooseFolderIntroDialog
-import com.aliernfrog.pftool.ui.dialog.UnrecommendedFolderDialog
-import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
-import com.aliernfrog.pftool.util.extension.enable
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.data.requiresAndroidData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
+import io.github.aliernfrog.pftool_shared.ui.dialog.ChooseFolderIntroDialog
+import io.github.aliernfrog.pftool_shared.ui.dialog.UnrecommendedFolderDialog
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.PermissionsViewModel
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.shared.ui.component.form.DividerRow
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SAFPermissionsScreen(
     vararg permissionsData: PermissionData,
+    vm: PermissionsViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
     val requiresAndroidData = permissionsData.any { it.requiresAndroidData }
     val needsToDowngradeFiles = requiresAndroidData && PFToolSharedUtil.documentsUIRestrictsAndroidData(context)
+            && !vm.ignoreDocumentsUIRestrictions
 
     AnimatedContent(needsToDowngradeFiles) {
         if (it) DowngradeFiles()
@@ -70,7 +76,7 @@ fun SAFPermissionsScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DowngradeFiles(
-    permissionsViewModel: PermissionsViewModel = koinViewModel()
+    vm: PermissionsViewModel = koinViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -83,30 +89,30 @@ private fun DowngradeFiles(
                 vertical = 8.dp,
                 horizontal = 12.dp
             ),
-            title = stringResource(R.string.permissions_downgradeFilesApp),
+            title = sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesApp),
             buttons = {
                 Column {
                     Button(
                         shapes = ButtonDefaults.shapes(),
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { permissionsViewModel.showFilesDowngradeDialog = true }
+                        onClick = { vm.showFilesDowngradeDialog = true }
                     ) {
-                        Text(stringResource(R.string.permissions_downgradeFilesApp_uninstall))
+                        Text(sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppUninstall))
                     }
                     OutlinedButton(
                         shapes = ButtonDefaults.shapes(),
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            permissionsViewModel.showShizukuIntroDialog = true
-                            StorageAccessType.SHIZUKU.enable()
+                            vm.showShizukuIntroDialog = true
+                            vm.storageAccessType = StorageAccessType.SHIZUKU
                         }
                     ) {
-                        Text(stringResource(R.string.permissions_downgradeFilesApp_cant))
+                        Text(sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppCant))
                     }
                 }
             }
         ) {
-            Text(stringResource(R.string.permissions_downgradeFilesApp_description))
+            Text(sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppDescription))
         }
     }
 }
@@ -115,16 +121,16 @@ private fun DowngradeFiles(
 @Composable
 private fun SAFPermissionsList(
     vararg permissionsData: PermissionData,
-    permissionsViewModel: PermissionsViewModel = koinViewModel(),
+    vm: PermissionsViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
     var missingPermissions by remember { mutableStateOf(
-        permissionsViewModel.getMissingUriPermissions(*permissionsData, context = context)
+        vm.getMissingUriPermissions(*permissionsData, context = context)
     ) }
 
     fun onUpdateState() {
-        missingPermissions = permissionsViewModel.getMissingUriPermissions(*permissionsData, context = context)
+        missingPermissions = vm.getMissingUriPermissions(*permissionsData, context = context)
         onUpdateStateRequest()
     }
 
@@ -161,6 +167,15 @@ private fun SAFPermissionsList(
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
+        item {
+            PermissionsScreenAction(
+                title = null,
+                description = sharedStringResource(PFToolSharedString.PermissionsSAFFoldersNeeded),
+                icon = Icons.Default.Folder,
+                button = null
+            )
+        }
+
         itemsIndexed(missingPermissions) { index, permissionData ->
             var introDialogShown by remember { mutableStateOf(false) }
             if (introDialogShown) ChooseFolderIntroDialog(
@@ -178,15 +193,22 @@ private fun SAFPermissionsList(
                 else openFolderPicker(permissionData)
             }
 
-            if (index != 0) DividerRow(Modifier.fillMaxWidth())
             ListItem(
+                colors = ListItemDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                ),
                 headlineContent = { Text(stringResource(permissionData.title)) },
                 supportingContent = {
                     Column(Modifier.fillMaxWidth()) {
                         permissionData.content()
 
                         permissionData.recommendedPathWarning?.let { warning ->
-                            Card(Modifier.padding(vertical = 8.dp)) {
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surface
+                                ),
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            ) {
                                 Text(
                                     text = stringResource(warning),
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -201,26 +223,29 @@ private fun SAFPermissionsList(
                                 .align(Alignment.End)
                                 .padding(top = 4.dp)
                         ) {
-                            Text(stringResource(R.string.permissions_chooseFolder))
+                            Text(sharedStringResource(PFToolSharedString.PermissionsChooseFolder))
                         }
                     }
                 },
-                modifier = Modifier.clickable(onClick = ::onClick)
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .verticalSegmentedShape(index = index, totalSize = missingPermissions.size)
+                    .clickable(onClick = ::onClick)
             )
         }
 
         if (StorageAccessType.ALL_FILES.isCompatible()) item {
             ExpressiveSection(
-                title = stringResource(R.string.permissions_other)
+                title = sharedStringResource(PFToolSharedString.PermissionsOther)
             ) {
                 ExpressiveButtonRow(
-                    title = stringResource(R.string.permissions_saf_allFiles),
-                    description = stringResource(R.string.permissions_saf_allFiles_description),
+                    title = sharedStringResource(PFToolSharedString.PermissionsSAFAllFiles),
+                    description = sharedStringResource(PFToolSharedString.PermissionsSAFAllFilesDescription),
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .verticalSegmentedShape()
                 ) {
-                    StorageAccessType.ALL_FILES.enable()
+                    vm.storageAccessType = StorageAccessType.ALL_FILES
                 }
             }
         }

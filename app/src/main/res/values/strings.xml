@@ -16,6 +16,7 @@
     <string name="intent_downloadMap">Download map</string>
     <string name="warning_error">Something went wrong</string>
     <string name="warning_fileDoesntExist">File does not exist</string>
+    <string name="info">Info</string>
     <string name="info_pleaseWait">Please wait…</string>
     <string name="info_sharing">Sharing…</string>
     <string name="info_deleteQuestion">Are you sure you want to delete {NAME}?\nThis can NOT be undone!</string>

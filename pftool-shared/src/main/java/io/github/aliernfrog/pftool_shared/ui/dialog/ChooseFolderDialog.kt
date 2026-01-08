@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.dialog
+package io.github.aliernfrog.pftool_shared.ui.dialog
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -26,11 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aliernfrog.pftool.R
 import io.github.aliernfrog.pftool_shared.data.PermissionData
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
 import io.github.aliernfrog.pftool_shared.util.folderPickerSupportsInitialUri
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -46,7 +48,7 @@ fun ChooseFolderIntroDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onConfirm
             ) {
-                Text(stringResource(R.string.action_ok))
+                Text(sharedStringResource(SharedString.ActionOK))
             }
         },
         dismissButton = {
@@ -54,11 +56,11 @@ fun ChooseFolderIntroDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onDismissRequest
             ) {
-                Text(stringResource(R.string.action_cancel))
+                Text(sharedStringResource(SharedString.ActionCancel))
             }
         },
         title = {
-            Text(stringResource(R.string.permissions_recommendedFolder))
+            Text(sharedStringResource(PFToolSharedString.PermissionsRecommendedFolder))
         },
         text = {
             Column(
@@ -70,10 +72,10 @@ fun ChooseFolderIntroDialog(
                 PathCard(permissionData.recommendedPath!!)
 
                 if (permissionData.forceRecommendedPath) Text(
-                    text = stringResource(
+                    text = sharedStringResource(
                         //? Folder picker on Android 7 or below doesn't support automatically navigating
-                        if (folderPickerSupportsInitialUri) R.string.permissions_recommendedFolder_a8Hint
-                        else R.string.permissions_recommendedFolder_a7Hint
+                        if (folderPickerSupportsInitialUri) PFToolSharedString.PermissionsRecommendedFolderA8Hint
+                        else PFToolSharedString.PermissionsRecommendedFolderA7Hint
                     ),
                     fontSize = 13.5.sp
                 )
@@ -92,7 +94,7 @@ fun UnrecommendedFolderDialog(
     onChooseFolderRequest: () -> Unit
 ) {
     var showAdvancedOptions by remember { mutableStateOf(false) }
-    
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -100,7 +102,7 @@ fun UnrecommendedFolderDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onChooseFolderRequest
             ) {
-                Text(stringResource(R.string.permissions_notRecommendedFolder_chooseRecommendedFolder))
+                Text(sharedStringResource(PFToolSharedString.PermissionsNotRecommendedFolderChooseRecommendedFolder))
             }
         },
         dismissButton = {
@@ -108,7 +110,7 @@ fun UnrecommendedFolderDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onDismissRequest
             ) {
-                Text(stringResource(R.string.action_cancel))
+                Text(sharedStringResource(SharedString.ActionCancel))
             }
         },
         text = {
@@ -116,28 +118,28 @@ fun UnrecommendedFolderDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(stringResource(R.string.permissions_notRecommendedFolder_description))
+                Text(sharedStringResource(PFToolSharedString.PermissionsNotRecommendedFolderDescription))
 
                 PathCard(permissionData.recommendedPath!!)
-                
+
                 permissionData.recommendedPathDescription?.let { description ->
                     Text(
                         text = stringResource(description)
                     )
                 }
-                
+
                 if (chosenUri != Uri.EMPTY) ClickableText(
-                    text = stringResource(
-                        if (showAdvancedOptions) R.string.permissions_notRecommendedFolder_advanced_hide
-                        else R.string.permissions_notRecommendedFolder_advanced_show
+                    text = sharedStringResource(
+                        if (showAdvancedOptions) PFToolSharedString.PermissionsNotRecommendedFolderAdvancedHide
+                        else PFToolSharedString.PermissionsNotRecommendedFolderAdvancedShow
                     )
                 ) {
                     showAdvancedOptions = !showAdvancedOptions
                 }
-                
+
                 AnimatedVisibility(showAdvancedOptions) {
                     ExpressiveButtonRow(
-                        title = stringResource(R.string.permissions_notRecommendedFolder_useAnyway),
+                        title = sharedStringResource(PFToolSharedString.PermissionsNotRecommendedFolderUseAnyway),
                         description = permissionData.useUnrecommendedAnywayDescription?.let {
                             stringResource(it)
                         }

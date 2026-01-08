@@ -52,8 +52,8 @@ import com.aliernfrog.pftool.impl.mapActions
 import com.aliernfrog.pftool.impl.mapDuplicateAction
 import com.aliernfrog.pftool.impl.mapRenameAction
 import com.aliernfrog.pftool.ui.component.SettingsButton
-import com.aliernfrog.pftool.ui.component.maps.GridMapItem
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import io.github.aliernfrog.pftool_shared.ui.component.maps.GridMapItem
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon

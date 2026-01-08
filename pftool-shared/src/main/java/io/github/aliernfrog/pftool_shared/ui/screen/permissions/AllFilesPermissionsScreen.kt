@@ -1,46 +1,47 @@
-package com.aliernfrog.pftool.ui.screen.permissions
+package io.github.aliernfrog.pftool_shared.ui.screen.permissions
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
-import com.aliernfrog.pftool.util.extension.enable
 import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.shared.ui.component.CardWithActions
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.PermissionsViewModel
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.util.getSharedString
+import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AllFilesPermissionsScreen(
-    permissionsViewModel: PermissionsViewModel = koinViewModel(),
+    vm: PermissionsViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
+    val context = LocalContext.current
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         if (it) onUpdateStateRequest()
-        else permissionsViewModel.topToastState.showToast(
-            text = R.string.permissions_allFiles_denied,
+        else vm.topToastState.showToast(
+            text = context.getSharedString(PFToolSharedString.PermissionsAllFilesDenied),
             icon = Icons.Default.Close,
             iconTintColor = TopToastColor.ERROR
         )
@@ -52,37 +53,33 @@ fun AllFilesPermissionsScreen(
             .verticalScroll(rememberScrollState())
             .navigationBarsPadding()
     ) {
-        CardWithActions(
-            title = stringResource(R.string.permissions_allFiles_title),
-            buttons = {
+        PermissionsScreenAction(
+            title = sharedStringResource(PFToolSharedString.PermissionsAllFilesTitle),
+            description = sharedStringResource(PFToolSharedString.PermissionsAllFilesDescription),
+            icon = Icons.Default.Security,
+            button = {
                 Button(
                     shapes = ButtonDefaults.shapes(),
                     onClick = {
                         permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     }
                 ) {
-                    Text(stringResource(R.string.permissions_allFiles_grant))
+                    Text(sharedStringResource(PFToolSharedString.PermissionsAllFilesGrant))
                 }
-            },
-            modifier = Modifier.fillMaxWidth().padding(
-                vertical = 8.dp,
-                horizontal = 12.dp
-            )
-        ) {
-            Text(stringResource(R.string.permissions_allFiles_description))
-        }
+            }
+        )
 
         ExpressiveSection(
-            title = stringResource(R.string.permissions_other)
+            title = sharedStringResource(PFToolSharedString.PermissionsOther)
         ) {
             ExpressiveButtonRow(
-                title = stringResource(R.string.permissions_allFiles_saf),
-                description = stringResource(R.string.permissions_allFiles_saf_description),
+                title = sharedStringResource(PFToolSharedString.PermissionsAllFilesSAF),
+                description = sharedStringResource(PFToolSharedString.PermissionsAllFilesSAFDescription),
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .verticalSegmentedShape()
             ) {
-                StorageAccessType.SAF.enable()
+                vm.storageAccessType = StorageAccessType.SAF
             }
         }
 

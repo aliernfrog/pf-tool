@@ -33,7 +33,7 @@ import kotlin.concurrent.schedule
 class ShizukuManager(
     applicationId: String,
     isDebugBuild: Boolean,
-    shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
+    private val shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
     private val topToastState: TopToastState,
     context: Context
 ) {
@@ -158,10 +158,14 @@ class ShizukuManager(
         return _status.value
     }
 
-    fun getCurrentShizukuVersionNameSimplified(context: Context): String? = getShizukuPackageInfo(context)?.versionName?.split(".")?.let {
+    fun getCurrentShizukuVersionNameSimplified(context: Context): String? = "v" + getShizukuPackageInfo(context)?.versionName?.split(".")?.let {
         if (it.size > 3) it.take(3)
         else it
     }?.joinToString(".")
+
+    fun disableShizukuNeverLoadPref() {
+        shizukuNeverLoadPref().value = false
+    }
 
     private fun isShizukuInstalled(context: Context) = getShizukuPackageInfo(context) != null
 
