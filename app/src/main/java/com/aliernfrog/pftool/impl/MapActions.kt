@@ -191,7 +191,7 @@ val mapActions = listOf(
         icon = Icons.Rounded.Delete,
         destructive = true,
         availableFor = { it.importedState != MapImportedState.NONE },
-        availableForMultiSelection = false,
+        availableForMultiSelection = true,
         execute = { context, maps, args ->
             (maps.first() as MapFile).mapsViewModel.mapsPendingDelete = maps.toList() as List<MapFile>
         }
