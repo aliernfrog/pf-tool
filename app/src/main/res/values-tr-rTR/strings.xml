@@ -133,9 +133,9 @@
     <string name="mapsList_imported">Haritalarınız</string>
     <string name="mapsList_exported">Dışa aktarılanlar</string>
     <string name="mapsList_shared">Paylaşılan</string>
-    <string name="mapsList_noImportedMaps">Hiç haritanız yok</string>
-    <string name="mapsList_noExportedMaps">Hiç harita dışa aktarmadınız</string>
-    <string name="mapsList_noSharedMaps">PF Tool ile herhangi bir harita paylaşmadınız</string>
+    <string name="mapsList_imported_noMaps">Hiç haritanız yok</string>
+    <string name="mapsList_exported_noMaps">Hiç harita dışa aktarmadınız</string>
+    <string name="mapsList_shared_noMaps">PF Tool ile herhangi bir harita paylaşmadınız</string>
     <string name="mapsList_searchNoMatches">Eşleşen harita bulunamadı</string>
     <string name="settings">Ayarlar</string>
     <string name="settings_category_game">Polyfield</string>
