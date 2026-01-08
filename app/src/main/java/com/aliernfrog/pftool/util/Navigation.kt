@@ -15,8 +15,10 @@ val settingsRootDestination = SettingsDestination(
     description = "",
     icon = Icons.Rounded.Settings,
     content = { onNavigateBackRequest, onNavigateRequest ->
-        SettingsScreen(onNavigateRequest = onNavigateRequest,
-            onNavigateBackRequest = onNavigateBackRequest)
+        SettingsScreen(
+            onNavigateRequest = onNavigateRequest,
+            onNavigateBackRequest = onNavigateBackRequest
+        )
     }
 )
 

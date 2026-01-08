@@ -7,7 +7,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.MapsListSegment
 import io.github.aliernfrog.pftool_shared.data.getDefaultMapsListSegments
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
@@ -15,7 +14,6 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MapsListViewModel(
-    val topToastState: TopToastState,
     val prefs: PreferenceManager,
     private val mapsViewModel: MapsViewModel,
     context: Context
