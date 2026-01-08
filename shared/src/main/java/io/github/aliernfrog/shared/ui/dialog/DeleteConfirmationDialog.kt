@@ -44,7 +44,7 @@ fun DeleteConfirmationDialog(
                 onClick = onDismissRequest,
                 shapes = ButtonDefaults.shapes()
             ) {
-                Text(sharedStringResource(SharedString.ActionDelete))
+                Text(sharedStringResource(SharedString.ActionCancel))
             }
         },
         icon = {
