@@ -27,18 +27,28 @@ import java.util.zip.ZipOutputStream
 class MapFile(
     override val file: FileWrapper
 ): IMapFile, KoinComponent {
+    companion object {
+        private const val THUMBNAIL_FILE_NAME: String = "thumbnail.jpg"
+        private val mapFolderContent = arrayOf(
+            "colormap.jpg",
+            "heightmap.jpg",
+            "map.txt",
+            THUMBNAIL_FILE_NAME
+        )
+    }
+
     val mapsViewModel by inject<MapsViewModel>()
     val topToastState by inject<TopToastState>()
     override val contextUtils by inject<ContextUtils>()
-
-    private val thumbnailFileName: String = "thumbnail.jpg"
-    private val allowedMapFiles = arrayOf("colormap.jpg","heightmap.jpg","map.txt",thumbnailFileName)
 
     val isZip: Boolean = fileName.lowercase().endsWith(".zip")
 
     override val importedState = if (path.startsWith(mapsViewModel.mapsDir)) MapImportedState.IMPORTED
     else if (path.startsWith(mapsViewModel.exportedMapsDir)) MapImportedState.EXPORTED
     else MapImportedState.NONE
+
+    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED) null
+    else file.findFile(THUMBNAIL_FILE_NAME)
 
     override fun rename(
         newName: String
@@ -91,7 +101,7 @@ class MapFile(
         while ((zipInputStream.nextEntry.also { currentEntry = it }) != null) {
             currentEntry?.let { entry ->
                 val entryName = PFToolSharedUtil.getFileName(entry.name)
-                if (!allowedMapFiles.contains(entryName.lowercase())) return@let
+                if (!mapFolderContent.contains(entryName.lowercase())) return@let
                 val outputFile = outputFolder.createFile(entryName)
                 val outputStream = outputFile!!.outputStream(context)!!
                 zipInputStream.copyTo(outputStream)
@@ -119,7 +129,7 @@ class MapFile(
         outputFile.outputStream(context)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
-                    it.isFile && allowedMapFiles.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
+                    it.isFile && mapFolderContent.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
                 }.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
@@ -149,7 +159,7 @@ class MapFile(
         } else context.contentResolver.openOutputStream(uri)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
-                    it.isFile && allowedMapFiles.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
+                    it.isFile && mapFolderContent.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
                 }.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
@@ -163,8 +173,7 @@ class MapFile(
         )
     }
 
-    override fun getThumbnailFile() = if (importedState != MapImportedState.IMPORTED) null
-    else file.findFile(thumbnailFileName)
+    override fun getThumbnailFile() = thumbnailFile
 
     override suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {

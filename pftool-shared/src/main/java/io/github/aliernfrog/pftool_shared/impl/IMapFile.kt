@@ -54,6 +54,9 @@ interface IMapFile {
 
     fun delete() = file.delete()
 
+    /**
+     * Returns the thumbnail file. This must return a cached object to avoid performance issues.
+     */
     fun getThumbnailFile(): FileWrapper?
 
     suspend fun runInIOThreadSafe(block: suspend () -> Unit)

@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.MapsListSegment
 import io.github.aliernfrog.pftool_shared.data.getDefaultMapsListSegments
+import io.github.aliernfrog.pftool_shared.impl.IMapFile
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,7 +20,7 @@ class MapsListViewModel(
     private val mapsViewModel: MapsViewModel,
     context: Context
 ) : ViewModel() {
-    val selectedMaps = mutableStateListOf<MapFile>()
+    val selectedMaps = mutableStateListOf<IMapFile>()
     val availableSegments = mutableStateListOf<MapsListSegment>()
 
     init {

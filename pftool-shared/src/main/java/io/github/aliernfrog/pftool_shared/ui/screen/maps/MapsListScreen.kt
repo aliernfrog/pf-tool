@@ -121,7 +121,9 @@ fun MapsListScreen(
     isLoadingMaps: Boolean,
     showThumbnailsInList: Boolean,
     showMultiSelectionOptions: Boolean = true,
-    multiSelectFloatingActionButton: @Composable (selectedMaps: List<IMapFile>, clearSelection: () -> Unit) -> Unit = { _, _ -> },
+    multiSelectFloatingActionButton: @Composable (
+        selectedMaps: List<IMapFile>, clearSelection: () -> Unit
+    ) -> Unit = { _, _ -> },
     settingsButton: (@Composable () -> Unit)? = null,
     onBackClick: (() -> Unit)?,
     onMapPick: (Any) -> Unit
@@ -408,7 +410,8 @@ fun MapsListScreen(
 
                         itemsIndexed(mapsToShow) { index, map ->
                             MapItem(
-                                map, isGrid = false,
+                                map,
+                                isGrid = false,
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp)
                                     .verticalSegmentedShape(
