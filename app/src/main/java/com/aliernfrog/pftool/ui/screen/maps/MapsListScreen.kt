@@ -9,7 +9,6 @@ import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.impl.mapActions
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
-import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.ui.screen.maps.MapsListScreen
 import org.koin.androidx.compose.koinViewModel
@@ -18,8 +17,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MapsListScreen(
     title: String = stringResource(R.string.mapsList_pickMap),
-    mapsListViewModel: MapsListViewModel = koinViewModel(),
-    mapsViewModel: MapsViewModel = koinViewModel(),
+    vm: MapsListViewModel = koinViewModel(),
     showMultiSelectionOptions: Boolean = true,
     multiSelectFloatingActionButton: @Composable (
         selectedMaps: List<MapFile>, clearSelection: () -> Unit
@@ -31,12 +29,12 @@ fun MapsListScreen(
     @Suppress("UNCHECKED_CAST")
     MapsListScreen(
         title = title,
-        mapsListSegments = mapsListViewModel.availableSegments,
+        mapsListSegments = vm.availableSegments,
         mapActions = mapActions,
-        selectedMaps = mapsListViewModel.selectedMaps,
-        listViewOptions = mapsListViewModel.prefs.mapsListViewOptions,
-        isLoadingMaps = mapsViewModel.isLoadingMaps,
-        showThumbnailsInList = mapsListViewModel.prefs.showMapThumbnailsInList.value,
+        selectedMaps = vm.selectedMaps,
+        listViewOptions = vm.prefs.mapsListViewOptions,
+        isLoadingMaps = vm.isLoadingMaps,
+        showThumbnailsInList = vm.prefs.showMapThumbnailsInList.value,
         showMultiSelectionOptions = showMultiSelectionOptions,
         multiSelectFloatingActionButton = { selectedMaps, clearSelection -> @Composable {
             multiSelectFloatingActionButton(selectedMaps as List<MapFile>, clearSelection)

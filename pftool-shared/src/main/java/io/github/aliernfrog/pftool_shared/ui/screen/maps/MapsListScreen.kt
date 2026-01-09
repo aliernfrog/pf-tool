@@ -80,7 +80,7 @@ import io.github.aliernfrog.pftool_shared.data.MapAction
 import io.github.aliernfrog.pftool_shared.data.MapsListSegment
 import io.github.aliernfrog.pftool_shared.enum.ListSorting
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
-import io.github.aliernfrog.pftool_shared.impl.EmptyMapActionArguments
+import io.github.aliernfrog.pftool_shared.impl.DefaultMapActionArguments
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
 import io.github.aliernfrog.pftool_shared.ui.component.LazyAdaptiveVerticalGrid
@@ -601,7 +601,7 @@ private fun MultiSelectionDropdown(
                 ) else MenuDefaults.itemColors(),
                 onClick = { scope.launch {
                     onDismissRequest(false)
-                    action.execute(context, maps, EmptyMapActionArguments())
+                    action.execute(context, maps, DefaultMapActionArguments())
                     onDismissRequest(true) // clear selection
                 } }
             )

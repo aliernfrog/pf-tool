@@ -6,6 +6,8 @@ class PFToolSharedString(override val key: String) : SharedString(key) {
     data object ActionMore : SharedString("action_more")
     data object ActionSelectDeselectAll : SharedString("action_select_deselectAll")
     data object ActionSelectSelectAll : SharedString("action_select_selectAll")
+    data object ActionTapToDismiss : SharedString("action_tapToDismiss")
+
     data object Info : SharedString("info")
     data object InfoShizukuDisconnected : SharedString("info_shizuku_disconnected")
 
@@ -21,6 +23,11 @@ class PFToolSharedString(override val key: String) : SharedString(key) {
     data object ListStyleGridMaxLineSpan : SharedString("list_style_gridMaxLineSpan")
 
     data object Maps : SharedString("maps")
+    data object MapsMapName : SharedString("maps_mapName")
+    data object MapsMapNameGuide : SharedString("maps_mapName_guide")
+    data object MapsThumbnail : SharedString("maps_thumbnail")
+    data object MapsRename : SharedString("maps_rename")
+    data object MapsDuplicate : SharedString("maps_duplicate")
     data object MapsListReload : SharedString("mapsList_reload")
     data object MapsListStorage : SharedString("mapsList_storage")
     data object MapsListSearch : SharedString("mapsList_search")

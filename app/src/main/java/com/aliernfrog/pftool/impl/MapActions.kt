@@ -22,6 +22,7 @@ import io.github.aliernfrog.shared.util.SharedString
 @Suppress("UNCHECKED_CAST")
 val mapActions = listOf(
     MapAction(
+        id = MapAction.RENAME_ID,
         shortLabel = SharedString(key = "", resId = R.string.maps_rename),
         icon = Icons.Rounded.Edit,
         availableForMultiSelection = false,
@@ -54,6 +55,7 @@ val mapActions = listOf(
     ),
 
     MapAction(
+        id = MapAction.DUPLICATE_ID,
         shortLabel = SharedString(key = "", resId = R.string.maps_duplicate),
         icon = Icons.Rounded.FileCopy,
         availableForMultiSelection = false,
@@ -86,6 +88,7 @@ val mapActions = listOf(
     ),
 
     MapAction(
+        id = "import",
         shortLabel = SharedString("", resId = R.string.maps_import_short),
         longLabel = SharedString(key = "", resId = R.string.maps_import),
         icon = Icons.Rounded.Download,
@@ -113,6 +116,7 @@ val mapActions = listOf(
     ),
 
     MapAction(
+        id = "export",
         shortLabel = SharedString(key = "", resId = R.string.maps_export_short),
         longLabel = SharedString(key = "", resId = R.string.maps_export),
         description = SharedString(key = "", resId = R.string.maps_export_description),
@@ -141,6 +145,7 @@ val mapActions = listOf(
     ),
 
     MapAction(
+        id = "exportCustomLocation",
         shortLabel = SharedString(key = "", resId = R.string.maps_exportCustomTarget),
         icon = Icons.AutoMirrored.Filled.AddToHomeScreen,
         availableFor = { true },
@@ -167,6 +172,7 @@ val mapActions = listOf(
     ),
 
     MapAction(
+        id = "share",
         shortLabel = SharedString(key = "", resId = R.string.maps_share_short),
         longLabel = SharedString(key = "", resId = R.string.maps_share),
         icon = Icons.Rounded.Share,
@@ -186,6 +192,7 @@ val mapActions = listOf(
     ),
 
     MapAction(
+        id = "delete",
         shortLabel = SharedString(key = "", resId = R.string.maps_delete_short),
         longLabel = SharedString(key = "", resId = R.string.maps_delete),
         icon = Icons.Rounded.Delete,
@@ -258,6 +265,3 @@ private suspend fun runIOAction(
     first.mapsViewModel.loadMaps(context)
     first.mapsViewModel.activeProgress = null
 }
-
-val mapRenameAction = mapActions.find { it.shortLabel.resId == R.string.maps_rename }!!
-val mapDuplicateAction = mapActions.find { it.shortLabel.resId == R.string.maps_duplicate }!!

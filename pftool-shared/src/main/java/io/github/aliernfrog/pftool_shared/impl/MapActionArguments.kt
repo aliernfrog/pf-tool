@@ -1,8 +1,8 @@
 package io.github.aliernfrog.pftool_shared.impl
 
-class EmptyMapActionArguments : IMapActionArguments {
+class DefaultMapActionArguments(
     override val mapName: String? = null
-}
+) : IMapActionArguments
 
 interface IMapActionArguments {
     val mapName: String?

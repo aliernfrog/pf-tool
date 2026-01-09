@@ -19,7 +19,7 @@ fun PermissionsScreen(
         permissionsData = permissionsData,
         title = title,
         onRestartAppRequest = {},
-        onNavigateStorageSettingsRequest = onNavigateSettingsRequest,
+        onNavigateStorageSettingsRequest = onNavigateSettingsRequest, // TODO navigate to storage settings page
         settingsButton = {
             SettingsButton {
                 onNavigateSettingsRequest()

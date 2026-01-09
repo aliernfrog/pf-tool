@@ -21,6 +21,10 @@ class MapsListViewModel(
     val selectedMaps = mutableStateListOf<IMapFile>()
     val availableSegments = mutableStateListOf<MapsListSegment>()
 
+    // TODO remove MapsViewModel dependency
+    val isLoadingMaps
+        get() = mapsViewModel.isLoadingMaps
+
     init {
         viewModelScope.launch {
             snapshotFlow { mapsViewModel.sharedMaps.isEmpty() }
