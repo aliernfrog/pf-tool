@@ -16,6 +16,7 @@ import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
 import io.github.aliernfrog.shared.ui.dialog.DeleteConfirmationDialog
+import io.github.aliernfrog.shared.ui.settings.SettingsDestination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -23,7 +24,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MapsScreen(
     map: MapFile?,
     vm: MapsViewModel = koinViewModel(),
-    onNavigateSettingsRequest: () -> Unit,
+    onNavigateRequest: (Any) -> Unit,
     onNavigateBackRequest: (() -> Unit)?
 ) {
     val permissions = remember { arrayOf(
@@ -51,11 +52,13 @@ fun MapsScreen(
     PermissionsScreen(
         *permissions,
         title = stringResource(R.string.maps),
-        onNavigateSettingsRequest = onNavigateSettingsRequest
+        onNavigateRequest = onNavigateRequest
     ) {
         MapsScreenSafePermissions(
             map = map,
-            onNavigateSettingsRequest = onNavigateSettingsRequest,
+            onNavigateSettingsRequest = {
+                onNavigateRequest(SettingsDestination.root)
+            },
             onNavigateBackRequest = onNavigateBackRequest
         )
     }

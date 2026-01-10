@@ -44,7 +44,7 @@ fun ExperimentalPage(
     vm: ExperimentalPageViewModel = koinViewModel(),
     experimentalPrefs: List<BasePreferenceManager.Preference<*>>,
     experimentalOptionsEnabledPref: BasePreferenceManager.Preference<Boolean>,
-    onCheckUpdatesRequest: () -> Unit,
+    onCheckUpdatesRequest: (skipVersionCheck: Boolean) -> Unit,
     onShowUpdateSheetRequest: () -> Unit,
     onRestartAppRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
@@ -85,7 +85,7 @@ fun ExperimentalPage(
             VerticalSegmentor(
                 {
                     ExpressiveButtonRow(title = "Check updates (skip version check)") {
-                        onCheckUpdatesRequest()
+                        onCheckUpdatesRequest(/* skipVersionCheck */ true)
                     }
                 }, {
                     ExpressiveButtonRow(title = "Show update toast") {

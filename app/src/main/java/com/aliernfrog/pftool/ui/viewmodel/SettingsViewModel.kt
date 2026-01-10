@@ -1,198 +1,22 @@
 package com.aliernfrog.pftool.ui.viewmodel
 
-import android.content.Context
-import android.os.Build
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FolderOpen
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Palette
-import androidx.compose.material.icons.rounded.PinDrop
-import androidx.compose.material.icons.rounded.Science
-import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.SettingsConstant
-import com.aliernfrog.pftool.crowdinURL
-import com.aliernfrog.pftool.languages
-import com.aliernfrog.pftool.util.extension.enable
+import com.aliernfrog.pftool.util.appSettingsCategories
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import com.aliernfrog.pftool.util.settingsLibsDestination
-import com.aliernfrog.pftool.util.staticutil.GeneralUtil
-import io.github.aliernfrog.pftool_shared.impl.Progress
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.LanguagePage
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.MapsPage
-import io.github.aliernfrog.pftool_shared.ui.screen.settings.StoragePage
+import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.shared.impl.VersionManager
-import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
-import io.github.aliernfrog.shared.ui.settings.AboutPage
-import io.github.aliernfrog.shared.ui.settings.AppearancePage
-import io.github.aliernfrog.shared.ui.settings.ExperimentalPage
-import io.github.aliernfrog.shared.ui.settings.SettingsCategory
-import io.github.aliernfrog.shared.ui.settings.SettingsDestination
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 class SettingsViewModel(
     val versionManager: VersionManager,
-    mainViewModel: MainViewModel, // TODO remove MainViewModel dependency
-    prefs: PreferenceManager,
-    context: Context
+    val prefs: PreferenceManager,
+    val progressState: ProgressState,
+    val topToastState: TopToastState
 ) : ViewModel() {
-    // TODO define categories outside ui/vm so they are easily referenceable
-    val categories = listOf(
-        SettingsCategory(
-            title = context.getString(R.string.settings_category_game),
-            destinations = listOf(
-                SettingsDestination(
-                    title = context.getString(R.string.settings_maps),
-                    description = context.getString(R.string.settings_maps_description),
-                    icon = Icons.Rounded.PinDrop,
-                    iconContainerColor = Color.Green,
-                    content = { onNavigateBackRequest, _ ->
-                        MapsPage(
-                            showChosenMapThumbnailPref = prefs.showChosenMapThumbnail,
-                            showMapThumbnailsInListPref = prefs.showMapThumbnailsInList,
-                            stackupMapsPref = prefs.stackupMaps,
-                            onNavigateBackRequest = onNavigateBackRequest
-                        )
-                    }
-                ),
-                SettingsDestination(
-                    title = context.getString(R.string.settings_storage),
-                    description = context.getString(R.string.settings_storage_description),
-                    icon = Icons.Rounded.FolderOpen,
-                    iconContainerColor = Color.Blue,
-                    content = { onNavigateBackRequest, _ ->
-                        StoragePage(
-                            storageAccessTypePref = prefs.storageAccessType,
-                            folderPrefs = mapOf(
-                                context.getString(R.string.settings_storage_folders_maps) to prefs.pfMapsDir,
-                                context.getString(R.string.settings_storage_folders_exportedMaps) to prefs.exportedMapsDir
-                            ),
-                            onEnableStorageAccessTypeRequest = { it.enable() },
-                            onNavigateBackRequest = onNavigateBackRequest
-                        )
-                    }
-                )
-            )
-        ),
-        SettingsCategory(
-            title = context.getString(R.string.settings_category_app),
-            destinations = listOf(
-                SettingsDestination(
-                    title = context.getString(R.string.settings_appearance),
-                    description = context.getString(R.string.settings_appearance_description),
-                    icon = Icons.Rounded.Palette,
-                    iconContainerColor = Color.Yellow,
-                    content = { onNavigateBackRequest, _ ->
-                        AppearancePage(
-                            themePref = prefs.theme,
-                            materialYouPref = prefs.materialYou,
-                            pitchBlackPref = prefs.pitchBlack,
-                            onNavigateBackRequest = onNavigateBackRequest
-                        )
-                    }
-                ),
-                SettingsDestination(
-                    title = context.getString(R.string.settings_language),
-                    description = context.getString(R.string.settings_language_description),
-                    icon = Icons.Rounded.Translate,
-                    iconContainerColor = Color.Magenta,
-                    shown = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N,
-                    content = { onNavigateBackRequest, _ ->
-                        LanguagePage(
-                            crowdinURL = crowdinURL,
-                            currentLanguagePref = prefs.language,
-                            languages = languages,
-                            appLanguage = mainViewModel.appLanguage,
-                            deviceLanguage = mainViewModel.deviceLanguage,
-                            baseLanguage = mainViewModel.baseLanguage,
-                            onSetLanguageRequest = {
-                                mainViewModel.appLanguage = it
-                            },
-                            onNavigateBackRequest = onNavigateBackRequest
-                        )
-                    }
-                ),
-                SettingsDestination(
-                    title = context.getString(R.string.settings_experimental),
-                    description = context.getString(R.string.settings_experimental_description),
-                    icon = Icons.Rounded.Science,
-                    iconContainerColor = Color.Black,
-                    shown = prefs.experimentalOptionsEnabled.value,
-                    content = { onNavigateBackRequest, _ ->
-                        val scope = rememberCoroutineScope()
-                        ExperimentalPage(
-                            experimentalPrefs = prefs.experimentalPrefs,
-                            experimentalOptionsEnabledPref = prefs.experimentalOptionsEnabled,
-                            onCheckUpdatesRequest = {
-                                scope.launch {
-                                    mainViewModel.checkUpdates(skipVersionCheck = true)
-                                }
-                            },
-                            onShowUpdateSheetRequest = {
-                                scope.launch {
-                                    mainViewModel.updateSheetState.show()
-                                }
-                            },
-                            onRestartAppRequest = {
-                                GeneralUtil.restartApp(context)
-                            },
-                            onNavigateBackRequest = onNavigateBackRequest
-                        ) {
-                            ExpressiveSection(title = "Progress") {
-                                VerticalSegmentor(
-                                    {
-                                        ExpressiveButtonRow(
-                                            title = "Set indeterminate progress"
-                                        ) {
-                                            mainViewModel.progressState.currentProgress =
-                                                Progress(description = context.getString(R.string.info_pleaseWait))
-                                        }
-                                    },
-                                    modifier = Modifier.padding(horizontal = 12.dp)
-                                )
-                            }
-                        }
-                    }
-                ),
-                SettingsDestination(
-                    title = context.getString(R.string.settings_about),
-                    description = mainViewModel.applicationVersionLabel,
-                    icon = Icons.Rounded.Info,
-                    iconContainerColor = Color.Blue,
-                    content = { onNavigateBackRequest, onNavigateRequest ->
-                        val scope = rememberCoroutineScope()
-                        AboutPage(
-                            socials = SettingsConstant.socials,
-                            credits = SettingsConstant.credits,
-                            debugInfo = mainViewModel.debugInfo,
-                            autoCheckUpdatesPref = prefs.autoCheckUpdates,
-                            experimentalOptionsEnabled = prefs.experimentalOptionsEnabled.value,
-                            onExperimentalOptionsEnabled = {
-                                prefs.experimentalOptionsEnabled.value = true
-                            },
-                            onShowUpdateSheetRequest = {
-                                scope.launch {
-                                    mainViewModel.updateSheetState.show()
-                                }
-                            },
-                            onNavigateLibsRequest = {
-                                onNavigateRequest(settingsLibsDestination)
-                            },
-                            onNavigateBackRequest = onNavigateBackRequest
-                        )
-                    }
-                )
-            )
-        )
-    )
+    val categories = appSettingsCategories
+
+    val debugInfo: String
+        get() = versionManager.getDebugInfo(prefs.debugInfoPrefs)
 }

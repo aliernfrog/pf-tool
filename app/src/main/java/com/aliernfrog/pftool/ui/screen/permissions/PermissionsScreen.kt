@@ -3,26 +3,34 @@ package com.aliernfrog.pftool.ui.screen.permissions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.aliernfrog.pftool.ui.component.SettingsButton
+import com.aliernfrog.pftool.util.AppSettingsDestination
+import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.ui.screen.permissions.PermissionsScreen
+import io.github.aliernfrog.shared.ui.settings.SettingsDestination
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PermissionsScreen(
     vararg permissionsData: PermissionData,
     title: String,
-    onNavigateSettingsRequest: () -> Unit,
+    onNavigateRequest: (Any) -> Unit,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+
     PermissionsScreen(
         permissionsData = permissionsData,
         title = title,
-        onRestartAppRequest = {},
-        onNavigateStorageSettingsRequest = onNavigateSettingsRequest, // TODO navigate to storage settings page
+        onRestartAppRequest = { GeneralUtil.restartApp(context, withModules = true) },
+        onNavigateStorageSettingsRequest = {
+            onNavigateRequest(AppSettingsDestination.storage)
+        },
         settingsButton = {
             SettingsButton {
-                onNavigateSettingsRequest()
+                onNavigateRequest(SettingsDestination.root)
             }
         },
         content = content

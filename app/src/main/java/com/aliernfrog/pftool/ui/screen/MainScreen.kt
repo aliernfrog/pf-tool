@@ -25,7 +25,6 @@ import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
-import com.aliernfrog.pftool.util.settingsRootDestination
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
 import io.github.aliernfrog.shared.ui.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.sheet.UpdateSheet
@@ -42,10 +41,6 @@ fun MainScreen(
 
     val updateAvailable = vm.updateAvailable.collectAsState()
     val latestVersionInfo = vm.latestVersionInfo.collectAsState()
-
-    val onNavigateSettingsRequest: () -> Unit = {
-        vm.navigationBackStack.add(settingsRootDestination)
-    }
 
     val onNavigateBackRequest: () -> Unit = {
         vm.navigationBackStack.removeLastIfMultiple()
@@ -88,7 +83,7 @@ fun MainScreen(
                         Destination.MAPS -> {
                             MapsScreen(
                                 map = null,
-                                onNavigateSettingsRequest = onNavigateSettingsRequest,
+                                onNavigateRequest = { vm.navigationBackStack.add(it) },
                                 onNavigateBackRequest = null
                             )
                         }
@@ -98,11 +93,13 @@ fun MainScreen(
                 entry<SettingsDestination>(
                     metadata = slideTransitionMetadata
                 ) { destination ->
-                    destination.content(
-                        /* onNavigateBackRequest = */ onNavigateBackRequest,
-                        /* onNavigateRequest = */ {
-                            vm.navigationBackStack.add(it)
-                        }
+                    SettingsScreen(
+                        destination = destination,
+                        onNavigateBackRequest = onNavigateBackRequest,
+                        onNavigateRequest = { vm.navigationBackStack.add(it) },
+                        onShowUpdateSheetRequest = { scope.launch {
+                            vm.updateSheetState.show()
+                        } }
                     )
                 }
 
@@ -111,7 +108,7 @@ fun MainScreen(
                 ) { map ->
                     MapsScreen(
                         map = map,
-                        onNavigateSettingsRequest = onNavigateSettingsRequest,
+                        onNavigateRequest = { vm.navigationBackStack.add(it) },
                         onNavigateBackRequest = onNavigateBackRequest
                     )
                 }

@@ -54,6 +54,7 @@ open class SharedString(
     data object SettingsAboutChangelog : SharedString("settings_about_changelog")
     data object SettingsAboutUpdate : SharedString("settings_about_update")
     data object SettingsAppearance : SharedString("settings_appearance")
+    data object SettingsAppearanceDescription : SharedString("settings_appearance_description")
     data object SettingsAppearanceTheme : SharedString("settings_appearance_theme")
     data object SettingsAppearanceThemeSystem : SharedString("settings_appearance_theme_system")
     data object SettingsAppearanceThemeLight : SharedString("settings_appearance_theme_light")
@@ -75,6 +76,12 @@ open class SharedString(
     data object UpdatesPrerelease : SharedString("updates_preRelease")
     data object UpdatesStable : SharedString("updates_stable")
     data object UpdatesUpdate : SharedString("updates_update")
+
+    companion object {
+        fun fromResId(resId: Int): SharedString {
+            return SharedString(key = "", resId = resId)
+        }
+    }
 }
 
 @SuppressLint("LocalContextResourcesRead", "DiscouragedApi")
