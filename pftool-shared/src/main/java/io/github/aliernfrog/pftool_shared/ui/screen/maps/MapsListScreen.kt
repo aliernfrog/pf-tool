@@ -59,13 +59,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,14 +95,14 @@ import io.github.aliernfrog.shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
+import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.extension.showErrorToast
 import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
@@ -144,9 +142,8 @@ fun MapsListScreen(
     val listStyle = ListStyle.entries[listStylePref.value]
     var multiSelectionDropdownShown by remember { mutableStateOf(false) }
     var areAllShownMapsSelected by remember { mutableStateOf(false) }
+    var showFABLabel by remember { mutableStateOf(true) }
     var searchQuery by rememberSaveable { mutableStateOf("") }
-
-    var firstVisibleItemIndex by remember { mutableIntStateOf(0) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.data?.data != null) scope.launch {
@@ -289,7 +286,7 @@ fun MapsListScreen(
                         FloatingActionButton(
                             icon = Icons.Outlined.SdCard,
                             text = sharedStringResource(PFToolSharedString.MapsListStorage),
-                            showText = firstVisibleItemIndex < 1,
+                            showText = showFABLabel,
                             onClick = {
                                 val intent =
                                     Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
@@ -367,17 +364,15 @@ fun MapsListScreen(
                     if (listViewOptions.sortingReversed.value) it.reversed() else it
                 }
 
-            LaunchedEffect(lazyListState) {
-                snapshotFlow { lazyListState.firstVisibleItemIndex }
-                    .distinctUntilChanged()
-                    .collectLatest { firstVisibleItemIndex = it }
-            }
+            LazyListScrollAccessibilityListener(
+                lazyListState = lazyListState,
+                onShowLabelsStateChange = { showFABLabel = it }
+            )
 
-            LaunchedEffect(lazyGridState) {
-                snapshotFlow { lazyGridState.firstVisibleItemIndex }
-                    .distinctUntilChanged()
-                    .collectLatest { firstVisibleItemIndex = it }
-            }
+            LazyGridScrollAccessibilityListener(
+                lazyGridState = lazyGridState,
+                onShowLabelsStateChange = { showFABLabel = it }
+            )
 
             @Composable
             fun HeaderWithArgs(modifier: Modifier = Modifier) {
