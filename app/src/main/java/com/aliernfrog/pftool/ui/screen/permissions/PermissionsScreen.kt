@@ -5,11 +5,13 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.aliernfrog.pftool.ui.component.SettingsButton
+import com.aliernfrog.pftool.ui.viewmodel.PermissionsViewModel
 import com.aliernfrog.pftool.util.AppSettingsDestination
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.ui.screen.permissions.PermissionsScreen
 import io.github.aliernfrog.shared.ui.settings.SettingsDestination
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -17,6 +19,7 @@ fun PermissionsScreen(
     vararg permissionsData: PermissionData,
     title: String,
     onNavigateRequest: (Any) -> Unit,
+    vm: PermissionsViewModel = koinViewModel(),
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -24,7 +27,10 @@ fun PermissionsScreen(
     PermissionsScreen(
         permissionsData = permissionsData,
         title = title,
-        onRestartAppRequest = { GeneralUtil.restartApp(context, withModules = true) },
+        onRestartAppRequest = {
+            vm.resetShizukuNeverLoadDebugPref()
+            GeneralUtil.restartApp(context, withModules = true)
+        },
         onNavigateStorageSettingsRequest = {
             onNavigateRequest(AppSettingsDestination.storage)
         },
