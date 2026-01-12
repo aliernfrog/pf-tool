@@ -12,5 +12,4 @@ val viewModelModule = module {
     singleOf(::SettingsViewModel)
     singleOf(::MapsViewModel)
     singleOf(::MapsListViewModel)
-    singleOf(::PermissionsViewModel)
 }

@@ -158,7 +158,7 @@ class ShizukuManager(
         return _status.value
     }
 
-    fun getCurrentShizukuVersionNameSimplified(context: Context): String? = "v" + getShizukuPackageInfo(context)?.versionName?.split(".")?.let {
+    fun getCurrentShizukuVersionNameSimplified(context: Context): String = "v" + getShizukuPackageInfo(context)?.versionName?.split(".")?.let {
         if (it.size > 3) it.take(3)
         else it
     }?.joinToString(".")
