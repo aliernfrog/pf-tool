@@ -96,7 +96,7 @@ fun MediaOverlay(
     )
 
     var state by remember { mutableStateOf(
-        if (data.model != null) MediaViewState.SUCCESS else MediaViewState.NO_IMAGE
+        if (data.model != null) MediaOverlayState.SUCCESS else MediaOverlayState.NO_IMAGE
     ) }
     var showOverlay by remember { mutableStateOf(false) }
     var viewportHeight by remember { mutableStateOf(0.dp) }
@@ -229,20 +229,20 @@ fun MediaOverlay(
                 }
 
                 when (it) {
-                    MediaViewState.ERROR -> CenteredBox {
+                    MediaOverlayState.ERROR -> CenteredBox {
                         data.errorContent()
                     }
-                    MediaViewState.NO_IMAGE -> CenteredBox {
+                    MediaOverlayState.NO_IMAGE -> CenteredBox {
                         ErrorWithIcon(
                             error = "",
                             painter = rememberVectorPainter(Icons.Rounded.HideImage),
                             contentColor = Color.White
                         )
                     }
-                    MediaViewState.SUCCESS -> AsyncImage(
+                    MediaOverlayState.SUCCESS -> AsyncImage(
                         model = data.model,
-                        onError = { state = MediaViewState.ERROR },
-                        onSuccess = { state = MediaViewState.SUCCESS },
+                        onError = { state = MediaOverlayState.ERROR },
+                        onSuccess = { state = MediaOverlayState.SUCCESS },
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()
@@ -322,7 +322,7 @@ private fun GuideDialog(
     )
 }
 
-private enum class MediaViewState {
+private enum class MediaOverlayState {
     SUCCESS,
     ERROR,
     NO_IMAGE

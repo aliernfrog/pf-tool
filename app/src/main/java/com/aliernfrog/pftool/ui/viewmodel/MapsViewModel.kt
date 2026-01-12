@@ -126,7 +126,7 @@ class MapsViewModel(
     fun openMapThumbnailViewer(map: MapFile) {
         val mainViewModel = getKoinInstance<MainViewModel>()
         val hasThumbnail = map.thumbnailModel != null
-        mainViewModel.showMediaView(MediaOverlayData(
+        mainViewModel.showMediaOverlay(MediaOverlayData(
             model = map.thumbnailModel,
             title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
             zoomEnabled = hasThumbnail,

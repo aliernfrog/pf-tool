@@ -78,8 +78,8 @@ class MainActivity : AppCompatActivity() {
                 Crossfade(mainViewModel.mediaOverlayData) { data ->
                     if (data != null) MediaOverlay(
                         data = data,
-                        showMediaOverlayGuidePref = mainViewModel.prefs.showMediaViewGuide,
-                        onDismissRequest = { mainViewModel.dismissMediaView() }
+                        showMediaOverlayGuidePref = mainViewModel.prefs.showMediaOverlayGuide,
+                        onDismissRequest = { mainViewModel.dismissMediaOverlay() }
                     )
                 }
                 TopToastHost(mainViewModel.topToastState)

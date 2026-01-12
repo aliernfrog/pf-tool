@@ -61,6 +61,10 @@ class MainViewModel(
     var mediaOverlayData by mutableStateOf<MediaOverlayData?>(null)
         private set
 
+    init {
+        prefs.lastKnownInstalledVersion.value = versionManager.currentVersionCode
+    }
+
     suspend fun checkUpdates(
         manuallyTriggered: Boolean = false,
         skipVersionCheck: Boolean = false
@@ -102,11 +106,11 @@ class MainViewModel(
         }
     }
 
-    fun showMediaView(data: MediaOverlayData) {
+    fun showMediaOverlay(data: MediaOverlayData) {
         mediaOverlayData = data
     }
 
-    fun dismissMediaView() {
+    fun dismissMediaOverlay() {
         mediaOverlayData = null
     }
 
