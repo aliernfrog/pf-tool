@@ -34,7 +34,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
-import io.github.aliernfrog.pftool_shared.ui.viewmodel.PermissionsViewModel
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.AppScaffold
@@ -49,7 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 fun PermissionsScreen(
     vararg permissionsData: PermissionData,
     title: String,
-    vm: PermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel = koinViewModel(),
     onRestartAppRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit,
     settingsButton: (@Composable () -> Unit)?,

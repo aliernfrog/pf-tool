@@ -64,7 +64,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,6 +72,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.MapAction
 import io.github.aliernfrog.pftool_shared.data.MapsListSegment
@@ -85,6 +85,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.LazyAdaptiveVerticalGrid
 import io.github.aliernfrog.pftool_shared.ui.component.maps.GridMapItem
 import io.github.aliernfrog.pftool_shared.ui.component.maps.ListMapItem
 import io.github.aliernfrog.pftool_shared.ui.sheet.ListViewOptionsSheet
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.IMapsListViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
@@ -105,6 +106,7 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import kotlin.collections.filter
 
@@ -114,11 +116,10 @@ fun MapsListScreen(
     title: String = sharedStringResource(PFToolSharedString.Maps),
     mapsListSegments: List<MapsListSegment>,
     mapActions: List<MapAction>,
-    selectedMaps: SnapshotStateList<IMapFile>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
-    isLoadingMaps: Boolean,
     showThumbnailsInList: Boolean,
     showMultiSelectionOptions: Boolean = true,
+    vm: IMapsListViewModel = koinViewModel(),
     multiSelectFloatingActionButton: @Composable (
         selectedMaps: List<IMapFile>, clearSelection: () -> Unit
     ) -> Unit = { _, _ -> },
@@ -136,6 +137,8 @@ fun MapsListScreen(
     }
     val currentlyShownSegment = mapsListSegments.getOrNull(pagerState.currentPage)
 
+    val selectedMaps = vm.selectedMaps
+    val isLoading = vm.isLoading.collectAsStateWithLifecycle().value
     val isMultiSelecting = selectedMaps.isNotEmpty()
     val listStylePref = listViewOptions.styleGroup.getCurrent()
     val gridMaxLineSpanPref = listViewOptions.gridMaxLineSpanGroup.getCurrent()
@@ -163,7 +166,7 @@ fun MapsListScreen(
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            mapsListSegments.forEach { it.reloadMaps() }
+            vm.reloadMaps(context)
         }
     }
 
@@ -171,8 +174,9 @@ fun MapsListScreen(
         pagerState.currentPage,
         selectedMaps.size
     ) {
-        currentlyShownSegment?.getMaps()?.let {
-            areAllShownMapsSelected = selectedMaps.containsAll(it)
+        currentlyShownSegment?.let { segment ->
+            val maps = vm.getMapsForSegment(segment)
+            areAllShownMapsSelected = selectedMaps.containsAll(maps)
         }
     }
 
@@ -205,10 +209,11 @@ fun MapsListScreen(
                             IconButton(
                                 shapes = IconButtonDefaults.shapes(),
                                 onClick = {
-                                    currentlyShownSegment?.getMaps()?.let { shownMaps ->
-                                        if (areAllShownMapsSelected) selectedMaps.removeAll(shownMaps)
+                                    currentlyShownSegment?.let { segment ->
+                                        val maps = vm.getMapsForSegment(segment)
+                                        if (areAllShownMapsSelected) selectedMaps.removeAll(maps)
                                         else selectedMaps.addAll(
-                                            shownMaps.filter { !selectedMaps.contains(it) }
+                                            maps.filter { !selectedMaps.contains(it) }
                                         )
                                     }
                                 }
@@ -246,16 +251,14 @@ fun MapsListScreen(
                                 )
                             }
                         } else {
-                            Crossfade(isLoadingMaps) { showLoading ->
+                            Crossfade(isLoading) { showLoading ->
                                 if (showLoading) CircularProgressIndicator(
                                     modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
                                 else IconButton(
                                     shapes = IconButtonDefaults.shapes(),
                                     onClick = {
-                                        mapsListSegments.forEach { scope.launch {
-                                            it.reloadMaps()
-                                        } }
+                                        vm.reloadMaps(context)
                                     }
                                 ) {
                                     Icon(
@@ -353,7 +356,7 @@ fun MapsListScreen(
             val lazyGridState = rememberLazyGridState()
 
             val segment = mapsListSegments[page]
-            val mapsToShow = segment.getMaps()
+            val mapsToShow = vm.getMapsForSegment(segment)
                 .filter {
                     it.name.contains(searchQuery, ignoreCase = true)
                 }
@@ -382,7 +385,7 @@ fun MapsListScreen(
                     segments = mapsListSegments,
                     currentSegment = segment,
                     mapsToShow = mapsToShow,
-                    isLoadingMaps = isLoadingMaps,
+                    isLoadingMaps = isLoading,
                     modifier = modifier,
                     onSwitchSegmentRequest = { scope.launch {
                         pagerState.animateScrollToPage(it, animationSpec = tween(300))

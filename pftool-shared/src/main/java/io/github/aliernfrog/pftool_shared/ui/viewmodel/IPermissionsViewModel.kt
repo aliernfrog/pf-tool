@@ -16,7 +16,7 @@ import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.util.extension.appHasPermissions
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 
-internal class PermissionsViewModel(
+class IPermissionsViewModel(
     private val storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     private val ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
     private val onSetStorageAccessType: (StorageAccessType) -> Unit,

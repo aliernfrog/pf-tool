@@ -64,10 +64,6 @@ class MainViewModel(
         NavigationConstant.INITIAL_DESTINATION
     )
 
-    val applicationVersionLabel = versionManager.versionLabel
-    val debugInfo: String
-        get() = versionManager.getDebugInfo(prefs.debugInfoPrefs)
-
     val latestVersionInfo = versionManager.latestVersionInfo
     val updateAvailable = versionManager.updateAvailable
     var showUpdateNotification by mutableStateOf(false)
@@ -169,7 +165,7 @@ class MainViewModel(
                 if (cached.size == 1) cached.first().let {
                     mapsViewModel.viewMapDetails(it)
                 } else if (cached.size > 1) {
-                    mapsViewModel.sharedMaps = cached
+                    mapsViewModel.setSharedMaps(cached)
                     withContext(Dispatchers.Main) {
                         // TODO scroll pager to shared maps
                     }

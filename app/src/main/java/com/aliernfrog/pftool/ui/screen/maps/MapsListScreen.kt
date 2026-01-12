@@ -31,14 +31,12 @@ fun MapsListScreen(
         title = title,
         mapsListSegments = vm.availableSegments,
         mapActions = mapActions,
-        selectedMaps = vm.selectedMaps,
         listViewOptions = vm.prefs.mapsListViewOptions,
-        isLoadingMaps = vm.isLoadingMaps,
         showThumbnailsInList = vm.prefs.showMapThumbnailsInList.value,
         showMultiSelectionOptions = showMultiSelectionOptions,
-        multiSelectFloatingActionButton = { selectedMaps, clearSelection -> @Composable {
+        multiSelectFloatingActionButton = { selectedMaps, clearSelection ->
             multiSelectFloatingActionButton(selectedMaps as List<MapFile>, clearSelection)
-        } },
+        },
         settingsButton = onNavigateSettingsRequest?.let { {
             SettingsButton(onClick = it)
         } },

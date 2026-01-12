@@ -41,7 +41,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.enum.ShizukuStatus
 import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
-import io.github.aliernfrog.pftool_shared.ui.viewmodel.PermissionsViewModel
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
@@ -57,7 +57,7 @@ import rikka.shizuku.Shizuku
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShizukuPermissionsScreen(
-    vm: PermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel = koinViewModel(),
     onRestartAppRequest: () -> Unit,
     onUpdateStateRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit

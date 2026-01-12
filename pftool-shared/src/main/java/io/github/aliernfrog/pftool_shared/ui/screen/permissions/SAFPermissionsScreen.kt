@@ -42,7 +42,7 @@ import io.github.aliernfrog.pftool_shared.data.requiresAndroidData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.ChooseFolderIntroDialog
 import io.github.aliernfrog.pftool_shared.ui.dialog.UnrecommendedFolderDialog
-import io.github.aliernfrog.pftool_shared.ui.viewmodel.PermissionsViewModel
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
@@ -57,7 +57,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SAFPermissionsScreen(
     vararg permissionsData: PermissionData,
-    vm: PermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -76,7 +76,7 @@ fun SAFPermissionsScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DowngradeFiles(
-    vm: PermissionsViewModel = koinViewModel()
+    vm: IPermissionsViewModel = koinViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -121,7 +121,7 @@ private fun DowngradeFiles(
 @Composable
 private fun SAFPermissionsList(
     vararg permissionsData: PermissionData,
-    vm: PermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current

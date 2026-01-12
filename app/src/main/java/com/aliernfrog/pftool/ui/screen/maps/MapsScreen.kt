@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -73,10 +72,6 @@ private fun MapsScreenSafePermissions(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        vm.checkAndUpdateMapsFiles(context)
-    }
 
     if (map != null) MapDetailsScreen(
         map = map,

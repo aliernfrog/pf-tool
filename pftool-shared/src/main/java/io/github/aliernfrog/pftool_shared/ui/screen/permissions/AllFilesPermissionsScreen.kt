@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
-import io.github.aliernfrog.pftool_shared.ui.viewmodel.PermissionsViewModel
+import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
@@ -34,7 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AllFilesPermissionsScreen(
-    vm: PermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel = koinViewModel(),
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
