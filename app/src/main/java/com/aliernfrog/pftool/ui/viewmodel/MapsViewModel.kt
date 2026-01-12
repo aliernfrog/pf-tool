@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
@@ -35,9 +36,7 @@ import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class MapsViewModel(
@@ -163,8 +162,8 @@ class MapsViewModel(
             }
     }
 
-    suspend fun loadMaps(context: Context) {
-        withContext(Dispatchers.IO) {
+    fun loadMaps(context: Context) {
+        viewModelScope.launch {
             mapRepository.reloadMaps(context)
         }
     }
