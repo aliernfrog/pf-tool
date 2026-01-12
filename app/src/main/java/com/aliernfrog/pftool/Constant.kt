@@ -1,20 +1,14 @@
 package com.aliernfrog.pftool
 
-import android.os.Build
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.ui.graphics.Color
-import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.impl.CreditData
 
 const val TAG = "PFToolLogs"
-
-const val experimentalSettingsRequiredClicks = 10
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"
-
-val supportsPerAppLanguagePreferences = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
 object SettingsConstant {
     val socials = listOf(
@@ -74,8 +68,4 @@ object SettingsConstant {
             link = "https://github.com/ReVanced/revanced-manager"
         )
     )
-}
-
-val languages = BuildConfig.LANGUAGES.sorted().map { langCode ->
-    GeneralUtil.getLanguageFromCode(langCode)!!
 }

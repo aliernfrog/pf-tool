@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
@@ -14,24 +13,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
-import androidx.core.app.LocaleManagerCompat
-import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.languages
-import com.aliernfrog.pftool.supportsPerAppLanguagePreferences
 import com.aliernfrog.pftool.util.NavigationConstant
 import com.aliernfrog.pftool.util.extension.showErrorToast
-import com.aliernfrog.pftool.util.extension.toLanguage
 import com.aliernfrog.pftool.util.manager.PreferenceManager
-import com.aliernfrog.pftool.util.staticutil.GeneralUtil
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
-import io.github.aliernfrog.pftool_shared.data.Language
-import io.github.aliernfrog.pftool_shared.data.getAvailableLanguage
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
@@ -45,7 +36,6 @@ import io.github.aliernfrog.shared.ui.component.createSheetStateWithDensity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,29 +58,8 @@ class MainViewModel(
     val updateAvailable = versionManager.updateAvailable
     var showUpdateNotification by mutableStateOf(false)
 
-    val baseLanguage = GeneralUtil.getLanguageFromCode("en-US")!!
-    val deviceLanguage = LocaleManagerCompat.getSystemLocales(context)[0]?.toLanguage() ?: baseLanguage
-
-    private var _appLanguage by mutableStateOf<Language?>(null)
-    var appLanguage: Language?
-        get() = _appLanguage ?: deviceLanguage.getAvailableLanguage(languages) ?: baseLanguage
-        set(language) {
-            prefs.language.value = language?.fullCode ?: ""
-            val localeListCompat = if (language == null) LocaleListCompat.getEmptyLocaleList()
-            else LocaleListCompat.forLanguageTags(language.languageCode)
-            AppCompatDelegate.setApplicationLocales(localeListCompat)
-            _appLanguage = language?.getAvailableLanguage(languages)
-        }
-
     var mediaOverlayData by mutableStateOf<MediaOverlayData?>(null)
         private set
-
-    init {
-        if (!supportsPerAppLanguagePreferences && prefs.language.value.isNotBlank()) runBlocking {
-            appLanguage = GeneralUtil.getLanguageFromCode(prefs.language.value)?.getAvailableLanguage(languages)
-        }
-        prefs.lastKnownInstalledVersion.value = versionManager.currentVersionCode
-    }
 
     suspend fun checkUpdates(
         manuallyTriggered: Boolean = false,
@@ -166,9 +135,6 @@ class MainViewModel(
                     mapsViewModel.viewMapDetails(it)
                 } else if (cached.size > 1) {
                     mapsViewModel.setSharedMaps(cached)
-                    withContext(Dispatchers.Main) {
-                        // TODO scroll pager to shared maps
-                    }
                 }
                 progressState.currentProgress = null
             }

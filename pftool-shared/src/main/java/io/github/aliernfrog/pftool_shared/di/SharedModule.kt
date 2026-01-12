@@ -3,6 +3,7 @@ package io.github.aliernfrog.pftool_shared.di
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
+import io.github.aliernfrog.pftool_shared.impl.LocaleManager
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.repository.FileRepository
@@ -19,15 +20,29 @@ import org.koin.dsl.module
 fun getPFToolSharedModule(
     applicationId: String,
     isDebugBuild: Boolean,
+    languageCodes: Array<String>,
+    translationProgresses: FloatArray,
+    baseLanguageCode: String,
     importedMapsFinder: MapFileFinder,
     exportedMapsFinder: MapFileFinder,
     getFileAsMapFile: (FileWrapper) -> IMapFile,
+    languagePref: () -> BasePreferenceManager.Preference<String>,
     shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
     storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
     onSetStorageAccessType: (StorageAccessType) -> Unit
 ): Module = module {
     singleOf(::ProgressState)
+
+    single {
+        LocaleManager(
+            languageCodes = languageCodes,
+            translationProgresses = translationProgresses,
+            languagePref = languagePref,
+            baseLanguageCode = baseLanguageCode,
+            context = get()
+        )
+    }
 
     single {
         ShizukuManager(

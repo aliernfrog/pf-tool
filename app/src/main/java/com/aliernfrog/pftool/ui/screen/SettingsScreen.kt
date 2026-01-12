@@ -14,8 +14,6 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant.credits
 import com.aliernfrog.pftool.SettingsConstant.socials
 import com.aliernfrog.pftool.crowdinURL
-import com.aliernfrog.pftool.languages
-import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.AppSettingsDestination
 import com.aliernfrog.pftool.util.extension.enable
@@ -93,16 +91,15 @@ fun SettingsScreen(
         }
 
         AppSettingsDestination.language -> {
-            val mainViewModel = koinViewModel<MainViewModel>() // TODO remove MainViewModel dependency
             LanguagePage(
                 crowdinURL = crowdinURL,
                 currentLanguagePref = vm.prefs.language,
-                languages = languages,
-                appLanguage = mainViewModel.appLanguage,
-                deviceLanguage = mainViewModel.deviceLanguage,
-                baseLanguage = mainViewModel.baseLanguage,
+                languages = vm.localeManager.languages,
+                appLanguage = vm.localeManager.appLanguage,
+                deviceLanguage = vm.localeManager.deviceLanguage,
+                baseLanguage = vm.localeManager.baseLanguage,
                 onSetLanguageRequest = {
-                    mainViewModel.appLanguage = it
+                    vm.localeManager.appLanguage = it
                 },
                 onNavigateBackRequest = onNavigateBackRequest
             )

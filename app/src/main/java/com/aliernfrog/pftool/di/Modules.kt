@@ -16,6 +16,9 @@ val appModules = listOf(
     getPFToolSharedModule(
         applicationId = BuildConfig.APPLICATION_ID,
         isDebugBuild = BuildConfig.DEBUG,
+        languageCodes = BuildConfig.LANGUAGES,
+        translationProgresses = BuildConfig.TRANSLATION_PROGRESSES,
+        baseLanguageCode = "en-US",
         importedMapsFinder = MapFileFinder(
             pathPref = { getKoinInstance<PreferenceManager>().pfMapsDir },
             isMapFile = { !it.isFile }
@@ -25,6 +28,9 @@ val appModules = listOf(
             isMapFile = { it.isFile && it.name.endsWith(".zip", ignoreCase = true) }
         ),
         getFileAsMapFile = { MapFile(it) },
+        languagePref = {
+            getKoinInstance<PreferenceManager>().language
+        },
         shizukuNeverLoadPref = {
             getKoinInstance<PreferenceManager>().shizukuNeverLoad
         },
