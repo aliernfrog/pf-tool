@@ -3,7 +3,6 @@ package io.github.aliernfrog.pftool_shared.util.staticutil
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
@@ -12,13 +11,12 @@ import android.webkit.URLUtil
 import androidx.core.net.toUri
 import io.github.aliernfrog.pftool_shared.data.Language
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
+import io.github.aliernfrog.pftool_shared.util.hasAndroidDataRestrictions
 import java.io.File
 import java.io.InputStream
 import java.net.URL
 import java.util.Locale
 import kotlin.collections.indexOf
-
-val hasAndroidDataRestrictions = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
 
 class PFToolSharedUtil {
     companion object {
