@@ -47,7 +47,7 @@ class MapFile(
     else if (path.startsWith(vm.exportedMapsDir)) MapImportedState.EXPORTED
     else MapImportedState.NONE
 
-    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED) null
+    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZip) null
     else file.findFile(THUMBNAIL_FILE_NAME)
 
     override fun rename(

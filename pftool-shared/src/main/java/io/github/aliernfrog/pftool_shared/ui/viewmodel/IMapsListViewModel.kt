@@ -13,7 +13,10 @@ class IMapsListViewModel(
     private val mapRepository: MapRepository
 ) : ViewModel() {
     val selectedMaps = mutableStateListOf<IMapFile>()
+    val sharedMaps = mapRepository.sharedMaps
     val isLoading = mapRepository.isLoading
+
+    var scrolledToShared = false
 
     fun reloadMaps(context: Context) {
         viewModelScope.launch {

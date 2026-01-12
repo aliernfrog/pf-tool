@@ -136,8 +136,8 @@ fun MapsListScreen(
         mapsListSegments.size
     }
     val currentlyShownSegment = mapsListSegments.getOrNull(pagerState.currentPage)
-
     val selectedMaps = vm.selectedMaps
+    val sharedMaps = vm.sharedMaps.collectAsStateWithLifecycle().value
     val isLoading = vm.isLoading.collectAsStateWithLifecycle().value
     val isMultiSelecting = selectedMaps.isNotEmpty()
     val listStylePref = listViewOptions.styleGroup.getCurrent()
@@ -168,6 +168,15 @@ fun MapsListScreen(
         withContext(Dispatchers.IO) {
             vm.reloadMaps(context)
         }
+    }
+
+    LaunchedEffect(sharedMaps, mapsListSegments.size) {
+        if (vm.scrolledToShared || sharedMaps.isEmpty()) return@LaunchedEffect
+        val sharedMapsPage = mapsListSegments.indexOfFirst {
+            it.label === PFToolSharedString.MapsListSegmentShared
+        }
+        pagerState.scrollToPage(sharedMapsPage)
+        vm.scrolledToShared = true
     }
 
     if (isMultiSelecting) LaunchedEffect(

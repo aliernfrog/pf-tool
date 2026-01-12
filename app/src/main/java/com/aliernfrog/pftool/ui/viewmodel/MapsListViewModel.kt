@@ -2,9 +2,7 @@ package com.aliernfrog.pftool.ui.viewmodel
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import io.github.aliernfrog.pftool_shared.data.MapsListSegment
@@ -21,13 +19,14 @@ class MapsListViewModel(
 
     init {
         viewModelScope.launch {
-            snapshotFlow { mapRepository.sharedMaps.asLiveData().value?.isEmpty() != true }
-                .collect { showSharedMapsSegment ->
-                    availableSegments.clear()
-                    availableSegments.addAll(getDefaultMapsListSegments(
-                        includeSharedMapsSegment = showSharedMapsSegment
-                    ))
-                }
+            mapRepository.sharedMaps.collect { maps ->
+                val showSharedMapsSegment = maps.isNotEmpty()
+
+                availableSegments.clear()
+                availableSegments.addAll(getDefaultMapsListSegments(
+                    includeSharedMapsSegment = showSharedMapsSegment
+                ))
+            }
         }
     }
 }
