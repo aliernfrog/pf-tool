@@ -31,7 +31,7 @@ class IPermissionsViewModel(
         get() = StorageAccessType.entries[storageAccessTypePref().value]
         set(value) { onSetStorageAccessType(value) }
 
-    val currentShizukuVersion = shizukuManager.getCurrentShizukuVersionNameSimplified(context) ?: "unknown"
+    val currentShizukuVersion = shizukuManager.getCurrentShizukuVersionNameSimplified(context)
     val isShizukuFileServiceRunning
         get() = shizukuManager.fileServiceRunning
 
