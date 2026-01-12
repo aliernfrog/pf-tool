@@ -66,6 +66,7 @@ fun ShizukuPermissionsScreen(
 
     val shizukuStatus = vm.shizukuManager.status.collectAsState().value
     val shizukuInstalled = vm.shizukuManager.shizukuInstalled
+    val shizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsState().value
     val shizukuTimedOut = vm.shizukuManager.timedOut.collectAsState().value
     val shizukuVersionProblematic = vm.shizukuManager.shizukuVersionProblematic.collectAsState().value
 
@@ -73,7 +74,7 @@ fun ShizukuPermissionsScreen(
         vm.shizukuManager.checkAvailability(context)
     }
 
-    LaunchedEffect(vm.isShizukuFileServiceRunning) {
+    LaunchedEffect(shizukuFileServiceRunning) {
         onUpdateStateRequest()
     }
 
