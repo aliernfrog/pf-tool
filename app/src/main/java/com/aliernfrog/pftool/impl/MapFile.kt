@@ -2,104 +2,55 @@ package com.aliernfrog.pftool.impl
 
 import android.content.Context
 import android.util.Log
-import com.aliernfrog.pftool.*
-import com.aliernfrog.pftool.data.MapActionResult
-import com.aliernfrog.pftool.di.getKoinInstance
-import com.aliernfrog.pftool.enum.MapImportedState
+import com.aliernfrog.pftool.R
+import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
-import com.aliernfrog.pftool.util.manager.ContextUtils
-import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
+import io.github.aliernfrog.pftool_shared.enum.MapActionResult
+import io.github.aliernfrog.pftool_shared.enum.MapImportedState
+import io.github.aliernfrog.pftool_shared.impl.FileWrapper
+import io.github.aliernfrog.pftool_shared.impl.IMapFile
+import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.di.getKoinInstance
+import io.github.aliernfrog.shared.impl.ContextUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 class MapFile(
-    val file: FileWrapper
-): KoinComponent {
-    val mapsViewModel by inject<MapsViewModel>()
-    val topToastState by inject<TopToastState>()
-    private val contextUtils by inject<ContextUtils>()
-
-    /**
-     * Name of the map.
-     */
-    val name: String = file.nameWithoutExtension
-
-    /**
-     * Name of the map file.
-     */
-    private val fileName: String = file.name
-
-    /**
-     * Name of the map thumbnail file. Does not check if it exists.
-     */
-    private val thumbnailFileName: String = "thumbnail.jpg"
-
-    private val allowedMapFiles = arrayOf("colormap.jpg","heightmap.jpg","map.txt",thumbnailFileName)
-
-    /**
-     * Path of the map. Can be a [File] path or uri.
-     */
-    val path: String = file.path
-
-    /**
-     * Whether the file is .zip.
-     */
-    val isZip: Boolean = fileName.lowercase().endsWith(".zip")
-
-    /**
-     * Size of the map file.
-     */
-    val size: Long = file.size
-
-    /**
-     * Last modified time of the map.
-     */
-    val lastModified: Long = file.lastModified
-
-    /**
-     * [MapImportedState] of the map.
-     */
-    val importedState: MapImportedState = if (path.startsWith(mapsViewModel.mapsDir)) MapImportedState.IMPORTED
-    else if (path.startsWith(mapsViewModel.exportedMapsDir)) MapImportedState.EXPORTED
-    else MapImportedState.NONE
-    
-    /**
-     * Thumbnail model of the map.
-     */
-    val thumbnailModel = if (importedState != MapImportedState.IMPORTED) null
-    else getThumbnailFile()?.painterModel
-
-    /**
-     * Readable size of the map in KB.
-     */
-    val readableSize: String = "${size / 1024} KB"
-
-    /**
-     * Readable last modified information of the map.
-     */
-    val readableLastModified = contextUtils.stringFunction { context ->
-        FileUtil.lastModifiedFromLong(this.lastModified, context)
+    override val file: FileWrapper
+): IMapFile, KoinComponent {
+    companion object {
+        private const val THUMBNAIL_FILE_NAME: String = "thumbnail.jpg"
+        private val mapFolderContent = arrayOf(
+            "colormap.jpg",
+            "heightmap.jpg",
+            "map.txt",
+            THUMBNAIL_FILE_NAME
+        )
     }
 
-    /**
-     * Details of the map. Includes size (KB) and modified time.
-     */
-    val details: String = "$readableSize | $readableLastModified"
+    val vm by inject<MapsViewModel>()
+    val topToastState by inject<TopToastState>()
+    override val contextUtils by inject<ContextUtils>()
 
-    /**
-     * Renames the map.
-     */
-    fun rename(
+    val isZip: Boolean = fileName.lowercase().endsWith(".zip")
+
+    override val importedState = if (path.startsWith(vm.mapsDir)) MapImportedState.IMPORTED
+    else if (path.startsWith(vm.exportedMapsDir)) MapImportedState.EXPORTED
+    else MapImportedState.NONE
+
+    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZip) null
+    else file.findFile(THUMBNAIL_FILE_NAME)
+
+    override fun rename(
         newName: String
     ): MapActionResult {
         val toName = fileName.replaceFirst(name, newName)
@@ -114,10 +65,7 @@ class MapFile(
         )
     }
 
-    /**
-     * Duplicates the map.
-     */
-    fun duplicate(
+    override fun duplicate(
         context: Context,
         newName: String
     ): MapActionResult {
@@ -136,27 +84,24 @@ class MapFile(
         )
     }
 
-    /**
-     * Imports the map.
-     */
-    fun import(
+    override fun import(
         context: Context,
-        withName: String = this.name
+        withName: String
     ): MapActionResult {
         if (importedState == MapImportedState.IMPORTED) return MapActionResult(successful = false)
-        var outputFolder = mapsViewModel.mapsFile.findFile(withName)
+        var outputFolder = vm.getMapsFile(context)!!.findFile(withName)
         if (outputFolder?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
         )
-        outputFolder = mapsViewModel.mapsFile.createDirectory(withName)!!
+        outputFolder = vm.getMapsFile(context)!!.createDirectory(withName)!!
         val fileInputStream = file.inputStream(context)
         val zipInputStream = ZipInputStream(fileInputStream)
         var currentEntry: ZipEntry?
         while ((zipInputStream.nextEntry.also { currentEntry = it }) != null) {
             currentEntry?.let { entry ->
-                val entryName = FileUtil.getFileName(entry.name)
-                if (!allowedMapFiles.contains(entryName.lowercase())) return@let
+                val entryName = PFToolSharedUtil.getFileName(entry.name)
+                if (!mapFolderContent.contains(entryName.lowercase())) return@let
                 val outputFile = outputFolder.createFile(entryName)
                 val outputStream = outputFile!!.outputStream(context)!!
                 zipInputStream.copyTo(outputStream)
@@ -165,29 +110,26 @@ class MapFile(
         }
         return MapActionResult(
             successful = true,
-            newFile = mapsViewModel.mapsFile.findFile(withName)
+            newFile = vm.getMapsFile(context)!!.findFile(withName)
         )
     }
 
-    /**
-     * Exports the map.
-     */
-    fun export(
+    override fun export(
         context: Context,
-        withName: String = this.name
+        withName: String
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
         val zipName = "$withName.zip"
-        var outputFile = mapsViewModel.exportedMapsFile.findFile(zipName)
+        var outputFile = vm.getExportedMapsFile(context)!!.findFile(zipName)
         if (outputFile?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
         )
-        outputFile = mapsViewModel.exportedMapsFile.createFile(zipName)!!
+        outputFile = vm.getExportedMapsFile(context)!!.createFile(zipName)!!
         outputFile.outputStream(context)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
-                    it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase())
+                    it.isFile && mapFolderContent.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
                 }.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
@@ -197,19 +139,19 @@ class MapFile(
         }
         return MapActionResult(
             successful = true,
-            newFile = mapsViewModel.exportedMapsFile.findFile(zipName)
+            newFile = vm.getExportedMapsFile(context)!!.findFile(zipName)
         )
     }
 
-    suspend fun exportToCustomLocation(
+    override suspend fun exportToCustomLocation(
         context: Context,
         withName: String
     ): MapActionResult {
         val uri = getKoinInstance<MainViewModel>().safZipFileCreator.createFile(suggestedName = withName)
-        if (uri == null) return MapActionResult(
-            successful = false,
-            message = R.string.maps_exportCustomTarget_cancelled
-        )
+            ?: return MapActionResult(
+                successful = false,
+                message = R.string.maps_exportCustomTarget_cancelled
+            )
         if (this.isZip) file.inputStream(context).use { input ->
             context.contentResolver.openOutputStream(uri)!!.use { output ->
                 input?.copyTo(output)
@@ -217,7 +159,7 @@ class MapFile(
         } else context.contentResolver.openOutputStream(uri)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
-                    it.isFile && allowedMapFiles.contains(FileUtil.getFileName(it.name).lowercase())
+                    it.isFile && mapFolderContent.contains(PFToolSharedUtil.getFileName(it.name).lowercase())
                 }.forEach { file ->
                     val entry = ZipEntry(file.name)
                     zos.putNextEntry(entry)
@@ -231,18 +173,9 @@ class MapFile(
         )
     }
 
-    /**
-     * Deletes the map without confirmation.
-     */
-    fun delete() = file.delete()
+    override fun getThumbnailFile() = thumbnailFile
 
-    /**
-     * Returns thumbnail file of the map if exists, null otherwise.
-     */
-    fun getThumbnailFile() = if (importedState != MapImportedState.IMPORTED) null
-    else file.findFile(thumbnailFileName)
-
-    suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
+    override suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
             try {
                 block()

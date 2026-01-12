@@ -1,10 +1,7 @@
 package com.aliernfrog.pftool.impl
 
+import io.github.aliernfrog.pftool_shared.impl.IMapActionArguments
+
 class MapActionArguments(
-    private val mapName: String? = null
-) {
-    fun resolveMapName(fallback: String): String {
-        val str = mapName?.ifBlank { fallback } ?: fallback
-        return str.replace("\n", "")
-    }
-}
+    override val mapName: String? = null
+) : IMapActionArguments

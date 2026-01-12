@@ -4,26 +4,30 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.BaseScaffold
-import com.aliernfrog.pftool.ui.dialog.ProgressDialog
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
-import com.aliernfrog.pftool.ui.screen.settings.SettingsDestination
-import com.aliernfrog.pftool.ui.sheet.UpdateSheet
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
+import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
+import io.github.aliernfrog.shared.ui.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.sheet.UpdateSheet
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -31,15 +35,15 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel()
+    vm: MainViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
 
-    val onNavigateSettingsRequest: () -> Unit = {
-        mainViewModel.navigationBackStack.add(SettingsDestination.ROOT)
-    }
+    val updateAvailable = vm.updateAvailable.collectAsStateWithLifecycle().value
+    val latestVersionInfo = vm.latestVersionInfo.collectAsStateWithLifecycle().value
+
     val onNavigateBackRequest: () -> Unit = {
-        mainViewModel.navigationBackStack.removeLastIfMultiple()
+        vm.navigationBackStack.removeLastIfMultiple()
     }
 
     val slideTransitionMetadata = NavDisplay.transitionSpec {
@@ -62,9 +66,12 @@ fun MainScreen(
         )
     }
 
-    BaseScaffold { paddingValues ->
+    Scaffold(
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { paddingValues ->
         NavDisplay(
-            backStack = mainViewModel.navigationBackStack,
+            backStack = vm.navigationBackStack,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -76,7 +83,7 @@ fun MainScreen(
                         Destination.MAPS -> {
                             MapsScreen(
                                 map = null,
-                                onNavigateSettingsRequest = onNavigateSettingsRequest,
+                                onNavigateRequest = { vm.navigationBackStack.add(it) },
                                 onNavigateBackRequest = null
                             )
                         }
@@ -86,11 +93,13 @@ fun MainScreen(
                 entry<SettingsDestination>(
                     metadata = slideTransitionMetadata
                 ) { destination ->
-                    destination.content(
-                        /* onNavigateBackRequest = */ onNavigateBackRequest,
-                        /* onNavigateRequest = */ {
-                            mainViewModel.navigationBackStack.add(it)
-                        }
+                    SettingsScreen(
+                        destination = destination,
+                        onNavigateBackRequest = onNavigateBackRequest,
+                        onNavigateRequest = { vm.navigationBackStack.add(it) },
+                        onShowUpdateSheetRequest = { scope.launch {
+                            vm.updateSheetState.show()
+                        } }
                     )
                 }
 
@@ -99,7 +108,7 @@ fun MainScreen(
                 ) { map ->
                     MapsScreen(
                         map = map,
-                        onNavigateSettingsRequest = onNavigateSettingsRequest,
+                        onNavigateRequest = { vm.navigationBackStack.add(it) },
                         onNavigateBackRequest = onNavigateBackRequest
                     )
                 }
@@ -108,17 +117,17 @@ fun MainScreen(
     }
 
     UpdateSheet(
-        sheetState = mainViewModel.updateSheetState,
-        latestVersionInfo = mainViewModel.latestVersionInfo,
-        updateAvailable = mainViewModel.updateAvailable,
+        sheetState = vm.updateSheetState,
+        latestVersionInfo = latestVersionInfo,
+        updateAvailable = updateAvailable,
         onCheckUpdatesRequest = { scope.launch {
-            mainViewModel.checkUpdates(manuallyTriggered = true)
+            vm.checkUpdates(manuallyTriggered = true)
         } }
     )
 
-    mainViewModel.progressState.currentProgress?.let {
+    vm.progressState.currentProgress?.let {
         ProgressDialog(it) {
-            mainViewModel.progressState.currentProgress = null
+            vm.progressState.currentProgress = null
         }
     }
 }

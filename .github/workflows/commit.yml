@@ -18,6 +18,9 @@ jobs:
           java-version: 21
           cache: gradle
 
+      - name: Publish shared library
+        run: ./gradlew :pftool-shared:publish
+
       - name: Build with Gradle
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/key.jks
