@@ -14,9 +14,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -39,8 +39,8 @@ fun MainScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    val updateAvailable = vm.updateAvailable.collectAsState()
-    val latestVersionInfo = vm.latestVersionInfo.collectAsState()
+    val updateAvailable = vm.updateAvailable.collectAsStateWithLifecycle().value
+    val latestVersionInfo = vm.latestVersionInfo.collectAsStateWithLifecycle().value
 
     val onNavigateBackRequest: () -> Unit = {
         vm.navigationBackStack.removeLastIfMultiple()
@@ -118,8 +118,8 @@ fun MainScreen(
 
     UpdateSheet(
         sheetState = vm.updateSheetState,
-        latestVersionInfo = latestVersionInfo.value,
-        updateAvailable = updateAvailable.value,
+        latestVersionInfo = latestVersionInfo,
+        updateAvailable = updateAvailable,
         onCheckUpdatesRequest = { scope.launch {
             vm.checkUpdates(manuallyTriggered = true)
         } }

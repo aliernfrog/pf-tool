@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +48,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.impl.CreditData
@@ -93,7 +93,7 @@ fun AboutPage(
         context.packageManager.getApplicationIcon(context.packageName).toBitmap().asImageBitmap()
     }
 
-    val updateAvailable = vm.updateAvailable.collectAsState()
+    val updateAvailable = vm.updateAvailable.collectAsStateWithLifecycle().value
 
     var versionClicks by remember { mutableIntStateOf(0) }
 
@@ -141,7 +141,7 @@ fun AboutPage(
             }
 
             ChangelogButton(
-                updateAvailable = updateAvailable.value,
+                updateAvailable = updateAvailable,
                 onClick = onShowUpdateSheetRequest
             )
 

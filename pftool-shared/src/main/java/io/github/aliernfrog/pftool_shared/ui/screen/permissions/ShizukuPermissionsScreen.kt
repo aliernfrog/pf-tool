@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +38,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.aliernfrog.pftool_shared.enum.ShizukuStatus
 import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
@@ -64,11 +64,11 @@ fun ShizukuPermissionsScreen(
 ) {
     val context = LocalContext.current
 
-    val shizukuStatus = vm.shizukuManager.status.collectAsState().value
+    val shizukuStatus = vm.shizukuManager.status.collectAsStateWithLifecycle().value
     val shizukuInstalled = vm.shizukuManager.shizukuInstalled
-    val shizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsState().value
-    val shizukuTimedOut = vm.shizukuManager.timedOut.collectAsState().value
-    val shizukuVersionProblematic = vm.shizukuManager.shizukuVersionProblematic.collectAsState().value
+    val shizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsStateWithLifecycle().value
+    val shizukuTimedOut = vm.shizukuManager.timedOut.collectAsStateWithLifecycle().value
+    val shizukuVersionProblematic = vm.shizukuManager.shizukuVersionProblematic.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
         vm.shizukuManager.checkAvailability(context)

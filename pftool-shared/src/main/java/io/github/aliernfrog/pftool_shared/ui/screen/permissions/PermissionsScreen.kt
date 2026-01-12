@@ -15,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
@@ -57,7 +57,7 @@ fun PermissionsScreen(
 ) {
     val context = LocalContext.current
 
-    val isShizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsState().value
+    val isShizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsStateWithLifecycle().value
 
     fun hasPermissions(): Boolean {
         return vm.hasPermissions(
