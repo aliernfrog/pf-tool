@@ -31,6 +31,10 @@ android {
         }
     }
 
+    sourceSets.getByName("main") {
+        res.srcDirs(layout.buildDirectory.dir("generated/shared/res"))
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -74,6 +78,34 @@ dependencies {
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
+}
+
+tasks.register("generateSharedStringsTxt") {
+    val enumFile = file("src/main/java/io/github/aliernfrog/shared/util/SharedString.kt")
+    inputs.file(enumFile)
+
+    val outputDir = layout.buildDirectory.dir("generated/shared/res/raw")
+    val outputFile = outputDir.map { it.file("shared_strings.txt") }
+    outputs.file(outputFile)
+
+    doLast {
+        if (!enumFile.exists())
+            throw GradleException("SharedString.kt file not found at: ${enumFile.path}")
+
+        val pattern = """SharedString\("([^"]+)"\)""".toRegex(RegexOption.MULTILINE)
+
+        val keys = enumFile.readText().let { content ->
+            pattern.findAll(content).map { it.groupValues[1] }.toList()
+        }
+
+        val targetFile = outputFile.get().asFile
+        targetFile.parentFile.mkdirs()
+        targetFile.writeText(keys.joinToString("\n"))
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn(tasks.named("generateSharedStringsTxt"))
 }
 
 afterEvaluate {

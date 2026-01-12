@@ -3,6 +3,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import java.util.zip.ZipFile
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -196,65 +197,69 @@ dependencies {
     coreLibraryDesugaring(libs.android.desugar)
 }
 
-/*TODO @Suppress("DEPRECATION")
+val sharedStringLibs = listOf("pftool-shared", "shared")
 tasks.register("checkSharedStrings") {
     group = "verification"
-    description = "Checks that all strings from pftool-shared are present in this app."
     outputs.upToDateWhen { false }
-    dependsOn(":pftool-shared:bundleDebugAar", ":pftool-shared:bundleReleaseAar")
+    dependsOn(
+        ":shared:bundleDebugAar", ":shared:bundleReleaseAar",
+        ":pftool-shared:bundleDebugAar", ":pftool-shared:bundleReleaseAar"
+    )
 
     doLast {
-        val libraryName = "pftool-shared"
-        project.logger.lifecycle("Executing shared string checks for library: $libraryName")
-
-        val projectDependency = project.configurations.getByName("debugRuntimeClasspath")
-            .allDependencies
-            .filterIsInstance<ProjectDependency>()
-            .find { project.project(it.path).path == ":$libraryName" }
-            ?: throw GradleException("Could not find a project dependency on ':$libraryName'")
-
-        val sharedLibAar = project.project(projectDependency.path).tasks.let { tasks ->
-            tasks.getByName("bundleDebugAar").outputs.files.singleFile.let {
-                if (it.exists()) it
-                else tasks.getByName("bundleReleaseAar").outputs.files.singleFile
-            }
-        }
-
-        val zipFile = ZipFile(sharedLibAar)
-        val entry = "res/raw/shared_strings.txt".let {
-            zipFile.getEntry(it)
-                ?: throw GradleException("Could not find '$it' inside '${sharedLibAar.name}'")
-        }
-
-        val stringKeys = zipFile.getInputStream(entry).bufferedReader().readLines()
-            .map { it.trim() }
-            .filter { it.isNotBlank() }
-        zipFile.close()
-
-        if (stringKeys.isEmpty()) {
-            logger.warn("No string keys found in shared_strings.txt, skipping shared string check")
-            return@doLast
-        }
-
-        project.logger.lifecycle("Checking for required string keys: ${stringKeys.joinToString(", ")}")
-
         val stringsFile = project.projectDir.resolve("src/main/res/values/strings.xml")
-        if (!stringsFile.exists()) return@doLast project.logger.warn("Strings file not found, skipping shared string check")
-
-        project.logger.lifecycle("Checking for missing string keys in ${stringsFile.path}")
-
         val stringsContent = stringsFile.readText()
-        val missingKeys = stringKeys.filter { key ->
-            !stringsContent.contains("<string name=\"$key\"")
+        val missingKeys = mutableListOf<Pair<String, String>>()
+
+        sharedStringLibs.forEach { libraryName ->
+            project.logger.lifecycle("Executing shared string checks for library: $libraryName")
+            val projectDependency = project.configurations.getByName("debugRuntimeClasspath")
+                .allDependencies
+                .filterIsInstance<ProjectDependency>()
+                .find { project.project(it.path).path == ":$libraryName" }
+                ?: throw GradleException("Could not find a project dependency on ':$libraryName'")
+
+            val aar = project.project(projectDependency.path).tasks.let { tasks ->
+                tasks.getByName("bundleDebugAar").outputs.files.singleFile.let {
+                    if (it.exists()) it
+                    else tasks.getByName("bundleReleaseAar").outputs.files.singleFile
+                }
+            }
+
+            val zipFile = ZipFile(aar)
+            val entry = "res/raw/shared_strings.txt".let {
+                zipFile.getEntry(it)
+                    ?: throw GradleException("Could not find '$it' inside '${aar.name}'")
+            }
+            val stringKeys = zipFile.getInputStream(entry).bufferedReader().readLines()
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+            zipFile.close()
+
+            if (stringKeys.isEmpty()) {
+                logger.warn("No string keys found in $libraryName:shared_strings.txt, skipping shared string check")
+                return@forEach
+            }
+
+            val missingKeysForLib = stringKeys.filter { key ->
+                !stringsContent.contains("<string name=\"$key\"")
+            }.map { key -> libraryName to key }
+
+            missingKeys.addAll(missingKeysForLib)
+
+            if (missingKeysForLib.isNotEmpty()) project.logger.warn("Strings required by $libraryName are missing: ${missingKeysForLib.joinToString(", ")}")
+            else project.logger.lifecycle("All required strings for $libraryName are present in ${stringsFile.path}")
         }
 
         if (missingKeys.isNotEmpty())
-            throw GradleException("Missing string keys in ${stringsFile.path}: ${missingKeys.joinToString(", ")}")
+            throw GradleException("Strings required by shared libraries are missing: ${
+                missingKeys.joinToString("\n") { (lib, key) -> "$lib -> $key" }
+            }")
 
-        project.logger.lifecycle("All required string keys are present in ${stringsFile.path}, passed shared string check")
+        project.logger.lifecycle("All required strings are present in ${stringsFile.path}")
     }
 }
 
 tasks.named("preBuild") {
     dependsOn(tasks.named("checkSharedStrings"))
-}*/
+}
