@@ -128,7 +128,7 @@ private fun Actions(
                 .padding(end = 12.dp)
         ) {
             Row(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .horizontalFadingEdge(
                         scrollState = versionNameScrollState,
                         edgeColor = MaterialTheme.colorScheme.surfaceContainerLow,
