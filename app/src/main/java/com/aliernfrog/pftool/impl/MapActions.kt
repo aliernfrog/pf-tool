@@ -14,7 +14,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import io.github.aliernfrog.pftool_shared.data.MapAction
-import io.github.aliernfrog.pftool_shared.enum.MapActionResult
+import io.github.aliernfrog.pftool_shared.data.MapActionResult
 import io.github.aliernfrog.pftool_shared.enum.MapImportedState
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.shared.util.SharedString

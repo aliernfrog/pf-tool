@@ -9,7 +9,7 @@ import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
-import io.github.aliernfrog.pftool_shared.enum.MapActionResult
+import io.github.aliernfrog.pftool_shared.data.MapActionResult
 import io.github.aliernfrog.pftool_shared.enum.MapImportedState
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.IMapFile

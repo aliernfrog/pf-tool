@@ -1,7 +1,7 @@
 package io.github.aliernfrog.pftool_shared.impl
 
 import android.content.Context
-import io.github.aliernfrog.pftool_shared.enum.MapActionResult
+import io.github.aliernfrog.pftool_shared.data.MapActionResult
 import io.github.aliernfrog.pftool_shared.enum.MapImportedState
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.impl.ContextUtils

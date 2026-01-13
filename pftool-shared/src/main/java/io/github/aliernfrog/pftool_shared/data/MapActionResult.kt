@@ -1,4 +1,4 @@
-package io.github.aliernfrog.pftool_shared.enum
+package io.github.aliernfrog.pftool_shared.data
 
 import androidx.annotation.StringRes
 
