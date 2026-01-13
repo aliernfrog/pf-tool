@@ -88,7 +88,7 @@ open class SharedString(
 @Composable
 fun sharedStringResource(sharedString: SharedString): String {
     val context = LocalContext.current
-    val id = rememberSaveable {
+    val id = rememberSaveable(sharedString) {
         context.getSharedStringResId(sharedString)
     }
     return if (id == 0) "MISSING STRING: ${sharedString.key}"
