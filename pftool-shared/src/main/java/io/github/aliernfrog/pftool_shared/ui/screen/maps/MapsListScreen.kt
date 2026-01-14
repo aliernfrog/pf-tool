@@ -114,6 +114,7 @@ import kotlin.collections.filter
 @Composable
 fun MapsListScreen(
     title: String = sharedStringResource(PFToolSharedString.Maps),
+    fileMimeType: String,
     mapsListSegments: List<MapsListSegment>,
     mapActions: List<MapAction>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
@@ -301,7 +302,7 @@ fun MapsListScreen(
                             showText = showFABLabel,
                             onClick = {
                                 val intent =
-                                    Intent(Intent.ACTION_GET_CONTENT).setType("application/zip")
+                                    Intent(Intent.ACTION_GET_CONTENT).setType(fileMimeType)
                                 launcher.launch(intent)
                             }
                         )

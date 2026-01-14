@@ -200,7 +200,8 @@ val mapActions = listOf(
         availableFor = { it.importedState != MapImportedState.NONE },
         availableForMultiSelection = true,
         execute = { _, maps, _ ->
-            (maps.first() as MapFile).vm.mapsPendingDelete = maps.toList() as List<MapFile>
+            maps as List<MapFile>
+            maps.first().vm.mapsPendingDelete = maps.toList()
         }
     )
 )
