@@ -96,7 +96,6 @@
     <string name="maps_duplicating">{NAME}, {NEW_NAME} adıyla çoğaltılıyor..</string>
     <string name="maps_thumbnail">Harita resmi</string>
     <string name="maps_thumbnail_noThumbnail">Resim yok</string>
-    <string name="maps_thumbnail_share">Resmi paylaş</string>
     <string name="maps_import">Bu haritayı içe aktar</string>
     <string name="maps_import_short">İçe aktar</string>
     <string name="maps_imported_single">{NAME} olarak içe aktarıldı</string>

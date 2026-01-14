@@ -98,7 +98,6 @@
     <string name="maps_duplicating">Duplicating {NAME} as {NEW_NAME}…</string>
     <string name="maps_thumbnail">Map thumbnail</string>
     <string name="maps_thumbnail_noThumbnail">No thumbnail</string>
-    <string name="maps_thumbnail_share">Share thumbnail</string>
     <string name="maps_import">Import this map</string>
     <string name="maps_import_short">Import</string>
     <string name="maps_imported_single">Imported as {NAME}</string>

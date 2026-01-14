@@ -2,24 +2,19 @@ package com.aliernfrog.pftool.ui.viewmodel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
+import com.aliernfrog.pftool.ui.component.media_overlay.ThumbnailToolbarContent
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -32,9 +27,6 @@ import io.github.aliernfrog.pftool_shared.repository.MapRepository
 import io.github.aliernfrog.shared.data.MediaOverlayData
 import io.github.aliernfrog.shared.di.getKoinInstance
 import io.github.aliernfrog.shared.impl.ContextUtils
-import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -129,29 +121,23 @@ class MapsViewModel(
             model = map.thumbnailModel,
             title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
             zoomEnabled = hasThumbnail,
-            optionsSheetContent = if (!hasThumbnail) null else {
-                {
-                    val context = LocalContext.current
-                    val scope = rememberCoroutineScope()
+            toolbarContent = {
+                val context = LocalContext.current
+                val scope = rememberCoroutineScope()
 
-                    VerticalSegmentor({
-                        ExpressiveButtonRow(
-                            title = stringResource(R.string.maps_thumbnail_share),
-                            icon = {
-                                ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Share))
+                ThumbnailToolbarContent(
+                    onShareRequest = {
+                        scope.launch {
+                            activeProgress = Progress(context.getString(R.string.info_sharing))
+                            map.runInIOThreadSafe {
+                                FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
                             }
-                        ) {
-                            scope.launch {
-                                activeProgress = Progress(context.getString(R.string.info_sharing))
-                                map.runInIOThreadSafe {
-                                    FileUtil.shareFiles(map.getThumbnailFile()!!, context = context)
-                                }
-                                activeProgress = null
-                            }
+                            activeProgress = null
                         }
-                    }, modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp))
-                }
-            }))
+                    }
+                )
+            }
+        ))
     }
 
     fun showActionFailedDialog(successes: List<Pair<String, MapActionResult>>, fails: List<Pair<String, MapActionResult>>) {

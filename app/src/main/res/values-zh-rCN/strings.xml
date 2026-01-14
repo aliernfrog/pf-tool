@@ -89,7 +89,6 @@
     <string name="maps_duplicating">从 {NAME} 复制为 {NEW_NAME}..</string>
     <string name="maps_thumbnail">地图略缩图</string>
     <string name="maps_thumbnail_noThumbnail">不显示略缩图</string>
-    <string name="maps_thumbnail_share">分享缩略图</string>
     <string name="maps_import">导入此地图</string>
     <string name="maps_import_short">导入</string>
     <string name="maps_imported_single">导入为 {NAME}</string>
