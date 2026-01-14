@@ -14,7 +14,7 @@ android {
     buildToolsVersion = "36.1.0"
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -71,7 +71,8 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.window)
 
-    implementation(libs.aboutlibraries)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.core)
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
     implementation(libs.dfc)

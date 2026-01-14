@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Science
@@ -33,6 +34,8 @@ import io.github.aliernfrog.shared.ui.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.settings.SettingsRootPage
 import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,8 +76,8 @@ fun SettingsScreen(
             StoragePage(
                 storageAccessTypePref = vm.prefs.storageAccessType,
                 folderPrefs = mapOf(
-                    context.getString(R.string.settings_storage_folders_maps) to vm.prefs.pfMapsDir,
-                    context.getString(R.string.settings_storage_folders_exportedMaps) to vm.prefs.exportedMapsDir
+                    stringResource(R.string.settings_storage_folders_maps) to vm.prefs.pfMapsDir,
+                    stringResource(R.string.settings_storage_folders_exportedMaps) to vm.prefs.exportedMapsDir
                 ),
                 onEnableStorageAccessTypeRequest = { it.enable() },
                 onNavigateBackRequest = onNavigateBackRequest
@@ -122,6 +125,7 @@ fun SettingsScreen(
                             ExpressiveButtonRow(
                                 title = "Set indeterminate progress"
                             ) {
+                                @SuppressLint("LocalContextGetResourceValueCall")
                                 vm.progressState.currentProgress =
                                     Progress(description = context.getString(R.string.info_pleaseWait))
                             }
@@ -154,6 +158,7 @@ fun SettingsScreen(
 
         SettingsDestination.libs -> {
             LibsPage(
+                librariesJSONRes = R.raw.aboutlibraries,
                 onNavigateBackRequest = onNavigateBackRequest
             )
         }
