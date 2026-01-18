@@ -1,9 +1,5 @@
 package com.aliernfrog.pftool.ui.screen
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -14,7 +10,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
@@ -24,46 +19,27 @@ import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.UpdateScreenDestination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
+import com.aliernfrog.pftool.util.slideTransitionMetadata
+import com.aliernfrog.pftool.util.slideVerticalTransitionMetadata
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
+import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.settings.SettingsDestination
-import io.github.aliernfrog.shared.ui.sheet.UpdateSheet
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@Suppress("MoveLambdaOutsideParentheses")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     vm: MainViewModel = koinViewModel()
 ) {
-    val scope = rememberCoroutineScope()
-
-    val updateAvailable = vm.updateAvailable.collectAsStateWithLifecycle().value
-    val latestVersionInfo = vm.latestVersionInfo.collectAsStateWithLifecycle().value
+    val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
+    val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
+    val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
+    val isCheckingForUpdates = vm.isCheckingForUpdates.collectAsStateWithLifecycle().value
 
     val onNavigateBackRequest: () -> Unit = {
         vm.navigationBackStack.removeLastIfMultiple()
-    }
-
-    val slideTransitionMetadata = NavDisplay.transitionSpec {
-        slideIntoContainer(
-            AnimatedContentTransitionScope.SlideDirection.Start
-        ) + fadeIn() togetherWith slideOutOfContainer(
-            AnimatedContentTransitionScope.SlideDirection.Start
-        ) + fadeOut()
-    } + NavDisplay.popTransitionSpec {
-        slideIntoContainer(
-            AnimatedContentTransitionScope.SlideDirection.End
-        ) togetherWith slideOutOfContainer(
-            AnimatedContentTransitionScope.SlideDirection.End
-        )
-    } + NavDisplay.predictivePopTransitionSpec {
-        slideIntoContainer(
-            AnimatedContentTransitionScope.SlideDirection.End
-        ) togetherWith slideOutOfContainer(
-            AnimatedContentTransitionScope.SlideDirection.End
-        )
     }
 
     Scaffold(
@@ -97,9 +73,12 @@ fun MainScreen(
                         destination = destination,
                         onNavigateBackRequest = onNavigateBackRequest,
                         onNavigateRequest = { vm.navigationBackStack.add(it) },
-                        onShowUpdateSheetRequest = { scope.launch {
-                            vm.updateSheetState.show()
-                        } }
+                        onCheckUpdatesRequest = { skipVersionCheck ->
+                            vm.checkUpdates(skipVersionCheck = skipVersionCheck)
+                        },
+                        onNavigateUpdatesScreenRequest = {
+                            vm.navigationBackStack.add(UpdateScreenDestination)
+                        }
                     )
                 }
 
@@ -112,18 +91,24 @@ fun MainScreen(
                         onNavigateBackRequest = onNavigateBackRequest
                     )
                 }
+
+                entry<UpdateScreenDestination>(
+                    metadata = slideVerticalTransitionMetadata
+                ) {
+                    UpdatesScreen(
+                        availableUpdates = availableUpdates,
+                        currentVersionInfo = currentVersionInfo,
+                        isCheckingForUpdates = isCheckingForUpdates,
+                        isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
+                        onCheckUpdatesRequest = {
+                            vm.checkUpdates(manuallyTriggered = true)
+                        },
+                        onNavigateBackRequest = onNavigateBackRequest
+                    )
+                }
             }
         )
     }
-
-    UpdateSheet(
-        sheetState = vm.updateSheetState,
-        latestVersionInfo = latestVersionInfo,
-        updateAvailable = updateAvailable,
-        onCheckUpdatesRequest = { scope.launch {
-            vm.checkUpdates(manuallyTriggered = true)
-        } }
-    )
 
     vm.progressState.currentProgress?.let {
         ProgressDialog(it) {

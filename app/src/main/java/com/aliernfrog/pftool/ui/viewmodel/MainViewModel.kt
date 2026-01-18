@@ -12,13 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.Density
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.NavigationConstant
+import com.aliernfrog.pftool.util.UpdateScreenDestination
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -29,10 +29,10 @@ import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.util.extension.cacheFile
 import io.github.aliernfrog.shared.data.MediaOverlayData
+import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.di.getKoinInstance
 import io.github.aliernfrog.shared.impl.UpdateCheckResult
 import io.github.aliernfrog.shared.impl.VersionManager
-import io.github.aliernfrog.shared.ui.component.createSheetStateWithDensity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +40,6 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainViewModel(
-    context: Context,
     val prefs: PreferenceManager,
     val topToastState: TopToastState,
     val progressState: ProgressState,
@@ -48,14 +47,15 @@ class MainViewModel(
 ) : ViewModel() {
     lateinit var scope: CoroutineScope
     lateinit var safZipFileCreator: SAFFileCreator
-    val updateSheetState = createSheetStateWithDensity(skipPartiallyExpanded = false, Density(context))
 
     val navigationBackStack = mutableStateListOf<Any>(
         NavigationConstant.INITIAL_DESTINATION
     )
 
-    val latestVersionInfo = versionManager.latestVersionInfo
-    val updateAvailable = versionManager.updateAvailable
+    val availableUpdates = versionManager.availableUpdates
+    val currentVersionInfo = versionManager.currentVersionInfo
+    val isCompatibleWithLatestVersion = versionManager.isCompatibleWithLatestVersion
+    val isCheckingForUpdates = versionManager.isCheckingForUpdates
     var showUpdateNotification by mutableStateOf(false)
 
     var mediaOverlayData by mutableStateOf<MediaOverlayData?>(null)
@@ -65,16 +65,16 @@ class MainViewModel(
         prefs.lastKnownInstalledVersion.value = versionManager.currentVersionCode
     }
 
-    suspend fun checkUpdates(
+    fun checkUpdates(
         manuallyTriggered: Boolean = false,
         skipVersionCheck: Boolean = false
     ) {
-        withContext(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val updateCheckResult = versionManager.checkUpdates(skipVersionCheck = skipVersionCheck)
             when (updateCheckResult) {
                 UpdateCheckResult.NoUpdates -> {
                     if (manuallyTriggered) withContext(Dispatchers.Main) {
-                        topToastState.showAndroidToast(
+                        topToastState.showToast(
                             text = R.string.updates_noUpdates,
                             icon = Icons.Rounded.Info,
                             iconTintColor = TopToastColor.ON_SURFACE
@@ -83,16 +83,17 @@ class MainViewModel(
                 }
                 UpdateCheckResult.Error -> {
                     if (manuallyTriggered) withContext(Dispatchers.Main) {
-                        topToastState.showAndroidToast(
+                        topToastState.showToast(
                             text = R.string.updates_error,
                             icon = Icons.Rounded.PriorityHigh,
                             iconTintColor = TopToastColor.ERROR
                         )
                     }
                 }
-                is UpdateCheckResult.UpdateAvailable -> {
+                is UpdateCheckResult.UpdatesAvailable -> {
                     withContext(Dispatchers.Main) {
-                        if (manuallyTriggered) updateSheetState.show()
+                        if (manuallyTriggered && navigationBackStack.first() !is UpdateScreenDestination)
+                            navigationBackStack.add(UpdateScreenDestination)
                         else showUpdateToast()
                     }
                 }
@@ -102,7 +103,8 @@ class MainViewModel(
 
     fun showUpdateToast() {
         io.github.aliernfrog.shared.util.showUpdateToast {
-            scope.launch { updateSheetState.show() }
+            if (navigationBackStack.first() !is ReleaseInfo)
+                navigationBackStack.add(UpdateScreenDestination)
         }
     }
 

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,12 +26,14 @@ import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 fun CardWithActions(
     title: String?,
     modifier: Modifier = Modifier,
-    painter: Painter? = null,
-    buttons: @Composable RowScope.() -> Unit,
+    icon: Painter? = null,
+    colors: CardColors = CardDefaults.cardColors(),
+    buttons: (@Composable RowScope.() -> Unit)?,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         shape = AppComponentShape,
+        colors = colors,
         modifier = modifier.width(IntrinsicSize.Max)
     ) {
         Column(
@@ -38,10 +42,10 @@ fun CardWithActions(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (title != null || painter != null) Row(
+            if (title != null || icon != null) Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                painter?.let {
+                icon?.let {
                     Icon(
                         painter = it,
                         contentDescription = null,
@@ -58,12 +62,14 @@ fun CardWithActions(
 
             content()
 
-            Row(
-                modifier = Modifier.align(Alignment.End),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                content = buttons
-            )
+            buttons?.let {
+                Row(
+                    modifier = Modifier.align(Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                    content = it
+                )
+            }
         }
     }
 }

@@ -203,9 +203,7 @@
     <string name="updates_updateAvailable">PF 工具更新可用！点击获取更多详细信息</string>
     <string name="updates_noUpdates">没有可用的更新</string>
     <string name="updates_error">检查更新时出错。</string>
-    <string name="updates_stable">正式(Stable)版</string>
-    <string name="updates_preRelease">预览版</string>
-    <string name="updates_openInGithub">前往 GitHub</string>
+    <string name="updates_prerelease">预览版</string>
     <string name="updates_update">更新</string>
     <string name="updates_checkUpdates">检查更新</string>
     <string name="updates_noChangelog">检查更新以查看变更日志</string>

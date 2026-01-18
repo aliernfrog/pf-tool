@@ -50,8 +50,7 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 @Composable
 fun SettingsRootPage(
     categories: List<SettingsCategory>,
-    updateAvailable: Boolean,
-    latestReleaseInfo: ReleaseInfo,
+    availableUpdates: List<ReleaseInfo>,
     experimentalOptionsEnabled: Boolean,
     onShowUpdateSheetRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
@@ -75,8 +74,7 @@ fun SettingsRootPage(
                 .navigationBarsPadding()
         ) {
             UpdateNotification(
-                isShown = updateAvailable,
-                versionInfo = latestReleaseInfo,
+                availableUpdates = availableUpdates,
                 onClick = onShowUpdateSheetRequest
             )
 
@@ -147,18 +145,18 @@ fun SettingsPageContainer(
 
 @Composable
 private fun UpdateNotification(
-    isShown: Boolean,
-    versionInfo: ReleaseInfo,
+    availableUpdates: List<ReleaseInfo>,
     onClick: () -> Unit
 ) {
     AnimatedVisibility(
-        visible = isShown,
+        visible = availableUpdates.isNotEmpty(),
         enter = fadeIn() + expandVertically(),
         exit = fadeOut() + shrinkVertically()
     ) {
+        val latestUpdate = availableUpdates.firstOrNull()
         ExpressiveButtonRow(
             title = sharedStringResource(SharedString.SettingsUpdateNotificationUpdateAvailable)
-                .replace("{VERSION}", versionInfo.versionName),
+                .replace("{VERSION}", latestUpdate?.versionName.toString()),
             description = sharedStringResource(SharedString.SettingsUpdateNotificationDescription),
             icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Update)) },
             containerColor = MaterialTheme.colorScheme.primaryContainer,

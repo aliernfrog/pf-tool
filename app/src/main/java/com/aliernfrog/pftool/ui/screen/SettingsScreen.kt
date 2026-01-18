@@ -39,22 +39,21 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsScreen(
     destination: SettingsDestination,
     vm: SettingsViewModel = koinViewModel(),
-    onShowUpdateSheetRequest: () -> Unit,
+    onCheckUpdatesRequest: (skipVersionCheck: Boolean) -> Unit,
+    onNavigateUpdatesScreenRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
     onNavigateRequest: (SettingsDestination) -> Unit
 ) {
     val context = LocalContext.current
-    val updateAvailable = vm.versionManager.updateAvailable.collectAsStateWithLifecycle().value
-    val latestVersionInfo = vm.versionManager.latestVersionInfo.collectAsStateWithLifecycle().value
+    val availableUpdates = vm.versionManager.availableUpdates.collectAsStateWithLifecycle().value
 
     when (destination) {
         SettingsDestination.root -> {
             SettingsRootPage(
                 categories = vm.categories,
-                updateAvailable = updateAvailable,
-                latestReleaseInfo = latestVersionInfo,
+                availableUpdates = availableUpdates,
                 experimentalOptionsEnabled = vm.prefs.experimentalOptionsEnabled.value,
-                onShowUpdateSheetRequest = onShowUpdateSheetRequest,
+                onShowUpdateSheetRequest = onNavigateUpdatesScreenRequest,
                 onNavigateBackRequest = onNavigateBackRequest,
                 onNavigateRequest = onNavigateRequest
             )
@@ -109,10 +108,8 @@ fun SettingsScreen(
             ExperimentalPage(
                 experimentalPrefs = vm.prefs.experimentalPrefs,
                 experimentalOptionsEnabledPref = vm.prefs.experimentalOptionsEnabled,
-                onCheckUpdatesRequest = { skipVersionCheck ->
-                    vm.versionManager.checkUpdates(skipVersionCheck)
-                },
-                onShowUpdateSheetRequest = onShowUpdateSheetRequest,
+                onCheckUpdatesRequest = onCheckUpdatesRequest,
+                onNavigateUpdatesScreenRequest = onNavigateUpdatesScreenRequest,
                 onRestartAppRequest = { GeneralUtil.restartApp(context, withModules = true) },
                 onNavigateBackRequest = onNavigateBackRequest
             ) {
@@ -146,7 +143,7 @@ fun SettingsScreen(
                         icon = Icons.Rounded.Science
                     )
                 },
-                onShowUpdateSheetRequest = onShowUpdateSheetRequest,
+                onShowUpdateSheetRequest = onNavigateUpdatesScreenRequest,
                 onNavigateLibsRequest = { onNavigateRequest(SettingsDestination.libs) },
                 onNavigateBackRequest = onNavigateBackRequest
             )

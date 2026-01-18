@@ -9,5 +9,5 @@ class AboutPageViewModel(
     versionManager: VersionManager
 ) : ViewModel() {
     val applicationVersionLabel = versionManager.versionLabel
-    val updateAvailable = versionManager.updateAvailable
+    val availableUpdates = versionManager.availableUpdates
 }

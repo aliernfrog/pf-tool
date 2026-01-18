@@ -9,6 +9,7 @@ import io.github.aliernfrog.shared.impl.CreditData
 const val TAG = "PFToolLogs"
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"
+const val defaultReleasesURL = "https://raw.githubusercontent.com/aliernfrog/pf-tool/refs/heads/main/releases.json"
 
 object SettingsConstant {
     val socials = listOf(
