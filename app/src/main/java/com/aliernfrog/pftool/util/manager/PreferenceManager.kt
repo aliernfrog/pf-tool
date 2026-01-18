@@ -45,7 +45,5 @@ class PreferenceManager(context: Context) : PFToolBasePreferenceManager(
     val ignoreDocumentsUIRestrictions = booleanPreference("ignoreDocumentsUiRestrictions", false, experimental = true, includeInDebugInfo = false)
     val shizukuNeverLoad = booleanPreference("shizukuNeverLoad", false, experimental = true, includeInDebugInfo = false)
     val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", context.getAppVersionCode(), experimental = true, includeInDebugInfo = false)
-
-    // TODO remove _ from below key (and use main branch for default)
-    val releasesURL = stringPreference("_releasesUrl", defaultReleasesURL, experimental = true, includeInDebugInfo = false)
+    val releasesURL = stringPreference("releasesUrl", defaultReleasesURL, experimental = true, includeInDebugInfo = false)
 }
