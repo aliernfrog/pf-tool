@@ -23,6 +23,8 @@ jobs:
           node-version: 24
       
       - name: Generate releases.json
+        env:
+          REPO: ${{ github.repository }}
         run: |
           node generate-releases-json.js
       
