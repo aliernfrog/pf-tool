@@ -14,6 +14,7 @@
     <string name="action_select_deselectAll">Deselect all</string>
     <string name="intent_openMap">Open map</string>
     <string name="intent_downloadMap">Download map</string>
+    <string name="warning">Warning</string>
     <string name="warning_error">Something went wrong</string>
     <string name="warning_fileDoesntExist">File does not exist</string>
     <string name="info">Info</string>
@@ -226,13 +227,16 @@
     <string name="mediaOverlay_guide_toggleOverlay">Tap to view the image fully, tap again to show the options</string>
     <string name="mediaOverlay_guide_toggleZoom">Rapidly tap twice to toggle zoom</string>
     <string name="mediaOverlay_guide_zoom">Pinch fingers to zoom-in and zoom-out, drag fingers to move</string>
-    <string name="updates_updateAvailable">PF Tool update available! Click for more details</string>
-    <string name="updates_noUpdates">No updates available</string>
-    <string name="updates_error">Something went wrong while checking for updates</string>
-    <string name="updates_stable">Stable</string>
-    <string name="updates_preRelease">Pre-release</string>
-    <string name="updates_openInGithub">View in GitHub</string>
-    <string name="updates_update">Update</string>
+    <string name="updates">Updates</string>
+    <string name="updates_changelog">Changelog</string>
+    <string name="updates_noChangelog">Updates must be checked in order to fetch the changelog</string>
+    <string name="updates_incompatible">Newer versions of PF Tool require a higher Android version, tap here for more information</string>
     <string name="updates_checkUpdates">Check updates</string>
-    <string name="updates_noChangelog">Check updates to view changelog</string>
+    <string name="updates_openInGithub">View in GitHub</string>
+    <string name="updates_currentVersion">Current version</string>
+    <string name="updates_prerelease">Pre-release</string>
+    <string name="updates_noUpdates">No updates available</string>
+    <string name="updates_update">Update</string>
+    <string name="updates_updateAvailable">PF Tool update available! Click for more details</string>
+    <string name="updates_error">Something went wrong while checking for updates</string>
 </resources>

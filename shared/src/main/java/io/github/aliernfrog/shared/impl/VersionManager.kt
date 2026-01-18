@@ -4,22 +4,21 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import io.github.aliernfrog.shared.data.ReleaseInfo
-import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.extension.getAppVersionCode
 import io.github.aliernfrog.shared.util.extension.getAppVersionName
-import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.json.JSONObject
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import java.net.URL
 
 class VersionManager(
     private val tag: String,
     private val appName: String,
-    private val updatesURLPref: BasePreferenceManager.Preference<String>,
+    private val releasesURLPref: BasePreferenceManager.Preference<String>,
     defaultInstallURL: String,
     buildCommit: String,
     buildBranch: String,
@@ -30,16 +29,23 @@ class VersionManager(
     val currentVersionCode = context.getAppVersionCode()
     val isCurrentlyUsingPreRelease = currentVersionName.contains("-alpha")
 
-    private val _latestVersionInfo = MutableStateFlow(ReleaseInfo(
+    private val _currentVersionInfo = MutableStateFlow(ReleaseInfo(
         versionName = currentVersionName,
-        preRelease = isCurrentlyUsingPreRelease,
-        body = context.getSharedString(SharedString.UpdatesNoChangelog),
+        versionCode = currentVersionCode,
+        prerelease = isCurrentlyUsingPreRelease,
+        minSdk = Build.VERSION.SDK_INT,
+        body = null,
+        createdAt = 0,
         htmlUrl = defaultInstallURL,
-        downloadLink = defaultInstallURL))
-    val latestVersionInfo: StateFlow<ReleaseInfo> = _latestVersionInfo.asStateFlow()
+        downloadUrl = defaultInstallURL
+    ))
+    val currentVersionInfo = _currentVersionInfo.asStateFlow()
 
-    private val _updateAvailable = MutableStateFlow(false)
-    val updateAvailable: StateFlow<Boolean> = _updateAvailable.asStateFlow()
+    private val _availableUpdates = MutableStateFlow(listOf<ReleaseInfo>())
+    val availableUpdates = _availableUpdates.asStateFlow()
+
+    private val _isCompatibleWithLatestVersion = MutableStateFlow(true)
+    val isCompatibleWithLatestVersion = _isCompatibleWithLatestVersion.asStateFlow()
 
     val versionLabel = "$currentVersionName (${
         buildCommit.ifBlank { currentVersionCode.toString() }
@@ -60,25 +66,31 @@ class VersionManager(
         }
     ).joinToString("\n")
 
-    fun checkUpdates(skipVersionCheck: Boolean = false): UpdateCheckResult {
-        return try {
-            val responseJSON = JSONObject(URL(updatesURLPref.value).readText())
-            val infoJSON = responseJSON.getJSONObject(
-                if (isCurrentlyUsingPreRelease && responseJSON.has("preRelease")) "preRelease" else "stable"
-            )
-            val latestVersionCode = infoJSON.getInt("versionCode")
-            _latestVersionInfo.value = ReleaseInfo(
-                versionName = infoJSON.getString("versionName"),
-                preRelease = infoJSON.getBoolean("preRelease"),
-                body = infoJSON.getString(
-                    if (infoJSON.has("bodyMarkdown")) "bodyMarkdown" else "body"
-                ),
-                htmlUrl = infoJSON.getString("htmlUrl"),
-                downloadLink = infoJSON.getString("downloadUrl")
-            )
-            _updateAvailable.value = skipVersionCheck || latestVersionCode > currentVersionCode
-            if (!_updateAvailable.value) return UpdateCheckResult.NoUpdates
-            UpdateCheckResult.UpdateAvailable(_latestVersionInfo.value)
+    suspend fun checkUpdates(skipVersionCheck: Boolean = false): UpdateCheckResult = withContext(Dispatchers.IO) {
+        try {
+            val releasesJSONArray = JSONArray(URL(releasesURLPref.value).readText())
+            val releases = mutableListOf<ReleaseInfo>()
+            for (i in 0 until releasesJSONArray.length()) {
+                val releaseJSON = releasesJSONArray.getJSONObject(i)
+                val release = ReleaseInfo.fromJSON(releaseJSON)
+                releases.add(release)
+            }
+            val updates = releases.filter { release ->
+                skipVersionCheck || (release.versionCode > currentVersionCode
+                        && (isCurrentlyUsingPreRelease || !release.prerelease)
+                        && Build.VERSION.SDK_INT >= release.minSdk)
+            }
+            val isCompatibleWithLatest = Build.VERSION.SDK_INT >= releases.first().minSdk
+            val currentRelease = releases.find { release ->
+                release.versionCode == currentVersionCode
+            } ?: releases.firstOrNull()
+            currentRelease?.let {
+                _currentVersionInfo.value = it
+            }
+            _availableUpdates.value = updates
+            _isCompatibleWithLatestVersion.value = isCompatibleWithLatest
+            if (updates.isEmpty()) UpdateCheckResult.NoUpdates
+            else UpdateCheckResult.UpdatesAvailable(updates)
         } catch (_: CancellationException) {
             UpdateCheckResult.NoUpdates // ignore this exception
         } catch (e: Exception) {
@@ -91,5 +103,5 @@ class VersionManager(
 sealed class UpdateCheckResult {
     data object NoUpdates : UpdateCheckResult()
     data object Error : UpdateCheckResult()
-    data class UpdateAvailable(val info: ReleaseInfo) : UpdateCheckResult()
+    data class UpdatesAvailable(val updates: List<ReleaseInfo>) : UpdateCheckResult()
 }

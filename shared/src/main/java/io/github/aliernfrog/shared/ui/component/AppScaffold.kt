@@ -9,9 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import io.github.aliernfrog.shared.util.SharedString
@@ -84,15 +82,10 @@ fun AppTopBar(
         colors = colors,
         navigationIcon = {
             onNavigationClick?.let {
-                IconButton(
-                    shapes = IconButtonDefaults.shapes(),
+                BackButtonWithTooltip(
+                    icon = navigationIcon,
                     onClick = it
-                ) {
-                    Icon(
-                        imageVector = navigationIcon,
-                        contentDescription = sharedStringResource(SharedString.ActionBack)
-                    )
-                }
+                )
             }
         },
         actions = actions
@@ -115,18 +108,22 @@ fun AppSmallTopBar(
         colors = colors,
         navigationIcon = {
             onNavigationClick?.let {
-                IconButton(
-                    shapes = IconButtonDefaults.shapes(),
+                BackButtonWithTooltip(
+                    icon = navigationIcon,
                     onClick = it
-                ) {
-                    Icon(
-                        imageVector = navigationIcon,
-                        contentDescription = sharedStringResource(SharedString.ActionBack)
-                    )
-                }
+                )
             }
         },
         actions = actions
+    )
+}
+
+@Composable
+private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
+    IconButtonWithTooltip(
+        painter = rememberVectorPainter(icon),
+        contentDescription = sharedStringResource(SharedString.ActionBack),
+        onClick = onClick
     )
 }
 

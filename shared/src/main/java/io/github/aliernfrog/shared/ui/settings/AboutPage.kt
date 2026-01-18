@@ -93,7 +93,7 @@ fun AboutPage(
         context.packageManager.getApplicationIcon(context.packageName).toBitmap().asImageBitmap()
     }
 
-    val updateAvailable = vm.updateAvailable.collectAsStateWithLifecycle().value
+    val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
 
     var versionClicks by remember { mutableIntStateOf(0) }
 
@@ -141,7 +141,7 @@ fun AboutPage(
             }
 
             ChangelogButton(
-                updateAvailable = updateAvailable,
+                updateAvailable = availableUpdates.isNotEmpty(),
                 onClick = onShowUpdateSheetRequest
             )
 

@@ -45,7 +45,7 @@ fun ExperimentalPage(
     experimentalPrefs: List<BasePreferenceManager.Preference<*>>,
     experimentalOptionsEnabledPref: BasePreferenceManager.Preference<Boolean>,
     onCheckUpdatesRequest: (skipVersionCheck: Boolean) -> Unit,
-    onShowUpdateSheetRequest: () -> Unit,
+    onNavigateUpdatesScreenRequest: () -> Unit,
     onRestartAppRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
     extraContent: @Composable () -> Unit
@@ -89,11 +89,11 @@ fun ExperimentalPage(
                     }
                 }, {
                     ExpressiveButtonRow(title = "Show update toast") {
-                        showUpdateToast { onShowUpdateSheetRequest() }
+                        showUpdateToast { onNavigateUpdatesScreenRequest() }
                     }
                 }, {
-                    ExpressiveButtonRow(title = "Show update dialog") {
-                        onShowUpdateSheetRequest()
+                    ExpressiveButtonRow(title = "Show update screen") {
+                        onNavigateUpdatesScreenRequest()
                     }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
