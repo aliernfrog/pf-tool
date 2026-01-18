@@ -47,6 +47,9 @@ class VersionManager(
     private val _isCompatibleWithLatestVersion = MutableStateFlow(true)
     val isCompatibleWithLatestVersion = _isCompatibleWithLatestVersion.asStateFlow()
 
+    private val _isCheckingForUpdates = MutableStateFlow(false)
+    val isCheckingForUpdates = _isCheckingForUpdates.asStateFlow()
+
     val versionLabel = "$currentVersionName (${
         buildCommit.ifBlank { currentVersionCode.toString() }
     }${
@@ -68,6 +71,7 @@ class VersionManager(
 
     suspend fun checkUpdates(skipVersionCheck: Boolean = false): UpdateCheckResult = withContext(Dispatchers.IO) {
         try {
+            _isCheckingForUpdates.value = true
             val releasesJSONArray = JSONArray(URL(releasesURLPref.value).readText())
             val releases = mutableListOf<ReleaseInfo>()
             for (i in 0 until releasesJSONArray.length()) {
@@ -75,6 +79,7 @@ class VersionManager(
                 val release = ReleaseInfo.fromJSON(releaseJSON)
                 releases.add(release)
             }
+            releases.sortByDescending { it.versionCode }
             val updates = releases.filter { release ->
                 skipVersionCheck || (release.versionCode > currentVersionCode
                         && (isCurrentlyUsingPreRelease || !release.prerelease)
@@ -83,7 +88,7 @@ class VersionManager(
             val isCompatibleWithLatest = Build.VERSION.SDK_INT >= releases.first().minSdk
             val currentRelease = releases.find { release ->
                 release.versionCode == currentVersionCode
-            } ?: releases.firstOrNull()
+            }
             currentRelease?.let {
                 _currentVersionInfo.value = it
             }
@@ -96,6 +101,8 @@ class VersionManager(
         } catch (e: Exception) {
             Log.e(tag, "[VersionManager:checkUpdates] Failed to check for updates", e)
             UpdateCheckResult.Error
+        } finally {
+            _isCheckingForUpdates.value = false
         }
     }
 }

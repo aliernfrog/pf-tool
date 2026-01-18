@@ -15,16 +15,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.aliernfrog.pftool.githubRepoURL
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
 import com.aliernfrog.pftool.util.Destination
+import com.aliernfrog.pftool.util.UpdateScreenDestination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
 import com.aliernfrog.pftool.util.slideTransitionMetadata
 import com.aliernfrog.pftool.util.slideVerticalTransitionMetadata
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
-import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.settings.SettingsDestination
 import org.koin.androidx.compose.koinViewModel
@@ -37,6 +36,7 @@ fun MainScreen(
     val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
     val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
     val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
+    val isCheckingForUpdates = vm.isCheckingForUpdates.collectAsStateWithLifecycle().value
 
     val onNavigateBackRequest: () -> Unit = {
         vm.navigationBackStack.removeLastIfMultiple()
@@ -77,7 +77,7 @@ fun MainScreen(
                             vm.checkUpdates(skipVersionCheck = skipVersionCheck)
                         },
                         onNavigateUpdatesScreenRequest = {
-                            vm.navigationBackStack.add(currentVersionInfo)
+                            vm.navigationBackStack.add(UpdateScreenDestination)
                         }
                     )
                 }
@@ -92,14 +92,14 @@ fun MainScreen(
                     )
                 }
 
-                entry<ReleaseInfo>(
+                entry<UpdateScreenDestination>(
                     metadata = slideVerticalTransitionMetadata
                 ) {
                     UpdatesScreen(
                         availableUpdates = availableUpdates,
                         currentVersionInfo = currentVersionInfo,
+                        isCheckingForUpdates = isCheckingForUpdates,
                         isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
-                        githubRepoURL = githubRepoURL,
                         onCheckUpdatesRequest = {
                             vm.checkUpdates(manuallyTriggered = true)
                         },

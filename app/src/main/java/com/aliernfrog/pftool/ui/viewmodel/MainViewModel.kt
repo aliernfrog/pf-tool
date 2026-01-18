@@ -18,6 +18,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.NavigationConstant
+import com.aliernfrog.pftool.util.UpdateScreenDestination
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
@@ -54,6 +55,7 @@ class MainViewModel(
     val availableUpdates = versionManager.availableUpdates
     val currentVersionInfo = versionManager.currentVersionInfo
     val isCompatibleWithLatestVersion = versionManager.isCompatibleWithLatestVersion
+    val isCheckingForUpdates = versionManager.isCheckingForUpdates
     var showUpdateNotification by mutableStateOf(false)
 
     var mediaOverlayData by mutableStateOf<MediaOverlayData?>(null)
@@ -90,8 +92,8 @@ class MainViewModel(
                 }
                 is UpdateCheckResult.UpdatesAvailable -> {
                     withContext(Dispatchers.Main) {
-                        if (manuallyTriggered && navigationBackStack.first() !is ReleaseInfo)
-                            navigationBackStack.add(currentVersionInfo.value)
+                        if (manuallyTriggered && navigationBackStack.first() !is UpdateScreenDestination)
+                            navigationBackStack.add(UpdateScreenDestination)
                         else showUpdateToast()
                     }
                 }
@@ -102,7 +104,7 @@ class MainViewModel(
     fun showUpdateToast() {
         io.github.aliernfrog.shared.util.showUpdateToast {
             if (navigationBackStack.first() !is ReleaseInfo)
-                navigationBackStack.add(currentVersionInfo.value)
+                navigationBackStack.add(UpdateScreenDestination)
         }
     }
 

@@ -25,6 +25,8 @@ enum class Destination {
     MAPS
 }
 
+object UpdateScreenDestination
+
 val slideTransitionMetadata = NavDisplay.transitionSpec {
     slideIntoContainer(
         AnimatedContentTransitionScope.SlideDirection.Start

@@ -4,9 +4,7 @@ import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,23 +14,23 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.DownloadDone
-import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -40,8 +38,8 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import io.github.aliernfrog.shared.data.ReleaseInfo
@@ -61,10 +58,14 @@ import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
+import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.TextWithIcon
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
+import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.sdkVersionToAndroidVersion
 import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -72,8 +73,8 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 fun UpdatesScreen(
     availableUpdates: List<ReleaseInfo>,
     currentVersionInfo: ReleaseInfo,
+    isCheckingForUpdates: Boolean,
     isCompatibleWithLatestVersion: Boolean,
-    githubRepoURL: String,
     onCheckUpdatesRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
@@ -101,7 +102,10 @@ fun UpdatesScreen(
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     ) {
-        Box {
+        PullToRefreshBox(
+            isRefreshing = isCheckingForUpdates,
+            onRefresh = onCheckUpdatesRequest
+        ) {
             LazyColumn(
                 state = lazyListState,
                 modifier = Modifier.fillMaxSize()
@@ -111,7 +115,10 @@ fun UpdatesScreen(
                         error = sharedStringResource(SharedString.UpdatesNoChangelog),
                         painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
                         button = {
-                            Button(onClick = onCheckUpdatesRequest) {
+                            Button(
+                                onClick = onCheckUpdatesRequest,
+                                shapes = ButtonDefaults.shapes()
+                            ) {
                                 ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
                                 Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
                             }
@@ -120,35 +127,38 @@ fun UpdatesScreen(
                 }
 
                 if (!isCompatibleWithLatestVersion) item {
+                    val minAndroidVersion = remember(availableUpdates) {
+                        sdkVersionToAndroidVersion(availableUpdates.firstOrNull()?.minSdk ?: 0)
+                    }
+
                     CardWithActions(
                         title = sharedStringResource(SharedString.Warning),
                         icon = rememberVectorPainter(Icons.Default.Warning),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
                         ),
                         buttons = null,
                         modifier = Modifier
                             .padding(start = 12.dp, end = 12.dp, bottom = 8.dp)
-                            .clickable {
-                                uriHandler.openUri(githubRepoURL)
-                            }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(sharedStringResource(SharedString.UpdatesIncompatible))
+                            Text(
+                                sharedStringResource(SharedString.UpdatesIncompatible)
+                                    .replace("{ANDROID_VERSION}", minAndroidVersion)
+                            )
                         }
                     }
                 }
 
-                items(availableUpdates) { release ->
+                itemsIndexed(availableUpdates) { index, release ->
                     ReleaseCard(
                         release = release,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 8.dp
-                        )
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp)
+                            .verticalSegmentedShape(index, totalSize = availableUpdates.size)
                     )
                 }
 
@@ -156,10 +166,12 @@ fun UpdatesScreen(
                     ReleaseCard(
                         release = currentVersionInfo,
                         isCurrentRelease = true,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 8.dp
-                        )
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 12.dp,
+                                vertical = 8.dp
+                            )
+                            .clip(AppComponentShape)
                     )
                 }
 
@@ -178,20 +190,20 @@ fun UpdatesScreen(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    TextButton(
+                    OutlinedButton(
                         onClick = {
                             uriHandler.openUri(currentVersionInfo.htmlUrl)
                         },
                         shapes = ButtonDefaults.shapes()
                     ) {
                         Icon(
-                            painterResource(io.github.aliernfrog.shared.R.drawable.github),
+                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                             contentDescription = null,
                             modifier = Modifier.size(ButtonDefaults.IconSize)
                         )
                         AnimatedVisibility(showExtendedToolbar) {
                             Text(
-                                text = sharedStringResource(SharedString.UpdatesOpenInGithub),
+                                text = sharedStringResource(SharedString.ActionOpenInBrowser),
                                 modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
                             )
                         }
@@ -207,7 +219,7 @@ fun UpdatesScreen(
                             ButtonIcon(rememberVectorPainter(Icons.Default.Update))
                             Text(sharedStringResource(SharedString.UpdatesUpdate))
                         }
-                        else OutlinedButton(
+                        else FilledTonalButton(
                             onClick = onCheckUpdatesRequest,
                             shapes = ButtonDefaults.shapes()
                         ) {
@@ -237,49 +249,43 @@ private fun ReleaseCard(
         ).toString()
     }
 
-    Card(modifier) {
+    Column(
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+    ) {
         Row(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
                 Text(
                     text = release.versionName,
-                    style = MaterialTheme.typography.titleLargeEmphasized
+                    style = MaterialTheme.typography.titleLargeEmphasized,
                 )
+
                 if (release.prerelease) Text(
                     text = sharedStringResource(SharedString.UpdatesPrerelease).uppercase(),
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = MaterialTheme.colorScheme.onSecondary
                     ),
                     modifier = Modifier
-                        .padding(start = 4.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .background(MaterialTheme.colorScheme.secondary)
                         .padding(horizontal = 4.dp)
                 )
             }
 
-            OutlinedButton(
-                onClick = { uriHandler.openUri(release.htmlUrl) },
-                shapes = ButtonDefaults.shapes()
-            ) {
-                Text(sharedStringResource(SharedString.UpdatesOpenInGithub))
-                Icon(
-                    imageVector = Icons.Default.OpenInBrowser,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(start = ButtonDefaults.IconSpacing)
-                        .size(ButtonDefaults.IconSize)
-                )
-            }
+            IconButtonWithTooltip(
+                icon = rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew),
+                contentDescription = sharedStringResource(SharedString.ActionOpenInBrowser),
+                onClick = { uriHandler.openUri(release.htmlUrl) }
+            )
         }
 
         Column(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 4.dp),
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(

@@ -7,6 +7,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_tapToDismiss">Tap to dismiss</string>
+    <string name="action_openInBrowser">Open in browser</string>
     <string name="action_share">Share</string>
     <string name="action_delete">Delete</string>
     <string name="action_more">More</string>
@@ -230,9 +231,8 @@
     <string name="updates">Updates</string>
     <string name="updates_changelog">Changelog</string>
     <string name="updates_noChangelog">Updates must be checked in order to fetch the changelog</string>
-    <string name="updates_incompatible">Newer versions of PF Tool require a higher Android version, tap here for more information</string>
+    <string name="updates_incompatible">Latest version of PF Tool requires at least Android {ANDROID_VERSION}</string>
     <string name="updates_checkUpdates">Check updates</string>
-    <string name="updates_openInGithub">View in GitHub</string>
     <string name="updates_currentVersion">Current version</string>
     <string name="updates_prerelease">Pre-release</string>
     <string name="updates_noUpdates">No updates available</string>

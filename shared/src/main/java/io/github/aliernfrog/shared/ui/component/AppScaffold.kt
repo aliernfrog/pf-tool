@@ -121,7 +121,7 @@ fun AppSmallTopBar(
 @Composable
 private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
     IconButtonWithTooltip(
-        painter = rememberVectorPainter(icon),
+        icon = rememberVectorPainter(icon),
         contentDescription = sharedStringResource(SharedString.ActionBack),
         onClick = onClick
     )

@@ -19,10 +19,18 @@ import androidx.compose.ui.graphics.painter.Painter
     ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun IconButtonWithTooltip(
-    painter: Painter,
+    icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    button: @Composable (icon: @Composable () -> Unit, onClick: () -> Unit) -> Unit = { icon, onClick ->
+        IconButton(
+            onClick = onClick,
+            shapes = IconButtonDefaults.shapes()
+        ) {
+            icon()
+        }
+    }
 ) {
     val tooltipState = rememberTooltipState()
     TooltipBox(
@@ -35,13 +43,13 @@ fun IconButtonWithTooltip(
         state = tooltipState,
         modifier = modifier
     ) {
-        IconButton(
-            onClick = onClick,
-            shapes = IconButtonDefaults.shapes()
-        ) {
-            Icon(
-                painter = painter, contentDescription = contentDescription
-            )
-        }
+        button(
+            {
+                Icon(
+                    painter = icon, contentDescription = contentDescription
+                )
+            },
+            onClick
+        )
     }
 }

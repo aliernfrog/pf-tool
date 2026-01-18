@@ -125,6 +125,5 @@
     <string name="updates_noUpdates">Brak dostępnych aktualizacji</string>
     <string name="updates_error">Coś poszło nie tak podczas szukania aktualizacji</string>
     <string name="updates_prerelease">Wersja wstępna</string>
-    <string name="updates_openInGithub">Pokaż w GitHub</string>
     <string name="updates_update">Aktualizuj</string>
 </resources>
