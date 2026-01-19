@@ -33,6 +33,19 @@ object SettingsConstant {
         )
     )
 
+    val supportLinks = listOf(
+        Social(
+            label = R.string.settings_about_issues_discord,
+            icon = io.github.aliernfrog.shared.R.drawable.discord,
+            url = "https://discord.gg/SQXqBMs"
+        ),
+        Social(
+            label = R.string.settings_about_issues_githubIssues,
+            icon = io.github.aliernfrog.shared.R.drawable.github,
+            url = "$githubRepoURL/issues"
+        )
+    )
+
     val credits = listOf(
         CreditData(
             name = "Mohammad Alizadeh",

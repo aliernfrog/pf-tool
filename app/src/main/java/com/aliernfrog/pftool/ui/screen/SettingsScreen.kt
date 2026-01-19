@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant.credits
 import com.aliernfrog.pftool.SettingsConstant.socials
+import com.aliernfrog.pftool.SettingsConstant.supportLinks
 import com.aliernfrog.pftool.crowdinURL
 import com.aliernfrog.pftool.ui.viewmodel.SettingsViewModel
 import com.aliernfrog.pftool.util.AppSettingsDestination
@@ -133,6 +134,7 @@ fun SettingsScreen(
             AboutPage(
                 socials = socials,
                 credits = credits,
+                supportLinks = supportLinks,
                 debugInfo = vm.debugInfo,
                 autoCheckUpdatesPref = vm.prefs.autoCheckUpdates,
                 experimentalOptionsEnabled = vm.prefs.experimentalOptionsEnabled.value,
