@@ -29,7 +29,6 @@ import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.util.extension.cacheFile
 import io.github.aliernfrog.shared.data.MediaOverlayData
-import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.di.getKoinInstance
 import io.github.aliernfrog.shared.impl.UpdateCheckResult
 import io.github.aliernfrog.shared.impl.VersionManager
@@ -103,7 +102,7 @@ class MainViewModel(
 
     fun showUpdateToast() {
         io.github.aliernfrog.shared.util.showUpdateToast {
-            if (navigationBackStack.first() !is ReleaseInfo)
+            if (navigationBackStack.first() !is UpdateScreenDestination)
                 navigationBackStack.add(UpdateScreenDestination)
         }
     }

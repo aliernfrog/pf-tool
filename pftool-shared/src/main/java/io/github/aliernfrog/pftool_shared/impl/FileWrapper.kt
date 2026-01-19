@@ -121,7 +121,10 @@ class FileWrapper(
                 it.createNewFile()
                 File(filePath)
             }
-            is DocumentFileCompat -> file.createFile("", name)
+            is DocumentFileCompat -> {
+                file.createFile("", name)
+                file.findFile(name, ignoreCase = true)
+            }
             is ServiceFile -> {
                 serviceFileRepository.fileService.createNewFile(filePath)
                 serviceFileRepository.fileService.getFile(filePath)
