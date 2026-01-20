@@ -244,4 +244,11 @@
     <string name="updates_update">Update</string>
     <string name="updates_updateAvailable">PF Tool update available! Click for more details</string>
     <string name="updates_error">Something went wrong while checking for updates</string>
+    <string name="crashHandler_title">Unexpected error</string>
+    <string name="crashHandler_description">PF Tool encountered an unexpected error, this shouldn\'t have happened!</string>
+    <string name="crashHandler_stackTrace">Stack trace</string>
+    <string name="crashHandler_report">It is recommended to report this crash so it can be fixed for everyone</string>
+    <string name="crashHandler_reportManually">Report manually</string>
+    <string name="crashHandler_reportManually_guide">To report the crash, copy crash details and forward it to PF Tool developer using one of the following links:</string>
+    <string name="crashHandler_reportManually_copyDetails">Copy crash details</string>
 </resources>

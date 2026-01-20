@@ -8,7 +8,7 @@ import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
-import io.github.aliernfrog.shared.ui.settings.SettingsPageContainer
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsPageContainer
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
 

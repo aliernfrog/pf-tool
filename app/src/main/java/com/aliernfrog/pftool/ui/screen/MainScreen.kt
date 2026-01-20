@@ -25,7 +25,7 @@ import com.aliernfrog.pftool.util.slideTransitionMetadata
 import com.aliernfrog.pftool.util.slideVerticalTransitionMetadata
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
 import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
-import io.github.aliernfrog.shared.ui.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

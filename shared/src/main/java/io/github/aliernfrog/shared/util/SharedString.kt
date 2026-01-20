@@ -33,10 +33,12 @@ open class SharedString(
     data object InfoPleaseWait : SharedString("info_pleaseWait")
     data object Warning : SharedString("warning")
     data object WarningError : SharedString("warning_error")
+
     data object MediaOverlayGuide : SharedString("mediaOverlay_guide")
     data object MediaOverlayGuideToggleOverlay : SharedString("mediaOverlay_guide_toggleOverlay")
     data object MediaOverlayGuideToggleZoom : SharedString("mediaOverlay_guide_toggleZoom")
     data object MediaOverlayGuideZoom : SharedString("mediaOverlay_guide_zoom")
+
     data object Settings : SharedString("settings")
     data object SettingsAbout : SharedString("settings_about")
     data object SettingsAboutDescription : SharedString("settings_about_description")
@@ -74,6 +76,7 @@ open class SharedString(
     data object SettingsExperimentalDescription : SharedString("settings_experimental_description")
     data object SettingsUpdateNotificationUpdateAvailable : SharedString("settings_updateNotification_updateAvailable")
     data object SettingsUpdateNotificationDescription : SharedString("settings_updateNotification_description")
+
     data object Updates : SharedString("updates")
     data object UpdatesChangelog : SharedString("updates_changelog")
     data object UpdatesIncompatible : SharedString("updates_incompatible")
@@ -83,6 +86,14 @@ open class SharedString(
     data object UpdatesPrerelease : SharedString("updates_prerelease")
     data object UpdatesUpdate : SharedString("updates_update")
     data object UpdatesUpdateAvailable : SharedString("updates_updateAvailable")
+
+    data object CrashHandlerTitle : SharedString("crashHandler_title")
+    data object CrashHandlerDescription : SharedString("crashHandler_description")
+    data object CrashHandlerStackTrace : SharedString("crashHandler_stackTrace")
+    data object CrashHandlerReport : SharedString("crashHandler_report")
+    data object CrashHandlerReportManually : SharedString("crashHandler_reportManually")
+    data object CrashHandlerReportManuallyGuide : SharedString("crashHandler_reportManually_guide")
+    data object CrashHandlerReportManuallyCopyDetails : SharedString("crashHandler_reportManually_copyDetails")
 
     companion object {
         fun fromResId(resId: Int): SharedString {
