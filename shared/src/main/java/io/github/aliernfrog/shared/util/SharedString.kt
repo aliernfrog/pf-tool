@@ -91,9 +91,12 @@ open class SharedString(
     data object CrashHandlerDescription : SharedString("crashHandler_description")
     data object CrashHandlerStackTrace : SharedString("crashHandler_stackTrace")
     data object CrashHandlerReport : SharedString("crashHandler_report")
-    data object CrashHandlerReportManually : SharedString("crashHandler_reportManually")
-    data object CrashHandlerReportManuallyGuide : SharedString("crashHandler_reportManually_guide")
-    data object CrashHandlerReportManuallyCopyDetails : SharedString("crashHandler_reportManually_copyDetails")
+    data object CrashHandlerSendReport : SharedString("crashHandler_sendReport")
+    data object CrashHandlerSendReportDescription : SharedString("crashHandler_sendReport_description")
+    data object CrashHandlerSupport : SharedString("crashHandler_support")
+    data object CrashHandlerSupportDescription : SharedString("crashHandler_support_description")
+    data object CrashHandlerSupportGuide : SharedString("crashHandler_support_guide")
+    data object CrashHandlerSupportCopyDetails : SharedString("crashHandler_support_copyDetails")
 
     companion object {
         fun fromResId(resId: Int): SharedString {

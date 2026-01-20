@@ -62,7 +62,7 @@ class VersionManager(
     })"
 
     fun getDebugInfo(debugInfoPrefs: List<BasePreferenceManager.Preference<*>>): String = arrayOf(
-        "$appName $currentVersionName",
+        "$appName $versionLabel",
         "Android API ${Build.VERSION.SDK_INT}",
         debugInfoPrefs.joinToString("\n") {
             "${it.key}: ${it.value}"
