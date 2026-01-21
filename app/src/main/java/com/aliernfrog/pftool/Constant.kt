@@ -10,6 +10,7 @@ const val TAG = "PFToolLogs"
 const val githubRepoURL = "https://github.com/aliernfrog/pf-tool"
 const val crowdinURL = "https://crowdin.com/project/pf-tool"
 const val defaultReleasesURL = "https://raw.githubusercontent.com/aliernfrog/pf-tool/refs/heads/main/releases.json"
+const val crashReportURL = "https://aliernfrog.vercel.app/crash-report"
 
 object SettingsConstant {
     val socials = listOf(

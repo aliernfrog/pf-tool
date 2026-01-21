@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.SettingsConstant.supportLinks
+import com.aliernfrog.pftool.crashReportURL
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
 import io.github.aliernfrog.shared.ui.component.util.AppContainer
 import io.github.aliernfrog.shared.ui.screen.CrashHandlerScreen
@@ -45,6 +46,7 @@ class CrashHandlerActivity : ComponentActivity() {
             PFToolTheme {
                 AppContainer {
                     CrashHandlerScreen(
+                        crashReportURL = crashReportURL,
                         stackTrace = crashStackTrace,
                         debugInfo = debugInfo,
                         supportLinks = supportLinks

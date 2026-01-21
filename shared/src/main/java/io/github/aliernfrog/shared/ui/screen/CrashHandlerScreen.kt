@@ -1,6 +1,7 @@
 package io.github.aliernfrog.shared.ui.screen
 
 import android.content.ClipData
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
@@ -52,13 +53,23 @@ import io.github.aliernfrog.shared.ui.component.form.DividerRow
 import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.extension.resolveString
+import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.net.URL
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CrashHandlerScreen(
+    crashReportURL: String,
     stackTrace: String,
     debugInfo: String,
     supportLinks: List<Social>
@@ -67,6 +78,10 @@ fun CrashHandlerScreen(
     val clipboard = LocalClipboard.current
     val uriHandler = LocalUriHandler.current
     val scope = rememberCoroutineScope()
+
+    val getCrashDetails = {
+        debugInfo + "\n\n" + stackTrace
+    }
 
     AppScaffold(
         topBar = { scrollBehavior ->
@@ -121,7 +136,19 @@ fun CrashHandlerScreen(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
             ) {
-                Toast.makeText(context, "Soon (TM)", Toast.LENGTH_SHORT).show()
+                // TODO localize toast messages
+                Toast.makeText(context, "Sending crash report...", Toast.LENGTH_SHORT).show()
+                scope.launch(Dispatchers.IO) {
+                    val response = sendPostRequest(
+                        toUrl = crashReportURL,
+                        json = JSONObject()
+                            .put("app", context.getSharedString(SharedString.AppName))
+                            .put("details", getCrashDetails())
+                    )
+                    scope.launch(Dispatchers.Main) {
+                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             DividerRow(
@@ -180,7 +207,7 @@ fun CrashHandlerScreen(
                             scope.launch {
                                 clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
                                     /* label = */ null,
-                                    /* text = */ debugInfo + "\n\n" + stackTrace
+                                    /* text = */ getCrashDetails()
                                 )))
                             }
                         }
@@ -214,5 +241,24 @@ fun CrashHandlerScreen(
                 }
             }
         }
+    }
+}
+
+private fun sendPostRequest(toUrl: String, json: JSONObject? = null): String {
+    return try {
+        val url = URL(toUrl)
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .method("POST", json?.let {
+                json.toString().toRequestBody("application/json".toMediaType())
+            })
+            .build()
+        client.newCall(request).execute().use { response ->
+            "${response.code}: ${response.body?.toString()}"
+        }
+    } catch (e: Exception) {
+        Log.e(TAG, "sendPostRequest: ", e)
+        "App error"
     }
 }
