@@ -53,7 +53,7 @@ import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
-import io.github.aliernfrog.shared.ui.settings.SettingsPageContainer
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsPageContainer
 import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource

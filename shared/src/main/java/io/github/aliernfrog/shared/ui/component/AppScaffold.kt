@@ -35,13 +35,14 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 @Composable
 fun AppScaffold(
     topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
+    modifier: Modifier = Modifier,
     topAppBarState: TopAppBarState = rememberTopAppBarState(),
     scrollBehavior: TopAppBarScrollBehavior = adaptiveExitUntilCollapsedScrollBehavior(topAppBarState),
     floatingActionButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { topBar(scrollBehavior) },
         floatingActionButton = floatingActionButton,
         contentWindowInsets = WindowInsets(0,0,0,0),
@@ -58,6 +59,7 @@ fun AppScaffold(
 fun AppTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
@@ -75,7 +77,8 @@ fun AppTopBar(
         actions = actions,
         colors = colors,
         navigationIcon = navigationIcon,
-        onNavigationClick = onNavigationClick
+        onNavigationClick = onNavigationClick,
+        modifier = modifier
     ) else LargeFlexibleTopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
@@ -88,7 +91,8 @@ fun AppTopBar(
                 )
             }
         },
-        actions = actions
+        actions = actions,
+        modifier = modifier
     )
 }
 
@@ -97,6 +101,7 @@ fun AppTopBar(
 fun AppSmallTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
@@ -114,7 +119,8 @@ fun AppSmallTopBar(
                 )
             }
         },
-        actions = actions
+        actions = actions,
+        modifier = modifier
     )
 }
 

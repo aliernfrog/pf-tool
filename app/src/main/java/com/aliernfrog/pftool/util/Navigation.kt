@@ -13,8 +13,8 @@ import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.ui.graphics.Color
 import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.pftool.R
-import io.github.aliernfrog.shared.ui.settings.SettingsDestination
-import io.github.aliernfrog.shared.ui.settings.category
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.screen.settings.category
 import io.github.aliernfrog.shared.util.SharedString
 
 object NavigationConstant {

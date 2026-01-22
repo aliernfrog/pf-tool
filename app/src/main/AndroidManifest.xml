@@ -60,6 +60,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.activity.CrashHandlerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
+
         <provider
             android:authorities="${applicationId}.provider"
             android:name="androidx.core.content.FileProvider"

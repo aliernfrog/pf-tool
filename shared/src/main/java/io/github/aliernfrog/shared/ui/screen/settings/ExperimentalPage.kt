@@ -1,4 +1,4 @@
-package io.github.aliernfrog.shared.ui.settings
+package io.github.aliernfrog.shared.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -181,6 +181,20 @@ fun ExperimentalPage(
                             )
                             onRestartAppRequest()
                         }
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+
+        ExpressiveSection(title = "Crash handler") {
+            VerticalSegmentor(
+                {
+                    ExpressiveButtonRow(
+                        title = "Test crash handler",
+                        description = "(by crashing)"
+                    ) {
+                        throw Exception("Did the crash handler test go well?")
                     }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)

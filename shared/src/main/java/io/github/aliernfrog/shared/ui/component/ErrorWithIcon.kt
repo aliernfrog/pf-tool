@@ -22,6 +22,7 @@ fun ErrorWithIcon(
     painter: Painter,
     modifier: Modifier = Modifier,
     visible: Boolean = true,
+    textOpacity: Float = 0.7f,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     button: (@Composable () -> Unit)? = null
 ) {
@@ -34,14 +35,17 @@ fun ErrorWithIcon(
             Icon(
                 painter = painter,
                 contentDescription = null,
-                modifier = Modifier.size(50.dp).alpha(0.7f),
+                modifier = Modifier
+                    .size(50.dp)
+                    .alpha(textOpacity),
                 tint = contentColor
             )
             Text(
                 text = error,
                 textAlign = TextAlign.Center,
                 color = contentColor,
-                modifier = Modifier.alpha(0.7f)
+                modifier = Modifier
+                    .alpha(textOpacity)
             )
             button?.invoke()
         }
