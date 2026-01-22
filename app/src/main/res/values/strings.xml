@@ -246,9 +246,10 @@
     <string name="updates_error">Something went wrong while checking for updates</string>
     <string name="crashHandler_title">Oops!</string>
     <string name="crashHandler_description">PF Tool encountered an unexpected error and crashed</string>
-    <string name="crashHandler_report">It is recommended to send crash report so it can be fixed for everyone</string>
+    <string name="crashHandler_report">Please click the button below to send crash report to PF Tool developer, this requires no additional steps</string>
     <string name="crashHandler_sendReport">Send crash report</string>
-    <string name="crashHandler_sendReport_description">Sends crash details to PF Tool developer instantly with no additional steps required</string>
+    <string name="crashHandler_sendReport_sent">Sent report</string>
+    <string name="crashHandler_restartApp">Restart app</string>
     <string name="crashHandler_support">Support</string>
     <string name="crashHandler_support_description">Tap to expand support links</string>
     <string name="crashHandler_support_guide">To report this crash to PF Tool developer directly, use Discord or GitHub links below.\nMake sure to copy and include the crash details in your report to speed up the process</string>

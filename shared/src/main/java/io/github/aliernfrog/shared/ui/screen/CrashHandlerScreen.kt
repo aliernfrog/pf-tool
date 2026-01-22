@@ -4,26 +4,36 @@ import android.content.ClipData
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.QuestionMark
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -32,18 +42,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.data.getIconPainter
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
@@ -72,12 +86,16 @@ fun CrashHandlerScreen(
     crashReportURL: String,
     stackTrace: String,
     debugInfo: String,
-    supportLinks: List<Social>
+    supportLinks: List<Social>,
+    onRestartAppRequest: () -> Unit
 ) {
     val context = LocalContext.current
     val clipboard = LocalClipboard.current
     val uriHandler = LocalUriHandler.current
     val scope = rememberCoroutineScope()
+    var reportState by remember {
+        mutableStateOf<ReportState>(ReportState.NotSent)
+    }
 
     val getCrashDetails = {
         debugInfo + "\n\n" + stackTrace
@@ -114,47 +132,87 @@ fun CrashHandlerScreen(
                 )
             }
 
-            Spacer(Modifier.height(16.dp))
-
             Text(
                 text = sharedStringResource(SharedString.CrashHandlerReport),
-                modifier = Modifier.padding(horizontal = 12.dp)
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 12.dp, vertical = 16.dp)
             )
 
-            ExpressiveButtonRow(
-                title = sharedStringResource(SharedString.CrashHandlerSendReport),
-                description = sharedStringResource(SharedString.CrashHandlerSendReportDescription),
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                icon = {
-                    ExpressiveRowIcon(
-                        painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.Send)
-                    )
-                },
-                modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
-                    .verticalSegmentedShape(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-            ) {
-                // TODO localize toast messages
-                Toast.makeText(context, "Sending crash report...", Toast.LENGTH_SHORT).show()
-                scope.launch(Dispatchers.IO) {
-                    val response = sendPostRequest(
-                        toUrl = crashReportURL,
-                        json = JSONObject()
-                            .put("app", context.getSharedString(SharedString.AppName))
-                            .put("details", getCrashDetails())
-                    )
-                    scope.launch(Dispatchers.Main) {
-                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+            ButtonDefaults.MediumContainerHeight.let { size ->
+                Button(
+                    onClick = {
+                        reportState = ReportState.Sending
+                        scope.launch(Dispatchers.IO) {
+                            val response = sendCrashReport(
+                                toUrl = crashReportURL,
+                                app = context.getSharedString(SharedString.AppName),
+                                details = getCrashDetails()
+                            )
+                            scope.launch(Dispatchers.Main) {
+                                Toast.makeText(context,
+                                    if (response is ReportState.Error) "${response.body} (${response.statusCode})"
+                                    else context.getSharedString(SharedString.CrashHandlerSendReportSent),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                reportState = if (response is ReportState.Error) ReportState.NotSent else response
+                            }
+                        }
+                    },
+                    enabled = reportState is ReportState.NotSent,
+                    shapes = ButtonDefaults.shapes(),
+                    contentPadding = ButtonDefaults.contentPaddingFor(size),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .heightIn(size)
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val isSending = reportState is ReportState.Sending
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.alpha(
+                                if (isSending) 0f else 1f
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = null,
+                                modifier = Modifier.size(
+                                    ButtonDefaults.iconSizeFor(size)
+                                )
+                            )
+                            Spacer(Modifier.width(ButtonDefaults.iconSpacingFor(size)))
+                            Text(sharedStringResource(
+                                if (reportState is ReportState.Sent) SharedString.CrashHandlerSendReportSent
+                                else SharedString.CrashHandlerSendReport
+                            ))
+                        }
+
+                        if (isSending) CircularProgressIndicator(
+                            modifier = Modifier.size(ButtonDefaults.iconSizeFor(size))
+                        )
                     }
                 }
+            }
+
+            OutlinedButton(
+                onClick = onRestartAppRequest,
+                shapes = ButtonDefaults.shapes(),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp)
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.Default.RestartAlt))
+                Text(sharedStringResource(SharedString.CrashHandlerRestartApp))
             }
 
             DividerRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 32.dp)
             )
 
             var supportSectionExpanded by remember { mutableStateOf(false) }
@@ -244,21 +302,39 @@ fun CrashHandlerScreen(
     }
 }
 
-private fun sendPostRequest(toUrl: String, json: JSONObject? = null): String {
+private fun sendCrashReport(toUrl: String, app: String, details: String): ReportState {
+    val json = JSONObject()
+        .put("app", app)
+        .put("details", details)
+
     return try {
         val url = URL(toUrl)
         val client = OkHttpClient()
         val request = Request.Builder()
             .url(url)
-            .method("POST", json?.let {
-                json.toString().toRequestBody("application/json".toMediaType())
-            })
+            .method(
+                method = "POST",
+                body = json.toString().toRequestBody("application/json".toMediaType())
+            )
             .build()
         client.newCall(request).execute().use { response ->
-            "${response.code}: ${response.body?.toString()}"
+            if (response.code in 200..299) ReportState.Sent(
+                statusCode = response.code,
+                body = response.body?.string()
+            ) else ReportState.Error(
+                statusCode = response.code,
+                body = response.body?.string()
+            )
         }
     } catch (e: Exception) {
         Log.e(TAG, "sendPostRequest: ", e)
-        "App error"
+        ReportState.Error(null, null)
     }
+}
+
+private sealed class ReportState {
+    data object NotSent : ReportState()
+    data object Sending : ReportState()
+    data class Error(val statusCode: Int?, val body: String?) : ReportState()
+    data class Sent(val statusCode: Int, val body: String?) : ReportState()
 }
