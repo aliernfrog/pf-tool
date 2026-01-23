@@ -185,10 +185,13 @@ fun CrashHandlerScreen(
                                 )
                             )
                             Spacer(Modifier.width(ButtonDefaults.iconSpacingFor(size)))
-                            Text(sharedStringResource(
-                                if (reportState is ReportState.Sent) SharedString.CrashHandlerSendReportSent
-                                else SharedString.CrashHandlerSendReport
-                            ))
+                            Text(
+                                text = sharedStringResource(
+                                    if (reportState is ReportState.Sent) SharedString.CrashHandlerSendReportSent
+                                    else SharedString.CrashHandlerSendReport
+                                ),
+                                style = ButtonDefaults.textStyleFor(size)
+                            )
                         }
 
                         if (isSending) CircularProgressIndicator(

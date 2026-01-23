@@ -10,9 +10,6 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,8 +19,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
@@ -120,13 +119,12 @@ fun ExperimentalPage(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        IconButton(
+                        IconButtonWithTooltip(
+                            icon = rememberVectorPainter(Icons.Default.Restore),
+                            contentDescription = "Reset",
                             onClick = { pref.resetValue() },
-                            shapes = IconButtonDefaults.shapes(),
                             modifier = Modifier.padding(start = 8.dp)
-                        ) {
-                            Icon(imageVector = Icons.Default.Restore, contentDescription = "Reset")
-                        }
+                        )
 
                         when (pref.defaultValue) {
                             is Boolean -> {

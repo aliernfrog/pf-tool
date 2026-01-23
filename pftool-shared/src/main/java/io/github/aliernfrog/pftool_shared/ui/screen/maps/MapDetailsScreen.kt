@@ -23,10 +23,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -54,6 +52,7 @@ import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.FilledIconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
@@ -292,18 +291,11 @@ private fun MapCard(
             placeholderIcon = if (chosenMap.thumbnailModel != null) Icons.Outlined.Image else Icons.Outlined.HideImage,
             modifier = modifier
         )
-        if (chosenMap.thumbnailModel != null && showMapThumbnail) FilledIconButton(
+        if (chosenMap.thumbnailModel != null && showMapThumbnail) FilledIconButtonWithTooltip(
+            icon = rememberVectorPainter(Icons.Default.Fullscreen),
+            contentDescription = sharedStringResource(PFToolSharedString.MapsThumbnail),
             onClick = onViewThumbnailRequest,
-            shapes = IconButtonDefaults.shapes(),
-            colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)
-            ),
             modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Fullscreen,
-                contentDescription = sharedStringResource(PFToolSharedString.MapsThumbnail)
-            )
-        }
+        )
     }
 }
