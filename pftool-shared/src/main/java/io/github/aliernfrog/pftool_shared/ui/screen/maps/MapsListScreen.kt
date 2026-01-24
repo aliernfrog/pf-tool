@@ -48,8 +48,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
@@ -93,6 +91,7 @@ import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.FloatingActionButton
+import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
@@ -216,8 +215,14 @@ fun MapsListScreen(
                     } } else onBackClick,
                     actions = {
                         if (multiSelecting && showMultiSelectionOptions) {
-                            IconButton(
-                                shapes = IconButtonDefaults.shapes(),
+                            IconButtonWithTooltip(
+                                icon = rememberVectorPainter(
+                                    if (areAllShownMapsSelected) Icons.Default.Deselect else Icons.Default.SelectAll
+                                ),
+                                contentDescription = sharedStringResource(
+                                    if (areAllShownMapsSelected) PFToolSharedString.ActionSelectDeselectAll
+                                    else PFToolSharedString.ActionSelectSelectAll
+                                ),
                                 onClick = {
                                     currentlyShownSegment?.let { segment ->
                                         val maps = vm.getMapsForSegment(segment)
@@ -227,25 +232,13 @@ fun MapsListScreen(
                                         )
                                     }
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = if (areAllShownMapsSelected) Icons.Default.Deselect else Icons.Default.SelectAll,
-                                    contentDescription = sharedStringResource(
-                                        if (areAllShownMapsSelected) PFToolSharedString.ActionSelectDeselectAll
-                                        else PFToolSharedString.ActionSelectSelectAll
-                                    )
-                                )
-                            }
+                            )
                             Box {
-                                IconButton(
-                                    shapes = IconButtonDefaults.shapes(),
+                                IconButtonWithTooltip(
+                                    icon = rememberVectorPainter(Icons.Default.MoreVert),
+                                    contentDescription = sharedStringResource(PFToolSharedString.ActionMore),
                                     onClick = { multiSelectionDropdownShown = true }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.MoreVert,
-                                        contentDescription = sharedStringResource(PFToolSharedString.ActionMore)
-                                    )
-                                }
+                                )
                                 MultiSelectionDropdown(
                                     expanded = multiSelectionDropdownShown,
                                     maps = selectedMaps,
@@ -265,17 +258,13 @@ fun MapsListScreen(
                                 if (showLoading) CircularProgressIndicator(
                                     modifier = Modifier.size(48.dp).padding(8.dp)
                                 )
-                                else IconButton(
-                                    shapes = IconButtonDefaults.shapes(),
+                                else IconButtonWithTooltip(
+                                    icon = rememberVectorPainter(Icons.Default.Refresh),
+                                    contentDescription = sharedStringResource(PFToolSharedString.MapsListReload),
                                     onClick = {
                                         vm.reloadMaps(context)
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Refresh,
-                                        contentDescription = sharedStringResource(PFToolSharedString.MapsListReload)
-                                    )
-                                }
+                                )
                             }
                             settingsButton?.invoke()
                         }
@@ -543,29 +532,22 @@ private fun Search(
                 expanded = false,
                 onExpandedChange = {},
                 leadingIcon = {
-                    if (searchQuery.isNotEmpty()) IconButton(
-                        onClick = { onSearchQueryChange("") },
-                        shapes = IconButtonDefaults.shapes()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = sharedStringResource(PFToolSharedString.MapsListSearchClear)
-                        )
-                    } else Icon(
+                    if (searchQuery.isNotEmpty()) IconButtonWithTooltip(
+                        icon = rememberVectorPainter(Icons.Default.Clear),
+                        contentDescription = sharedStringResource(PFToolSharedString.MapsListSearchClear),
+                        onClick = { onSearchQueryChange("") }
+                    )
+                    else Icon(
                         imageVector = Icons.Outlined.Search,
                         contentDescription = null
                     )
                 },
                 trailingIcon = {
-                    IconButton(
-                        onClick = onShowListViewOptionsRequest,
-                        shapes = IconButtonDefaults.shapes()
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Sort,
-                            contentDescription = sharedStringResource(PFToolSharedString.ListOptions)
-                        )
-                    }
+                    IconButtonWithTooltip(
+                        icon = rememberVectorPainter(Icons.AutoMirrored.Filled.Sort),
+                        contentDescription = sharedStringResource(PFToolSharedString.ListOptions),
+                        onClick = onShowListViewOptionsRequest
+                    )
                 },
                 placeholder = {
                     Text(sharedStringResource(PFToolSharedString.MapsListSearch))

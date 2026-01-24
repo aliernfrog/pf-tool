@@ -11,13 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,8 +28,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.FilledTonalIconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -139,16 +140,15 @@ fun ToggleExpandButton(
     modifier: Modifier = Modifier
 ) {
     val rotation by animateFloatAsState(if (expanded) 180f else 0f)
-    FilledTonalIconButton(
-        shapes = IconButtonDefaults.shapes(),
+    FilledTonalIconButtonWithTooltip(
+        icon = rememberVectorPainter(Icons.Default.KeyboardArrowDown),
+        contentDescription = sharedStringResource(
+            if (expanded) SharedString.ActionCollapse
+            else SharedString.ActionExpand
+        ),
         onClick = onClick,
         modifier = modifier.rotate(rotation)
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.KeyboardArrowDown,
-            contentDescription = null
-        )
-    }
+    )
 }
 
 @Composable

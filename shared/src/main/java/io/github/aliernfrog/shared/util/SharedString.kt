@@ -29,6 +29,8 @@ open class SharedString(
     data object ActionDismiss : SharedString("action_dismiss")
     data object ActionOK : SharedString("action_ok")
     data object ActionOpenInBrowser : SharedString("action_openInBrowser")
+    data object ActionExpand : SharedString("action_expand")
+    data object ActionCollapse : SharedString("action_collapse")
     data object InfoDeleteQuestion : SharedString("info_deleteQuestion")
     data object InfoPleaseWait : SharedString("info_pleaseWait")
     data object Warning : SharedString("warning")
