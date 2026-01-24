@@ -1,11 +1,13 @@
 package io.github.aliernfrog.shared.ui.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -22,7 +24,8 @@ fun IconButtonWithTooltip(
     icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colors: IconButtonColors = IconButtonDefaults.iconButtonColors()
 ) {
     PlainTextTooltipContainer(
         tooltipText = contentDescription,
@@ -30,7 +33,8 @@ fun IconButtonWithTooltip(
     ) {
         IconButton(
             onClick = onClick,
-            shapes = IconButtonDefaults.shapes()
+            shapes = IconButtonDefaults.shapes(),
+            colors = colors
         ) {
             Icon(
                 painter = icon, contentDescription = contentDescription
@@ -45,7 +49,8 @@ fun FilledIconButtonWithTooltip(
     icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors()
 ) {
     PlainTextTooltipContainer(
         tooltipText = contentDescription,
@@ -53,7 +58,8 @@ fun FilledIconButtonWithTooltip(
     ) {
         FilledIconButton(
             onClick = onClick,
-            shapes = IconButtonDefaults.shapes()
+            shapes = IconButtonDefaults.shapes(),
+            colors = colors
         ) {
             Icon(
                 painter = icon, contentDescription = contentDescription
@@ -68,7 +74,8 @@ fun FilledTonalIconButtonWithTooltip(
     icon: Painter,
     contentDescription: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colors: IconButtonColors = IconButtonDefaults.filledTonalIconButtonColors()
 ) {
     PlainTextTooltipContainer(
         tooltipText = contentDescription,
@@ -76,7 +83,8 @@ fun FilledTonalIconButtonWithTooltip(
     ) {
         FilledTonalIconButton(
             onClick = onClick,
-            shapes = IconButtonDefaults.shapes()
+            shapes = IconButtonDefaults.shapes(),
+            colors = colors
         ) {
             Icon(
                 painter = icon, contentDescription = contentDescription
@@ -93,15 +101,19 @@ fun PlainTextTooltipContainer(
     content: @Composable () -> Unit
 ) {
     val tooltipState = rememberTooltipState()
-    TooltipBox(
-        tooltip = {
-            PlainTooltip {
-                Text(tooltipText)
-            }
-        },
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
-        state = tooltipState,
-        modifier = modifier,
-        content = content
-    )
+
+    // Passing modifier directly to TooltipBox will break .align()
+    // and possibly more modifiers. So wrap it in a Box.
+    Box(modifier) {
+        TooltipBox(
+            tooltip = {
+                PlainTooltip {
+                    Text(tooltipText)
+                }
+            },
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+            state = tooltipState,
+            content = content
+        )
+    }
 }

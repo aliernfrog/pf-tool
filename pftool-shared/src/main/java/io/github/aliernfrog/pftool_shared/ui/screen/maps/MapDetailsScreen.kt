@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -295,7 +296,10 @@ private fun MapCard(
             icon = rememberVectorPainter(Icons.Default.Fullscreen),
             contentDescription = sharedStringResource(PFToolSharedString.MapsThumbnail),
             onClick = onViewThumbnailRequest,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp)
+            modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp),
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)
+            )
         )
     }
 }
