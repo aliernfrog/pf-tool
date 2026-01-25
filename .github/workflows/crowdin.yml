@@ -54,5 +54,5 @@ jobs:
           git config user.name Crowdin Bot
           git config user.email support+bot@crowdin.com
           git add ./app/src/main/res
-          git commit -m "chore(l10n): clean untranslated files"
+          git commit -m "chore(l10n): Clean untranslated files"
           git push
