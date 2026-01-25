@@ -115,6 +115,7 @@ class MapsViewModel(
     }
 
     fun openMapThumbnailViewer(map: MapFile) {
+        // TODO remove MainViewModel dependency
         val mainViewModel = getKoinInstance<MainViewModel>()
         val hasThumbnail = map.thumbnailModel != null
         mainViewModel.showMediaOverlay(MediaOverlayData(

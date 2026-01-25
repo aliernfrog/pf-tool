@@ -25,6 +25,7 @@ fun IconButtonWithTooltip(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors()
 ) {
     PlainTextTooltipContainer(
@@ -34,6 +35,7 @@ fun IconButtonWithTooltip(
         IconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
+            enabled = enabled,
             colors = colors
         ) {
             Icon(
@@ -50,6 +52,7 @@ fun FilledIconButtonWithTooltip(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors()
 ) {
     PlainTextTooltipContainer(
@@ -59,6 +62,7 @@ fun FilledIconButtonWithTooltip(
         FilledIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
+            enabled = enabled,
             colors = colors
         ) {
             Icon(
@@ -75,6 +79,7 @@ fun FilledTonalIconButtonWithTooltip(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     colors: IconButtonColors = IconButtonDefaults.filledTonalIconButtonColors()
 ) {
     PlainTextTooltipContainer(
@@ -84,6 +89,7 @@ fun FilledTonalIconButtonWithTooltip(
         FilledTonalIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
+            enabled = enabled,
             colors = colors
         ) {
             Icon(
