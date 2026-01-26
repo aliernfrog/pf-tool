@@ -121,7 +121,10 @@ class FileWrapper(
                 it.createNewFile()
                 File(filePath)
             }
-            is DocumentFileCompat -> file.createFile("", name)
+            is DocumentFileCompat -> {
+                file.createFile("", name)
+                file.findFile(name, ignoreCase = true)
+            }
             is ServiceFile -> {
                 serviceFileRepository.fileService.createNewFile(filePath)
                 serviceFileRepository.fileService.getFile(filePath)
@@ -179,7 +182,9 @@ class FileWrapper(
         return when (file) {
             is File -> file.inputStream()
             is DocumentFileCompat -> context.contentResolver.openInputStream(file.uri)
-            is ServiceFile -> getByteArray(ignoreCache = true)!!.inputStream()
+            is ServiceFile -> ParcelFileDescriptor.AutoCloseInputStream(
+                serviceFileRepository.fileService.getFd(file.path)
+            )
             else -> throw invalidFileClassException
         }
     }

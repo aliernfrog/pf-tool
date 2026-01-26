@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.ui.component.media_overlay
+package com.aliernfrog.pftool.ui.component.widget.media_overlay
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share

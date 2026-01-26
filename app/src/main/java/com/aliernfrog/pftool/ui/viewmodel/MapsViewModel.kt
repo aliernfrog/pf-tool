@@ -14,7 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.component.media_overlay.ThumbnailToolbarContent
+import com.aliernfrog.pftool.ui.component.widget.media_overlay.ThumbnailToolbarContent
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
@@ -115,6 +115,7 @@ class MapsViewModel(
     }
 
     fun openMapThumbnailViewer(map: MapFile) {
+        // TODO remove MainViewModel dependency
         val mainViewModel = getKoinInstance<MainViewModel>()
         val hasThumbnail = map.thumbnailModel != null
         mainViewModel.showMediaOverlay(MediaOverlayData(

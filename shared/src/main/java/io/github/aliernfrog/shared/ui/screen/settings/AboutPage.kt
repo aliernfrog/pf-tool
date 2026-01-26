@@ -1,4 +1,4 @@
-package io.github.aliernfrog.shared.ui.settings
+package io.github.aliernfrog.shared.ui.screen.settings
 
 import android.content.ClipData
 import androidx.compose.animation.AnimatedContent
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.rounded.ContactSupport
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Book
@@ -27,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,23 +41,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import io.github.aliernfrog.shared.data.Social
+import io.github.aliernfrog.shared.data.getIconPainter
 import io.github.aliernfrog.shared.impl.CreditData
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.HorizontalSegmentor
+import io.github.aliernfrog.shared.ui.component.ScrollableRow
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
+import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
@@ -77,6 +80,7 @@ fun AboutPage(
     vm: AboutPageViewModel = koinViewModel(),
     socials: List<Social>,
     credits: List<CreditData>,
+    supportLinks: List<Social>,
     debugInfo: String,
     autoCheckUpdatesPref: BasePreferenceManager.Preference<Boolean>,
     experimentalOptionsEnabled: Boolean,
@@ -93,7 +97,7 @@ fun AboutPage(
         context.packageManager.getApplicationIcon(context.packageName).toBitmap().asImageBitmap()
     }
 
-    val updateAvailable = vm.updateAvailable.collectAsStateWithLifecycle().value
+    val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
 
     var versionClicks by remember { mutableIntStateOf(0) }
 
@@ -141,7 +145,7 @@ fun AboutPage(
             }
 
             ChangelogButton(
-                updateAvailable = updateAvailable,
+                updateAvailable = availableUpdates.isNotEmpty(),
                 onClick = onShowUpdateSheetRequest
             )
 
@@ -156,14 +160,10 @@ fun AboutPage(
                         .padding(vertical = 8.dp)
                 ) {
                     ExpressiveRowIcon(
-                        painter = when (val icon = social.icon) {
-                            is Int -> painterResource(icon)
-                            is ImageVector -> rememberVectorPainter(icon)
-                            else -> throw IllegalArgumentException("unexpected class for social icon")
-                        },
+                        painter = social.getIconPainter(),
                         containerColor = social.iconContainerColor.toRowFriendlyColor
                     )
-                    Text(social.label)
+                    Text(social.label.resolveString())
                 }
             } }
 
@@ -189,6 +189,67 @@ fun AboutPage(
                         checked = autoCheckUpdatesPref.value,
                         onCheckedChange = { autoCheckUpdatesPref.value = it }
                     )
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+
+        ExpressiveSection(
+            title = sharedStringResource(SharedString.SettingsAboutIssues)
+        ) {
+            VerticalSegmentor(
+                {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = 8.dp, horizontal = 18.dp
+                            )
+                    ) {
+                        ExpressiveRowHeader(
+                            title = sharedStringResource(SharedString.SettingsAboutIssuesTitle),
+                            description = sharedStringResource(SharedString.SettingsAboutIssuesDescription),
+                            icon = {
+                                ExpressiveRowIcon(
+                                    painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.ContactSupport)
+                                )
+                            }
+                        )
+
+                        ScrollableRow(
+                            gradientColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                            modifier = Modifier.padding(top = 8.dp).align(Alignment.End)
+                        ) {
+                            supportLinks.forEach { social ->
+                                OutlinedButton(
+                                    onClick = { uriHandler.openUri(social.url) },
+                                    shapes = ButtonDefaults.shapes()
+                                ) {
+                                    ButtonIcon(social.getIconPainter())
+                                    Text(social.label.resolveString())
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = sharedStringResource(SharedString.SettingsAboutIssuesCopyDebugInfo),
+                        description = sharedStringResource(SharedString.SettingsAboutIssuesCopyDebugInfoDescription),
+                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
+                    ) {
+                        scope.launch {
+                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
+                                context.getSharedString(SharedString.SettingsAboutIssuesCopyDebugInfoClipLabel),
+                                debugInfo
+                            )))
+                            vm.topToastState.showToast(
+                                text = context.getSharedString(SharedString.SettingsAboutIssuesCopyDebugInfoCopied),
+                                icon = Icons.Rounded.CopyAll
+                            )
+                        }
+                    }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
@@ -240,32 +301,6 @@ fun AboutPage(
                         },
                         onClick = onNavigateLibsRequest
                     )
-                },
-                modifier = Modifier.padding(horizontal = 12.dp)
-            )
-        }
-
-        ExpressiveSection(
-            title = sharedStringResource(SharedString.SettingsAboutOther)
-        ) {
-            VerticalSegmentor(
-                {
-                    ExpressiveButtonRow(
-                        title = sharedStringResource(SharedString.SettingsAboutOtherCopyDebugInfo),
-                        description = sharedStringResource(SharedString.SettingsAboutOtherCopyDebugInfoDescription),
-                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
-                    ) {
-                        scope.launch {
-                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
-                                context.getSharedString(SharedString.SettingsAboutOtherCopyDebugInfoClipLabel),
-                                debugInfo
-                            )))
-                            vm.topToastState.showToast(
-                                text = context.getSharedString(SharedString.SettingsAboutOtherCopyDebugInfoCopied),
-                                icon = Icons.Rounded.CopyAll
-                            )
-                        }
-                    }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )

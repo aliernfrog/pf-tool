@@ -38,8 +38,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
@@ -137,8 +135,7 @@ fun MediaOverlay(
                     modifier = Modifier
                         .onSizeChanged { size ->
                             with(density) {
-                                optionsHeight =
-                                    size.height.toDp() + 48.dp // 48dp drag handle height
+                                optionsHeight = size.height.toDp() + 48.dp // 48dp drag handle height
                             }
                         }
                         .padding(bottom = 8.dp)
@@ -166,31 +163,41 @@ fun MediaOverlay(
         contentColor = Color.White
     ) {
         Box {
-            FadeVisibility(visible = showOverlay && overlayCanBeShown,
-                modifier = Modifier.zIndex(1f)) {
-                Row(modifier = Modifier.background(Color.Black.copy(alpha = 0.7f))
-                    .statusBarsPadding(), verticalAlignment = Alignment.CenterVertically) {
-                    Row(modifier = Modifier.weight(1f).fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(shapes = IconButtonDefaults.shapes(),
+            FadeVisibility(
+                visible = showOverlay && overlayCanBeShown,
+                modifier = Modifier.zIndex(1f)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .statusBarsPadding(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButtonWithTooltip(
+                            icon = rememberVectorPainter(Icons.Default.Close),
+                            contentDescription = sharedStringResource(SharedString.ActionClose),
                             onClick = onDismissRequest,
-                            modifier = Modifier.padding(8.dp)) {
-                            Icon(imageVector = Icons.Default.Close,
-                                contentDescription = sharedStringResource(SharedString.ActionClose))
-                        }
+                            modifier = Modifier.padding(8.dp)
+                        )
                         data.title?.let {
-                            Text(text = it,
+                            Text(
+                                text = it,
                                 style = MaterialTheme.typography.titleLarge,
                                 overflow = TextOverflow.Ellipsis,
-                                maxLines = 2)
+                                maxLines = 2
+                            )
                         }
                     }
-                    IconButton(shapes = IconButtonDefaults.shapes(),
+                    IconButtonWithTooltip(
+                        icon = rememberVectorPainter(Icons.AutoMirrored.Filled.HelpOutline),
+                        contentDescription = sharedStringResource(SharedString.MediaOverlayGuide),
                         onClick = { showMediaOverlayGuidePref.value = true },
-                        modifier = Modifier.padding(8.dp)) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.HelpOutline,
-                            contentDescription = sharedStringResource(SharedString.MediaOverlayGuide))
-                    }
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
             Crossfade(

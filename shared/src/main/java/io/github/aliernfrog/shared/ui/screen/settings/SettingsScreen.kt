@@ -1,4 +1,4 @@
-package io.github.aliernfrog.shared.ui.settings
+package io.github.aliernfrog.shared.ui.screen.settings
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -31,8 +31,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.shared.data.ReleaseInfo
-import io.github.aliernfrog.shared.di.getKoinInstance
-import io.github.aliernfrog.shared.impl.VersionManager
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.AppTopBar
@@ -50,8 +48,7 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 @Composable
 fun SettingsRootPage(
     categories: List<SettingsCategory>,
-    updateAvailable: Boolean,
-    latestReleaseInfo: ReleaseInfo,
+    availableUpdates: List<ReleaseInfo>,
     experimentalOptionsEnabled: Boolean,
     onShowUpdateSheetRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
@@ -75,8 +72,7 @@ fun SettingsRootPage(
                 .navigationBarsPadding()
         ) {
             UpdateNotification(
-                isShown = updateAvailable,
-                versionInfo = latestReleaseInfo,
+                availableUpdates = availableUpdates,
                 onClick = onShowUpdateSheetRequest
             )
 
@@ -147,18 +143,18 @@ fun SettingsPageContainer(
 
 @Composable
 private fun UpdateNotification(
-    isShown: Boolean,
-    versionInfo: ReleaseInfo,
+    availableUpdates: List<ReleaseInfo>,
     onClick: () -> Unit
 ) {
     AnimatedVisibility(
-        visible = isShown,
+        visible = availableUpdates.isNotEmpty(),
         enter = fadeIn() + expandVertically(),
         exit = fadeOut() + shrinkVertically()
     ) {
+        val latestUpdate = availableUpdates.firstOrNull()
         ExpressiveButtonRow(
             title = sharedStringResource(SharedString.SettingsUpdateNotificationUpdateAvailable)
-                .replace("{VERSION}", versionInfo.versionName),
+                .replace("{VERSION}", latestUpdate?.versionName.toString()),
             description = sharedStringResource(SharedString.SettingsUpdateNotificationDescription),
             icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Update)) },
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -201,13 +197,9 @@ data class SettingsDestination(
 
         val about = SettingsDestination(
             title = SharedString.SettingsAbout,
-            description = SharedString.AppName,
+            description = SharedString.SettingsAboutDescription,
             icon = Icons.Rounded.Info,
-            iconContainerColor = Color.Blue,
-            descriptionOverride = {
-                val versionManager = getKoinInstance<VersionManager>()
-                versionManager.versionLabel
-            }
+            iconContainerColor = Color.Blue
         )
 
         val libs = SettingsDestination(

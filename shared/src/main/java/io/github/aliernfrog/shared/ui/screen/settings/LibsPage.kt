@@ -1,4 +1,4 @@
-package io.github.aliernfrog.shared.ui.settings
+package io.github.aliernfrog.shared.ui.screen.settings
 
 import androidx.annotation.RawRes
 import androidx.compose.foundation.clickable

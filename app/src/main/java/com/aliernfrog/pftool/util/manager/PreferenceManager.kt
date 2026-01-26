@@ -2,6 +2,7 @@ package com.aliernfrog.pftool.util.manager
 
 import android.content.Context
 import android.os.Environment
+import com.aliernfrog.pftool.defaultReleasesURL
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
 import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
@@ -44,5 +45,5 @@ class PreferenceManager(context: Context) : PFToolBasePreferenceManager(
     val ignoreDocumentsUIRestrictions = booleanPreference("ignoreDocumentsUiRestrictions", false, experimental = true, includeInDebugInfo = false)
     val shizukuNeverLoad = booleanPreference("shizukuNeverLoad", false, experimental = true, includeInDebugInfo = false)
     val lastKnownInstalledVersion = longPreference("lastKnownInstalledVersion", context.getAppVersionCode(), experimental = true, includeInDebugInfo = false)
-    val updatesURL = stringPreference("updatesUrl", "https://aliernfrog.github.io/pftool/latest.json", experimental = true, includeInDebugInfo = false)
+    val releasesURL = stringPreference("releasesUrl", defaultReleasesURL, experimental = true, includeInDebugInfo = false)
 }

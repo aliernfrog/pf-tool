@@ -1,4 +1,4 @@
-package io.github.aliernfrog.shared.ui.settings
+package io.github.aliernfrog.shared.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -10,20 +10,19 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
@@ -45,14 +44,14 @@ fun ExperimentalPage(
     experimentalPrefs: List<BasePreferenceManager.Preference<*>>,
     experimentalOptionsEnabledPref: BasePreferenceManager.Preference<Boolean>,
     onCheckUpdatesRequest: (skipVersionCheck: Boolean) -> Unit,
-    onShowUpdateSheetRequest: () -> Unit,
+    onNavigateUpdatesScreenRequest: () -> Unit,
     onRestartAppRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
     extraContent: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    val sortedExperimentalOptions = rememberSaveable {
+    val sortedExperimentalOptions = remember {
         experimentalPrefs.sortedBy {
             when (it.defaultValue) {
                 is Boolean -> 0
@@ -89,11 +88,11 @@ fun ExperimentalPage(
                     }
                 }, {
                     ExpressiveButtonRow(title = "Show update toast") {
-                        showUpdateToast { onShowUpdateSheetRequest() }
+                        showUpdateToast { onNavigateUpdatesScreenRequest() }
                     }
                 }, {
-                    ExpressiveButtonRow(title = "Show update dialog") {
-                        onShowUpdateSheetRequest()
+                    ExpressiveButtonRow(title = "Show update screen") {
+                        onNavigateUpdatesScreenRequest()
                     }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
@@ -120,13 +119,12 @@ fun ExperimentalPage(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        IconButton(
+                        IconButtonWithTooltip(
+                            icon = rememberVectorPainter(Icons.Default.Restore),
+                            contentDescription = "Reset",
                             onClick = { pref.resetValue() },
-                            shapes = IconButtonDefaults.shapes(),
                             modifier = Modifier.padding(start = 8.dp)
-                        ) {
-                            Icon(imageVector = Icons.Default.Restore, contentDescription = "Reset")
-                        }
+                        )
 
                         when (pref.defaultValue) {
                             is Boolean -> {
@@ -181,6 +179,20 @@ fun ExperimentalPage(
                             )
                             onRestartAppRequest()
                         }
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+        }
+
+        ExpressiveSection(title = "Crash handler") {
+            VerticalSegmentor(
+                {
+                    ExpressiveButtonRow(
+                        title = "Test crash handler",
+                        description = "(by crashing)"
+                    ) {
+                        throw Exception("Did the crash handler test go well?")
                     }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)

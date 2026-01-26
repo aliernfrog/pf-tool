@@ -1,13 +1,20 @@
 package com.aliernfrog.pftool.util
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.PinDrop
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.ui.graphics.Color
+import androidx.navigation3.ui.NavDisplay
 import com.aliernfrog.pftool.R
-import io.github.aliernfrog.shared.ui.settings.SettingsDestination
-import io.github.aliernfrog.shared.ui.settings.category
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.screen.settings.category
 import io.github.aliernfrog.shared.util.SharedString
 
 object NavigationConstant {
@@ -16,6 +23,48 @@ object NavigationConstant {
 
 enum class Destination {
     MAPS
+}
+
+object UpdateScreenDestination
+
+val slideTransitionMetadata = NavDisplay.transitionSpec {
+    slideIntoContainer(
+        AnimatedContentTransitionScope.SlideDirection.Start
+    ) + fadeIn() togetherWith slideOutOfContainer(
+        AnimatedContentTransitionScope.SlideDirection.Start
+    ) + fadeOut()
+} + NavDisplay.popTransitionSpec {
+    slideIntoContainer(
+        AnimatedContentTransitionScope.SlideDirection.End
+    ) togetherWith slideOutOfContainer(
+        AnimatedContentTransitionScope.SlideDirection.End
+    )
+} + NavDisplay.predictivePopTransitionSpec {
+    slideIntoContainer(
+        AnimatedContentTransitionScope.SlideDirection.End
+    ) togetherWith slideOutOfContainer(
+        AnimatedContentTransitionScope.SlideDirection.End
+    )
+}
+
+val slideVerticalTransitionMetadata = NavDisplay.transitionSpec {
+    slideInVertically(
+        initialOffsetY = { it }
+    ) + fadeIn() togetherWith slideOutVertically(
+        targetOffsetY = { -it }
+    ) + fadeOut()
+} + NavDisplay.popTransitionSpec {
+    slideInVertically(
+        initialOffsetY = { -it }
+    ) + fadeIn() togetherWith slideOutVertically(
+        targetOffsetY = { -it }
+    ) + fadeOut()
+} + NavDisplay.predictivePopTransitionSpec {
+    slideInVertically(
+        initialOffsetY = { -it }
+    ) + fadeIn() togetherWith slideOutVertically(
+        targetOffsetY = { it }
+    ) + fadeOut()
 }
 
 class AppSettingsDestination {
