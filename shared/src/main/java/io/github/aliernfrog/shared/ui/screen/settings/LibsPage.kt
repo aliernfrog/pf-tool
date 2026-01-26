@@ -36,6 +36,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -72,7 +73,7 @@ fun LibsPage(
 
     val libs by produceLibraries(librariesJSONRes)
     val librarySheetState = rememberModalBottomSheetState()
-    var selectedLibrary by rememberSaveable {
+    var selectedLibrary by remember {
         mutableStateOf<Library?>(null)
     }
 
