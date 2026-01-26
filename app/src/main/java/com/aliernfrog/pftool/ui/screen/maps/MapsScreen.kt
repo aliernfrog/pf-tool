@@ -4,32 +4,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.data.PermissionData
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.ui.dialog.CustomMessageDialog
-import com.aliernfrog.pftool.ui.dialog.DeleteConfirmationDialog
 import com.aliernfrog.pftool.ui.screen.permissions.PermissionsScreen
 import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
+import io.github.aliernfrog.pftool_shared.data.PermissionData
+import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
+import io.github.aliernfrog.shared.ui.dialog.DeleteConfirmationDialog
+import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MapsScreen(
     map: MapFile?,
-    mapsViewModel: MapsViewModel = koinViewModel(),
-    onNavigateSettingsRequest: () -> Unit,
+    vm: MapsViewModel = koinViewModel(),
+    onNavigateRequest: (Any) -> Unit,
     onNavigateBackRequest: (() -> Unit)?
 ) {
     val permissions = remember { arrayOf(
         PermissionData(
             title = R.string.permissions_maps,
-            pref = mapsViewModel.prefs.pfMapsDir,
+            pref = vm.prefs.pfMapsDir,
             recommendedPathDescription = R.string.permissions_maps_recommended,
             recommendedPathWarning = R.string.permissions_maps_openPFToCreate,
             useUnrecommendedAnywayDescription = R.string.permissions_maps_useUnrecommendedAnyway,
@@ -39,7 +39,7 @@ fun MapsScreen(
         ),
         PermissionData(
             title = R.string.permissions_exportedMaps,
-            pref = mapsViewModel.prefs.exportedMapsDir,
+            pref = vm.prefs.exportedMapsDir,
             recommendedPathDescription = R.string.permissions_exportedMaps_recommended,
             forceRecommendedPath = false,
             content = {
@@ -51,11 +51,13 @@ fun MapsScreen(
     PermissionsScreen(
         *permissions,
         title = stringResource(R.string.maps),
-        onNavigateSettingsRequest = onNavigateSettingsRequest
+        onNavigateRequest = onNavigateRequest
     ) {
         MapsScreenSafePermissions(
             map = map,
-            onNavigateSettingsRequest = onNavigateSettingsRequest,
+            onNavigateSettingsRequest = {
+                onNavigateRequest(SettingsDestination.root)
+            },
             onNavigateBackRequest = onNavigateBackRequest
         )
     }
@@ -64,16 +66,12 @@ fun MapsScreen(
 @Composable
 private fun MapsScreenSafePermissions(
     map: MapFile?,
-    mapsViewModel: MapsViewModel = koinViewModel(),
+    vm: MapsViewModel = koinViewModel(),
     onNavigateSettingsRequest: () -> Unit,
     onNavigateBackRequest: (() -> Unit)?
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        mapsViewModel.checkAndUpdateMapsFiles(context)
-    }
 
     if (map != null) MapDetailsScreen(
         map = map,
@@ -84,27 +82,27 @@ private fun MapsScreenSafePermissions(
         onBackClick = onNavigateBackRequest,
         onNavigateSettingsRequest = onNavigateSettingsRequest,
         onMapPick = {
-            mapsViewModel.viewMapDetails(it)
+            vm.viewMapDetails(it)
         }
     )
 
-    mapsViewModel.customDialogTitleAndText?.let { (title, text) ->
+    vm.customDialogTitleAndText?.let { (title, text) ->
         CustomMessageDialog(
             title = title,
             text = text,
             icon = Icons.Default.PriorityHigh,
             onDismissRequest = {
-                mapsViewModel.customDialogTitleAndText = null
+                vm.customDialogTitleAndText = null
             }
         )
     }
 
-    mapsViewModel.mapsPendingDelete?.let { maps ->
+    vm.mapsPendingDelete?.let { maps ->
         DeleteConfirmationDialog(
             name = maps.joinToString(", ") { it.name },
-            onDismissRequest = { mapsViewModel.mapsPendingDelete = null },
+            onDismissRequest = { vm.mapsPendingDelete = null },
             onConfirmDelete = { scope.launch {
-                mapsViewModel.deletePendingMaps(context)
+                vm.deletePendingMaps(context)
             } }
         )
     }

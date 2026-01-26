@@ -78,11 +78,11 @@
     <string name="mapsList_count">{COUNT} map</string>
     <string name="mapsList_storage">Pamięć</string>
     <string name="mapsList_imported">Twoje mapy</string>
+    <string name="mapsList_imported_noMaps">Nie posiadasz żadnych map</string>
     <string name="mapsList_exported">Wyeksportowane mapy</string>
+    <string name="mapsList_exported_noMaps">Nie masz żadnych wyeksportowanych map</string>
     <string name="mapsList_shared">Udostępnione</string>
-    <string name="mapsList_noImportedMaps">Nie posiadasz żadnych map</string>
-    <string name="mapsList_noExportedMaps">Nie masz żadnych wyeksportowanych map</string>
-    <string name="mapsList_noSharedMaps">Nie udostępniłeś żadnych map do PF Tool</string>
+    <string name="mapsList_shared_noMaps">Nie udostępniłeś żadnych map do PF Tool</string>
     <string name="mapsList_searchNoMatches">Nie znaleziono pasujących map</string>
     <string name="settings">Ustawienia</string>
     <string name="settings_updateNotification_updateAvailable">Dostępna aktualizacja: {VERSION}</string>
@@ -121,11 +121,9 @@
     <string name="settings_experimental">Ustawienia eksperymentalne</string>
     <string name="settings_experimental_enabled">Ustawienia eksperymentalne włączone!</string>
     <string name="settings_experimental_description">Te ustawienia nie są przeznaczone do normalnego użytku i mogą zepsuć PF Tool w przypadku niewłaściwego użycia</string>
-    <string name="updates_updateAvailable">Dostępna jest aktualizacja PF Tool! Kliknij, aby uzyskać więcej informacji</string>
+    <string name="updates_prerelease">Wersja wstępna</string>
     <string name="updates_noUpdates">Brak dostępnych aktualizacji</string>
-    <string name="updates_error">Coś poszło nie tak podczas szukania aktualizacji</string>
-    <string name="updates_stable">Wersja stabilna</string>
-    <string name="updates_preRelease">Wersja wstępna</string>
-    <string name="updates_openInGithub">Pokaż w GitHub</string>
     <string name="updates_update">Aktualizuj</string>
+    <string name="updates_updateAvailable">Dostępna jest aktualizacja PF Tool! Kliknij, aby uzyskać więcej informacji</string>
+    <string name="updates_error">Coś poszło nie tak podczas szukania aktualizacji</string>
 </resources>
