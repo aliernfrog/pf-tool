@@ -1,5 +1,15 @@
 [
   {
+    "versionName": "v2.1.1",
+    "versionCode": 201100,
+    "prerelease": false,
+    "minSdk": 21,
+    "body": "### 🐛 Bug Fixes\n- [`62c64f5`](https://github.com/aliernfrog/pf-tool/commit/62c64f53731a65794f1dd265f312d5a069bd95c0) - **Maps**: Prevent crash when maps folder is not a directory, inform the user instead *(commit by @aliernfrog)*",
+    "createdAt": 1769631898000,
+    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.1.1",
+    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.1.1/pftool.apk"
+  },
+  {
     "versionName": "v2.1.0",
     "versionCode": 201000,
     "prerelease": false,
