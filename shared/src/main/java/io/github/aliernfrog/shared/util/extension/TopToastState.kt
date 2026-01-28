@@ -5,10 +5,17 @@ import androidx.compose.material.icons.rounded.PriorityHigh
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
 
-fun TopToastState.showErrorToast(text: Any) {
+fun TopToastState.showErrorToast(
+    text: Any,
+    duration: Long = 3000,
+    onToastClick: (() -> Unit)? = null
+) {
     showToast(
         text = text,
         icon = Icons.Rounded.PriorityHigh,
-        iconTintColor = TopToastColor.ERROR
+        iconTintColor = TopToastColor.ERROR,
+        duration = duration,
+        swipeToDismiss = onToastClick != null,
+        onToastClick = onToastClick
     )
 }

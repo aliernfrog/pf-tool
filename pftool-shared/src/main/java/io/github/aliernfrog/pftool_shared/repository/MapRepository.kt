@@ -13,6 +13,7 @@ class MapRepository(
     private val importedMapsFinder: MapFileFinder,
     private val exportedMapsFinder: MapFileFinder,
     private val getFileAsMapFile: (FileWrapper) -> IMapFile,
+    private val onError: (Context, MapFileFinder) -> Unit,
     private val fileRepository: FileRepository
 ) {
     private val _importedMaps = MutableStateFlow(listOf<IMapFile>())
@@ -44,7 +45,8 @@ class MapRepository(
             exportedMapsFinder to _exportedMaps
         ).forEach { (finder, listStateFlow) ->
             fileRepository.getFile(finder.pathPref().value, context)?.let { file ->
-                listStateFlow.value = file.listFiles()
+                if (file.isFile || !file.exists()) onError(context, finder)
+                else listStateFlow.value = file.listFiles()
                     .filter { finder.isMapFile(it) }
                     .map { getFileAsMapFile(it) }
             }
