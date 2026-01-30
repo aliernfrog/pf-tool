@@ -6,6 +6,8 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -36,6 +38,7 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +56,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -266,8 +270,8 @@ fun MediaOverlay(
             data.toolbarContent?.let { toolbarContent ->
                 AnimatedVisibility(
                     visible = showOverlay,
-                    enter = slideInVertically { it } + fadeIn(),
-                    exit = slideOutVertically { it } + fadeOut(),
+                    enter = slideInVertically { it } + fadeIn() + scaleIn(),
+                    exit = slideOutVertically { it } + fadeOut() + scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .systemBarsPadding()
@@ -275,7 +279,11 @@ fun MediaOverlay(
                 ) {
                     HorizontalFloatingToolbar(
                         expanded = true,
-                        content = toolbarContent
+                        content = toolbarContent,
+                        modifier = Modifier.shadow(
+                            elevation = 6.dp,
+                            shape = FloatingToolbarDefaults.ContainerShape
+                        )
                     )
                 }
             }

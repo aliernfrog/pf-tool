@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         fun AppTheme(content: @Composable () -> Unit) {
             PFToolTheme(
                 darkTheme = useDarkTheme,
+                useLightSystemBars = !useDarkTheme && mainViewModel.mediaOverlayData == null,
                 dynamicColors = mainViewModel.prefs.materialYou.value,
                 pitchBlack = mainViewModel.prefs.pitchBlack.value,
                 content = content
