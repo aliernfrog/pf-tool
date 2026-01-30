@@ -23,7 +23,6 @@ class PFToolSharedString(override val key: String) : SharedString(key) {
     data object ListStyleGridMaxLineSpan : SharedString("list_style_gridMaxLineSpan")
 
     data object Maps : SharedString("maps")
-    data object MapsFailedToLoadNotADirectory : SharedString("maps_failedToLoad_notADirectory")
     data object MapsMapName : SharedString("maps_mapName")
     data object MapsMapNameGuide : SharedString("maps_mapName_guide")
     data object MapsThumbnail : SharedString("maps_thumbnail")
