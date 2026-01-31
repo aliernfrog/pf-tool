@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
-import com.aliernfrog.pftool.ui.viewmodel.MainViewModel
-import com.aliernfrog.pftool.ui.viewmodel.MapsViewModel
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
@@ -13,8 +11,8 @@ import io.github.aliernfrog.pftool_shared.data.MapActionResult
 import io.github.aliernfrog.pftool_shared.enum.MapImportedState
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
+import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
-import io.github.aliernfrog.shared.di.getKoinInstance
 import io.github.aliernfrog.shared.impl.ContextUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -37,14 +35,16 @@ class MapFile(
         )
     }
 
-    val vm by inject<MapsViewModel>()
+    val mapsState by inject<MapsState>()
+    val appState by inject<AppState>()
+    val progressState by inject<ProgressState>()
     val topToastState by inject<TopToastState>()
     override val contextUtils by inject<ContextUtils>()
 
     val isZip: Boolean = fileName.lowercase().endsWith(".zip")
 
-    override val importedState = if (path.startsWith(vm.mapsDir)) MapImportedState.IMPORTED
-    else if (path.startsWith(vm.exportedMapsDir)) MapImportedState.EXPORTED
+    override val importedState = if (path.startsWith(mapsState.mapsDir)) MapImportedState.IMPORTED
+    else if (path.startsWith(mapsState.exportedMapsDir)) MapImportedState.EXPORTED
     else MapImportedState.NONE
 
     private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZip) null
@@ -89,12 +89,12 @@ class MapFile(
         withName: String
     ): MapActionResult {
         if (importedState == MapImportedState.IMPORTED) return MapActionResult(successful = false)
-        var outputFolder = vm.getMapsFile(context)!!.findFile(withName)
+        var outputFolder = mapsState.getMapsFile(context)!!.findFile(withName)
         if (outputFolder?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
         )
-        outputFolder = vm.getMapsFile(context)!!.createDirectory(withName)!!
+        outputFolder = mapsState.getMapsFile(context)!!.createDirectory(withName)!!
         val fileInputStream = file.inputStream(context)
         val zipInputStream = ZipInputStream(fileInputStream)
         var currentEntry: ZipEntry?
@@ -110,7 +110,7 @@ class MapFile(
         }
         return MapActionResult(
             successful = true,
-            newFile = vm.getMapsFile(context)!!.findFile(withName)
+            newFile = mapsState.getMapsFile(context)!!.findFile(withName)
         )
     }
 
@@ -120,12 +120,12 @@ class MapFile(
     ): MapActionResult {
         if (importedState == MapImportedState.EXPORTED) return MapActionResult(successful = false)
         val zipName = "$withName.zip"
-        var outputFile = vm.getExportedMapsFile(context)!!.findFile(zipName)
+        var outputFile = mapsState.getExportedMapsFile(context)!!.findFile(zipName)
         if (outputFile?.exists() == true) return MapActionResult(
             successful = false,
             message = R.string.maps_alreadyExists
         )
-        outputFile = vm.getExportedMapsFile(context)!!.createFile(zipName)!!
+        outputFile = mapsState.getExportedMapsFile(context)!!.createFile(zipName)!!
         outputFile.outputStream(context)!!.use { os ->
             ZipOutputStream(os).use { zos ->
                 file.listFiles().filter {
@@ -139,7 +139,7 @@ class MapFile(
         }
         return MapActionResult(
             successful = true,
-            newFile = vm.getExportedMapsFile(context)!!.findFile(zipName)
+            newFile = mapsState.getExportedMapsFile(context)!!.findFile(zipName)
         )
     }
 
@@ -147,7 +147,7 @@ class MapFile(
         context: Context,
         withName: String
     ): MapActionResult {
-        val uri = getKoinInstance<MainViewModel>().safZipFileCreator.createFile(suggestedName = withName)
+        val uri = appState.safZipFileCreator.createFile(suggestedName = withName)
             ?: return MapActionResult(
                 successful = false,
                 message = R.string.maps_exportCustomTarget_cancelled

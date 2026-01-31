@@ -2,6 +2,8 @@ package com.aliernfrog.pftool.di
 
 import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.TAG
+import com.aliernfrog.pftool.impl.AppState
+import com.aliernfrog.pftool.impl.MapsState
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.shared.impl.VersionManager
@@ -10,6 +12,8 @@ import org.koin.dsl.module
 
 val appModule = module {
     singleOf(::PreferenceManager)
+    singleOf(::AppState)
+    singleOf(::MapsState)
 
     single {
         get<PreferenceManager>().let { prefs ->
