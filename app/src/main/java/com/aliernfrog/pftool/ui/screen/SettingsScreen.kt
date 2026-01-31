@@ -29,6 +29,8 @@ import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsRootPage
 import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.res.stringResource
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,8 +70,8 @@ fun SettingsScreen(
             StoragePage(
                 storageAccessTypePref = vm.prefs.storageAccessType,
                 folderPrefs = mapOf(
-                    context.getString(R.string.settings_storage_folders_maps) to vm.prefs.pfMapsDir,
-                    context.getString(R.string.settings_storage_folders_exportedMaps) to vm.prefs.exportedMapsDir
+                    stringResource(R.string.settings_storage_folders_maps) to vm.prefs.pfMapsDir,
+                    stringResource(R.string.settings_storage_folders_exportedMaps) to vm.prefs.exportedMapsDir
                 ),
                 onEnableStorageAccessTypeRequest = { it.enable() },
                 onNavigateBackRequest = onNavigateBackRequest
@@ -141,6 +143,7 @@ fun SettingsScreen(
 
         SettingsDestination.libs -> {
             LibsPage(
+                librariesJSONRes = R.raw.aboutlibraries,
                 onNavigateBackRequest = onNavigateBackRequest
             )
         }
