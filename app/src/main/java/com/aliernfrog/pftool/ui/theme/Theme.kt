@@ -26,6 +26,7 @@ import io.github.aliernfrog.shared.ui.theme.supportsMaterialYou
 @Composable
 fun PFToolTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    useLightSystemBars: Boolean = !darkTheme,
     dynamicColors: Boolean = true,
     pitchBlack: Boolean = false,
     content: @Composable () -> Unit
@@ -60,8 +61,8 @@ fun PFToolTheme(
             activity.window.isNavigationBarContrastEnforced = false
         }
 
-        insetsController.isAppearanceLightStatusBars = !darkTheme
-        insetsController.isAppearanceLightNavigationBars = !darkTheme
+        insetsController.isAppearanceLightStatusBars = useLightSystemBars
+        insetsController.isAppearanceLightNavigationBars = useLightSystemBars
     }
 
     MaterialExpressiveTheme(

@@ -3,6 +3,7 @@ package io.github.aliernfrog.pftool_shared.ui.viewmodel
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,9 +12,11 @@ import androidx.lifecycle.ViewModel
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import androidx.core.net.toUri
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.util.extension.appHasPermissions
+import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 
 class IPermissionsViewModel(
@@ -59,8 +62,17 @@ class IPermissionsViewModel(
         vararg permissionsData: PermissionData,
         context: Context
     ): List<PermissionData> {
-        return permissionsData.filter {
-            !it.pref.value.toUri().appHasPermissions(context)
+        return permissionsData.filterNot {
+            val uri = it.pref.value.toUri()
+            if (!uri.appHasPermissions(context)) return@filterNot false
+            try {
+                val file = DocumentFileCompat.fromTreeUri(context, uri)
+                val isDirectory = file != null && file.exists() && !file.isFile()
+                isDirectory
+            } catch (e: Exception) {
+                Log.e(TAG, "getMissingUriPermissions: $uri", e)
+                true // let it pass if we get errors
+            }
         }
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -45,7 +44,6 @@ class MainActivity : AppCompatActivity() {
     ) {
         val context = LocalContext.current
         val view = LocalView.current
-        val scope = rememberCoroutineScope()
         val useDarkTheme = shouldUseDarkTheme(mainViewModel.prefs.theme.value)
         var isAppInitialized by rememberSaveable { mutableStateOf(false) }
 
@@ -53,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         fun AppTheme(content: @Composable () -> Unit) {
             PFToolTheme(
                 darkTheme = useDarkTheme,
+                useLightSystemBars = !useDarkTheme && mainViewModel.mediaOverlayData == null,
                 dynamicColors = mainViewModel.prefs.materialYou.value,
                 pitchBlack = mainViewModel.prefs.pitchBlack.value,
                 content = content
@@ -75,8 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         LaunchedEffect(Unit) {
-            mainViewModel.scope = scope
-            mainViewModel.safZipFileCreator = safZipFileCreator
+            mainViewModel.setSafZipFileCreator(safZipFileCreator)
             mainViewModel.topToastState.setComposeView(view)
             if (isAppInitialized) return@LaunchedEffect
 

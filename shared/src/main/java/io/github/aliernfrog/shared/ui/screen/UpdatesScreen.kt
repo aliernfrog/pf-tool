@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
@@ -81,6 +83,7 @@ fun UpdatesScreen(
     val lazyListState = rememberLazyListState()
     val uriHandler = LocalUriHandler.current
     val updateAvailable = availableUpdates.isNotEmpty()
+    val latestReleaseInfo = availableUpdates.firstOrNull() ?: currentVersionInfo
     var showExtendedToolbar by remember { mutableStateOf(true) }
 
     LazyListScrollAccessibilityListener(
@@ -186,13 +189,17 @@ fun UpdatesScreen(
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = FloatingToolbarDefaults.ContainerShape
+                    )
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     OutlinedButton(
                         onClick = {
-                            uriHandler.openUri(currentVersionInfo.htmlUrl)
+                            uriHandler.openUri(latestReleaseInfo.htmlUrl)
                         },
                         shapes = ButtonDefaults.shapes()
                     ) {
@@ -213,7 +220,7 @@ fun UpdatesScreen(
                         targetState = updateAvailable
                     ) { showUpdate ->
                         if (showUpdate) Button(
-                            onClick = { uriHandler.openUri(currentVersionInfo.downloadUrl) },
+                            onClick = { uriHandler.openUri(latestReleaseInfo.downloadUrl) },
                             shapes = ButtonDefaults.shapes()
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.Update))

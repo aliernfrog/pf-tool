@@ -30,7 +30,7 @@ val mapActions = listOf(
         execute = { context, maps, args ->
             val first = maps.first() as MapFile
             val newName = args.resolveMapName(fallback = first.name)
-            first.vm.activeProgress = Progress(
+            first.progressState.currentProgress = Progress(
                 description = context.getString(R.string.maps_renaming)
                     .replace("{NAME}", first.name)
                     .replace("{NEW_NAME}", newName)
@@ -41,7 +41,7 @@ val mapActions = listOf(
                     text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
-                    first.vm.viewMapDetails(it)
+                    first.mapsState.viewMapDetails(it)
                 }
                 first.topToastState.showToast(
                     text = context.getString(result.message ?: R.string.maps_renamed)
@@ -49,8 +49,8 @@ val mapActions = listOf(
                     icon = Icons.Rounded.Edit
                 )
             }
-            first.vm.activeProgress = null
-            first.vm.loadMaps(context)
+            first.progressState.currentProgress = null
+            first.mapsState.loadMaps(context)
         }
     ),
 
@@ -63,7 +63,7 @@ val mapActions = listOf(
         execute = { context, maps, args ->
             val first = maps.first() as MapFile
             val newName = args.resolveMapName(fallback = first.name)
-            first.vm.activeProgress = Progress(
+            first.progressState.currentProgress = Progress(
                 description = context.getString(R.string.maps_duplicating)
                     .replace("{NAME}", first.name)
                     .replace("{NEW_NAME}", newName)
@@ -74,7 +74,7 @@ val mapActions = listOf(
                     text = result.message ?: R.string.warning_error
                 )
                 result.newFile?.let {
-                    first.vm.viewMapDetails(it)
+                    first.mapsState.viewMapDetails(it)
                 }
                 first.topToastState.showToast(
                     text = context.getString(result.message ?: R.string.maps_duplicated)
@@ -82,8 +82,8 @@ val mapActions = listOf(
                     icon = Icons.Rounded.FileCopy
                 )
             }
-            first.vm.activeProgress = null
-            first.vm.loadMaps(context)
+            first.progressState.currentProgress = null
+            first.mapsState.loadMaps(context)
         }
     ),
 
@@ -153,7 +153,7 @@ val mapActions = listOf(
         execute = { context, maps, args ->
             val first = maps.first() as MapFile
             val withName = args.resolveMapName(fallback = first.name)
-            first.vm.activeProgress = Progress(
+            first.progressState.currentProgress = Progress(
                 description = context.getString(R.string.maps_exportCustomTarget_exporting)
                     .replace("{NAME}", first.name)
             )
@@ -165,9 +165,9 @@ val mapActions = listOf(
                     icon = Icons.AutoMirrored.Filled.AddToHomeScreen
                 )
                 else first.topToastState.showErrorToast(result.message ?: R.string.warning_error)
-                result.newFile?.let { first.vm.viewMapDetails(it) }
+                result.newFile?.let { first.mapsState.viewMapDetails(it) }
             }
-            first.vm.activeProgress = null
+            first.progressState.currentProgress = null
         }
     ),
 
@@ -181,13 +181,13 @@ val mapActions = listOf(
         execute = { context, maps, _ ->
             val first = maps.first() as MapFile
             val files = maps.map { it.file }
-            first.vm.activeProgress = Progress(
+            first.progressState.currentProgress = Progress(
                 description = context.getString(R.string.info_sharing)
             )
             first.runInIOThreadSafe {
                 FileUtil.shareFiles(*files.toTypedArray(), context = context)
             }
-            first.vm.activeProgress = null
+            first.progressState.currentProgress = null
         }
     ),
 
@@ -201,7 +201,7 @@ val mapActions = listOf(
         availableForMultiSelection = true,
         execute = { _, maps, _ ->
             maps as List<MapFile>
-            maps.first().vm.mapsPendingDelete = maps.toList()
+            maps.first().mapsState.mapsPendingDelete = maps.toList()
         }
     )
 )
@@ -235,12 +235,12 @@ private suspend fun runIOAction(
         )
     }
 
-    first.vm.activeProgress = getProgress()
+    first.progressState.currentProgress = getProgress()
     first.runInIOThreadSafe {
         val results = maps.map {
             val executionResult = result(it)
             passedProgress++
-            first.vm.activeProgress = getProgress()
+            first.progressState.currentProgress = getProgress()
             it.name to executionResult
         }
         if (isSingle) results.first().let { (mapName, result) ->
@@ -250,19 +250,19 @@ private suspend fun runIOAction(
             ) else first.topToastState.showErrorToast(
                 text = context.getString(result.message ?: R.string.warning_error)
             )
-            result.newFile?.let { first.vm.viewMapDetails(it) }
+            result.newFile?.let { first.mapsState.viewMapDetails(it) }
         } else {
             val successes = results.filter { it.second.successful }
             val fails = results.filter { !it.second.successful }
             if (fails.isEmpty()) first.topToastState.showToast(
                 text = context.getString(multipleSuccessMessageId).replace("{COUNT}", successes.size.toString()),
                 icon = successIcon
-            ) else first.vm.showActionFailedDialog(
+            ) else first.mapsState.showActionFailedDialog(
                 successes = successes,
                 fails = fails
             )
         }
     }
-    first.vm.loadMaps(context)
-    first.vm.activeProgress = null
+    first.mapsState.loadMaps(context)
+    first.progressState.currentProgress = null
 }

@@ -1,6 +1,5 @@
 package io.github.aliernfrog.pftool_shared.di
 
-import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
@@ -13,10 +12,6 @@ import io.github.aliernfrog.pftool_shared.repository.MapRepository
 import io.github.aliernfrog.pftool_shared.repository.ServiceFileRepository
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IMapsListViewModel
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
-import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
-import io.github.aliernfrog.shared.di.getKoinInstance
-import io.github.aliernfrog.shared.util.extension.showErrorToast
-import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -35,8 +30,7 @@ fun getPFToolSharedModule(
     shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
     storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
-    onSetStorageAccessType: (StorageAccessType) -> Unit,
-    onNavigateStorageSettings: () -> Unit
+    onSetStorageAccessType: (StorageAccessType) -> Unit
 ): Module = module {
     singleOf(::ProgressState)
 
@@ -87,16 +81,6 @@ fun getPFToolSharedModule(
             importedMapsFinder = importedMapsFinder,
             exportedMapsFinder = exportedMapsFinder,
             getFileAsMapFile = getFileAsMapFile,
-            onError = { context, finder ->
-                getKoinInstance<TopToastState>().showErrorToast(
-                    text = context.getSharedString(PFToolSharedString.MapsFailedToLoadNotADirectory)
-                        .replace("{NAME}", finder.pathPref().key),
-                    duration = 30000,
-                    onToastClick = {
-                        onNavigateStorageSettings()
-                    }
-                )
-            },
             fileRepository = get()
         )
     }
