@@ -591,7 +591,7 @@ private fun MultiSelectionDropdown(
                 ) else MenuDefaults.itemColors(),
                 onClick = { scope.launch {
                     onDismissRequest(false)
-                    action.execute(context, maps, DefaultMapActionArguments())
+                    action.execute(context, maps.toList(), DefaultMapActionArguments())
                     onDismissRequest(true) // clear selection
                 } }
             )
