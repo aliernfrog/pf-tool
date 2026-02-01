@@ -29,12 +29,11 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AllFilesPermissionsScreen(
-    vm: IPermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel,
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current

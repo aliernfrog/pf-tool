@@ -12,9 +12,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
-import com.aliernfrog.pftool.impl.AppState
+import com.aliernfrog.pftool.domain.AppState
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.impl.MapsState
+import com.aliernfrog.pftool.domain.MapsState
 import com.aliernfrog.pftool.util.UpdateScreenDestination
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
@@ -36,9 +36,9 @@ class MainViewModel(
     val prefs: PreferenceManager,
     private val appState: AppState,
     private val mapsState: MapsState,
-    val topToastState: TopToastState,
     val progressState: ProgressState,
-    val versionManager: VersionManager,
+    val topToastState: TopToastState,
+    val versionManager: VersionManager
 ) : ViewModel() {
     val navigationBackStack
         get() = appState.navigationBackStack
@@ -53,6 +53,7 @@ class MainViewModel(
 
     init {
         prefs.lastKnownInstalledVersion.value = versionManager.currentVersionCode
+        if (prefs.autoCheckUpdates.value) checkUpdates()
     }
 
     fun checkUpdates(

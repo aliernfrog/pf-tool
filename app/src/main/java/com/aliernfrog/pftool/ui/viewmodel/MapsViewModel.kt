@@ -8,9 +8,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.impl.AppState
+import com.aliernfrog.pftool.domain.AppState
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.impl.MapsState
+import com.aliernfrog.pftool.domain.MapsState
 import com.aliernfrog.pftool.ui.component.widget.media_overlay.ThumbnailToolbarContent
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil

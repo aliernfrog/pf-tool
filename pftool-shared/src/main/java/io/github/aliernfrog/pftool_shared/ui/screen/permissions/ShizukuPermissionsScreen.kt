@@ -51,13 +51,12 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.util.sharedStringResource
-import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShizukuPermissionsScreen(
-    vm: IPermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel,
     onRestartAppRequest: () -> Unit,
     onUpdateStateRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit

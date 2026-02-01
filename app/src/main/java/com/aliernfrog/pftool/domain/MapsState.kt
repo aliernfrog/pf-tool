@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.impl
+package com.aliernfrog.pftool.domain
 
 import android.content.Context
 import android.util.Log
@@ -7,10 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
+import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.util.extension.showErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.MapActionResult
+import io.github.aliernfrog.pftool_shared.data.getDefaultMapsListSegments
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.repository.MapRepository
 import io.github.aliernfrog.shared.impl.ContextUtils
@@ -25,10 +27,17 @@ class MapsState(
 ) {
     val mapsDir: String
         get() = prefs.pfMapsDir.value
+
     val exportedMapsDir: String
         get() = prefs.exportedMapsDir.value
+
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
+    var availableSegments by mutableStateOf(
+        getDefaultMapsListSegments(
+            includeSharedMapsSegment = mapRepository.sharedMaps.value.isNotEmpty()
+        )
+    )
 
     fun viewMapDetails(map: Any) {
         try {
@@ -71,5 +80,8 @@ class MapsState(
 
     fun setSharedMaps(maps: List<MapFile>) {
         mapRepository.setSharedMaps(maps)
+        availableSegments = getDefaultMapsListSegments(
+            includeSharedMapsSegment = maps.isNotEmpty()
+        )
     }
 }

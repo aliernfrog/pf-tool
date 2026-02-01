@@ -1,4 +1,4 @@
-package com.aliernfrog.pftool.impl
+package com.aliernfrog.pftool.domain
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf

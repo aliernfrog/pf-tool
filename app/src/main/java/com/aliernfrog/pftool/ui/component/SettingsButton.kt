@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
-import com.aliernfrog.pftool.impl.AppState
+import com.aliernfrog.pftool.domain.AppState
 import io.github.aliernfrog.shared.ui.component.PlainTextTooltipContainer
 import org.koin.compose.koinInject
 

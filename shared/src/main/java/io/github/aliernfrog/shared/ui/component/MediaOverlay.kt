@@ -69,14 +69,14 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import io.github.aliernfrog.shared.ui.component.form.DividerRow
 import io.github.aliernfrog.shared.data.MediaOverlayData
-import io.github.aliernfrog.shared.ui.viewmodel.InsetsViewModel
+import io.github.aliernfrog.shared.impl.InsetsManager
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -84,15 +84,14 @@ import kotlin.math.absoluteValue
 fun MediaOverlay(
     data: MediaOverlayData,
     showMediaOverlayGuidePref: BasePreferenceManager.Preference<Boolean>,
+    insetsManager: InsetsManager = koinInject<InsetsManager>(),
     onDismissRequest: () -> Unit
 ) {
-    val insetsViewModel = koinViewModel<InsetsViewModel>()
-
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val zoomState = rememberZoomState()
     val isZoomedIn = zoomState.scale > 1f
-    val isImeVisible = insetsViewModel.isImeVisible
+    val isImeVisible = insetsManager.isImeVisible
     val bottomSheetState = rememberStandardBottomSheetState(
         skipHiddenState = false
     )
