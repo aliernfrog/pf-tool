@@ -52,12 +52,11 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.sharedStringResource
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SAFPermissionsScreen(
     vararg permissionsData: PermissionData,
-    vm: IPermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel,
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -66,9 +65,11 @@ fun SAFPermissionsScreen(
             && !vm.ignoreDocumentsUIRestrictions
 
     AnimatedContent(needsToDowngradeFiles) {
-        if (it) DowngradeFiles()
+        if (it) DowngradeFiles(vm)
         else SAFPermissionsList(
-            *permissionsData, onUpdateStateRequest = onUpdateStateRequest
+            *permissionsData,
+            vm = vm,
+            onUpdateStateRequest = onUpdateStateRequest
         )
     }
 }
@@ -76,7 +77,7 @@ fun SAFPermissionsScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DowngradeFiles(
-    vm: IPermissionsViewModel = koinViewModel()
+    vm: IPermissionsViewModel
 ) {
     Column(
         modifier = Modifier
@@ -121,7 +122,7 @@ private fun DowngradeFiles(
 @Composable
 private fun SAFPermissionsList(
     vararg permissionsData: PermissionData,
-    vm: IPermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel,
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current

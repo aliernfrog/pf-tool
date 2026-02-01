@@ -88,11 +88,13 @@ fun PermissionsScreen(
                 when (method) {
                     StorageAccessType.SAF -> SAFPermissionsScreen(
                         *permissionsData,
+                        vm = vm,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
                     )
                     StorageAccessType.SHIZUKU -> ShizukuPermissionsScreen(
+                        vm = vm,
                         onRestartAppRequest = onRestartAppRequest,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
@@ -100,6 +102,7 @@ fun PermissionsScreen(
                         onNavigateStorageSettingsRequest = onNavigateStorageSettingsRequest
                     )
                     StorageAccessType.ALL_FILES -> AllFilesPermissionsScreen(
+                        vm = vm,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }

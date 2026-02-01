@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.aliernfrog.shared.ui.viewmodel.InsetsViewModel
+import io.github.aliernfrog.shared.impl.InsetsManager
 import io.github.aliernfrog.shared.util.extension.isAnyVisible
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +61,7 @@ fun AppModalBottomSheet(
 @Composable
 fun BaseModalBottomSheet(
     sheetState: SheetState,
-    insetsViewModel: InsetsViewModel = koinViewModel(),
+    insetsViewModel: InsetsManager = koinInject(),
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     content: @Composable ColumnScope.(bottomPadding: Dp) -> Unit
 ) {

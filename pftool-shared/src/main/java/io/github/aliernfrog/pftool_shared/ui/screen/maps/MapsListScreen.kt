@@ -95,6 +95,7 @@ import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.component.util.AnimatedContentShadowWorkaround
 import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
@@ -273,31 +274,23 @@ fun MapsListScreen(
             }
         },
         floatingActionButton = {
-            AnimatedContent(
+            AnimatedContentShadowWorkaround(
                 targetState = !isMultiSelecting,
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
-                    .offset(x = 16.dp, y = 16.dp)
+                modifier = Modifier.navigationBarsPadding()
             ) { showStorage ->
-                Box(
-                    // padding so that FAB shadow doesnt get cropped
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    if (showStorage) {
-                        FloatingActionButton(
-                            icon = Icons.Outlined.SdCard,
-                            text = sharedStringResource(PFToolSharedString.MapsListStorage),
-                            showText = showFABLabel,
-                            onClick = {
-                                val intent =
-                                    Intent(Intent.ACTION_GET_CONTENT).setType(fileMimeType)
-                                launcher.launch(intent)
-                            }
-                        )
-                    } else multiSelectFloatingActionButton(selectedMaps) {
-                        selectedMaps.clear()
-                    }
+                if (showStorage) {
+                    FloatingActionButton(
+                        icon = Icons.Outlined.SdCard,
+                        text = sharedStringResource(PFToolSharedString.MapsListStorage),
+                        showText = showFABLabel,
+                        onClick = {
+                            val intent =
+                                Intent(Intent.ACTION_GET_CONTENT).setType(fileMimeType)
+                            launcher.launch(intent)
+                        }
+                    )
+                } else multiSelectFloatingActionButton(selectedMaps) {
+                    selectedMaps.clear()
                 }
             }
         }
@@ -591,7 +584,7 @@ private fun MultiSelectionDropdown(
                 ) else MenuDefaults.itemColors(),
                 onClick = { scope.launch {
                     onDismissRequest(false)
-                    action.execute(context, maps, DefaultMapActionArguments())
+                    action.execute(context, maps.toList(), DefaultMapActionArguments())
                     onDismissRequest(true) // clear selection
                 } }
             )

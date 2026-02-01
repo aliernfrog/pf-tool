@@ -9,12 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import io.github.aliernfrog.shared.ui.viewmodel.InsetsViewModel
-import org.koin.androidx.compose.koinViewModel
+import io.github.aliernfrog.shared.impl.InsetsManager
+import org.koin.compose.koinInject
 
 @Composable
 fun InsetsObserver(
-    insetsViewModel: InsetsViewModel = koinViewModel()
+    insetsManager: InsetsManager = koinInject()
 ) {
     val density = LocalDensity.current
     fun toDp(pxs: Int): Dp {
@@ -27,7 +27,7 @@ fun InsetsObserver(
     Spacer(
         modifier = Modifier
             .onSizeChanged {
-                insetsViewModel.topPadding = toDp(it.height)
+                insetsManager.topPadding = toDp(it.height)
             }
             .statusBarsPadding()
     )
@@ -36,7 +36,7 @@ fun InsetsObserver(
     Spacer(
         modifier = Modifier
             .onSizeChanged {
-                insetsViewModel.bottomPadding = toDp(it.height)
+                insetsManager.bottomPadding = toDp(it.height)
             }
             .navigationBarsPadding()
     )
@@ -45,7 +45,7 @@ fun InsetsObserver(
     Spacer(
         modifier = Modifier
             .onSizeChanged {
-                insetsViewModel.imePadding = toDp(it.height)
+                insetsManager.imePadding = toDp(it.height)
             }
             .imePadding()
     )
