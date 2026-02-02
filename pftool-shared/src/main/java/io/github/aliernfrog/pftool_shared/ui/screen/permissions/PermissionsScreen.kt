@@ -12,8 +12,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -155,14 +157,15 @@ fun PermissionsScreenAction(
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth().padding(12.dp)
     ) {
         icon?.let {
             ExpressiveRowIcon(
                 painter = rememberVectorPainter(it),
-                iconSize = 40.dp
+                iconSize = 80.dp,
+                shape = MaterialShapes.PixelCircle.toShape()
             )
         }
 

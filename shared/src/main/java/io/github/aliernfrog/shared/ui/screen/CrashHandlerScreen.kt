@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.QuestionMark
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -59,6 +57,7 @@ import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
+import io.github.aliernfrog.shared.ui.component.SizedButton
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
@@ -140,64 +139,56 @@ fun CrashHandlerScreen(
                     .padding(horizontal = 12.dp, vertical = 16.dp)
             )
 
-            ButtonDefaults.MediumContainerHeight.let { size ->
-                Button(
-                    onClick = {
-                        reportState = ReportState.Sending
-                        scope.launch(Dispatchers.IO) {
-                            val response = sendCrashReport(
-                                toUrl = crashReportURL,
-                                app = context.getSharedString(SharedString.AppName),
-                                details = getCrashDetails()
-                            )
-                            scope.launch(Dispatchers.Main) {
-                                Toast.makeText(context,
-                                    if (response is ReportState.Error) "${response.body} (${response.statusCode})"
-                                    else context.getSharedString(SharedString.CrashHandlerSendReportSent),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                reportState = if (response is ReportState.Error) ReportState.NotSent else response
-                            }
+            SizedButton(
+                onClick = {
+                    reportState = ReportState.Sending
+                    scope.launch(Dispatchers.IO) {
+                        val response = sendCrashReport(
+                            toUrl = crashReportURL,
+                            app = context.getSharedString(SharedString.AppName),
+                            details = getCrashDetails()
+                        )
+                        scope.launch(Dispatchers.Main) {
+                            Toast.makeText(context,
+                                if (response is ReportState.Error) "${response.body} (${response.statusCode})"
+                                else context.getSharedString(SharedString.CrashHandlerSendReportSent),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            reportState = if (response is ReportState.Error) ReportState.NotSent else response
                         }
-                    },
-                    enabled = reportState is ReportState.NotSent,
-                    shapes = ButtonDefaults.shapes(),
-                    contentPadding = ButtonDefaults.contentPaddingFor(size),
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .heightIn(size)
+                    }
+                },
+                size = ButtonDefaults.MediumContainerHeight,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) { textStyle, iconSpacing, iconSize ->
+                Box(
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center
+                    val isSending = reportState is ReportState.Sending
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.alpha(
+                            if (isSending) 0f else 1f
+                        )
                     ) {
-                        val isSending = reportState is ReportState.Sending
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.alpha(
-                                if (isSending) 0f else 1f
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = null,
-                                modifier = Modifier.size(
-                                    ButtonDefaults.iconSizeFor(size)
-                                )
-                            )
-                            Spacer(Modifier.width(ButtonDefaults.iconSpacingFor(size)))
-                            Text(
-                                text = sharedStringResource(
-                                    if (reportState is ReportState.Sent) SharedString.CrashHandlerSendReportSent
-                                    else SharedString.CrashHandlerSendReport
-                                ),
-                                style = ButtonDefaults.textStyleFor(size)
-                            )
-                        }
-
-                        if (isSending) CircularProgressIndicator(
-                            modifier = Modifier.size(ButtonDefaults.iconSizeFor(size))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = null,
+                            modifier = Modifier.size(iconSize)
+                        )
+                        Spacer(Modifier.width(iconSpacing))
+                        Text(
+                            text = sharedStringResource(
+                                if (reportState is ReportState.Sent) SharedString.CrashHandlerSendReportSent
+                                else SharedString.CrashHandlerSendReport
+                            ),
+                            style = textStyle
                         )
                     }
+
+                    if (isSending) CircularProgressIndicator(
+                        modifier = Modifier.size(iconSize)
+                    )
                 }
             }
 

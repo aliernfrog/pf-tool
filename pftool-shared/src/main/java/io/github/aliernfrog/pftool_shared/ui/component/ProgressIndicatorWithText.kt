@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -75,7 +74,7 @@ private fun CircularProgress(
     color: Color? = null
 ) {
     progress?.float.let {
-        if (it == null || progress?.finished == true) return@let CircularProgressIndicator(
+        if (it == null || progress?.finished == true) return@let CircularWavyProgressIndicator(
             trackColor = color ?: ProgressIndicatorDefaults.circularIndeterminateTrackColor,
             modifier = modifier
         )
