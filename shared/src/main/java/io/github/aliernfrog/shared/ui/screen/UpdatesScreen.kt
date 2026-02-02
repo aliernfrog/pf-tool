@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -61,6 +62,7 @@ import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
+import io.github.aliernfrog.shared.ui.component.PlainTextTooltipContainer
 import io.github.aliernfrog.shared.ui.component.TextWithIcon
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
@@ -194,44 +196,80 @@ fun UpdatesScreen(
                         shape = FloatingToolbarDefaults.ContainerShape
                     )
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            uriHandler.openUri(latestReleaseInfo.htmlUrl)
-                        },
-                        shapes = ButtonDefaults.shapes()
+                @Composable
+                fun ToolbarContent(expandedOverride: Boolean?) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize)
-                        )
-                        AnimatedVisibility(showExtendedToolbar) {
-                            Text(
-                                text = sharedStringResource(SharedString.ActionOpenInBrowser),
-                                modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
-                            )
+                        PlainTextTooltipContainer(
+                            tooltipText = sharedStringResource(SharedString.ActionOpenInBrowser)
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    uriHandler.openUri(latestReleaseInfo.htmlUrl)
+                                },
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                                )
+                                AnimatedVisibility(
+                                    expandedOverride != false
+                                            && (expandedOverride == true || showExtendedToolbar)
+                                ) {
+                                    Text(
+                                        text = sharedStringResource(SharedString.ActionOpenInBrowser),
+                                        modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
+                                    )
+                                }
+                            }
+                        }
+
+                        AnimatedContent(
+                            targetState = updateAvailable
+                        ) { showUpdate ->
+                            if (showUpdate) Button(
+                                onClick = { uriHandler.openUri(latestReleaseInfo.downloadUrl) },
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                ButtonIcon(rememberVectorPainter(Icons.Default.Update))
+                                Text(sharedStringResource(SharedString.UpdatesUpdate))
+                            }
+                            else FilledTonalButton(
+                                onClick = onCheckUpdatesRequest,
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
+                                Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
+                            }
                         }
                     }
+                }
 
-                    AnimatedContent(
-                        targetState = updateAvailable
-                    ) { showUpdate ->
-                        if (showUpdate) Button(
-                            onClick = { uriHandler.openUri(latestReleaseInfo.downloadUrl) },
-                            shapes = ButtonDefaults.shapes()
-                        ) {
-                            ButtonIcon(rememberVectorPainter(Icons.Default.Update))
-                            Text(sharedStringResource(SharedString.UpdatesUpdate))
-                        }
-                        else FilledTonalButton(
-                            onClick = onCheckUpdatesRequest,
-                            shapes = ButtonDefaults.shapes()
-                        ) {
-                            ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
-                            Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
+                SubcomposeLayout { constraints ->
+                    val fullContentPlaceables = subcompose("fullContent") {
+                        ToolbarContent(expandedOverride = true)
+                    }.map { it.measure(constraints) }
+
+                    val fullWidth = fullContentPlaceables.sumOf { it.width } + 16.dp.roundToPx()
+
+                    val placeables = (if (fullWidth < constraints.maxWidth) subcompose("dynamic") {
+                        ToolbarContent(expandedOverride = null)
+                    } else subcompose("noLabels") {
+                        ToolbarContent(expandedOverride = false)
+                    }).map { it.measure(constraints) }
+
+                    val width = placeables.sumOf { it.width }
+                    val height = placeables.maxOfOrNull { it.height } ?: 0
+
+                    layout(width, height) {
+                        var xPos = 0
+                        placeables.forEach {
+                            it.placeRelative(xPos, 0)
+                            xPos += it.width
                         }
                     }
                 }
