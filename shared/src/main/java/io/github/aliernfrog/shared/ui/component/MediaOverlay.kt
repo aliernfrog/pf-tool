@@ -244,8 +244,8 @@ fun MediaOverlay(
                     }
                     MediaOverlayState.NO_IMAGE -> CenteredBox {
                         ErrorWithIcon(
-                            error = "",
-                            painter = rememberVectorPainter(Icons.Rounded.HideImage),
+                            description = "",
+                            icon = rememberVectorPainter(Icons.Rounded.HideImage),
                             contentColor = Color.White
                         )
                     }

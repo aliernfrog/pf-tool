@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.util.extension.showErrorToast
+import com.aliernfrog.pftool.util.extension.showReportableErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.data.MapActionResult
@@ -53,7 +53,7 @@ class MapsState(
             appState.navigationBackStack.add(mapFile)
         } catch (_: CancellationException) {}
         catch (e: Exception) {
-            topToastState.showErrorToast()
+            topToastState.showReportableErrorToast(e)
             Log.e(TAG, "MapsState/viewMapDetails: ", e)
         }
     }

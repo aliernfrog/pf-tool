@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -27,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.aliernfrog.pftool.SettingsConstant.supportLinks
+import com.aliernfrog.pftool.crashReportURL
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.ui.screen.SettingsScreen
 import com.aliernfrog.pftool.ui.screen.maps.MapsScreen
@@ -45,6 +48,7 @@ import io.github.aliernfrog.shared.ui.component.util.AppContainer
 import io.github.aliernfrog.shared.ui.component.util.InsetsObserver
 import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
+import io.github.aliernfrog.shared.ui.sheet.CrashDetailsSheet
 import io.github.aliernfrog.shared.ui.theme.Theme
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -93,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun App(vm: MainViewModel) {
         val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
@@ -174,6 +179,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 )
             }
+
+            CrashDetailsSheet(
+                throwable = vm.lastCaughtException,
+                crashReportURL = crashReportURL,
+                debugInfo = vm.versionManager.getDebugInfo(),
+                supportLinks = supportLinks
+            )
 
             vm.progressState.currentProgress?.let {
                 ProgressDialog(it) {
