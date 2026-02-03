@@ -180,7 +180,8 @@ fun PermissionsScreenAction(
         description?.let {
             Text(
                 text = it,
-                style = MaterialTheme.typography.bodyLargeEmphasized
+                style = MaterialTheme.typography.bodyLargeEmphasized,
+                textAlign = TextAlign.Center
             )
         }
 
