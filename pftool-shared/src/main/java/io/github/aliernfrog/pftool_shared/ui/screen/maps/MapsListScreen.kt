@@ -282,7 +282,7 @@ fun MapsListScreen(
                     FloatingActionButton(
                         icon = Icons.Outlined.SdCard,
                         text = sharedStringResource(PFToolSharedString.MapsListStorage),
-                        showText = showFABLabel,
+                        expanded = showFABLabel,
                         onClick = {
                             val intent =
                                 Intent(Intent.ACTION_GET_CONTENT).setType(fileMimeType)
