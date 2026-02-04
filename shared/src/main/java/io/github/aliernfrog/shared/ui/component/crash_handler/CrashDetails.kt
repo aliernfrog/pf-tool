@@ -53,6 +53,7 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.form.DividerRow
 import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
+import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.extension.resolveString
@@ -180,6 +181,7 @@ fun CrashDetails(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
+                .verticalSegmentedShape()
         ) {
             val supportLinkButtons: List<@Composable () -> Unit> = supportLinks.map { social -> {
                 ExpressiveButtonRow(
