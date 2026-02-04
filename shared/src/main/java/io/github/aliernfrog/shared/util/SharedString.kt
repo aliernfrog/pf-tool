@@ -35,6 +35,7 @@ open class SharedString(
     data object InfoPleaseWait : SharedString("info_pleaseWait")
     data object Warning : SharedString("warning")
     data object WarningError : SharedString("warning_error")
+    data object WarningErrorTapToReport : SharedString("warning_error_tapToReport")
 
     data object MediaOverlayGuide : SharedString("mediaOverlay_guide")
     data object MediaOverlayGuideToggleOverlay : SharedString("mediaOverlay_guide_toggleOverlay")

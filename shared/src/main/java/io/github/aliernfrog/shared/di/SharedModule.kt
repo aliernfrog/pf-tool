@@ -1,5 +1,6 @@
 package io.github.aliernfrog.shared.di
 
+import io.github.aliernfrog.shared.domain.IAppState
 import io.github.aliernfrog.shared.impl.InsetsManager
 import io.github.aliernfrog.shared.impl.ContextUtils
 import io.github.aliernfrog.shared.ui.viewmodel.settings.AboutPageViewModel
@@ -16,6 +17,7 @@ val sharedModule = module {
     viewModelOf(::LibsPageViewModel)
     viewModelOf(::SettingsViewModel)
 
+    singleOf(::IAppState)
     singleOf(::InsetsManager)
     singleOf(::ContextUtils)
 }

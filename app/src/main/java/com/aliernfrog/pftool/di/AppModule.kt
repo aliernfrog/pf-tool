@@ -21,6 +21,7 @@ val appModule = module {
                 tag = TAG,
                 appName = "PF Tool",
                 releasesURLPref = prefs.releasesURL,
+                debugInfoPrefs = prefs.debugInfoPrefs,
                 defaultInstallURL = "https://github.com/aliernfrog/pf-tool",
                 buildCommit = BuildConfig.GIT_COMMIT,
                 buildBranch = BuildConfig.GIT_BRANCH,

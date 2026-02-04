@@ -16,7 +16,7 @@ import com.aliernfrog.pftool.domain.AppState
 import com.aliernfrog.pftool.impl.MapFile
 import com.aliernfrog.pftool.domain.MapsState
 import com.aliernfrog.pftool.util.UpdateScreenDestination
-import com.aliernfrog.pftool.util.extension.showErrorToast
+import com.aliernfrog.pftool.util.extension.showReportableErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
@@ -25,6 +25,7 @@ import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.util.extension.cacheFile
+import io.github.aliernfrog.shared.domain.IAppState
 import io.github.aliernfrog.shared.impl.UpdateCheckResult
 import io.github.aliernfrog.shared.impl.VersionManager
 import kotlinx.coroutines.Dispatchers
@@ -35,11 +36,15 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     val prefs: PreferenceManager,
     private val appState: AppState,
+    private val iAppState: IAppState,
     private val mapsState: MapsState,
     val progressState: ProgressState,
     val topToastState: TopToastState,
     val versionManager: VersionManager
 ) : ViewModel() {
+    val lastCaughtException
+        get() = iAppState.lastCaughtException
+
     val navigationBackStack
         get() = appState.navigationBackStack
 
@@ -136,7 +141,7 @@ class MainViewModel(
             }
         } catch (e: Exception) {
             Log.e(TAG, "handleIntent: $e")
-            topToastState.showErrorToast()
+            topToastState.showReportableErrorToast(e)
             progressState.currentProgress = null
         }
     }

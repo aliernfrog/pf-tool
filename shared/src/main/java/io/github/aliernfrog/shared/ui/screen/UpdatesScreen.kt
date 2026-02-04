@@ -118,8 +118,8 @@ fun UpdatesScreen(
             ) {
                 if (!updateAvailable && currentVersionInfo.body == null) item {
                     ErrorWithIcon(
-                        error = sharedStringResource(SharedString.UpdatesNoChangelog),
-                        painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
+                        description = sharedStringResource(SharedString.UpdatesNoChangelog),
+                        icon = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
                         button = {
                             Button(
                                 onClick = onCheckUpdatesRequest,

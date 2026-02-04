@@ -484,10 +484,10 @@ private fun Header(
             }
             else AnimatedContent(searchQuery.isNotEmpty()) { searching ->
                 ErrorWithIcon(
-                    error = sharedStringResource(
+                    description = sharedStringResource(
                         if (searching) PFToolSharedString.MapsListSearchNoMatches else currentSegment.noMapsText
                     ),
-                    painter = rememberVectorPainter(
+                    icon = rememberVectorPainter(
                         if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
                     ),
                     modifier = Modifier.fillMaxWidth()

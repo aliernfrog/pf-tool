@@ -6,7 +6,7 @@ import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
 import com.aliernfrog.pftool.domain.AppState
 import com.aliernfrog.pftool.domain.MapsState
-import com.aliernfrog.pftool.util.extension.showErrorToast
+import com.aliernfrog.pftool.util.extension.showReportableErrorToast
 import com.aliernfrog.toptoast.state.TopToastState
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import io.github.aliernfrog.pftool_shared.data.MapActionResult
@@ -182,7 +182,7 @@ class MapFile(
             try {
                 block()
             } catch (e: Exception) {
-                topToastState.showErrorToast()
+                topToastState.showReportableErrorToast(e)
                 Log.e(TAG, this.toString(), e)
             }
         }
