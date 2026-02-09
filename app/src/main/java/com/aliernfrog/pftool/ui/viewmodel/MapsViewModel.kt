@@ -15,6 +15,7 @@ import com.aliernfrog.pftool.ui.component.widget.media_overlay.ThumbnailToolbarC
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.pftool.util.staticutil.FileUtil
 import com.aliernfrog.toptoast.state.TopToastState
+import io.github.aliernfrog.pftool_shared.enum.MapImportedState
 import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.shared.data.MediaOverlayData
@@ -96,7 +97,7 @@ class MapsViewModel(
             model = map.thumbnailModel,
             title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
             zoomEnabled = hasThumbnail,
-            toolbarContent = {
+            toolbarContent = if (map.importedState == MapImportedState.IMPORTED && hasThumbnail) { {
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
 
@@ -111,7 +112,7 @@ class MapsViewModel(
                         }
                     }
                 )
-            }
+            } } else null
         )
     }
 
