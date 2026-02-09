@@ -478,7 +478,7 @@ fun MapsListScreen(
                                 state = lazyGridState,
                                 maxLineSpan = gridMaxLineSpanPref.value
                             ) { maxLineSpan: Int ->
-                                item {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
                                     SegmentSummary(
                                         segment = segment,
                                         shownMaps = mapsToShow,
