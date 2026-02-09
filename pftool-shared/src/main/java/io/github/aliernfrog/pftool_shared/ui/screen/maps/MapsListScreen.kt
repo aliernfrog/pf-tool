@@ -127,7 +127,7 @@ fun MapsListScreen(
     mapActions: List<MapAction>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
     showThumbnailsInList: Boolean,
-    showMultiSelectionOptions: Boolean = true,
+    showMultiSelectionActions: Boolean = true,
     vm: IMapsListViewModel = koinViewModel(),
     multiSelectFloatingActionButton: @Composable (
         selectedMaps: List<IMapFile>, clearSelection: () -> Unit
@@ -223,7 +223,7 @@ fun MapsListScreen(
                         selectedMaps.clear()
                     } } else onBackClick,
                     actions = {
-                        if (multiSelecting && showMultiSelectionOptions) {
+                        if (multiSelecting) {
                             IconButtonWithTooltip(
                                 icon = rememberVectorPainter(
                                     if (areAllShownMapsSelected) Icons.Default.Deselect else Icons.Default.SelectAll
@@ -242,7 +242,7 @@ fun MapsListScreen(
                                     }
                                 }
                             )
-                            Box {
+                            if (showMultiSelectionActions) Box {
                                 IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.MoreVert),
                                     contentDescription = sharedStringResource(PFToolSharedString.ActionMore),
