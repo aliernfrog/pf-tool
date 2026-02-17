@@ -12,8 +12,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -88,11 +90,13 @@ fun PermissionsScreen(
                 when (method) {
                     StorageAccessType.SAF -> SAFPermissionsScreen(
                         *permissionsData,
+                        vm = vm,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
                     )
                     StorageAccessType.SHIZUKU -> ShizukuPermissionsScreen(
+                        vm = vm,
                         onRestartAppRequest = onRestartAppRequest,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
@@ -100,6 +104,7 @@ fun PermissionsScreen(
                         onNavigateStorageSettingsRequest = onNavigateStorageSettingsRequest
                     )
                     StorageAccessType.ALL_FILES -> AllFilesPermissionsScreen(
+                        vm = vm,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
@@ -152,14 +157,15 @@ fun PermissionsScreenAction(
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxWidth().padding(12.dp)
     ) {
         icon?.let {
             ExpressiveRowIcon(
                 painter = rememberVectorPainter(it),
-                iconSize = 40.dp
+                iconSize = 80.dp,
+                shape = MaterialShapes.PixelCircle.toShape()
             )
         }
 
@@ -174,7 +180,8 @@ fun PermissionsScreenAction(
         description?.let {
             Text(
                 text = it,
-                style = MaterialTheme.typography.bodyLargeEmphasized
+                style = MaterialTheme.typography.bodyLargeEmphasized,
+                textAlign = TextAlign.Center
             )
         }
 

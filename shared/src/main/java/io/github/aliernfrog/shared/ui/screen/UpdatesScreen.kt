@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,21 +17,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.DownloadDone
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.rounded.Biotech
+import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.DownloadDone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -48,7 +50,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -57,9 +61,10 @@ import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
+import io.github.aliernfrog.shared.ui.component.ContainedTextWithIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
-import io.github.aliernfrog.shared.ui.component.TextWithIcon
+import io.github.aliernfrog.shared.ui.component.PlainTextTooltipContainer
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
@@ -81,6 +86,7 @@ fun UpdatesScreen(
     val lazyListState = rememberLazyListState()
     val uriHandler = LocalUriHandler.current
     val updateAvailable = availableUpdates.isNotEmpty()
+    val latestReleaseInfo = availableUpdates.firstOrNull() ?: currentVersionInfo
     var showExtendedToolbar by remember { mutableStateOf(true) }
 
     LazyListScrollAccessibilityListener(
@@ -112,8 +118,8 @@ fun UpdatesScreen(
             ) {
                 if (!updateAvailable && currentVersionInfo.body == null) item {
                     ErrorWithIcon(
-                        error = sharedStringResource(SharedString.UpdatesNoChangelog),
-                        painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
+                        description = sharedStringResource(SharedString.UpdatesNoChangelog),
+                        icon = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
                         button = {
                             Button(
                                 onClick = onCheckUpdatesRequest,
@@ -186,45 +192,85 @@ fun UpdatesScreen(
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = FloatingToolbarDefaults.ContainerShape
+                    )
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            uriHandler.openUri(currentVersionInfo.htmlUrl)
-                        },
-                        shapes = ButtonDefaults.shapes()
+                @Composable
+                fun ToolbarContent(expandedOverride: Boolean?) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                            contentDescription = null,
-                            modifier = Modifier.size(ButtonDefaults.IconSize)
-                        )
-                        AnimatedVisibility(showExtendedToolbar) {
-                            Text(
-                                text = sharedStringResource(SharedString.ActionOpenInBrowser),
-                                modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
-                            )
+                        PlainTextTooltipContainer(
+                            tooltipText = sharedStringResource(SharedString.ActionOpenInBrowser)
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    uriHandler.openUri(latestReleaseInfo.htmlUrl)
+                                },
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                                )
+                                AnimatedVisibility(
+                                    expandedOverride != false
+                                            && (expandedOverride == true || showExtendedToolbar)
+                                ) {
+                                    Text(
+                                        text = sharedStringResource(SharedString.ActionOpenInBrowser),
+                                        modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
+                                    )
+                                }
+                            }
+                        }
+
+                        AnimatedContent(
+                            targetState = updateAvailable
+                        ) { showUpdate ->
+                            if (showUpdate) Button(
+                                onClick = { uriHandler.openUri(latestReleaseInfo.downloadUrl) },
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                ButtonIcon(rememberVectorPainter(Icons.Default.Update))
+                                Text(sharedStringResource(SharedString.UpdatesUpdate))
+                            }
+                            else FilledTonalButton(
+                                onClick = onCheckUpdatesRequest,
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
+                                Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
+                            }
                         }
                     }
+                }
 
-                    AnimatedContent(
-                        targetState = updateAvailable
-                    ) { showUpdate ->
-                        if (showUpdate) Button(
-                            onClick = { uriHandler.openUri(currentVersionInfo.downloadUrl) },
-                            shapes = ButtonDefaults.shapes()
-                        ) {
-                            ButtonIcon(rememberVectorPainter(Icons.Default.Update))
-                            Text(sharedStringResource(SharedString.UpdatesUpdate))
-                        }
-                        else FilledTonalButton(
-                            onClick = onCheckUpdatesRequest,
-                            shapes = ButtonDefaults.shapes()
-                        ) {
-                            ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
-                            Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
+                SubcomposeLayout { constraints ->
+                    val fullContentPlaceables = subcompose("fullContent") {
+                        ToolbarContent(expandedOverride = true)
+                    }.map { it.measure(constraints) }
+
+                    val fullWidth = fullContentPlaceables.sumOf { it.width } + 16.dp.roundToPx()
+
+                    val placeables = (if (fullWidth < constraints.maxWidth) subcompose("dynamic") {
+                        ToolbarContent(expandedOverride = null)
+                    } else subcompose("noLabels") {
+                        ToolbarContent(expandedOverride = false)
+                    }).map { it.measure(constraints) }
+
+                    val width = placeables.sumOf { it.width }
+                    val height = placeables.maxOfOrNull { it.height } ?: 0
+
+                    layout(width, height) {
+                        var xPos = 0
+                        placeables.forEach {
+                            it.placeRelative(xPos, 0)
+                            xPos += it.width
                         }
                     }
                 }
@@ -257,7 +303,10 @@ private fun ReleaseCard(
             modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f).fillMaxWidth()
             ) {
                 Text(
@@ -265,15 +314,22 @@ private fun ReleaseCard(
                     style = MaterialTheme.typography.titleLargeEmphasized,
                 )
 
-                if (release.prerelease) Text(
-                    text = sharedStringResource(SharedString.UpdatesPrerelease).uppercase(),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = MaterialTheme.colorScheme.onSecondary
-                    ),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(MaterialTheme.colorScheme.secondary)
-                        .padding(horizontal = 4.dp)
+                if (isCurrentRelease) ContainedTextWithIcon(
+                    icon = rememberVectorPainter(Icons.Rounded.DownloadDone),
+                    text = sharedStringResource(SharedString.UpdatesCurrentVersion),
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+
+                if (release.prerelease) ContainedTextWithIcon(
+                    icon = rememberVectorPainter(Icons.Rounded.Biotech),
+                    text = sharedStringResource(SharedString.UpdatesPrerelease),
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                )
+
+                ContainedTextWithIcon(
+                    icon = rememberVectorPainter(Icons.Rounded.DateRange),
+                    text = releasedAtText,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
                 )
             }
 
@@ -288,20 +344,6 @@ private fun ReleaseCard(
             modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                if (isCurrentRelease) TextWithIcon(
-                    text = sharedStringResource(SharedString.UpdatesCurrentVersion),
-                    icon = rememberVectorPainter(Icons.Default.DownloadDone)
-                )
-
-                TextWithIcon(
-                    text = releasedAtText,
-                    icon = rememberVectorPainter(Icons.Default.DateRange)
-                )
-            }
-
             MarkdownText(
                 markdown = release.body.toString(),
                 linkColor = MaterialTheme.colorScheme.primary,

@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Security
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
@@ -24,17 +23,17 @@ import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.shared.ui.component.SizedButton
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AllFilesPermissionsScreen(
-    vm: IPermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel,
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -58,13 +57,16 @@ fun AllFilesPermissionsScreen(
             description = sharedStringResource(PFToolSharedString.PermissionsAllFilesDescription),
             icon = Icons.Default.Security,
             button = {
-                Button(
-                    shapes = ButtonDefaults.shapes(),
+                SizedButton(
                     onClick = {
                         permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    }
-                ) {
-                    Text(sharedStringResource(PFToolSharedString.PermissionsAllFilesGrant))
+                    },
+                    size = ButtonDefaults.MediumContainerHeight
+                ) { textStyle, _, _ ->
+                    Text(
+                        text = sharedStringResource(PFToolSharedString.PermissionsAllFilesGrant),
+                        style = textStyle
+                    )
                 }
             }
         )

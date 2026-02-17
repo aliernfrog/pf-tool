@@ -1,32 +1,22 @@
 [
   {
+    "versionName": "v2.1.1",
+    "versionCode": 201100,
+    "prerelease": false,
+    "minSdk": 21,
+    "body": "### 🐛 Bug Fixes\n- [`62c64f5`](https://github.com/aliernfrog/pf-tool/commit/62c64f53731a65794f1dd265f312d5a069bd95c0) - **Maps**: Prevent crash when maps folder is not a directory, inform the user instead *(commit by @aliernfrog)*",
+    "createdAt": 1769631898000,
+    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.1.1",
+    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.1.1/pftool.apk"
+  },
+  {
     "versionName": "v2.1.0",
     "versionCode": 201000,
     "prerelease": false,
     "minSdk": 21,
     "body": "# Note\r\nThis release includes major refactors to improve state management and move shared code across my apps to reusable modules/libraries. Issues are expected, you can report them on [Issues](https://github.com/aliernfrog/pf-tool/issues) or on [Discord](https://aliernfrog.github.io/discord).\r\n\r\n### ✨ New Features\r\n- [`4fc7dc9`](https://github.com/aliernfrog/pf-tool/commit/4fc7dc969b922361168d570acaa8cf6b8fe54118) - **Maps**: Use toolbar for thumbnail viewer instead of bottom sheet *(commit by @aliernfrog)*\r\n- [`924ce21`](https://github.com/aliernfrog/pf-tool/commit/924ce214a7815ef9950248f299c96b94abde3bf4) - Redesign update flow and API with `minSdk` checks *(PR #90 by @aliernfrog)*\r\n- [`0ec623c`](https://github.com/aliernfrog/pf-tool/commit/0ec623cc72237a1685cfe4ff9b7503f59918097e) - Add crash handler and support links *(PR #91 by @aliernfrog)*\r\n- [`6dcb24f`](https://github.com/aliernfrog/pf-tool/commit/6dcb24fe5820a75c08ba966444c104713b53d278) - Add tooltips to all icon buttons *(PR #92 by @aliernfrog)*\r\n- [`75c6d5a`](https://github.com/aliernfrog/pf-tool/commit/75c6d5adff31a93908c2721a4e735342c34061b1) - **l10n**: Update translations *(PR #88 by @aliernfrog)*\r\n\r\n### 🐛 Bug Fixes\r\n- [`dd8203a`](https://github.com/aliernfrog/pf-tool/commit/dd8203a304b694d07bfcb488b52bc2b5ca44e1c1) - **SharedString**: Update resource id based on state *(commit by @aliernfrog)*\r\n- [`55c5a14`](https://github.com/aliernfrog/pf-tool/commit/55c5a14d349edd6171385b61fe261c999ce30474) - **MapsListScreen**: Allow specifying file mime type *(commit by @aliernfrog)*\r\n- [`74269a1`](https://github.com/aliernfrog/pf-tool/commit/74269a14544be42356db72466972c9643a49d748) - **`FileWrapper/createFile`**: `findFile` after `createFile` for DocumentFileCompat *(commit by @aliernfrog)*\r\n- [`c67f444`](https://github.com/aliernfrog/pf-tool/commit/c67f4449f19b3b677396b7a34d7d75a9f9708efa) - **Shizuku**: Improve reliability when exporting maps and copying files *(commit by @aliernfrog)*\r\n\r\n### ♻️ Refactors\r\n- [`24054d3`](https://github.com/aliernfrog/pf-tool/commit/24054d3ab949d4c79f4848d122976589408ac80a) - Move shared code to separate modules *(PR #86 by @aliernfrog)*",
     "createdAt": 1769442868000,
-    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.1.0",
-    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.1.0/pftool.apk"
-  },
-  {
-    "versionName": "v2.0.1",
-    "versionCode": 200100,
-    "prerelease": false,
-    "minSdk": 21,
-    "body": "### ✨ New Features\n- [`74cd8dd`](https://github.com/aliernfrog/pf-tool/commit/74cd8dd60c76a27c5486f42f4c5a9f2e8fa37f8a) - **l10n**: update translations *(PR #85 by @aliernfrog)*\n\n### 🐛 Bug Fixes\n- [`4464150`](https://github.com/aliernfrog/pf-tool/commit/4464150677ee6863ac9ceaeb94d76e3532f9da45) - **shizuku**: recommend downgrading to Shizuku v13.5.4 *(PR #83 by @aliernfrog)*",
-    "createdAt": 1758474245000,
-    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.0.1",
-    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.0.1/pftool.apk"
-  },
-  {
-    "versionName": "v2.0.0",
-    "versionCode": 200000,
-    "prerelease": false,
-    "minSdk": 21,
-    "body": "### ✨ New Features\n- [`8a78219`](https://github.com/aliernfrog/pf-tool/commit/8a78219ae94dffebaa10b62ec7592e7a6bca9177) - material3 expressive design *(PR #73 by @aliernfrog)*\n- [`40aac9f`](https://github.com/aliernfrog/pf-tool/commit/40aac9f10a1cd051f64f204f3eefda7d6a3f5c27) - **maps**: redesign list options, items per grid row option *(PR #74 by @aliernfrog)*\n- [`d93989b`](https://github.com/aliernfrog/pf-tool/commit/d93989b97fc79f019e18caf91dbd3f315ea61b15) - show translation percentages *(PR #76 by @aliernfrog)*\n- [`6287484`](https://github.com/aliernfrog/pf-tool/commit/6287484eba11a6a9e6e2faacaced414e2b905122) - **maps**: improve navigation and FAB, redesign map details *(PR #77 by @aliernfrog)*\n- [`ee492b8`](https://github.com/aliernfrog/pf-tool/commit/ee492b811909a1bc422298ed93432222634962b0) - ability to cancel indeterminate progress dialogs *(commit by @aliernfrog)*\n- [`336ee2f`](https://github.com/aliernfrog/pf-tool/commit/336ee2fce95674a9a6b2a13df115ef7c1cc28f0a) - **maps**: option to export to custom location *(PR #78 by @aliernfrog)*\n- [`560d83f`](https://github.com/aliernfrog/pf-tool/commit/560d83fe9b70c807ee4c82adf3dc9a97b1857124) - some more ui improvements *(commit by @aliernfrog)*\n- [`b11b03f`](https://github.com/aliernfrog/pf-tool/commit/b11b03fdb3a331949cc7a54703b685b6fcd766b2) - more expressive design *(PR #79 by @aliernfrog)*\n- [`f2ee8b0`](https://github.com/aliernfrog/pf-tool/commit/f2ee8b06cfb37898cef7eafae5b873c539ef36fb) - **maps-list**: button to select/deselect all *(PR #82 by @aliernfrog)*\n- [`57ade44`](https://github.com/aliernfrog/pf-tool/commit/57ade44aaa7e5dba5d6e6dbb24965dc0fd7fcc71) - use contained loading indicator, use segmentor in map thumbnail viewer *(commit by @aliernfrog)*\n- [`8ebb15d`](https://github.com/aliernfrog/pf-tool/commit/8ebb15d0ac7ebfef19547755fb42a920ad06cc6e) - **l10n**: update translations *(PR #80 by @aliernfrog)*\n\n### 🐛 Bug Fixes\n- [`2c55327`](https://github.com/aliernfrog/pf-tool/commit/2c553276f8843e831718b51e831d0834b3ef5fa9) - use correct naming for Sui Zygisk module *(commit by @aliernfrog)*\n- [`0f009c3`](https://github.com/aliernfrog/pf-tool/commit/0f009c3ef2baee9a90f3a5f58cf78ccfae0f5d56) - remove line breaks from map names *(commit by @aliernfrog)*\n- [`9da7c74`](https://github.com/aliernfrog/pf-tool/commit/9da7c743208f97852b4b30306a3618cdb15286bc) - **maps**: crash when launching with invalid URL *(commit by @aliernfrog)*\n- [`20ed6a4`](https://github.com/aliernfrog/pf-tool/commit/20ed6a4af6ea0a8bd8d65fee3989e59043ad8b26) - **maps**: make sure files are initialized *(commit by @aliernfrog)*\n\n### ⚡ Performance Improvements\n- [`d360992`](https://github.com/aliernfrog/pf-tool/commit/d3609929b962a3312b6e895cabab2728a7af01a1) - improve maps loading performance *(commit by @aliernfrog)*\n\n### ♻️ Refactors\n- [`bc6a63f`](https://github.com/aliernfrog/pf-tool/commit/bc6a63f20c599b1c57ef052c670d432c8e81def3) - migrate to navigation3 *(PR #75 by @aliernfrog)*\n- [`2940430`](https://github.com/aliernfrog/pf-tool/commit/294043021062cca3fee7f2425fc5649a837661f3) - **MapAction**: safe arguments *(PR #81 by @aliernfrog)*",
-    "createdAt": 1756558771000,
-    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.0.0",
-    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.0.0/pftool.apk"
+    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.1.1",
+    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.1.1/pftool.apk"
   }
 ]

@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
@@ -30,6 +31,8 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.viewmodel.settings.ExperimentalPageViewModel
 import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.extension.showReportableErrorToast
+import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
 import io.github.aliernfrog.shared.util.showUpdateToast
@@ -49,6 +52,7 @@ fun ExperimentalPage(
     onNavigateBackRequest: () -> Unit,
     extraContent: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val sortedExperimentalOptions = remember {
@@ -193,6 +197,17 @@ fun ExperimentalPage(
                         description = "(by crashing)"
                     ) {
                         throw Exception("Did the crash handler test go well?")
+                    }
+                },
+                {
+                    ExpressiveButtonRow(
+                        title = "Test error toast",
+                        description = "and crash details sheet"
+                    ) {
+                        vm.topToastState.showReportableErrorToast(
+                            text = context.getSharedString(SharedString.WarningErrorTapToReport),
+                            throwable = Exception("Soft crash handler!")
+                        )
                     }
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)

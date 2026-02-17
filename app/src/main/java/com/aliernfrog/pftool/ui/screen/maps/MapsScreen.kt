@@ -55,6 +55,7 @@ fun MapsScreen(
     ) {
         MapsScreenSafePermissions(
             map = map,
+            vm = vm,
             onNavigateSettingsRequest = {
                 onNavigateRequest(SettingsDestination.root)
             },
@@ -66,7 +67,7 @@ fun MapsScreen(
 @Composable
 private fun MapsScreenSafePermissions(
     map: MapFile?,
-    vm: MapsViewModel = koinViewModel(),
+    vm: MapsViewModel,
     onNavigateSettingsRequest: () -> Unit,
     onNavigateBackRequest: (() -> Unit)?
 ) {
@@ -75,8 +76,9 @@ private fun MapsScreenSafePermissions(
 
     if (map != null) MapDetailsScreen(
         map = map,
+        vm = vm,
         onNavigateSettingsRequest = onNavigateSettingsRequest,
-        onNavigateBackRequest = onNavigateBackRequest
+        onNavigateBackRequest = onNavigateBackRequest,
     ) else MapsListScreen(
         title = stringResource(R.string.maps),
         onBackClick = onNavigateBackRequest,

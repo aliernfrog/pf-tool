@@ -6,6 +6,8 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -36,6 +38,7 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +56,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
@@ -65,14 +69,14 @@ import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import io.github.aliernfrog.shared.ui.component.form.DividerRow
 import io.github.aliernfrog.shared.data.MediaOverlayData
-import io.github.aliernfrog.shared.ui.viewmodel.InsetsViewModel
+import io.github.aliernfrog.shared.impl.InsetsManager
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -80,15 +84,14 @@ import kotlin.math.absoluteValue
 fun MediaOverlay(
     data: MediaOverlayData,
     showMediaOverlayGuidePref: BasePreferenceManager.Preference<Boolean>,
+    insetsManager: InsetsManager = koinInject<InsetsManager>(),
     onDismissRequest: () -> Unit
 ) {
-    val insetsViewModel = koinViewModel<InsetsViewModel>()
-
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
     val zoomState = rememberZoomState()
     val isZoomedIn = zoomState.scale > 1f
-    val isImeVisible = insetsViewModel.isImeVisible
+    val isImeVisible = insetsManager.isImeVisible
     val bottomSheetState = rememberStandardBottomSheetState(
         skipHiddenState = false
     )
@@ -241,8 +244,8 @@ fun MediaOverlay(
                     }
                     MediaOverlayState.NO_IMAGE -> CenteredBox {
                         ErrorWithIcon(
-                            error = "",
-                            painter = rememberVectorPainter(Icons.Rounded.HideImage),
+                            description = "",
+                            icon = rememberVectorPainter(Icons.Rounded.HideImage),
                             contentColor = Color.White
                         )
                     }
@@ -266,8 +269,8 @@ fun MediaOverlay(
             data.toolbarContent?.let { toolbarContent ->
                 AnimatedVisibility(
                     visible = showOverlay,
-                    enter = slideInVertically { it } + fadeIn(),
-                    exit = slideOutVertically { it } + fadeOut(),
+                    enter = slideInVertically { it } + fadeIn() + scaleIn(),
+                    exit = slideOutVertically { it } + fadeOut() + scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .systemBarsPadding()
@@ -275,7 +278,11 @@ fun MediaOverlay(
                 ) {
                     HorizontalFloatingToolbar(
                         expanded = true,
-                        content = toolbarContent
+                        content = toolbarContent,
+                        modifier = Modifier.shadow(
+                            elevation = 6.dp,
+                            shape = FloatingToolbarDefaults.ContainerShape
+                        )
                     )
                 }
             }
