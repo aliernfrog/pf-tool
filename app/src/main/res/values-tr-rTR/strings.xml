@@ -19,6 +19,7 @@
     <string name="intent_downloadMap">Harita indir</string>
     <string name="warning">Uyarı</string>
     <string name="warning_error">Bir şeyler ters gitti</string>
+    <string name="warning_error_tapToReport">Bir şeyler ters gitti! Hatayı raporlamak ve detayları görmek için buraya dokunun</string>
     <string name="warning_fileDoesntExist">Dosya mevcut değil</string>
     <string name="info">Bilgi</string>
     <string name="info_pleaseWait">Lütfen bekleyin…</string>
