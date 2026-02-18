@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -34,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -46,18 +49,19 @@ import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
+import io.github.aliernfrog.shared.ui.component.SizedButton
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
-import org.koin.androidx.compose.koinViewModel
 import rikka.shizuku.Shizuku
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShizukuPermissionsScreen(
-    vm: IPermissionsViewModel = koinViewModel(),
+    vm: IPermissionsViewModel,
     onRestartAppRequest: () -> Unit,
     onUpdateStateRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit
@@ -239,34 +243,45 @@ private fun ShizukuSetupGuide(
             ShizukuStatus.UNAUTHORIZED -> Icons.Default.Security
             else -> null
         }
-        val button: (@Composable () -> Unit)? = { when (status) {
-            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> {
-                Button(
-                    shapes = ButtonDefaults.shapes(),
-                    onClick = onLaunchShizukuRequest
-                ) {
-                    ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                    Text(sharedStringResource(PFToolSharedString.PermissionsShizukuInstallShizuku))
+
+        val button: @Composable () -> Unit = when (status) {
+            ShizukuStatus.WAITING_FOR_BINDER -> Triple(
+                PFToolSharedString.PermissionsShizukuOpenShizuku,
+                Icons.AutoMirrored.Filled.OpenInNew,
+                onLaunchShizukuRequest
+            )
+
+            ShizukuStatus.UNAUTHORIZED -> Triple(
+                PFToolSharedString.PermissionsShizukuPermissionGrant,
+                null
+            ) { Shizuku.requestPermission(0) }
+
+            // UNKNOWN, NOT_INSTALLED and AVAILABLE
+            else -> Triple(
+                PFToolSharedString.PermissionsShizukuInstallShizuku,
+                Icons.AutoMirrored.Filled.OpenInNew,
+                onLaunchShizukuRequest
+            )
+        }.let { (text: SharedString, icon: ImageVector?, onClick: () -> Unit) -> {
+            SizedButton(
+                onClick = onClick,
+                size = ButtonDefaults.MediumContainerHeight
+            ) { textStyle, iconSpacing, iconSize ->
+                icon?.let {
+                    Icon(
+                        imageVector = it,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = iconSpacing)
+                            .size(iconSize)
+                    )
                 }
+
+                Text(
+                    text = sharedStringResource(text),
+                    style = textStyle
+                )
             }
-            ShizukuStatus.WAITING_FOR_BINDER -> {
-                Button(
-                    shapes = ButtonDefaults.shapes(),
-                    onClick = onLaunchShizukuRequest
-                ) {
-                    ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                    Text(sharedStringResource(PFToolSharedString.PermissionsShizukuOpenShizuku))
-                }
-            }
-            ShizukuStatus.UNAUTHORIZED -> {
-                Button(
-                    shapes = ButtonDefaults.shapes(),
-                    onClick = { Shizuku.requestPermission(0) }
-                ) {
-                    Text(sharedStringResource(PFToolSharedString.PermissionsShizukuPermissionGrant))
-                }
-            }
-            else -> null
         } }
 
         PermissionsScreenAction(

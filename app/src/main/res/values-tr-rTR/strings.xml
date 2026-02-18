@@ -19,6 +19,7 @@
     <string name="intent_downloadMap">Harita indir</string>
     <string name="warning">Uyarı</string>
     <string name="warning_error">Bir şeyler ters gitti</string>
+    <string name="warning_error_tapToReport">Bir şeyler ters gitti! Hatayı raporlamak ve detayları görmek için buraya dokunun</string>
     <string name="warning_fileDoesntExist">Dosya mevcut değil</string>
     <string name="info">Bilgi</string>
     <string name="info_pleaseWait">Lütfen bekleyin…</string>
@@ -90,7 +91,6 @@
     <string name="list_style_grid">Izgara</string>
     <string name="list_style_gridMaxLineSpan">Satır başına öğe sayısı</string>
     <string name="maps">Haritalar</string>
-    <string name="maps_failedToLoad_notADirectory">{NAME} bir klasör değil! Depolama yapılandırmanızı gözden geçirmek için buraya dokunun</string>
     <string name="maps_alreadyExists">Bu adda bir harita zaten var, başka bir ad seçin</string>
     <string name="maps_actionFailed">{SUCCESSES} başarılı, {FAILS} başarısız</string>
     <string name="maps_mapName">Harita adı</string>

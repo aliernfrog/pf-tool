@@ -19,6 +19,7 @@ class VersionManager(
     private val tag: String,
     private val appName: String,
     private val releasesURLPref: BasePreferenceManager.Preference<String>,
+    private val debugInfoPrefs: List<BasePreferenceManager.Preference<*>>,
     defaultInstallURL: String,
     buildCommit: String,
     buildBranch: String,
@@ -61,7 +62,7 @@ class VersionManager(
         }
     })"
 
-    fun getDebugInfo(debugInfoPrefs: List<BasePreferenceManager.Preference<*>>): String = arrayOf(
+    fun getDebugInfo(): String = arrayOf(
         "$appName $versionLabel",
         "Android API ${Build.VERSION.SDK_INT}",
         debugInfoPrefs.joinToString("\n") {

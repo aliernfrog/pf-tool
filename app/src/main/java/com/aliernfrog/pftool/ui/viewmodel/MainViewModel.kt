@@ -8,18 +8,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.PriorityHigh
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.TAG
+import com.aliernfrog.pftool.domain.AppState
 import com.aliernfrog.pftool.impl.MapFile
-import com.aliernfrog.pftool.util.NavigationConstant
+import com.aliernfrog.pftool.domain.MapsState
 import com.aliernfrog.pftool.util.UpdateScreenDestination
-import com.aliernfrog.pftool.util.extension.showErrorToast
+import com.aliernfrog.pftool.util.extension.showReportableErrorToast
 import com.aliernfrog.pftool.util.manager.PreferenceManager
 import com.aliernfrog.toptoast.enum.TopToastColor
 import com.aliernfrog.toptoast.state.TopToastState
@@ -28,11 +25,9 @@ import io.github.aliernfrog.pftool_shared.impl.Progress
 import io.github.aliernfrog.pftool_shared.impl.ProgressState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.util.extension.cacheFile
-import io.github.aliernfrog.shared.data.MediaOverlayData
-import io.github.aliernfrog.shared.di.getKoinInstance
+import io.github.aliernfrog.shared.domain.IAppState
 import io.github.aliernfrog.shared.impl.UpdateCheckResult
 import io.github.aliernfrog.shared.impl.VersionManager
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,28 +35,30 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 class MainViewModel(
     val prefs: PreferenceManager,
-    val topToastState: TopToastState,
+    private val appState: AppState,
+    private val iAppState: IAppState,
+    private val mapsState: MapsState,
     val progressState: ProgressState,
+    val topToastState: TopToastState,
     val versionManager: VersionManager
 ) : ViewModel() {
-    lateinit var scope: CoroutineScope
-    lateinit var safZipFileCreator: SAFFileCreator
+    val lastCaughtException
+        get() = iAppState.lastCaughtException
 
-    val navigationBackStack = mutableStateListOf<Any>(
-        NavigationConstant.INITIAL_DESTINATION
-    )
+    val navigationBackStack
+        get() = appState.navigationBackStack
 
     val availableUpdates = versionManager.availableUpdates
     val currentVersionInfo = versionManager.currentVersionInfo
     val isCompatibleWithLatestVersion = versionManager.isCompatibleWithLatestVersion
     val isCheckingForUpdates = versionManager.isCheckingForUpdates
-    var showUpdateNotification by mutableStateOf(false)
 
-    var mediaOverlayData by mutableStateOf<MediaOverlayData?>(null)
-        private set
+    val mediaOverlayData
+        get() = appState.mediaOverlayData
 
     init {
         prefs.lastKnownInstalledVersion.value = versionManager.currentVersionCode
+        if (prefs.autoCheckUpdates.value) checkUpdates()
     }
 
     fun checkUpdates(
@@ -91,6 +88,7 @@ class MainViewModel(
                 }
                 is UpdateCheckResult.UpdatesAvailable -> {
                     withContext(Dispatchers.Main) {
+                        appState.showUpdateNotification = true
                         if (manuallyTriggered && navigationBackStack.first() !is UpdateScreenDestination)
                             navigationBackStack.add(UpdateScreenDestination)
                         else showUpdateToast()
@@ -107,17 +105,15 @@ class MainViewModel(
         }
     }
 
-    fun showMediaOverlay(data: MediaOverlayData) {
-        mediaOverlayData = data
+    fun dismissMediaOverlay() {
+        appState.mediaOverlayData = null
     }
 
-    fun dismissMediaOverlay() {
-        mediaOverlayData = null
+    fun setSafZipFileCreator(creator: SAFFileCreator) {
+        appState.safZipFileCreator = creator
     }
 
     fun handleIntent(intent: Intent, context: Context) {
-        val mapsViewModel = getKoinInstance<MapsViewModel>()
-
         try {
             val uris: MutableList<Uri> = intent.data?.let {
                 mutableListOf(it)
@@ -137,15 +133,15 @@ class MainViewModel(
                     if (file != null) cached.add(MapFile(FileWrapper(file)))
                 }
                 if (cached.size == 1) cached.first().let {
-                    mapsViewModel.viewMapDetails(it)
+                    mapsState.viewMapDetails(it)
                 } else if (cached.size > 1) {
-                    mapsViewModel.setSharedMaps(cached)
+                    mapsState.setSharedMaps(cached)
                 }
                 progressState.currentProgress = null
             }
         } catch (e: Exception) {
             Log.e(TAG, "handleIntent: $e")
-            topToastState.showErrorToast()
+            topToastState.showReportableErrorToast(e)
             progressState.currentProgress = null
         }
     }

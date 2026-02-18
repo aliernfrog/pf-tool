@@ -10,11 +10,13 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -27,7 +29,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -66,8 +70,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -95,6 +103,7 @@ import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.component.util.AnimatedContentShadowWorkaround
 import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
@@ -118,7 +127,7 @@ fun MapsListScreen(
     mapActions: List<MapAction>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
     showThumbnailsInList: Boolean,
-    showMultiSelectionOptions: Boolean = true,
+    showMultiSelectionActions: Boolean = true,
     vm: IMapsListViewModel = koinViewModel(),
     multiSelectFloatingActionButton: @Composable (
         selectedMaps: List<IMapFile>, clearSelection: () -> Unit
@@ -214,7 +223,7 @@ fun MapsListScreen(
                         selectedMaps.clear()
                     } } else onBackClick,
                     actions = {
-                        if (multiSelecting && showMultiSelectionOptions) {
+                        if (multiSelecting) {
                             IconButtonWithTooltip(
                                 icon = rememberVectorPainter(
                                     if (areAllShownMapsSelected) Icons.Default.Deselect else Icons.Default.SelectAll
@@ -233,7 +242,7 @@ fun MapsListScreen(
                                     }
                                 }
                             )
-                            Box {
+                            if (showMultiSelectionActions) Box {
                                 IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.MoreVert),
                                     contentDescription = sharedStringResource(PFToolSharedString.ActionMore),
@@ -273,40 +282,48 @@ fun MapsListScreen(
             }
         },
         floatingActionButton = {
-            AnimatedContent(
+            AnimatedContentShadowWorkaround(
                 targetState = !isMultiSelecting,
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    // since we are adding 16.dp padding below, add offset to bring it back to where its supposed to be
-                    .offset(x = 16.dp, y = 16.dp)
+                modifier = Modifier.navigationBarsPadding()
             ) { showStorage ->
-                Box(
-                    // padding so that FAB shadow doesnt get cropped
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    if (showStorage) {
-                        FloatingActionButton(
-                            icon = Icons.Outlined.SdCard,
-                            text = sharedStringResource(PFToolSharedString.MapsListStorage),
-                            showText = showFABLabel,
-                            onClick = {
-                                val intent =
-                                    Intent(Intent.ACTION_GET_CONTENT).setType(fileMimeType)
-                                launcher.launch(intent)
-                            }
-                        )
-                    } else multiSelectFloatingActionButton(selectedMaps) {
-                        selectedMaps.clear()
-                    }
+                if (showStorage) {
+                    FloatingActionButton(
+                        icon = Icons.Outlined.SdCard,
+                        text = sharedStringResource(PFToolSharedString.MapsListStorage),
+                        expanded = showFABLabel,
+                        onClick = {
+                            val intent =
+                                Intent(Intent.ACTION_GET_CONTENT).setType(fileMimeType)
+                            launcher.launch(intent)
+                        }
+                    )
+                } else multiSelectFloatingActionButton(selectedMaps) {
+                    selectedMaps.clear()
                 }
             }
         }
     ) {
         @Composable
+        fun SegmentSummary(
+            segment: MapsListSegment,
+            shownMaps: List<IMapFile>,
+            modifier: Modifier = Modifier
+        ) {
+            SegmentSummary(
+                isLoadingMaps = isLoading,
+                isSearching = searchQuery.isNotEmpty(),
+                currentSegment = segment,
+                shownMapCount = shownMaps.size,
+                modifier = modifier
+            )
+        }
+
+        @Composable
         fun MapItem(map: IMapFile, isGrid: Boolean, modifier: Modifier = Modifier) {
             val selected = if (isMultiSelecting) selectedMaps.any {
                 it.path == map.path
             } else null
+
             fun toggleSelection() {
                 selectedMaps.run {
                     if (selected == true) remove(map) else add(map)
@@ -347,104 +364,140 @@ fun MapsListScreen(
             }
         }
 
-        HorizontalPager(
-            state = pagerState,
-            beyondViewportPageCount = 1
-        ) { page ->
-            val lazyListState = rememberLazyListState()
-            val lazyGridState = rememberLazyGridState()
+        BoxWithConstraints {
+            val viewportHeight = maxHeight
+            val scrollState = rememberScrollState()
 
-            val segment = mapsListSegments[page]
-            val mapsToShow = vm.getMapsForSegment(segment)
-                .filter {
-                    it.name.contains(searchQuery, ignoreCase = true)
-                }
-                .sortedWith { m1, m2 ->
-                    ListSorting.entries[listViewOptions.sorting.value].comparator.compare(m1.file, m2.file)
-                }
-                .let {
-                    if (listViewOptions.sortingReversed.value) it.reversed() else it
-                }
-
-            LazyListScrollAccessibilityListener(
-                lazyListState = lazyListState,
-                onShowLabelsStateChange = { showFABLabel = it }
-            )
-
-            LazyGridScrollAccessibilityListener(
-                lazyGridState = lazyGridState,
-                onShowLabelsStateChange = { showFABLabel = it }
-            )
-
-            @Composable
-            fun HeaderWithArgs(modifier: Modifier = Modifier) {
-                Header(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState)
+            ) {
+                Search(
                     searchQuery = searchQuery,
                     onSearchQueryChange = { searchQuery = it },
-                    segments = mapsListSegments,
-                    currentSegment = segment,
-                    mapsToShow = mapsToShow,
-                    isLoadingMaps = isLoading,
-                    modifier = modifier,
-                    onSwitchSegmentRequest = { scope.launch {
-                        pagerState.animateScrollToPage(it, animationSpec = tween(300))
-                    } },
+                    modifier = Modifier.padding(horizontal = 12.dp),
                     onShowListViewOptionsRequest = { scope.launch {
                         listViewOptionsSheetState.show()
                     } }
                 )
-            }
 
-            AnimatedContent(targetState = listStyle) { style ->
-                when (style) {
-                    ListStyle.LIST -> LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = lazyListState
-                    ) {
-                        item {
-                            HeaderWithArgs(Modifier.padding(horizontal = 12.dp))
-                        }
-
-                        itemsIndexed(mapsToShow) { index, map ->
-                            MapItem(
-                                map,
-                                isGrid = false,
-                                modifier = Modifier
-                                    .padding(horizontal = 12.dp)
-                                    .verticalSegmentedShape(
-                                        index = index,
-                                        totalSize = mapsToShow.size,
-                                        spacing = 4.dp,
-                                        containerColor = Color.Transparent
-                                    )
-                            )
-                        }
-
-                        item {
-                            Footer()
-                        }
+                SingleChoiceConnectedButtonGroup(
+                    choices = mapsListSegments.map {
+                        sharedStringResource(it.label)
+                    },
+                    selectedIndex = mapsListSegments.indexOfFirst { it == currentlyShownSegment },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
+                    scope.launch {
+                        pagerState.animateScrollToPage(it, animationSpec = tween(300))
                     }
-                    ListStyle.GRID -> LazyAdaptiveVerticalGrid(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 10.dp),
-                        state = lazyGridState,
-                        maxLineSpan = gridMaxLineSpanPref.value
-                    ) { maxLineSpan: Int ->
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            HeaderWithArgs(Modifier.padding(horizontal = 2.dp))
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    beyondViewportPageCount = 1,
+                    modifier = Modifier
+                        .heightIn(max = viewportHeight)
+                        .nestedScroll(remember {
+                            object : NestedScrollConnection {
+                                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                                    return if (available.y > 0) Offset.Zero else Offset(
+                                        x = 0f,
+                                        y = -scrollState.dispatchRawDelta(-available.y)
+                                    )
+                                }
+                            }
+                        })
+                ) { page ->
+                    val segment = mapsListSegments[page]
+                    val mapsToShow = vm.getMapsForSegment(segment)
+                        .filter {
+                            it.name.contains(searchQuery, ignoreCase = true)
+                        }
+                        .sortedWith { m1, m2 ->
+                            ListSorting.entries[listViewOptions.sorting.value].comparator.compare(m1.file, m2.file)
+                        }
+                        .let {
+                            if (listViewOptions.sortingReversed.value) it.reversed() else it
                         }
 
-                        items(mapsToShow) { map ->
-                            MapItem(
-                                map = map,
-                                isGrid = true,
-                                modifier = Modifier.padding(2.dp)
-                            )
-                        }
+                    val lazyListState = rememberLazyListState()
+                    val lazyGridState = rememberLazyGridState()
 
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Footer()
+                    LazyListScrollAccessibilityListener(
+                        lazyListState = lazyListState,
+                        onShowLabelsStateChange = { showFABLabel = it }
+                    )
+
+                    LazyGridScrollAccessibilityListener(
+                        lazyGridState = lazyGridState,
+                        onShowLabelsStateChange = { showFABLabel = it }
+                    )
+
+                    AnimatedContent(targetState = listStyle) { style ->
+                        when (style) {
+                            ListStyle.LIST -> LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                state = lazyListState
+                            ) {
+                                item {
+                                    SegmentSummary(
+                                        segment = segment,
+                                        shownMaps = mapsToShow,
+                                        modifier = Modifier.padding(horizontal = 12.dp)
+                                    )
+                                }
+
+                                itemsIndexed(mapsToShow) { index, map ->
+                                    MapItem(
+                                        map = map,
+                                        isGrid = false,
+                                        modifier = Modifier
+                                            .padding(horizontal = 12.dp)
+                                            .verticalSegmentedShape(
+                                                index = index,
+                                                totalSize = mapsToShow.size,
+                                                spacing = 4.dp,
+                                                containerColor = Color.Transparent
+                                            )
+                                    )
+                                }
+
+                                item {
+                                    Footer()
+                                }
+                            }
+
+                            ListStyle.GRID -> LazyAdaptiveVerticalGrid(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 10.dp),
+                                state = lazyGridState,
+                                maxLineSpan = gridMaxLineSpanPref.value
+                            ) { maxLineSpan: Int ->
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    SegmentSummary(
+                                        segment = segment,
+                                        shownMaps = mapsToShow,
+                                        modifier = Modifier.padding(horizontal = 2.dp)
+                                    )
+                                }
+
+                                items(mapsToShow) { map ->
+                                    MapItem(
+                                        map = map,
+                                        isGrid = true,
+                                        modifier = Modifier.padding(2.dp)
+                                    )
+                                }
+
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Footer()
+                                }
+                            }
                         }
                     }
                 }
@@ -455,33 +508,15 @@ fun MapsListScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun Header(
-    searchQuery: String,
-    onSearchQueryChange: (String) -> Unit,
-    segments: List<MapsListSegment>,
-    currentSegment: MapsListSegment,
-    mapsToShow: List<IMapFile>,
+private fun SegmentSummary(
     isLoadingMaps: Boolean,
-    modifier: Modifier = Modifier,
-    onSwitchSegmentRequest: (Int) -> Unit,
-    onShowListViewOptionsRequest: () -> Unit
+    isSearching: Boolean,
+    currentSegment: MapsListSegment,
+    shownMapCount: Int,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Search(
-            searchQuery = searchQuery,
-            onSearchQueryChange = onSearchQueryChange,
-            onShowListViewOptionsRequest = onShowListViewOptionsRequest
-        )
-        SingleChoiceConnectedButtonGroup(
-            choices = segments.map {
-                sharedStringResource(it.label)
-            },
-            selectedIndex = segments.indexOfFirst { it == currentSegment },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            onSwitchSegmentRequest(it)
-        }
-        if (mapsToShow.isEmpty()) {
+        if (shownMapCount == 0) {
             if (isLoadingMaps) Box(Modifier.fillMaxSize()) {
                 ContainedLoadingIndicator(
                     modifier = Modifier
@@ -489,12 +524,12 @@ private fun Header(
                         .padding(vertical = 24.dp)
                 )
             }
-            else AnimatedContent(searchQuery.isNotEmpty()) { searching ->
+            else AnimatedContent(isSearching) { searching ->
                 ErrorWithIcon(
-                    error = sharedStringResource(
+                    description = sharedStringResource(
                         if (searching) PFToolSharedString.MapsListSearchNoMatches else currentSegment.noMapsText
                     ),
-                    painter = rememberVectorPainter(
+                    icon = rememberVectorPainter(
                         if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
                     ),
                     modifier = Modifier.fillMaxWidth()
@@ -502,7 +537,7 @@ private fun Header(
             }
         } else Text(
             text = sharedStringResource(PFToolSharedString.MapsListCount)
-                .replace("{COUNT}", mapsToShow.size.toString()),
+                .replace("{COUNT}", shownMapCount.toString()),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
                 .padding(horizontal = 6.dp)
@@ -521,7 +556,8 @@ private fun Footer() {
 private fun Search(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onShowListViewOptionsRequest: () -> Unit
+    onShowListViewOptionsRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     SearchBar(
         inputField = {
@@ -557,7 +593,7 @@ private fun Search(
         expanded = false,
         onExpandedChange = {},
         content = {},
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .offset(y = (-12).dp)
     )
@@ -591,7 +627,7 @@ private fun MultiSelectionDropdown(
                 ) else MenuDefaults.itemColors(),
                 onClick = { scope.launch {
                     onDismissRequest(false)
-                    action.execute(context, maps, DefaultMapActionArguments())
+                    action.execute(context, maps.toList(), DefaultMapActionArguments())
                     onDismissRequest(true) // clear selection
                 } }
             )

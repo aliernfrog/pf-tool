@@ -20,15 +20,19 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.component.AppScaffold
@@ -40,9 +44,11 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.shared.ui.viewmodel.settings.SettingsViewModel
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +56,7 @@ fun SettingsRootPage(
     categories: List<SettingsCategory>,
     availableUpdates: List<ReleaseInfo>,
     experimentalOptionsEnabled: Boolean,
+    vm: SettingsViewModel = koinViewModel(),
     onShowUpdateSheetRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit,
     onNavigateRequest: (SettingsDestination) -> Unit
@@ -110,6 +117,16 @@ fun SettingsRootPage(
                     )
                 }
             }
+
+            Text(
+                text = vm.versionLabel,
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 4.dp, start = 12.dp , end = 12.dp)
+                    .alpha(0.7f)
+            )
         }
     }
 }

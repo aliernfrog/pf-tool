@@ -1,12 +1,11 @@
-package io.github.aliernfrog.shared.ui.viewmodel
+package io.github.aliernfrog.shared.impl
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 
-class InsetsViewModel : ViewModel() {
+class InsetsManager {
     var topPadding by mutableStateOf(0.dp)
     var imePadding by mutableStateOf(0.dp)
     private var internalBottomPadding by mutableStateOf(0.dp)

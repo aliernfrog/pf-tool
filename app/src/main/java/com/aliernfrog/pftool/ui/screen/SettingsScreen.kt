@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.pftool.R
 import com.aliernfrog.pftool.SettingsConstant.credits
@@ -68,8 +69,8 @@ fun SettingsScreen(
             StoragePage(
                 storageAccessTypePref = vm.prefs.storageAccessType,
                 folderPrefs = mapOf(
-                    context.getString(R.string.settings_storage_folders_maps) to vm.prefs.pfMapsDir,
-                    context.getString(R.string.settings_storage_folders_exportedMaps) to vm.prefs.exportedMapsDir
+                    stringResource(R.string.settings_storage_folders_maps) to vm.prefs.pfMapsDir,
+                    stringResource(R.string.settings_storage_folders_exportedMaps) to vm.prefs.exportedMapsDir
                 ),
                 onEnableStorageAccessTypeRequest = { it.enable() },
                 onNavigateBackRequest = onNavigateBackRequest
