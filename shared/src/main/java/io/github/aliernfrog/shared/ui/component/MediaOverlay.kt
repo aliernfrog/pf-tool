@@ -45,6 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -183,8 +184,9 @@ fun MediaOverlay(
                         IconButtonWithTooltip(
                             icon = rememberVectorPainter(Icons.Default.Close),
                             contentDescription = sharedStringResource(SharedString.ActionClose),
-                            onClick = onDismissRequest,
-                            modifier = Modifier.padding(8.dp)
+                            tooltipPositioning = TooltipAnchorPosition.Below,
+                            modifier = Modifier.padding(8.dp),
+                            onClick = onDismissRequest
                         )
                         data.title?.let {
                             Text(
@@ -198,8 +200,9 @@ fun MediaOverlay(
                     IconButtonWithTooltip(
                         icon = rememberVectorPainter(Icons.AutoMirrored.Filled.HelpOutline),
                         contentDescription = sharedStringResource(SharedString.MediaOverlayGuide),
-                        onClick = { showMediaOverlayGuidePref.value = true },
-                        modifier = Modifier.padding(8.dp)
+                        tooltipPositioning = TooltipAnchorPosition.Below,
+                        modifier = Modifier.padding(8.dp),
+                        onClick = { showMediaOverlayGuidePref.value = true }
                     )
                 }
             }
