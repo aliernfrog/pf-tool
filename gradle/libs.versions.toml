@@ -1,5 +1,5 @@
 [versions]
-android-plugin = "9.0.0"
+android-plugin = "9.0.1"
 kotlin-plugin = "2.3.0"
 
 android-desugar = "2.1.5"
