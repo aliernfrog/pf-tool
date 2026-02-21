@@ -3,9 +3,9 @@ package io.github.aliernfrog.pftool_shared.util
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import io.github.aliernfrog.shared.di.getKoinInstance
-import org.koin.compose.koinInject
 import kotlin.reflect.KProperty1
 
 data class PFToolSharedString(
@@ -132,9 +132,13 @@ data class PFToolSharedString(
     @StringRes val settingsStorageFoldersOpenAndroidData : Int,
 )
 
+val LocalPFToolSharedString = staticCompositionLocalOf<PFToolSharedString> {
+    error("No PFToolSharedString class provided!")
+}
+
 @Composable
 fun sharedStringResource(property: KProperty1<PFToolSharedString, Int>): String {
-    val provider = koinInject<PFToolSharedString>()
+    val provider = LocalPFToolSharedString.current
     return stringResource(property.get(provider))
 }
 
