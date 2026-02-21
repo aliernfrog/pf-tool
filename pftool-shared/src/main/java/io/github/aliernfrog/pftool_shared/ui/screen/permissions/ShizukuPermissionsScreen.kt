@@ -46,6 +46,7 @@ import io.github.aliernfrog.pftool_shared.enum.ShizukuStatus
 import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
@@ -54,9 +55,8 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
-import io.github.aliernfrog.shared.util.SharedString
-import io.github.aliernfrog.shared.util.sharedStringResource
 import rikka.shizuku.Shizuku
+import kotlin.reflect.KProperty1
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -104,7 +104,7 @@ fun ShizukuPermissionsScreen(
                 ) {
                     ContainedLoadingIndicator()
                     Text(
-                        text = sharedStringResource(PFToolSharedString.PermissionsShizukuWaitingService),
+                        text = sharedStringResource(PFToolSharedString::permissionsShizukuWaitingService),
                         modifier = Modifier.padding(top = 16.dp)
                     )
                 }
@@ -136,7 +136,7 @@ fun ShizukuPermissionsScreen(
                                     }
                                 ) {
                                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                                    Text(sharedStringResource(PFToolSharedString.PermissionsShizukuOpenShizuku))
+                                    Text(sharedStringResource(PFToolSharedString::permissionsShizukuOpenShizuku))
                                 }
                                 Button(
                                     shapes = ButtonDefaults.shapes(),
@@ -146,11 +146,11 @@ fun ShizukuPermissionsScreen(
                                     }
                                 ) {
                                     ButtonIcon(rememberVectorPainter(Icons.Default.RestartAlt))
-                                    Text(sharedStringResource(PFToolSharedString.PermissionsShizukuWaitingServiceTimedOutRestart))
+                                    Text(sharedStringResource(PFToolSharedString::permissionsShizukuWaitingServiceTimedOutRestart))
                                 }
                             }
                         ) {
-                            Text(sharedStringResource(PFToolSharedString.PermissionsShizukuWaitingServiceTimedOut))
+                            Text(sharedStringResource(PFToolSharedString::permissionsShizukuWaitingServiceTimedOut))
                         }
                     }
                 }
@@ -186,7 +186,7 @@ private fun ProblematicManagerCard(
                 }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.OpenInBrowser))
-                Text(sharedStringResource(PFToolSharedString.PermissionsShizukuProblematicVersionAllVersions))
+                Text(sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersionAllVersions))
             }
 
             Button(
@@ -196,17 +196,17 @@ private fun ProblematicManagerCard(
                 }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Download))
-                Text(sharedStringResource(PFToolSharedString.PermissionsShizukuProblematicVersionDownloadRecommended))
+                Text(sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersionDownloadRecommended))
             }
         }
     ) {
         Text(
-            text = sharedStringResource(PFToolSharedString.PermissionsShizukuProblematicVersion)
+            text = sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersion)
                 .replace("{CURRENT_VERSION}", shizukuVersion)
                 .replace("{RECOMMENDED_VERSION}", ShizukuManager.SHIZUKU_RECOMMENDED_VERSION_NAME)
         )
         Text(
-            text = sharedStringResource(PFToolSharedString.PermissionsShizukuProblematicVersionNote)
+            text = sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersionNote)
                 .replace("{CURRENT_VERSION}", shizukuVersion),
             style = MaterialTheme.typography.bodySmallEmphasized
         )
@@ -226,15 +226,15 @@ private fun ShizukuSetupGuide(
 
     AnimatedContent(shizukuStatus) { status ->
         val title = when (status) {
-            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> PFToolSharedString.PermissionsShizukuInstallTitle
-            ShizukuStatus.WAITING_FOR_BINDER -> PFToolSharedString.PermissionsShizukuNotRunning
-            ShizukuStatus.UNAUTHORIZED -> PFToolSharedString.PermissionsShizukuPermission
+            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> PFToolSharedString::permissionsShizukuInstallTitle
+            ShizukuStatus.WAITING_FOR_BINDER -> PFToolSharedString::permissionsShizukuNotRunning
+            ShizukuStatus.UNAUTHORIZED -> PFToolSharedString::permissionsShizukuPermission
             else -> null
         }
         val description = when (status) {
-            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> PFToolSharedString.PermissionsShizukuIntroduction
-            ShizukuStatus.WAITING_FOR_BINDER -> PFToolSharedString.PermissionsShizukuNotRunningDescription
-            ShizukuStatus.UNAUTHORIZED -> PFToolSharedString.PermissionsShizukuPermissionDescription
+            ShizukuStatus.UNKNOWN, ShizukuStatus.NOT_INSTALLED -> PFToolSharedString::permissionsShizukuIntroduction
+            ShizukuStatus.WAITING_FOR_BINDER -> PFToolSharedString::permissionsShizukuNotRunningDescription
+            ShizukuStatus.UNAUTHORIZED -> PFToolSharedString::permissionsShizukuPermissionDescription
             else -> null
         }
         val icon = when (status) {
@@ -246,23 +246,23 @@ private fun ShizukuSetupGuide(
 
         val button: @Composable () -> Unit = when (status) {
             ShizukuStatus.WAITING_FOR_BINDER -> Triple(
-                PFToolSharedString.PermissionsShizukuOpenShizuku,
+                PFToolSharedString::permissionsShizukuOpenShizuku,
                 Icons.AutoMirrored.Filled.OpenInNew,
                 onLaunchShizukuRequest
             )
 
             ShizukuStatus.UNAUTHORIZED -> Triple(
-                PFToolSharedString.PermissionsShizukuPermissionGrant,
+                PFToolSharedString::permissionsShizukuPermissionGrant,
                 null
             ) { Shizuku.requestPermission(0) }
 
             // UNKNOWN, NOT_INSTALLED and AVAILABLE
             else -> Triple(
-                PFToolSharedString.PermissionsShizukuInstallShizuku,
+                PFToolSharedString::permissionsShizukuInstallShizuku,
                 Icons.AutoMirrored.Filled.OpenInNew,
                 onLaunchShizukuRequest
             )
-        }.let { (text: SharedString, icon: ImageVector?, onClick: () -> Unit) -> {
+        }.let { (text: KProperty1<PFToolSharedString, Int>, icon: ImageVector?, onClick: () -> Unit) -> {
             SizedButton(
                 onClick = onClick,
                 size = ButtonDefaults.MediumContainerHeight
@@ -296,7 +296,7 @@ private fun ShizukuSetupGuide(
         deviceRooted && shizukuStatus != ShizukuStatus.UNAUTHORIZED
     ) {
         CardWithActions(
-            title = sharedStringResource(PFToolSharedString.PermissionsShizukuRooted),
+            title = sharedStringResource(PFToolSharedString::permissionsShizukuRooted),
             buttons = {
                 OutlinedButton(
                     shapes = ButtonDefaults.shapes(),
@@ -305,7 +305,7 @@ private fun ShizukuSetupGuide(
                     }
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                    Text(sharedStringResource(PFToolSharedString.PermissionsShizukuSui))
+                    Text(sharedStringResource(PFToolSharedString::permissionsShizukuSui))
                 }
                 Button(
                     shapes = ButtonDefaults.shapes(),
@@ -313,23 +313,23 @@ private fun ShizukuSetupGuide(
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
                     Text(sharedStringResource(
-                        if (shizukuInstalled) PFToolSharedString.PermissionsShizukuOpenShizuku
-                        else PFToolSharedString.PermissionsShizukuInstallShizuku
+                        if (shizukuInstalled) PFToolSharedString::permissionsShizukuOpenShizuku
+                        else PFToolSharedString::permissionsShizukuInstallShizuku
                     ))
                 }
             },
             modifier = Modifier.fillMaxWidth().padding(8.dp)
         ) {
             Text(
-                text = sharedStringResource(PFToolSharedString.PermissionsShizukuRootedDescription),
+                text = sharedStringResource(PFToolSharedString::permissionsShizukuRootedDescription),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
 
     if (shizukuInstalled) ExpressiveButtonRow(
-        title = sharedStringResource(PFToolSharedString.Info),
-        description = sharedStringResource(PFToolSharedString.PermissionsShizukuIntroduction),
+        title = sharedStringResource(PFToolSharedString::info),
+        description = sharedStringResource(PFToolSharedString::permissionsShizukuIntroduction),
         icon = {
             ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Info))
         },

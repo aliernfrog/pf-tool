@@ -71,7 +71,7 @@ fun ProgressDialog(
                 ),
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text(sharedStringResource(SharedString.ActionCancel))
+                Text(sharedStringResource(SharedString::actionCancel))
             }
         }
     }

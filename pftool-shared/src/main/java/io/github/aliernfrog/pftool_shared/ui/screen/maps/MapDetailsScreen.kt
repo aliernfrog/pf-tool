@@ -43,12 +43,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.data.MapAction
 import io.github.aliernfrog.pftool_shared.impl.DefaultMapActionArguments
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
 import io.github.aliernfrog.pftool_shared.ui.component.maps.GridMapItem
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
@@ -59,7 +61,6 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.util.extension.clickableWithColor
-import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -126,7 +127,7 @@ fun MapDetailsScreen(
                         mapNameEdit.value = it.replace("\n", "")
                     },
                     label = {
-                        Text(sharedStringResource(PFToolSharedString.MapsMapName))
+                        Text(sharedStringResource(PFToolSharedString::mapsMapName))
                     },
                     placeholder = { Text(map.name) },
                     singleLine = true,
@@ -166,11 +167,11 @@ fun MapDetailsScreen(
                             verticalArrangement = Arrangement.spacedBy(1.dp)
                         ) {
                             Text(
-                                text = sharedStringResource(PFToolSharedString.MapsMapNameGuide),
+                                text = sharedStringResource(PFToolSharedString::mapsMapNameGuide),
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
-                                text = sharedStringResource(PFToolSharedString.ActionTapToDismiss),
+                                text = sharedStringResource(PFToolSharedString::actionTapToDismiss),
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.alpha(0.7f)
                             )
@@ -202,7 +203,7 @@ fun MapDetailsScreen(
                         enabled = available
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.FileCopy))
-                        Text(sharedStringResource(PFToolSharedString.MapsDuplicate))
+                        Text(sharedStringResource(PFToolSharedString::mapsDuplicate))
                     }
                 }
 
@@ -219,7 +220,7 @@ fun MapDetailsScreen(
                         enabled = available
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.Edit))
-                        Text(sharedStringResource(PFToolSharedString.MapsRename))
+                        Text(sharedStringResource(PFToolSharedString::mapsRename))
                     }
                 }
             }
@@ -235,9 +236,9 @@ fun MapDetailsScreen(
             }.map { action -> {
                 FadeVisibility(visible = action.availableFor(map)) {
                     ExpressiveButtonRow(
-                        title = sharedStringResource(action.longLabel),
+                        title = stringResource(action.longLabel),
                         description = action.description?.let {
-                            sharedStringResource(it)
+                            stringResource(it)
                         },
                         icon = {
                             ExpressiveRowIcon(
@@ -294,7 +295,7 @@ private fun MapCard(
         )
         if (chosenMap.thumbnailModel != null && showMapThumbnail) FilledIconButtonWithTooltip(
             icon = rememberVectorPainter(Icons.Default.Fullscreen),
-            contentDescription = sharedStringResource(PFToolSharedString.MapsThumbnail),
+            contentDescription = sharedStringResource(PFToolSharedString::mapsThumbnail),
             onClick = onViewThumbnailRequest,
             modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp),
             colors = IconButtonDefaults.filledIconButtonColors(

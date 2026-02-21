@@ -95,7 +95,7 @@ fun CrashDetails(
         modifier = modifier
     ) {
         Text(
-            text = sharedStringResource(SharedString.CrashHandlerReport),
+            text = sharedStringResource(SharedString::crashHandlerReport),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
         )
@@ -106,13 +106,13 @@ fun CrashDetails(
                 scope.launch(Dispatchers.IO) {
                     val response = sendCrashReport(
                         toUrl = crashReportURL,
-                        app = context.getSharedString(SharedString.AppName),
+                        app = context.getSharedString(SharedString::appName),
                         details = getCrashDetails()
                     )
                     scope.launch(Dispatchers.Main) {
                         Toast.makeText(context,
                             if (response is ReportState.Error) "${response.body} (${response.statusCode})"
-                            else context.getSharedString(SharedString.CrashHandlerSendReportSent),
+                            else context.getSharedString(SharedString::crashHandlerSendReportSent),
                             Toast.LENGTH_SHORT
                         ).show()
                         reportState = if (response is ReportState.Error) ReportState.NotSent else response
@@ -141,8 +141,8 @@ fun CrashDetails(
                     Spacer(Modifier.width(iconSpacing))
                     Text(
                         text = sharedStringResource(
-                            if (reportState is ReportState.Sent) SharedString.CrashHandlerSendReportSent
-                            else SharedString.CrashHandlerSendReport
+                            if (reportState is ReportState.Sent) SharedString::crashHandlerSendReportSent
+                            else SharedString::crashHandlerSendReport
                         ),
                         style = textStyle
                     )
@@ -169,9 +169,9 @@ fun CrashDetails(
         ExpandableRow(
             expanded = supportSectionExpanded,
             onClickHeader = { supportSectionExpanded = !supportSectionExpanded },
-            title = sharedStringResource(SharedString.CrashHandlerSupport),
+            title = sharedStringResource(SharedString::crashHandlerSupport),
             description = if (supportSectionExpanded) null else sharedStringResource(
-                SharedString.CrashHandlerSupportDescription
+                SharedString::crashHandlerSupportDescription
             ),
             icon = {
                 ExpressiveRowIcon(
@@ -199,14 +199,14 @@ fun CrashDetails(
             VerticalSegmentor(
                 {
                     Text(
-                        text = sharedStringResource(SharedString.CrashHandlerSupportGuide),
+                        text = sharedStringResource(SharedString::crashHandlerSupportGuide),
                         style = MaterialTheme.typography.bodySmallEmphasized,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 },
                 {
                     ExpressiveButtonRow(
-                        title = sharedStringResource(SharedString.CrashHandlerSupportCopyDetails),
+                        title = sharedStringResource(SharedString::crashHandlerSupportCopyDetails),
                         icon = {
                             ExpressiveRowIcon(
                                 painter = rememberVectorPainter(Icons.Rounded.ContentCopy)
@@ -229,7 +229,7 @@ fun CrashDetails(
         }
 
         ExpressiveSection(
-            title = sharedStringResource(SharedString.CrashHandlerStackTrace)
+            title = sharedStringResource(SharedString::crashHandlerStackTrace)
         ) {
             ElevatedCard(
                 modifier = Modifier

@@ -36,7 +36,7 @@ fun DeleteConfirmationDialog(
                     contentColor = MaterialTheme.colorScheme.onError
                 )
             ) {
-                Text(sharedStringResource(SharedString.ActionDelete))
+                Text(sharedStringResource(SharedString::actionDelete))
             }
         },
         dismissButton = {
@@ -44,7 +44,7 @@ fun DeleteConfirmationDialog(
                 onClick = onDismissRequest,
                 shapes = ButtonDefaults.shapes()
             ) {
-                Text(sharedStringResource(SharedString.ActionCancel))
+                Text(sharedStringResource(SharedString::actionCancel))
             }
         },
         icon = {
@@ -55,7 +55,7 @@ fun DeleteConfirmationDialog(
         },
         text = {
             Text(
-                text = sharedStringResource(SharedString.InfoDeleteQuestion).replace("{NAME}", name),
+                text = sharedStringResource(SharedString::infoDeleteQuestion).replace("{NAME}", name),
                 modifier = Modifier.verticalScroll(rememberScrollState())
             )
         }

@@ -3,15 +3,13 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-import java.util.zip.ZipFile
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.aboutlibraries.android)
 }
 
 android {
@@ -21,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId = "com.aliernfrog.pftool"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 202000
         versionName = "2.2.0"
@@ -52,23 +50,24 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-            optIn.add("kotlin.RequiresOptIn")
-            freeCompilerArgs.add("-Xannotation-default-target=param-property")
-        }
-    }
-
     buildFeatures {
         buildConfig = true
         compose = true
+        resValues = true
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        optIn.add("kotlin.RequiresOptIn")
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
@@ -180,7 +179,8 @@ dependencies {
 
     implementation(project(":shared"))
     implementation(project(":pftool-shared"))
-    implementation(libs.aboutlibraries)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.core)
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
     implementation(libs.dfc)
@@ -195,71 +195,4 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling.preview)
 
     coreLibraryDesugaring(libs.android.desugar)
-}
-
-val sharedStringLibs = listOf("pftool-shared", "shared")
-tasks.register("checkSharedStrings") {
-    group = "verification"
-    outputs.upToDateWhen { false }
-    dependsOn(
-        ":shared:bundleDebugAar", ":shared:bundleReleaseAar",
-        ":pftool-shared:bundleDebugAar", ":pftool-shared:bundleReleaseAar"
-    )
-
-    doLast {
-        val stringsFile = project.projectDir.resolve("src/main/res/values/strings.xml")
-        val stringsContent = stringsFile.readText()
-        val missingKeys = mutableListOf<Pair<String, String>>()
-
-        sharedStringLibs.forEach { libraryName ->
-            project.logger.lifecycle("Executing shared string checks for library: $libraryName")
-            val projectDependency = project.configurations.getByName("debugRuntimeClasspath")
-                .allDependencies
-                .filterIsInstance<ProjectDependency>()
-                .find { project.project(it.path).path == ":$libraryName" }
-                ?: throw GradleException("Could not find a project dependency on ':$libraryName'")
-
-            val aar = project.project(projectDependency.path).tasks.let { tasks ->
-                tasks.getByName("bundleDebugAar").outputs.files.singleFile.let {
-                    if (it.exists()) it
-                    else tasks.getByName("bundleReleaseAar").outputs.files.singleFile
-                }
-            }
-
-            val zipFile = ZipFile(aar)
-            val entry = "res/raw/shared_strings.txt".let {
-                zipFile.getEntry(it)
-                    ?: throw GradleException("Could not find '$it' inside '${aar.name}'")
-            }
-            val stringKeys = zipFile.getInputStream(entry).bufferedReader().readLines()
-                .map { it.trim() }
-                .filter { it.isNotBlank() }
-            zipFile.close()
-
-            if (stringKeys.isEmpty()) {
-                logger.warn("No string keys found in $libraryName:shared_strings.txt, skipping shared string check")
-                return@forEach
-            }
-
-            val missingKeysForLib = stringKeys.filter { key ->
-                !stringsContent.contains("<string name=\"$key\"")
-            }.map { key -> libraryName to key }
-
-            missingKeys.addAll(missingKeysForLib)
-
-            if (missingKeysForLib.isNotEmpty()) project.logger.warn("Strings required by $libraryName are missing: ${missingKeysForLib.joinToString(", ")}")
-            else project.logger.lifecycle("All required strings for $libraryName are present in ${stringsFile.path}")
-        }
-
-        if (missingKeys.isNotEmpty())
-            throw GradleException("Strings required by shared libraries are missing: ${
-                missingKeys.joinToString("\n") { (lib, key) -> "$lib -> $key" }
-            }")
-
-        project.logger.lifecycle("All required strings are present in ${stringsFile.path}")
-    }
-}
-
-tasks.named("preBuild") {
-    dependsOn(tasks.named("checkSharedStrings"))
 }

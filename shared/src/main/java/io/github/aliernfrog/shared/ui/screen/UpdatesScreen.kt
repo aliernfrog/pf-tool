@@ -99,8 +99,8 @@ fun UpdatesScreen(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
                 title = sharedStringResource(
-                    if (updateAvailable) SharedString.Updates
-                    else SharedString.UpdatesChangelog
+                    if (updateAvailable) SharedString::updates
+                    else SharedString::updatesChangelog
                 ),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
@@ -118,7 +118,7 @@ fun UpdatesScreen(
             ) {
                 if (!updateAvailable && currentVersionInfo.body == null) item {
                     ErrorWithIcon(
-                        description = sharedStringResource(SharedString.UpdatesNoChangelog),
+                        description = sharedStringResource(SharedString::updatesNoChangelog),
                         icon = rememberVectorPainter(Icons.AutoMirrored.Filled.Notes),
                         button = {
                             Button(
@@ -126,7 +126,7 @@ fun UpdatesScreen(
                                 shapes = ButtonDefaults.shapes()
                             ) {
                                 ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
-                                Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
+                                Text(sharedStringResource(SharedString::updatesCheckUpdates))
                             }
                         }
                     )
@@ -138,7 +138,7 @@ fun UpdatesScreen(
                     }
 
                     CardWithActions(
-                        title = sharedStringResource(SharedString.Warning),
+                        title = sharedStringResource(SharedString::warning),
                         icon = rememberVectorPainter(Icons.Default.Warning),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -152,7 +152,7 @@ fun UpdatesScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                sharedStringResource(SharedString.UpdatesIncompatible)
+                                sharedStringResource(SharedString::updatesIncompatible)
                                     .replace("{ANDROID_VERSION}", minAndroidVersion)
                             )
                         }
@@ -204,7 +204,7 @@ fun UpdatesScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         PlainTextTooltipContainer(
-                            tooltipText = sharedStringResource(SharedString.ActionOpenInBrowser)
+                            tooltipText = sharedStringResource(SharedString::actionOpenInBrowser)
                         ) {
                             OutlinedButton(
                                 onClick = {
@@ -222,7 +222,7 @@ fun UpdatesScreen(
                                             && (expandedOverride == true || showExtendedToolbar)
                                 ) {
                                     Text(
-                                        text = sharedStringResource(SharedString.ActionOpenInBrowser),
+                                        text = sharedStringResource(SharedString::actionOpenInBrowser),
                                         modifier = Modifier.padding(start = ButtonDefaults.IconSpacing)
                                     )
                                 }
@@ -237,14 +237,14 @@ fun UpdatesScreen(
                                 shapes = ButtonDefaults.shapes()
                             ) {
                                 ButtonIcon(rememberVectorPainter(Icons.Default.Update))
-                                Text(sharedStringResource(SharedString.UpdatesUpdate))
+                                Text(sharedStringResource(SharedString::updatesUpdate))
                             }
                             else FilledTonalButton(
                                 onClick = onCheckUpdatesRequest,
                                 shapes = ButtonDefaults.shapes()
                             ) {
                                 ButtonIcon(rememberVectorPainter(Icons.Default.Refresh))
-                                Text(sharedStringResource(SharedString.UpdatesCheckUpdates))
+                                Text(sharedStringResource(SharedString::updatesCheckUpdates))
                             }
                         }
                     }
@@ -316,13 +316,13 @@ private fun ReleaseCard(
 
                 if (isCurrentRelease) ContainedTextWithIcon(
                     icon = rememberVectorPainter(Icons.Rounded.DownloadDone),
-                    text = sharedStringResource(SharedString.UpdatesCurrentVersion),
+                    text = sharedStringResource(SharedString::updatesCurrentVersion),
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
 
                 if (release.prerelease) ContainedTextWithIcon(
                     icon = rememberVectorPainter(Icons.Rounded.Biotech),
-                    text = sharedStringResource(SharedString.UpdatesPrerelease),
+                    text = sharedStringResource(SharedString::updatesPrerelease),
                     containerColor = MaterialTheme.colorScheme.errorContainer
                 )
 
@@ -335,7 +335,7 @@ private fun ReleaseCard(
 
             IconButtonWithTooltip(
                 icon = rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew),
-                contentDescription = sharedStringResource(SharedString.ActionOpenInBrowser),
+                contentDescription = sharedStringResource(SharedString::actionOpenInBrowser),
                 onClick = { uriHandler.openUri(release.htmlUrl) }
             )
         }

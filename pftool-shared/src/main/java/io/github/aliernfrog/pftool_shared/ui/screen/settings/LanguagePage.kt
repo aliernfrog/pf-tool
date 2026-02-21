@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
@@ -53,6 +54,8 @@ import io.github.aliernfrog.pftool_shared.data.getAvailableLanguage
 import io.github.aliernfrog.pftool_shared.data.getNameIn
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.copy
+import io.github.aliernfrog.pftool_shared.util.getSharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
@@ -61,9 +64,7 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
-import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
-import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,7 +135,7 @@ fun LanguagePage(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
-                title = sharedStringResource(PFToolSharedString.SettingsLanguage),
+                title = sharedStringResource(PFToolSharedString::settingsLanguage),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
@@ -150,13 +151,13 @@ fun LanguagePage(
             }
 
             item {
-                ExpressiveSection(sharedStringResource(PFToolSharedString.SettingsLanguageSystem)) {
+                ExpressiveSection(sharedStringResource(PFToolSharedString::settingsLanguageSystem)) {
                     VerticalSegmentor(
                         {
                             LanguageButton(
                                 language = deviceLanguage,
-                                title = sharedStringResource(PFToolSharedString.SettingsLanguageSystemFollow),
-                                description = availableDeviceLanguage?.localizedName ?: sharedStringResource(PFToolSharedString.SettingsLanguageSystemNotAvailable)
+                                title = sharedStringResource(PFToolSharedString::settingsLanguageSystemFollow),
+                                description = availableDeviceLanguage?.localizedName ?: sharedStringResource(PFToolSharedString::settingsLanguageSystemNotAvailable)
                                     .replace("{SYSTEM_LANGUAGE}", appLanguage?.let {
                                         deviceLanguage?.getNameIn(it.languageCode, it.countryCode)
                                     } ?: ""),
@@ -171,7 +172,7 @@ fun LanguagePage(
                     )
                 }
 
-                ExpressiveSection(sharedStringResource(PFToolSharedString.SettingsLanguageOther)) {}
+                ExpressiveSection(sharedStringResource(PFToolSharedString::settingsLanguageOther)) {}
             }
 
             itemsIndexed(languages) { index, language ->
@@ -202,13 +203,15 @@ private fun TranslationProgressIndicator(
     val scope = rememberCoroutineScope()
     val state = rememberTooltipState(isPersistent = true)
     val tooltipText = remember {
-        if (isBase) context.getSharedString(PFToolSharedString.SettingsLanguageProgressBase)
-        else context.getSharedString(PFToolSharedString.SettingsLanguageProgressPercent)
+        if (isBase) context.getSharedString(PFToolSharedString::settingsLanguageProgressBase)
+        else context.getSharedString(PFToolSharedString::settingsLanguageProgressPercent)
             .replace("{PERCENT}", (progress*100).toInt().toString())
     }
 
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Above
+        ),
         tooltip = {
             PlainTooltip {
                 Text(tooltipText)
@@ -274,14 +277,14 @@ fun TranslationHelp(
                 )
                 Text(
                     text = sharedStringResource(
-                        if (isDeviceLanguageAvailable) PFToolSharedString.SettingsLanguageHelp
-                        else PFToolSharedString.SettingsLanguageHelpDeviceNotAvailable
+                        if (isDeviceLanguageAvailable) PFToolSharedString::settingsLanguageHelp
+                        else PFToolSharedString::settingsLanguageHelpDeviceNotAvailable
                     ),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = sharedStringResource(PFToolSharedString.SettingsLanguageHelpDescription),
+                text = sharedStringResource(PFToolSharedString::settingsLanguageHelpDescription),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

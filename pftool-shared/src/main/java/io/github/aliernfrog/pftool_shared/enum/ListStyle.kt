@@ -5,18 +5,18 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.ViewStream
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
-import io.github.aliernfrog.shared.util.SharedString
+import kotlin.reflect.KProperty1
 
 enum class ListStyle(
-    val label: SharedString,
+    val label: KProperty1<PFToolSharedString, Int>,
     val iconVector: ImageVector
 ) {
     LIST(
-        label = PFToolSharedString.ListStyleList,
+        label = PFToolSharedString::listStyleList,
         iconVector = Icons.Default.ViewStream
     ),
     GRID(
-        label = PFToolSharedString.ListStyleGrid,
+        label = PFToolSharedString::listStyleGrid,
         iconVector = Icons.Default.GridView
     )
 }

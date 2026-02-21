@@ -28,8 +28,9 @@ import io.github.aliernfrog.shared.ui.screen.settings.ExperimentalPage
 import io.github.aliernfrog.shared.ui.screen.settings.LibsPage
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsRootPage
-import io.github.aliernfrog.shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.resolve
 import org.koin.androidx.compose.koinViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -142,12 +143,13 @@ fun SettingsScreen(
 
         SettingsDestination.libs -> {
             LibsPage(
+                librariesJSONRes = R.raw.aboutlibraries,
                 onNavigateBackRequest = onNavigateBackRequest
             )
         }
 
         else -> {
-            Text("UNKNOWN DESTINATION: ${sharedStringResource(destination.title)}")
+            Text("UNKNOWN DESTINATION: ${destination.title.resolve()}")
         }
     }
 }
