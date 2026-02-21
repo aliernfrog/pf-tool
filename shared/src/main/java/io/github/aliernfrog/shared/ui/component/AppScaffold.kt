@@ -129,7 +129,7 @@ fun AppSmallTopBar(
 private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
     IconButtonWithTooltip(
         icon = rememberVectorPainter(icon),
-        contentDescription = sharedStringResource(SharedString.ActionBack),
+        contentDescription = sharedStringResource(SharedString::actionBack),
         tooltipPositioning = TooltipAnchorPosition.Below,
         onClick = onClick
     )

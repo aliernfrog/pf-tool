@@ -26,11 +26,11 @@ import io.github.aliernfrog.pftool_shared.enum.ListSorting
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
-import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +50,7 @@ fun ListViewOptionsSheet(
         sheetState = sheetState
     ) {
         if (isAnySortingOptionAvailable) ExpressiveSection(
-            title = sharedStringResource(PFToolSharedString.ListSorting)
+            title = sharedStringResource(PFToolSharedString::listSorting)
         ) {
             onSortingChange?.let { sortingChangeCallback ->
                 val filtersScrollState = rememberScrollState()
@@ -84,7 +84,7 @@ fun ListViewOptionsSheet(
                         selected = sortingReversed == true,
                         onClick = { sortingReversedChangeCallback(sortingReversed != true) },
                         label = {
-                            Text(sharedStringResource(PFToolSharedString.ListSortingReversed))
+                            Text(sharedStringResource(PFToolSharedString::listSortingReversed))
                         },
                         leadingIcon = {
                             Icon(Icons.Default.SwapVert, null)
@@ -95,7 +95,7 @@ fun ListViewOptionsSheet(
             }
         }
 
-        ExpressiveSection(sharedStringResource(PFToolSharedString.ListStyle)) {
+        ExpressiveSection(sharedStringResource(PFToolSharedString::listStyle)) {
             val stylesScrollState = rememberScrollState()
             Row(
                 modifier = Modifier
@@ -124,7 +124,7 @@ fun ListViewOptionsSheet(
 
             FadeVisibility(style == ListStyle.GRID) {
                 ExpressiveSection(
-                    title = sharedStringResource(PFToolSharedString.ListStyleGridMaxLineSpan)
+                    title = sharedStringResource(PFToolSharedString::listStyleGridMaxLineSpan)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically

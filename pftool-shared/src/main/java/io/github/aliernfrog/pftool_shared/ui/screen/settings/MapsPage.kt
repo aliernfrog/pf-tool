@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsPageContainer
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
-import io.github.aliernfrog.shared.util.sharedStringResource
 
 @Composable
 fun MapsPage(
@@ -20,23 +20,23 @@ fun MapsPage(
     onNavigateBackRequest: () -> Unit
 ) {
     SettingsPageContainer(
-        title = sharedStringResource(PFToolSharedString.SettingsMaps),
+        title = sharedStringResource(PFToolSharedString::settingsMaps),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
-        ExpressiveSection(sharedStringResource(PFToolSharedString.SettingsMapsThumbnails)) {
+        ExpressiveSection(sharedStringResource(PFToolSharedString::settingsMapsThumbnails)) {
             VerticalSegmentor(
                 {
                     ExpressiveSwitchRow(
-                        title = sharedStringResource(PFToolSharedString.SettingsMapsThumbnailsChosen),
-                        description = sharedStringResource(PFToolSharedString.SettingsMapsThumbnailsChosenDescription),
+                        title = sharedStringResource(PFToolSharedString::settingsMapsThumbnailsChosen),
+                        description = sharedStringResource(PFToolSharedString::settingsMapsThumbnailsChosenDescription),
                         checked = showChosenMapThumbnailPref.value,
                         onCheckedChange = { showChosenMapThumbnailPref.value = it }
                     )
                 },
                 {
                     ExpressiveSwitchRow(
-                        title = sharedStringResource(PFToolSharedString.SettingsMapsThumbnailsList),
-                        description = sharedStringResource(PFToolSharedString.SettingsMapsThumbnailsListDescription),
+                        title = sharedStringResource(PFToolSharedString::settingsMapsThumbnailsList),
+                        description = sharedStringResource(PFToolSharedString::settingsMapsThumbnailsListDescription),
                         checked = showMapThumbnailsInListPref.value,
                         onCheckedChange = { showMapThumbnailsInListPref.value = it }
                     )
@@ -45,12 +45,12 @@ fun MapsPage(
             )
         }
 
-        ExpressiveSection(sharedStringResource(PFToolSharedString.SettingsMapsBehavior)) {
+        ExpressiveSection(sharedStringResource(PFToolSharedString::settingsMapsBehavior)) {
             VerticalSegmentor(
                 {
                     ExpressiveSwitchRow(
-                        title = sharedStringResource(PFToolSharedString.SettingsMapsBehaviorStackup),
-                        description = sharedStringResource(PFToolSharedString.SettingsMapsBehaviorStackupDescription),
+                        title = sharedStringResource(PFToolSharedString::settingsMapsBehaviorStackup),
+                        description = sharedStringResource(PFToolSharedString::settingsMapsBehaviorStackupDescription),
                         checked = stackupMapsPref.value,
                         onCheckedChange = { stackupMapsPref.value = it }
                     )

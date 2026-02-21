@@ -41,7 +41,7 @@ fun CrashHandlerScreen(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
-                title = sharedStringResource(SharedString.CrashHandlerTitle),
+                title = sharedStringResource(SharedString::crashHandlerTitle),
                 scrollBehavior = scrollBehavior
             )
         },
@@ -53,7 +53,7 @@ fun CrashHandlerScreen(
                 .navigationBarsPadding()
         ) {
             ErrorWithIcon(
-                description = sharedStringResource(SharedString.CrashHandlerDescription),
+                description = sharedStringResource(SharedString::crashHandlerDescription),
                 icon = rememberVectorPainter(Icons.Default.Error),
                 contentColor = MaterialTheme.colorScheme.error,
                 iconContainerColor = MaterialTheme.colorScheme.errorContainer,
@@ -73,7 +73,7 @@ fun CrashHandlerScreen(
                         shapes = ButtonDefaults.shapes()
                     ) {
                         ButtonIcon(rememberVectorPainter(Icons.Default.RestartAlt))
-                        Text(sharedStringResource(SharedString.CrashHandlerRestartApp))
+                        Text(sharedStringResource(SharedString::crashHandlerRestartApp))
                     }
                 }
             )

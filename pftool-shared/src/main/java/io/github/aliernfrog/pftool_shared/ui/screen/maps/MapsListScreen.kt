@@ -78,6 +78,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.toptoast.state.TopToastState
@@ -94,7 +95,9 @@ import io.github.aliernfrog.pftool_shared.ui.component.maps.ListMapItem
 import io.github.aliernfrog.pftool_shared.ui.sheet.ListViewOptionsSheet
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IMapsListViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.getSharedString
 import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppTopBar
@@ -110,8 +113,6 @@ import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibility
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.extension.showErrorToast
-import io.github.aliernfrog.shared.util.getSharedString
-import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -122,7 +123,7 @@ import kotlin.collections.filter
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MapsListScreen(
-    title: String = sharedStringResource(PFToolSharedString.Maps),
+    title: String = sharedStringResource(PFToolSharedString::maps),
     fileMimeType: String,
     mapsListSegments: List<MapsListSegment>,
     mapActions: List<MapAction>,
@@ -168,7 +169,7 @@ fun MapsListScreen(
                 )
                 if (cachedFile != null) onMapPick(FileWrapper(cachedFile))
                 else topToastState.showErrorToast(
-                    text = context.getSharedString(PFToolSharedString.MapsListPickMapFailed),
+                    text = context.getSharedString(PFToolSharedString::mapsListPickMapFailed),
                 )
             }
         }
@@ -183,7 +184,7 @@ fun MapsListScreen(
     LaunchedEffect(sharedMaps, mapsListSegments.size) {
         if (vm.scrolledToShared || sharedMaps.isEmpty()) return@LaunchedEffect
         val sharedMapsPage = mapsListSegments.indexOfFirst {
-            it.label === PFToolSharedString.MapsListSegmentShared
+            it.label === PFToolSharedString::mapsListSegmentShared
         }
         pagerState.scrollToPage(sharedMapsPage)
         vm.scrolledToShared = true
@@ -216,7 +217,7 @@ fun MapsListScreen(
             AnimatedContent(targetState = isMultiSelecting) { multiSelecting ->
                 AppTopBar(
                     title = if (!multiSelecting) title
-                    else sharedStringResource(PFToolSharedString.MapsListMultiSelection)
+                    else sharedStringResource(PFToolSharedString::mapsListMultiSelection)
                         .replace("{COUNT}", selectedMaps.size.toString()),
                     scrollBehavior = scrollBehavior,
                     navigationIcon = if (multiSelecting) Icons.Default.Close else Icons.AutoMirrored.Rounded.ArrowBack,
@@ -230,8 +231,8 @@ fun MapsListScreen(
                                     if (areAllShownMapsSelected) Icons.Default.Deselect else Icons.Default.SelectAll
                                 ),
                                 contentDescription = sharedStringResource(
-                                    if (areAllShownMapsSelected) PFToolSharedString.ActionSelectDeselectAll
-                                    else PFToolSharedString.ActionSelectSelectAll
+                                    if (areAllShownMapsSelected) PFToolSharedString::actionSelectDeselectAll
+                                    else PFToolSharedString::actionSelectSelectAll
                                 ),
                                 tooltipPositioning = TooltipAnchorPosition.Below,
                                 onClick = {
@@ -247,7 +248,7 @@ fun MapsListScreen(
                             if (showMultiSelectionActions) Box {
                                 IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.MoreVert),
-                                    contentDescription = sharedStringResource(PFToolSharedString.ActionMore),
+                                    contentDescription = sharedStringResource(PFToolSharedString::actionMore),
                                     tooltipPositioning = TooltipAnchorPosition.Below,
                                     onClick = { multiSelectionDropdownShown = true }
                                 )
@@ -272,7 +273,7 @@ fun MapsListScreen(
                                 )
                                 else IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.Refresh),
-                                    contentDescription = sharedStringResource(PFToolSharedString.MapsListReload),
+                                    contentDescription = sharedStringResource(PFToolSharedString::mapsListReload),
                                     tooltipPositioning = TooltipAnchorPosition.Below,
                                     onClick = {
                                         vm.reloadMaps(context)
@@ -293,7 +294,7 @@ fun MapsListScreen(
                 if (showStorage) {
                     FloatingActionButton(
                         icon = Icons.Outlined.SdCard,
-                        text = sharedStringResource(PFToolSharedString.MapsListStorage),
+                        text = sharedStringResource(PFToolSharedString::mapsListStorage),
                         expanded = showFABLabel,
                         onClick = {
                             val intent =
@@ -531,7 +532,7 @@ private fun SegmentSummary(
             else AnimatedContent(isSearching) { searching ->
                 ErrorWithIcon(
                     description = sharedStringResource(
-                        if (searching) PFToolSharedString.MapsListSearchNoMatches else currentSegment.noMapsText
+                        if (searching) PFToolSharedString::mapsListSearchNoMatches else currentSegment.noMapsText
                     ),
                     icon = rememberVectorPainter(
                         if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
@@ -540,7 +541,7 @@ private fun SegmentSummary(
                 )
             }
         } else Text(
-            text = sharedStringResource(PFToolSharedString.MapsListCount)
+            text = sharedStringResource(PFToolSharedString::mapsListCount)
                 .replace("{COUNT}", shownMapCount.toString()),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
@@ -574,7 +575,7 @@ private fun Search(
                 leadingIcon = {
                     if (searchQuery.isNotEmpty()) IconButtonWithTooltip(
                         icon = rememberVectorPainter(Icons.Default.Clear),
-                        contentDescription = sharedStringResource(PFToolSharedString.MapsListSearchClear),
+                        contentDescription = sharedStringResource(PFToolSharedString::mapsListSearchClear),
                         onClick = { onSearchQueryChange("") }
                     )
                     else Icon(
@@ -585,12 +586,12 @@ private fun Search(
                 trailingIcon = {
                     IconButtonWithTooltip(
                         icon = rememberVectorPainter(Icons.AutoMirrored.Filled.Sort),
-                        contentDescription = sharedStringResource(PFToolSharedString.ListOptions),
+                        contentDescription = sharedStringResource(PFToolSharedString::listOptions),
                         onClick = onShowListViewOptionsRequest
                     )
                 },
                 placeholder = {
-                    Text(sharedStringResource(PFToolSharedString.MapsListSearch))
+                    Text(sharedStringResource(PFToolSharedString::mapsListSearch))
                 }
             )
         },
@@ -618,7 +619,7 @@ private fun MultiSelectionDropdown(
     ) {
         actions.forEach { action ->
             DropdownMenuItem(
-                text = { Text(sharedStringResource(action.shortLabel)) },
+                text = { Text(stringResource(action.shortLabel)) },
                 leadingIcon = {
                     Icon(
                         imageVector = action.icon,

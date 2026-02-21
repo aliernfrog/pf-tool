@@ -42,15 +42,6 @@ android {
     }
 }
 
-androidComponents {
-    onVariants { variant ->
-        variant.sources.res?.addGeneratedSourceDirectory(
-            tasks.named<GenerateStringsTask>("generateSharedStringsTxt"),
-            GenerateStringsTask::outputDir
-        )
-    }
-}
-
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
@@ -89,31 +80,6 @@ dependencies {
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
-}
-
-abstract class GenerateStringsTask : DefaultTask() {
-    @get:OutputDirectory
-    abstract val outputDir: DirectoryProperty
-
-    @TaskAction
-    fun execute() {
-        val enumFile = project.file("src/main/java/io/github/aliernfrog/pftool_shared/util/SharedString.kt")
-        val pattern = """SharedString\("([^"]+)"\)""".toRegex(RegexOption.MULTILINE)
-        val keys = enumFile.readText().let { content ->
-            pattern.findAll(content).map { it.groupValues[1] }.toList()
-        }
-        val targetFile = outputDir.file("raw/shared_strings.txt").get().asFile
-        targetFile.parentFile.mkdirs()
-        targetFile.writeText(keys.joinToString("\n"))
-    }
-}
-
-val generateSharedStringsTxt = tasks.register<GenerateStringsTask>("generateSharedStringsTxt") {
-    outputDir.set(layout.buildDirectory.dir("generated/pftool_shared/res"))
-}
-
-tasks.named("preBuild") {
-    dependsOn(tasks.named("generateSharedStringsTxt"))
 }
 
 afterEvaluate {
