@@ -39,7 +39,7 @@ fun showUpdateToast(
     val contextUtils = getKoinInstance<ContextUtils>()
     topToastState.showToast(
         text = contextUtils.stringFunction {
-            it.getSharedString(SharedString.UpdatesUpdateAvailable)
+            it.getSharedString(SharedString::updatesUpdateAvailable)
         },
         icon = Icons.Rounded.Update,
         duration = 20000,

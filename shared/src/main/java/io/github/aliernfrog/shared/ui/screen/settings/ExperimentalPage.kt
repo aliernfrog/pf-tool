@@ -68,12 +68,12 @@ fun ExperimentalPage(
     }
 
     SettingsPageContainer(
-        title = sharedStringResource(SharedString.SettingsExperimental),
+        title = sharedStringResource(SharedString::settingsExperimental),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         ExpressiveSwitchRow(
-            title = sharedStringResource(SharedString.SettingsExperimental),
-            description = sharedStringResource(SharedString.SettingsExperimentalDescription),
+            title = sharedStringResource(SharedString::settingsExperimental),
+            description = sharedStringResource(SharedString::settingsExperimentalDescription),
             checked = experimentalOptionsEnabledPref.value,
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
@@ -205,7 +205,7 @@ fun ExperimentalPage(
                         description = "and crash details sheet"
                     ) {
                         vm.topToastState.showReportableErrorToast(
-                            text = context.getSharedString(SharedString.WarningErrorTapToReport),
+                            text = context.getSharedString(SharedString::warningErrorTapToReport),
                             throwable = Exception("Soft crash handler!")
                         )
                     }

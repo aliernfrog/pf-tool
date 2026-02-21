@@ -21,7 +21,7 @@ fun CustomMessageDialog(
     text: String?,
     icon: ImageVector? = null,
     confirmButton: (@Composable () -> Unit)? = null,
-    dismissButtonText: String = sharedStringResource(SharedString.ActionDismiss),
+    dismissButtonText: String = sharedStringResource(SharedString::actionDismiss),
     onDismissRequest: () -> Unit
 ) {
     @Composable

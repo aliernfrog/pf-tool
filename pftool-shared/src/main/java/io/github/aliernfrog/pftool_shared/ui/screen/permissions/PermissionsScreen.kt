@@ -38,13 +38,14 @@ import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.util.SharedString
-import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
+import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -115,17 +116,16 @@ fun PermissionsScreen(
     }
 
     if (vm.showShizukuIntroDialog) CustomMessageDialog(
-        title = sharedStringResource(PFToolSharedString.PermissionsSetupShizuku),
-        text = sharedStringResource(PFToolSharedString.PermissionsSetupShizukuDescription),
+        title = sharedStringResource(PFToolSharedString::permissionsSetupShizuku),
+        text = sharedStringResource(PFToolSharedString::permissionsSetupShizukuDescription),
         onDismissRequest = { vm.showShizukuIntroDialog = false }
     )
 
     if (vm.showFilesDowngradeDialog) CustomMessageDialog(
         title = null,
-        text = sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppGuide)
+        text = sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppGuide)
             .replace(
-                "{CANT_UNINSTALL_TEXT}",
-                sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppCant)
+                "{CANT_UNINSTALL_TEXT}", sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppCant)
             ),
         onDismissRequest = { vm.showFilesDowngradeDialog = false },
         confirmButton = {
@@ -141,7 +141,7 @@ fun PermissionsScreen(
                     }
                 }
             ) {
-                Text(sharedStringResource(SharedString.ActionOK))
+                Text(sharedStringResource(SharedString::actionOK))
             }
         }
     )

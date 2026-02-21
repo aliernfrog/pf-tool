@@ -76,7 +76,7 @@ fun LibsPage(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
-                title = sharedStringResource(SharedString.SettingsAboutLibs),
+                title = sharedStringResource(SharedString::settingsAboutLibs),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
@@ -109,7 +109,7 @@ fun LibsPage(
                             icon = {
                                 Icon(
                                     imageVector = Icons.Default.Balance,
-                                    contentDescription = sharedStringResource(SharedString.SettingsAboutLibsLicense)
+                                    contentDescription = sharedStringResource(SharedString::settingsAboutLibsLicense)
                                 )
                             }
                         )
@@ -165,7 +165,7 @@ fun LibsPage(
                             onClick = { uriHandler.openUri(it) }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
-                            Text(sharedStringResource(SharedString.SettingsAboutLibsWebsite))
+                            Text(sharedStringResource(SharedString::settingsAboutLibsWebsite))
                         }
                     }
                     lib.organization?.url?.let {
@@ -176,7 +176,7 @@ fun LibsPage(
                             }
                         ) {
                             ButtonIcon(rememberVectorPainter(Icons.Default.CorporateFare))
-                            Text(sharedStringResource(SharedString.SettingsAboutLibsOrganization))
+                            Text(sharedStringResource(SharedString::settingsAboutLibsOrganization))
                         }
                     }
                     lib.developers.forEach { dev ->

@@ -23,12 +23,12 @@ import com.aliernfrog.toptoast.enum.TopToastColor
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.getSharedString
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.SizedButton
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
-import io.github.aliernfrog.shared.util.getSharedString
-import io.github.aliernfrog.shared.util.sharedStringResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -40,7 +40,7 @@ fun AllFilesPermissionsScreen(
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         if (it) onUpdateStateRequest()
         else vm.topToastState.showToast(
-            text = context.getSharedString(PFToolSharedString.PermissionsAllFilesDenied),
+            text = context.getSharedString(PFToolSharedString::permissionsAllFilesDenied),
             icon = Icons.Default.Close,
             iconTintColor = TopToastColor.ERROR
         )
@@ -53,8 +53,8 @@ fun AllFilesPermissionsScreen(
             .navigationBarsPadding()
     ) {
         PermissionsScreenAction(
-            title = sharedStringResource(PFToolSharedString.PermissionsAllFilesTitle),
-            description = sharedStringResource(PFToolSharedString.PermissionsAllFilesDescription),
+            title = sharedStringResource(PFToolSharedString::permissionsAllFilesTitle),
+            description = sharedStringResource(PFToolSharedString::permissionsAllFilesDescription),
             icon = Icons.Default.Security,
             button = {
                 SizedButton(
@@ -64,7 +64,7 @@ fun AllFilesPermissionsScreen(
                     size = ButtonDefaults.MediumContainerHeight
                 ) { textStyle, _, _ ->
                     Text(
-                        text = sharedStringResource(PFToolSharedString.PermissionsAllFilesGrant),
+                        text = sharedStringResource(PFToolSharedString::permissionsAllFilesGrant),
                         style = textStyle
                     )
                 }
@@ -72,11 +72,11 @@ fun AllFilesPermissionsScreen(
         )
 
         ExpressiveSection(
-            title = sharedStringResource(PFToolSharedString.PermissionsOther)
+            title = sharedStringResource(PFToolSharedString::permissionsOther)
         ) {
             ExpressiveButtonRow(
-                title = sharedStringResource(PFToolSharedString.PermissionsAllFilesSAF),
-                description = sharedStringResource(PFToolSharedString.PermissionsAllFilesSAFDescription),
+                title = sharedStringResource(PFToolSharedString::permissionsAllFilesSAF),
+                description = sharedStringResource(PFToolSharedString::permissionsAllFilesSAFDescription),
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .verticalSegmentedShape()

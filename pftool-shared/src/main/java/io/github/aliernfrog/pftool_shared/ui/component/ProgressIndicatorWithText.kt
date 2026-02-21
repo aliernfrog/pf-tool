@@ -36,7 +36,7 @@ fun HorizontalProgressIndicatorWithText(
             color = indicatorColor
         )
         Text(
-            text = progress?.description ?: sharedStringResource(SharedString.InfoPleaseWait),
+            text = progress?.description ?: sharedStringResource(SharedString::infoPleaseWait),
             color = textColor
         )
     }
@@ -59,7 +59,7 @@ fun VerticalProgressIndicatorWithText(
             color = indicatorColor
         )
         Text(
-            text = progress?.description ?: sharedStringResource(SharedString.InfoPleaseWait),
+            text = progress?.description ?: sharedStringResource(SharedString::infoPleaseWait),
             color = textColor,
             modifier = Modifier.padding(top = 8.dp)
         )

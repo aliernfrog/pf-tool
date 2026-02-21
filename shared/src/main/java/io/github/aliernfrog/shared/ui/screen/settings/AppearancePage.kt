@@ -57,11 +57,11 @@ fun AppearancePage(
     onNavigateBackRequest: () -> Unit
 ) {
     SettingsPageContainer(
-        title = sharedStringResource(SharedString.SettingsAppearance),
+        title = sharedStringResource(SharedString::settingsAppearance),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         ExpressiveSection(
-            title = sharedStringResource(SharedString.SettingsAppearanceTheme)
+            title = sharedStringResource(SharedString::settingsAppearanceTheme)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
@@ -138,15 +138,15 @@ fun AppearancePage(
         }
 
         ExpressiveSection(
-            title = sharedStringResource(SharedString.SettingsAppearanceColors)
+            title = sharedStringResource(SharedString::settingsAppearanceColors)
         ) {
             VerticalSegmentor(
                 {
                     ExpressiveSwitchRow(
-                        title = sharedStringResource(SharedString.SettingsAppearanceColorsMaterialYou),
+                        title = sharedStringResource(SharedString::settingsAppearanceColorsMaterialYou),
                         description = sharedStringResource(
-                            if (supportsMaterialYou) SharedString.SettingsAppearanceColorsMaterialYouDescription
-                            else SharedString.SettingsAppearanceColorsMaterialYouUnavailable
+                            if (supportsMaterialYou) SharedString::settingsAppearanceColorsMaterialYouDescription
+                            else SharedString::settingsAppearanceColorsMaterialYouUnavailable
                         ),
                         icon = {
                             ExpressiveRowIcon(
@@ -160,8 +160,8 @@ fun AppearancePage(
                     )
                 }, {
                     ExpressiveSwitchRow(
-                        title = sharedStringResource(SharedString.SettingsAppearanceColorsPitchBlack),
-                        description = sharedStringResource(SharedString.SettingsAppearanceColorsPitchBlackDescription),
+                        title = sharedStringResource(SharedString::settingsAppearanceColorsPitchBlack),
+                        description = sharedStringResource(SharedString::settingsAppearanceColorsPitchBlackDescription),
                         icon = {
                             ExpressiveRowIcon(
                                 painter = rememberVectorPainter(Icons.Rounded.Contrast),
