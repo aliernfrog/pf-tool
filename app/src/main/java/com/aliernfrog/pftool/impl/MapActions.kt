@@ -17,13 +17,12 @@ import io.github.aliernfrog.pftool_shared.data.MapAction
 import io.github.aliernfrog.pftool_shared.data.MapActionResult
 import io.github.aliernfrog.pftool_shared.enum.MapImportedState
 import io.github.aliernfrog.pftool_shared.impl.Progress
-import io.github.aliernfrog.shared.util.SharedString
 
 @Suppress("UNCHECKED_CAST")
 val mapActions = listOf(
     MapAction(
         id = MapAction.RENAME_ID,
-        shortLabel = SharedString.fromResId(R.string.maps_rename),
+        shortLabel = R.string.maps_rename,
         icon = Icons.Rounded.Edit,
         availableForMultiSelection = false,
         availableFor = { it.importedState != MapImportedState.NONE },
@@ -56,7 +55,7 @@ val mapActions = listOf(
 
     MapAction(
         id = MapAction.DUPLICATE_ID,
-        shortLabel = SharedString.fromResId(R.string.maps_duplicate),
+        shortLabel = R.string.maps_duplicate,
         icon = Icons.Rounded.FileCopy,
         availableForMultiSelection = false,
         availableFor = { it.importedState != MapImportedState.NONE },
@@ -89,8 +88,8 @@ val mapActions = listOf(
 
     MapAction(
         id = "import",
-        shortLabel = SharedString.fromResId(R.string.maps_import_short),
-        longLabel = SharedString.fromResId(R.string.maps_import),
+        shortLabel = R.string.maps_import_short,
+        longLabel = R.string.maps_import,
         icon = Icons.Rounded.Download,
         availableFor = {
             (it as MapFile).isZip && it.importedState != MapImportedState.IMPORTED
@@ -117,9 +116,9 @@ val mapActions = listOf(
 
     MapAction(
         id = "export",
-        shortLabel = SharedString.fromResId(R.string.maps_export_short),
-        longLabel = SharedString.fromResId(R.string.maps_export),
-        description = SharedString.fromResId(R.string.maps_export_description),
+        shortLabel = R.string.maps_export_short,
+        longLabel = R.string.maps_export,
+        description = R.string.maps_export_description,
         icon = Icons.Rounded.Upload,
         availableFor = {
             !(it as MapFile).isZip && it.importedState == MapImportedState.IMPORTED
@@ -146,7 +145,7 @@ val mapActions = listOf(
 
     MapAction(
         id = "exportCustomLocation",
-        shortLabel = SharedString.fromResId(R.string.maps_exportCustomTarget),
+        shortLabel = R.string.maps_exportCustomTarget,
         icon = Icons.AutoMirrored.Filled.AddToHomeScreen,
         availableFor = { true },
         availableForMultiSelection = false,
@@ -173,8 +172,8 @@ val mapActions = listOf(
 
     MapAction(
         id = "share",
-        shortLabel = SharedString.fromResId(R.string.maps_share_short),
-        longLabel = SharedString.fromResId(R.string.maps_share),
+        shortLabel = R.string.maps_share_short,
+        longLabel = R.string.maps_share,
         icon = Icons.Rounded.Share,
         availableFor = { (it as MapFile).isZip },
         availableForMultiSelection = true,
@@ -193,8 +192,8 @@ val mapActions = listOf(
 
     MapAction(
         id = "delete",
-        shortLabel = SharedString.fromResId(R.string.maps_delete_short),
-        longLabel = SharedString.fromResId(R.string.maps_delete),
+        shortLabel = R.string.maps_delete_short,
+        longLabel = R.string.maps_delete,
         icon = Icons.Rounded.Delete,
         destructive = true,
         availableFor = { it.importedState != MapImportedState.NONE },

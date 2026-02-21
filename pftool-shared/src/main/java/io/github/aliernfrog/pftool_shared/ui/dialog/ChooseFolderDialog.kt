@@ -30,6 +30,7 @@ import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
 import io.github.aliernfrog.pftool_shared.util.folderPickerSupportsInitialUri
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
@@ -48,7 +49,7 @@ fun ChooseFolderIntroDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onConfirm
             ) {
-                Text(sharedStringResource(SharedString.ActionOK))
+                Text(sharedStringResource(SharedString::actionOK))
             }
         },
         dismissButton = {
@@ -56,11 +57,11 @@ fun ChooseFolderIntroDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onDismissRequest
             ) {
-                Text(sharedStringResource(SharedString.ActionCancel))
+                Text(sharedStringResource(SharedString::actionCancel))
             }
         },
         title = {
-            Text(sharedStringResource(PFToolSharedString.PermissionsRecommendedFolder))
+            Text(sharedStringResource(PFToolSharedString::permissionsRecommendedFolder))
         },
         text = {
             Column(
@@ -74,8 +75,8 @@ fun ChooseFolderIntroDialog(
                 if (permissionData.forceRecommendedPath) Text(
                     text = sharedStringResource(
                         //? Folder picker on Android 7 or below doesn't support automatically navigating
-                        if (folderPickerSupportsInitialUri) PFToolSharedString.PermissionsRecommendedFolderA8Hint
-                        else PFToolSharedString.PermissionsRecommendedFolderA7Hint
+                        if (folderPickerSupportsInitialUri) PFToolSharedString::permissionsRecommendedFolderA8Hint
+                        else PFToolSharedString::permissionsRecommendedFolderA7Hint
                     ),
                     fontSize = 13.5.sp
                 )
@@ -102,7 +103,7 @@ fun UnrecommendedFolderDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onChooseFolderRequest
             ) {
-                Text(sharedStringResource(PFToolSharedString.PermissionsNotRecommendedFolderChooseRecommendedFolder))
+                Text(sharedStringResource(PFToolSharedString::permissionsNotRecommendedFolderChooseRecommendedFolder))
             }
         },
         dismissButton = {
@@ -110,7 +111,7 @@ fun UnrecommendedFolderDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onDismissRequest
             ) {
-                Text(sharedStringResource(SharedString.ActionCancel))
+                Text(sharedStringResource(SharedString::actionCancel))
             }
         },
         text = {
@@ -118,7 +119,7 @@ fun UnrecommendedFolderDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(sharedStringResource(PFToolSharedString.PermissionsNotRecommendedFolderDescription))
+                Text(sharedStringResource(PFToolSharedString::permissionsNotRecommendedFolderDescription))
 
                 PathCard(permissionData.recommendedPath!!)
 
@@ -130,8 +131,8 @@ fun UnrecommendedFolderDialog(
 
                 if (chosenUri != Uri.EMPTY) ClickableText(
                     text = sharedStringResource(
-                        if (showAdvancedOptions) PFToolSharedString.PermissionsNotRecommendedFolderAdvancedHide
-                        else PFToolSharedString.PermissionsNotRecommendedFolderAdvancedShow
+                        if (showAdvancedOptions) PFToolSharedString::permissionsNotRecommendedFolderAdvancedHide
+                        else PFToolSharedString::permissionsNotRecommendedFolderAdvancedShow
                     )
                 ) {
                     showAdvancedOptions = !showAdvancedOptions
@@ -139,7 +140,7 @@ fun UnrecommendedFolderDialog(
 
                 AnimatedVisibility(showAdvancedOptions) {
                     ExpressiveButtonRow(
-                        title = sharedStringResource(PFToolSharedString.PermissionsNotRecommendedFolderUseAnyway),
+                        title = sharedStringResource(PFToolSharedString::permissionsNotRecommendedFolderUseAnyway),
                         description = permissionData.useUnrecommendedAnywayDescription?.let {
                             stringResource(it)
                         }
