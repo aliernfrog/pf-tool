@@ -31,6 +31,7 @@ import io.github.aliernfrog.shared.ui.screen.settings.SettingsRootPage
 import io.github.aliernfrog.shared.util.resolve
 import org.koin.androidx.compose.koinViewModel
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -142,6 +143,7 @@ fun SettingsScreen(
 
         SettingsDestination.libs -> {
             LibsPage(
+                librariesJSONRes = R.raw.aboutlibraries,
                 onNavigateBackRequest = onNavigateBackRequest
             )
         }

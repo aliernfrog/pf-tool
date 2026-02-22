@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     `maven-publish`
@@ -14,7 +13,7 @@ android {
     buildToolsVersion = "36.1.0"
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -32,26 +31,22 @@ android {
         }
     }
 
-    sourceSets.getByName("main") {
-        res.srcDirs(layout.buildDirectory.dir("generated/pftool_shared/res"))
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-            optIn.add("kotlin.RequiresOptIn")
-            freeCompilerArgs.add("-Xannotation-default-target=param-property")
-        }
-    }
-
     buildFeatures {
         aidl = true
         compose = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        optIn.add("kotlin.RequiresOptIn")
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
@@ -71,7 +66,8 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material3.window)
 
-    implementation(libs.aboutlibraries)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.core)
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
     implementation(libs.dfc)

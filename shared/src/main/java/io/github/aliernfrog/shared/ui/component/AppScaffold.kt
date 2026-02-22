@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -129,6 +130,7 @@ private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
     IconButtonWithTooltip(
         icon = rememberVectorPainter(icon),
         contentDescription = sharedStringResource(SharedString::actionBack),
+        tooltipPositioning = TooltipAnchorPosition.Below,
         onClick = onClick
     )
 }

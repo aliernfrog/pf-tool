@@ -19,7 +19,8 @@ enum class StorageAccessType(
         label = PFToolSharedString::settingsStorageStorageAccessTypeShizuku,
         description = PFToolSharedString::settingsStorageStorageAccessTypeShizukuDescription,
         isCompatible = {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            true
+            //Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
         }
     ),
 

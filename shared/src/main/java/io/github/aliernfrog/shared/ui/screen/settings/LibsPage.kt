@@ -1,5 +1,6 @@
 package io.github.aliernfrog.shared.ui.screen.settings
 
+import androidx.annotation.RawRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -49,29 +50,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.form.DividerRow
-import io.github.aliernfrog.shared.ui.viewmodel.settings.LibsPageViewModel
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LibsPage(
-    vm: LibsPageViewModel = koinViewModel(),
+    @RawRes librariesJSONRes: Int,
     onNavigateBackRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
+
+    val libs by produceLibraries(librariesJSONRes)
     val librarySheetState = rememberModalBottomSheetState()
-    var selectedLibrary by remember { mutableStateOf<Library?>(null) }
+    var selectedLibrary by remember {
+        mutableStateOf<Library?>(null)
+    }
 
     AppScaffold(
         topBar = { scrollBehavior ->
@@ -86,36 +90,38 @@ fun LibsPage(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            itemsIndexed(vm.libraries) { index, lib ->
-                val onClick: () -> Unit = {
-                    scope.launch {
-                        selectedLibrary = lib
-                        librarySheetState.show()
+            libs?.libraries?.let { libraries ->
+                itemsIndexed(libraries) { index, lib ->
+                    val onClick: () -> Unit = {
+                        scope.launch {
+                            selectedLibrary = lib
+                            librarySheetState.show()
+                        }
                     }
-                }
 
-                val licenses = rememberSaveable {
-                    lib.licenses.joinToString(", ") { it.name }
-                }
+                    val licenses = rememberSaveable {
+                        lib.licenses.joinToString(", ") { it.name }
+                    }
 
-                if (index != 0) DividerRow()
-                ListItem(
-                    overlineContent = { Text(lib.name) },
-                    headlineContent = { lib.description?.let { Text(it) } },
-                    supportingContent = {
-                        SuggestionChip(
-                            onClick = onClick,
-                            label = { Text(licenses) },
-                            icon = {
-                                Icon(
-                                    imageVector = Icons.Default.Balance,
-                                    contentDescription = sharedStringResource(SharedString::settingsAboutLibsLicense)
-                                )
-                            }
-                        )
-                    },
-                    modifier = Modifier.clickable(onClick = onClick)
-                )
+                    if (index != 0) DividerRow()
+                    ListItem(
+                        overlineContent = { Text(lib.name) },
+                        headlineContent = { lib.description?.let { Text(it) } },
+                        supportingContent = {
+                            SuggestionChip(
+                                onClick = onClick,
+                                label = { Text(licenses) },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Balance,
+                                        contentDescription = sharedStringResource(SharedString::settingsAboutLibsLicense)
+                                    )
+                                }
+                            )
+                        },
+                        modifier = Modifier.clickable(onClick = onClick)
+                    )
+                }
             }
 
             item {

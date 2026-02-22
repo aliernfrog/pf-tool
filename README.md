@@ -9,7 +9,7 @@
 
   [![Download](https://img.shields.io/github/v/tag/aliernfrog/pf-tool?style=for-the-badge&label=Download)](https://github.com/aliernfrog/pf-tool/releases/latest/download/pftool.apk)
   
-  <i style="font-size: 0.7rem;">At least <b>Android 5.0</b> is required</i>
+  <i style="font-size: 0.7rem;">At least <b>Android 6.0</b> is required</i>
   
   <br>
 
