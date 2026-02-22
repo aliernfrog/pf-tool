@@ -6,13 +6,18 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import com.aliernfrog.pftool.BuildConfig
 import com.aliernfrog.pftool.SettingsConstant.supportLinks
 import com.aliernfrog.pftool.crashReportURL
 import com.aliernfrog.pftool.ui.theme.PFToolTheme
+import com.aliernfrog.pftool.util.pfToolSharedString
+import com.aliernfrog.pftool.util.sharedString
 import com.aliernfrog.pftool.util.staticutil.GeneralUtil
+import io.github.aliernfrog.pftool_shared.util.LocalPFToolSharedString
 import io.github.aliernfrog.shared.ui.component.util.AppContainer
 import io.github.aliernfrog.shared.ui.screen.CrashHandlerScreen
+import io.github.aliernfrog.shared.util.LocalSharedString
 
 class CrashHandlerActivity : ComponentActivity() {
     companion object {
@@ -45,16 +50,21 @@ class CrashHandlerActivity : ComponentActivity() {
 
         setContent {
             PFToolTheme {
-                AppContainer {
-                    CrashHandlerScreen(
-                        crashReportURL = crashReportURL,
-                        stackTrace = crashStackTrace,
-                        debugInfo = debugInfo,
-                        supportLinks = supportLinks,
-                        onRestartAppRequest = {
-                            GeneralUtil.restartApp(this@CrashHandlerActivity)
-                        }
-                    )
+                CompositionLocalProvider(
+                    LocalSharedString provides sharedString,
+                    LocalPFToolSharedString provides pfToolSharedString
+                ) {
+                    AppContainer {
+                        CrashHandlerScreen(
+                            crashReportURL = crashReportURL,
+                            stackTrace = crashStackTrace,
+                            debugInfo = debugInfo,
+                            supportLinks = supportLinks,
+                            onRestartAppRequest = {
+                                GeneralUtil.restartApp(this@CrashHandlerActivity)
+                            }
+                        )
+                    }
                 }
             }
         }

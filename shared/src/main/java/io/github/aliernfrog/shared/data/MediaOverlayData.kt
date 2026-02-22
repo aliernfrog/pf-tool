@@ -17,7 +17,7 @@ data class MediaOverlayData(
     val zoomEnabled: Boolean = true,
     val errorContent: @Composable () -> Unit = {
         ErrorWithIcon(
-            description = sharedStringResource(SharedString.WarningError),
+            description = sharedStringResource(SharedString::warningError),
             icon = rememberVectorPainter(Icons.Rounded.Error),
             contentColor = Color.Red
         )

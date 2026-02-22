@@ -1,16 +1,16 @@
 package io.github.aliernfrog.pftool_shared.data
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.github.aliernfrog.pftool_shared.impl.IMapActionArguments
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
-import io.github.aliernfrog.shared.util.SharedString
 
 data class MapAction(
     val id: String,
-    val shortLabel: SharedString,
-    val longLabel: SharedString = shortLabel,
-    val description: SharedString? = null,
+    @StringRes val shortLabel: Int,
+    @StringRes val longLabel: Int = shortLabel,
+    @StringRes val description: Int? = null,
     val icon: ImageVector,
     val availableForMultiSelection: Boolean,
     val destructive: Boolean = false,

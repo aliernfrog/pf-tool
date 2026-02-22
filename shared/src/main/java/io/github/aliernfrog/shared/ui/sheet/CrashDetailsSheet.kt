@@ -63,7 +63,7 @@ fun CrashDetailsSheet(
         sheetState = sheetState
     ) {
         ErrorWithIcon(
-            title = sharedStringResource(SharedString.WarningError),
+            title = sharedStringResource(SharedString::warningError),
             icon = rememberVectorPainter(Icons.Rounded.PriorityHigh),
             iconContainerShape = MaterialShapes.Triangle.toShape(),
             iconContainerColor = MaterialTheme.colorScheme.errorContainer,
@@ -83,7 +83,7 @@ fun CrashDetailsSheet(
                     shapes = ButtonDefaults.shapes()
                 ) {
                     ButtonIcon(rememberVectorPainter(Icons.Default.Close))
-                    Text(sharedStringResource(SharedString.ActionDismiss))
+                    Text(sharedStringResource(SharedString::actionDismiss))
                 }
             }
         )

@@ -182,9 +182,9 @@ fun MediaOverlay(
                     ) {
                         IconButtonWithTooltip(
                             icon = rememberVectorPainter(Icons.Default.Close),
-                            contentDescription = sharedStringResource(SharedString.ActionClose),
-                            onClick = onDismissRequest,
-                            modifier = Modifier.padding(8.dp)
+                            contentDescription = sharedStringResource(SharedString::actionClose),
+                            modifier = Modifier.padding(8.dp),
+                            onClick = onDismissRequest
                         )
                         data.title?.let {
                             Text(
@@ -197,9 +197,9 @@ fun MediaOverlay(
                     }
                     IconButtonWithTooltip(
                         icon = rememberVectorPainter(Icons.AutoMirrored.Filled.HelpOutline),
-                        contentDescription = sharedStringResource(SharedString.MediaOverlayGuide),
-                        onClick = { showMediaOverlayGuidePref.value = true },
-                        modifier = Modifier.padding(8.dp)
+                        contentDescription = sharedStringResource(SharedString::mediaOverlayGuide),
+                        modifier = Modifier.padding(8.dp),
+                        onClick = { showMediaOverlayGuidePref.value = true }
                     )
                 }
             }
@@ -308,15 +308,15 @@ private fun GuideDialog(
                 shapes = ButtonDefaults.shapes(),
                 onClick = onDismissRequest
             ) {
-                Text(sharedStringResource(SharedString.ActionOK))
+                Text(sharedStringResource(SharedString::actionOK))
             }
         },
         text = {
             Column {
                 listOf(
-                    Icons.Default.TouchApp to SharedString.MediaOverlayGuideToggleOverlay,
-                    Icons.Default.ZoomInMap to SharedString.MediaOverlayGuideToggleZoom,
-                    Icons.Default.Pinch to SharedString.MediaOverlayGuideZoom
+                    Icons.Default.TouchApp to SharedString::mediaOverlayGuideToggleOverlay,
+                    Icons.Default.ZoomInMap to SharedString::mediaOverlayGuideToggleZoom,
+                    Icons.Default.Pinch to SharedString::mediaOverlayGuideZoom
                 ).forEachIndexed { index, pair ->
                     if (index != 0) DividerRow(Modifier.fillMaxWidth())
                     Row(
