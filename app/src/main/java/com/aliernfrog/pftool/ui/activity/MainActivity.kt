@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,8 @@ import com.aliernfrog.pftool.util.slideVerticalTransitionMetadata
 import com.aliernfrog.toptoast.component.TopToastHost
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
+import io.github.aliernfrog.pftool_shared.util.LocalPFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.ui.component.MediaOverlay
 import io.github.aliernfrog.shared.ui.component.util.AppContainer
 import io.github.aliernfrog.shared.ui.component.util.InsetsObserver
@@ -49,6 +52,9 @@ import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.sheet.CrashDetailsSheet
 import io.github.aliernfrog.shared.ui.theme.Theme
+import io.github.aliernfrog.shared.util.LocalSharedString
+import io.github.aliernfrog.shared.util.SharedString
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -60,6 +66,8 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
 
         val vm = getViewModel<MainViewModel>()
+        val sharedString by inject<SharedString>()
+        val pfToolSharedString by inject<PFToolSharedString>()
 
         setContent {
             val context = LocalContext.current
@@ -79,7 +87,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             AppTheme {
-                App(vm)
+                CompositionLocalProvider(
+                    LocalSharedString provides sharedString,
+                    LocalPFToolSharedString provides pfToolSharedString
+                ) {
+                    App(vm)
+                }
             }
 
             LaunchedEffect(Unit) {

@@ -3,9 +3,9 @@ package io.github.aliernfrog.shared.util
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import io.github.aliernfrog.shared.di.getKoinInstance
-import org.koin.compose.koinInject
 import kotlin.reflect.KProperty1
 
 data class SharedString(
@@ -91,9 +91,13 @@ data class SharedString(
     @StringRes val crashHandlerSupportCopyDetails : Int,
 )
 
+val LocalSharedString = staticCompositionLocalOf<SharedString> {
+    error("No SharedString class provided!")
+}
+
 @Composable
 fun sharedStringResource(property: KProperty1<SharedString, Int>): String {
-    val provider = koinInject<SharedString>()
+    val provider = LocalSharedString.current
     return stringResource(property.get(provider))
 }
 
