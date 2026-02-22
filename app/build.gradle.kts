@@ -21,8 +21,8 @@ android {
         applicationId = "com.aliernfrog.pftool"
         minSdk = 23
         targetSdk = 36
-        versionCode = 202000
-        versionName = "2.2.0"
+        versionCode = 202100
+        versionName = "2.2.1"
         vectorDrawables { useSupportLibrary = true }
     }
 
@@ -195,4 +195,11 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling.preview)
 
     coreLibraryDesugaring(libs.android.desugar)
+}
+
+tasks.named("preBuild") {
+    dependsOn(
+        ":shared:bundleDebugAar", ":shared:bundleReleaseAar",
+        ":pftool-shared:bundleDebugAar", ":pftool-shared:bundleReleaseAar"
+    )
 }

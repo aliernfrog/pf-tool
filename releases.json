@@ -1,5 +1,15 @@
 [
   {
+    "versionName": "v2.2.1",
+    "versionCode": 202100,
+    "prerelease": false,
+    "minSdk": 21,
+    "body": "### ♻️ Refactors\n- [`29dbf00`](https://github.com/aliernfrog/pf-tool/commit/29dbf00b0b830d1d9cbe15f5b1e113a3b9f50621) - **Shared strings**: Data class based resolving instead of key lookup *(PR #102 by @aliernfrog)*",
+    "createdAt": 1771768485000,
+    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.2.1",
+    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.2.1/pftool.apk"
+  },
+  {
     "versionName": "v2.2.0",
     "versionCode": 202000,
     "prerelease": false,
