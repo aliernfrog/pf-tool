@@ -102,7 +102,7 @@ fun AboutPage(
     var versionClicks by remember { mutableIntStateOf(0) }
 
     SettingsPageContainer(
-        title = sharedStringResource(SharedString.SettingsAbout),
+        title = sharedStringResource(SharedString::settingsAbout),
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         Column(
@@ -120,14 +120,14 @@ fun AboutPage(
             ) {
                 Image(
                     bitmap = appIcon,
-                    contentDescription = sharedStringResource(SharedString.AppName),
+                    contentDescription = sharedStringResource(SharedString::appName),
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .size(72.dp)
                 )
                 Column {
                     Text(
-                        text = sharedStringResource(SharedString.AppName),
+                        text = sharedStringResource(SharedString::appName),
                         style = MaterialTheme.typography.titleLargeEmphasized
                     )
                     Text(
@@ -177,14 +177,14 @@ fun AboutPage(
         }
 
         ExpressiveSection(
-            title = sharedStringResource(SharedString.SettingsAboutUpdates),
+            title = sharedStringResource(SharedString::settingsAboutUpdates),
             modifier = Modifier.padding(top = 8.dp)
         ) {
             VerticalSegmentor(
                 {
                     ExpressiveSwitchRow(
-                        title = sharedStringResource(SharedString.SettingsAboutUpdatesAutoCheckUpdates),
-                        description = sharedStringResource(SharedString.SettingsAboutUpdatesAutoCheckUpdatesDescription),
+                        title = sharedStringResource(SharedString::settingsAboutUpdatesAutoCheckUpdates),
+                        description = sharedStringResource(SharedString::settingsAboutUpdatesAutoCheckUpdatesDescription),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Schedule)) },
                         checked = autoCheckUpdatesPref.value,
                         onCheckedChange = { autoCheckUpdatesPref.value = it }
@@ -195,7 +195,7 @@ fun AboutPage(
         }
 
         ExpressiveSection(
-            title = sharedStringResource(SharedString.SettingsAboutIssues)
+            title = sharedStringResource(SharedString::settingsAboutIssues)
         ) {
             VerticalSegmentor(
                 {
@@ -207,8 +207,8 @@ fun AboutPage(
                             )
                     ) {
                         ExpressiveRowHeader(
-                            title = sharedStringResource(SharedString.SettingsAboutIssuesTitle),
-                            description = sharedStringResource(SharedString.SettingsAboutIssuesDescription),
+                            title = sharedStringResource(SharedString::settingsAboutIssuesTitle),
+                            description = sharedStringResource(SharedString::settingsAboutIssuesDescription),
                             icon = {
                                 ExpressiveRowIcon(
                                     painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.ContactSupport)
@@ -235,17 +235,17 @@ fun AboutPage(
                 },
                 {
                     ExpressiveButtonRow(
-                        title = sharedStringResource(SharedString.SettingsAboutIssuesCopyDebugInfo),
-                        description = sharedStringResource(SharedString.SettingsAboutIssuesCopyDebugInfoDescription),
+                        title = sharedStringResource(SharedString::settingsAboutIssuesCopyDebugInfo),
+                        description = sharedStringResource(SharedString::settingsAboutIssuesCopyDebugInfoDescription),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
                     ) {
                         scope.launch {
                             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
-                                context.getSharedString(SharedString.SettingsAboutIssuesCopyDebugInfoClipLabel),
+                                context.getSharedString(SharedString::settingsAboutIssuesCopyDebugInfoClipLabel),
                                 debugInfo
                             )))
                             vm.topToastState.showToast(
-                                text = context.getSharedString(SharedString.SettingsAboutIssuesCopyDebugInfoCopied),
+                                text = context.getSharedString(SharedString::settingsAboutIssuesCopyDebugInfoCopied),
                                 icon = Icons.Rounded.CopyAll
                             )
                         }
@@ -256,7 +256,7 @@ fun AboutPage(
         }
 
         ExpressiveSection(
-            title = sharedStringResource(SharedString.SettingsAboutCredits)
+            title = sharedStringResource(SharedString::settingsAboutCredits)
         ) {
             LaunchedEffect(Unit) {
                 credits.forEach {
@@ -290,8 +290,8 @@ fun AboutPage(
                 *creditsButtons.toTypedArray(),
                 {
                     ExpressiveButtonRow(
-                        title = sharedStringResource(SharedString.SettingsAboutLibs),
-                        description = sharedStringResource(SharedString.SettingsAboutLibsDescription),
+                        title = sharedStringResource(SharedString::settingsAboutLibs),
+                        description = sharedStringResource(SharedString::settingsAboutLibsDescription),
                         icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Book)) },
                         trailingComponent = {
                             Icon(
@@ -322,7 +322,7 @@ private fun ChangelogButton(
             ButtonIcon(
                 rememberVectorPainter(Icons.Default.Update)
             )
-            Text(sharedStringResource(SharedString.SettingsAboutUpdate))
+            Text(sharedStringResource(SharedString::settingsAboutUpdate))
         }
         else FilledTonalButton(
             shapes = ButtonDefaults.shapes(),
@@ -331,7 +331,7 @@ private fun ChangelogButton(
             ButtonIcon(
                 rememberVectorPainter(Icons.Default.Description)
             )
-            Text(sharedStringResource(SharedString.SettingsAboutChangelog))
+            Text(sharedStringResource(SharedString::settingsAboutChangelog))
         }
     }
 }

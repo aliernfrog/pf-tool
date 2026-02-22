@@ -143,8 +143,8 @@ fun ToggleExpandButton(
     FilledTonalIconButtonWithTooltip(
         icon = rememberVectorPainter(Icons.Default.KeyboardArrowDown),
         contentDescription = sharedStringResource(
-            if (expanded) SharedString.ActionCollapse
-            else SharedString.ActionExpand
+            if (expanded) SharedString::actionCollapse
+            else SharedString::actionExpand
         ),
         onClick = onClick,
         modifier = modifier.rotate(rotation)

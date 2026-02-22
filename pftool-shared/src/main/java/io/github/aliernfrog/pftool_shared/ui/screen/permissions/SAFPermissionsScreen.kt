@@ -46,12 +46,12 @@ import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
+import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
-import io.github.aliernfrog.shared.util.sharedStringResource
 
 @Composable
 fun SAFPermissionsScreen(
@@ -90,7 +90,7 @@ private fun DowngradeFiles(
                 vertical = 8.dp,
                 horizontal = 12.dp
             ),
-            title = sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesApp),
+            title = sharedStringResource(PFToolSharedString::permissionsDowngradeFilesApp),
             buttons = {
                 Column {
                     Button(
@@ -98,7 +98,7 @@ private fun DowngradeFiles(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = { vm.showFilesDowngradeDialog = true }
                     ) {
-                        Text(sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppUninstall))
+                        Text(sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppUninstall))
                     }
                     OutlinedButton(
                         shapes = ButtonDefaults.shapes(),
@@ -108,12 +108,12 @@ private fun DowngradeFiles(
                             vm.storageAccessType = StorageAccessType.SHIZUKU
                         }
                     ) {
-                        Text(sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppCant))
+                        Text(sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppCant))
                     }
                 }
             }
         ) {
-            Text(sharedStringResource(PFToolSharedString.PermissionsDowngradeFilesAppDescription))
+            Text(sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppDescription))
         }
     }
 }
@@ -171,7 +171,7 @@ private fun SAFPermissionsList(
         item {
             PermissionsScreenAction(
                 title = null,
-                description = sharedStringResource(PFToolSharedString.PermissionsSAFFoldersNeeded),
+                description = sharedStringResource(PFToolSharedString::permissionsSAFFoldersNeeded),
                 icon = Icons.Default.Folder,
                 button = null
             )
@@ -224,7 +224,7 @@ private fun SAFPermissionsList(
                                 .align(Alignment.End)
                                 .padding(top = 4.dp)
                         ) {
-                            Text(sharedStringResource(PFToolSharedString.PermissionsChooseFolder))
+                            Text(sharedStringResource(PFToolSharedString::permissionsChooseFolder))
                         }
                     }
                 },
@@ -237,11 +237,11 @@ private fun SAFPermissionsList(
 
         if (StorageAccessType.ALL_FILES.isCompatible()) item {
             ExpressiveSection(
-                title = sharedStringResource(PFToolSharedString.PermissionsOther)
+                title = sharedStringResource(PFToolSharedString::permissionsOther)
             ) {
                 ExpressiveButtonRow(
-                    title = sharedStringResource(PFToolSharedString.PermissionsSAFAllFiles),
-                    description = sharedStringResource(PFToolSharedString.PermissionsSAFAllFilesDescription),
+                    title = sharedStringResource(PFToolSharedString::permissionsSAFAllFiles),
+                    description = sharedStringResource(PFToolSharedString::permissionsSAFAllFilesDescription),
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .verticalSegmentedShape()

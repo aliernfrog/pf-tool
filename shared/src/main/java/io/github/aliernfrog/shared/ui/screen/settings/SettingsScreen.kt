@@ -46,7 +46,8 @@ import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.viewmodel.settings.SettingsViewModel
 import io.github.aliernfrog.shared.util.SharedString
-import io.github.aliernfrog.shared.util.getSharedString
+import io.github.aliernfrog.shared.util.SharedStringResolvable
+import io.github.aliernfrog.shared.util.resolve
 import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
 
@@ -66,7 +67,7 @@ fun SettingsRootPage(
     AppScaffold(
         topBar = { scrollBehavior ->
             AppTopBar(
-                title = sharedStringResource(SharedString.Settings),
+                title = sharedStringResource(SharedString::settings),
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
@@ -85,7 +86,7 @@ fun SettingsRootPage(
 
             categories.forEach { category ->
                 ExpressiveSection(
-                    title = sharedStringResource(category.title)
+                    title = category.title.resolve()
                 ) {
                     val buttons: List<@Composable () -> Unit> = category.destinations
                         .filter {
@@ -94,11 +95,11 @@ fun SettingsRootPage(
                         .map { destination -> {
                             val description = rememberSaveable {
                                 destination.descriptionOverride?.let { it() }
-                                    ?: context.getSharedString(destination.description)
+                                    ?: destination.description.resolve(context)
                             }
 
                             ExpressiveButtonRow(
-                                title = sharedStringResource(destination.title),
+                                title = destination.title.resolve(),
                                 description = description,
                                 icon = {
                                     ExpressiveRowIcon(
@@ -170,9 +171,9 @@ private fun UpdateNotification(
     ) {
         val latestUpdate = availableUpdates.firstOrNull()
         ExpressiveButtonRow(
-            title = sharedStringResource(SharedString.SettingsUpdateNotificationUpdateAvailable)
+            title = sharedStringResource(SharedString::settingsUpdateNotificationUpdateAvailable)
                 .replace("{VERSION}", latestUpdate?.versionName.toString()),
-            description = sharedStringResource(SharedString.SettingsUpdateNotificationDescription),
+            description = sharedStringResource(SharedString::settingsUpdateNotificationDescription),
             icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.Update)) },
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier.padding(12.dp).clip(AppComponentShape),
@@ -182,8 +183,8 @@ private fun UpdateNotification(
 }
 
 data class SettingsDestination(
-    val title: SharedString,
-    val description: SharedString,
+    val title: SharedStringResolvable,
+    val description: SharedStringResolvable,
     val icon: ImageVector,
     val iconContainerColor: Color,
     val shown: () -> Boolean = { true },
@@ -191,37 +192,37 @@ data class SettingsDestination(
 ) {
     companion object {
         val root = SettingsDestination(
-            title = SharedString.Settings,
-            description = SharedString.Settings,
+            title = SharedStringResolvable.Property(SharedString::settings),
+            description = SharedStringResolvable.Property(SharedString::settings),
             icon = Icons.Rounded.Settings,
             iconContainerColor = Color.Blue,
             shown = { false }
         )
 
         val appearance = SettingsDestination(
-            title = SharedString.SettingsAppearance,
-            description = SharedString.SettingsAppearanceDescription,
+            title = SharedStringResolvable.Property(SharedString::settingsAppearance),
+            description = SharedStringResolvable.Property(SharedString::settingsAppearanceDescription),
             icon = Icons.Rounded.Palette,
             iconContainerColor = Color.Yellow
         )
 
         val experimental = SettingsDestination(
-            title = SharedString.SettingsExperimental,
-            description = SharedString.SettingsExperimentalDescription,
+            title = SharedStringResolvable.Property(SharedString::settingsExperimental),
+            description = SharedStringResolvable.Property(SharedString::settingsExperimentalDescription),
             icon = Icons.Rounded.Science,
             iconContainerColor = Color.Black
         )
 
         val about = SettingsDestination(
-            title = SharedString.SettingsAbout,
-            description = SharedString.SettingsAboutDescription,
+            title = SharedStringResolvable.Property(SharedString::settingsAbout),
+            description = SharedStringResolvable.Property(SharedString::settingsAboutDescription),
             icon = Icons.Rounded.Info,
             iconContainerColor = Color.Blue
         )
 
         val libs = SettingsDestination(
-            title = SharedString.SettingsAboutLibs,
-            description = SharedString.SettingsAboutLibsDescription,
+            title = SharedStringResolvable.Property(SharedString::settingsAboutLibs),
+            description = SharedStringResolvable.Property(SharedString::settingsAboutLibsDescription),
             icon = Icons.Rounded.Info,
             iconContainerColor = Color.Blue,
             shown = { false }
@@ -230,11 +231,11 @@ data class SettingsDestination(
 }
 
 interface SettingsCategory {
-    val title: SharedString
+    val title: SharedStringResolvable
     val destinations: List<SettingsDestination>
 }
 
-class SettingsCategoryBuilder(override val title: SharedString) : SettingsCategory {
+class SettingsCategoryBuilder(override val title: SharedStringResolvable) : SettingsCategory {
     override val destinations = mutableListOf<SettingsDestination>()
 
     operator fun SettingsDestination.unaryPlus() {
@@ -243,7 +244,7 @@ class SettingsCategoryBuilder(override val title: SharedString) : SettingsCatego
 }
 
 fun category(
-    title: SharedString,
+    title: SharedStringResolvable,
     block: SettingsCategoryBuilder.() -> Unit
 ): SettingsCategory {
     return SettingsCategoryBuilder(title).apply(block)

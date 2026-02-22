@@ -12,6 +12,7 @@ import io.github.aliernfrog.pftool_shared.repository.MapRepository
 import io.github.aliernfrog.pftool_shared.repository.ServiceFileRepository
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IMapsListViewModel
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
+import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -25,6 +26,7 @@ fun getPFToolSharedModule(
     languageCodes: Array<String>,
     translationProgresses: FloatArray,
     baseLanguageCode: String,
+    sharedString: PFToolSharedString,
     importedMapsFinder: MapFileFinder,
     exportedMapsFinder: MapFileFinder,
     getFileAsMapFile: (FileWrapper) -> IMapFile,
@@ -34,6 +36,7 @@ fun getPFToolSharedModule(
     ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
     onSetStorageAccessType: (StorageAccessType) -> Unit
 ): Module = module {
+    single { sharedString }
     singleOf(::ProgressState)
 
     single {
@@ -56,18 +59,6 @@ fun getPFToolSharedModule(
         )
     }
 
-    viewModelOf(::IMapsListViewModel)
-    viewModel {
-        IPermissionsViewModel(
-            storageAccessTypePref = storageAccessTypePref,
-            ignoreDocumentsUIRestrictionsPref = ignoreDocumentsUIRestrictionsPref,
-            onSetStorageAccessType = onSetStorageAccessType,
-            topToastState = get(),
-            shizukuManager = get(),
-            context = get()
-        )
-    }
-
     singleOf(::ServiceFileRepository)
 
     single {
@@ -83,6 +74,18 @@ fun getPFToolSharedModule(
             exportedMapsFinder = exportedMapsFinder,
             getFileAsMapFile = getFileAsMapFile,
             fileRepository = get()
+        )
+    }
+
+    viewModelOf(::IMapsListViewModel)
+    viewModel {
+        IPermissionsViewModel(
+            storageAccessTypePref = storageAccessTypePref,
+            ignoreDocumentsUIRestrictionsPref = ignoreDocumentsUIRestrictionsPref,
+            onSetStorageAccessType = onSetStorageAccessType,
+            topToastState = get(),
+            shizukuManager = get(),
+            context = get()
         )
     }
 }

@@ -17,6 +17,7 @@ import io.github.aliernfrog.pftool_shared.IFileService
 import io.github.aliernfrog.pftool_shared.enum.ShizukuStatus
 import io.github.aliernfrog.pftool_shared.service.FileService
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.getSharedString
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.extension.showErrorToast
@@ -99,7 +100,7 @@ class ShizukuManager(
             Log.d(TAG, "user service disconnected")
             _fileServiceRunning.value = false
             topToastState.showToast(
-                text = context.getSharedString(PFToolSharedString.InfoShizukuDisconnected),
+                text = context.getSharedString(PFToolSharedString::infoShizukuDisconnected),
                 icon = Icons.Default.Info
             )
         }
@@ -132,7 +133,7 @@ class ShizukuManager(
         } catch (e: Exception) {
             Log.e(TAG, "ShizukuManager/launchShizuku: failed to start activity ", e)
             topToastState.showErrorToast(
-                text = context.getSharedString(SharedString.WarningError)
+                text = context.getSharedString(SharedString::warningError)
             )
         }
     }
