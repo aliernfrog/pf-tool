@@ -22,7 +22,7 @@ koin = "4.1.1"
 markdown = "0.5.8"
 shizuku = "13.1.5"
 toptoast = "2.2.0-alpha03"
-zoomable = "2.11.0"
+zoomable = "2.11.1"
 
 [libraries]
 android-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "android-desugar" }
