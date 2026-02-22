@@ -195,3 +195,10 @@ dependencies {
 
     coreLibraryDesugaring(libs.android.desugar)
 }
+
+tasks.named("preBuild") {
+    dependsOn(
+        ":shared:bundleDebugAar", ":shared:bundleReleaseAar",
+        ":pftool-shared:bundleDebugAar", ":pftool-shared:bundleReleaseAar"
+    )
+}
