@@ -5,21 +5,28 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import io.github.aliernfrog.pftool_shared.util.externalStorageRoot
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.util.TAG
 import java.io.File
 
 fun Uri.appHasPermissions(context: Context): Boolean {
-    val hasPermissions = context.checkUriPermission(
-        this,
-        android.os.Process.myPid(),
-        android.os.Process.myUid(),
-        Intent.FLAG_GRANT_READ_URI_PERMISSION
-    ) == PackageManager.PERMISSION_GRANTED
-    if (!hasPermissions) return false
-    val file = DocumentFileCompat.fromTreeUri(context, this)
-    return file?.exists() == true
+    try {
+        val hasPermissions = context.checkUriPermission(
+            this,
+            android.os.Process.myPid(),
+            android.os.Process.myUid(),
+            Intent.FLAG_GRANT_READ_URI_PERMISSION
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!hasPermissions) return false
+        val file = DocumentFileCompat.fromTreeUri(context, this)
+        return file?.exists() == true
+    } catch (e: Exception) {
+        Log.e(TAG, "Uri/appHasPermissions: Failed to check permissions for uri: $this", e)
+        return false
+    }
 }
 
 fun Uri.cacheFile(context: Context): File? {
