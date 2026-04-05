@@ -260,14 +260,14 @@ fun AboutPage(
         ) {
             LaunchedEffect(Unit) {
                 credits.forEach {
-                    it.fetchAvatar()
+                    it.fetchDetails()
                 }
             }
 
             val creditsButtons: List<@Composable () -> Unit> = credits.map { credit -> {
                 ExpressiveButtonRow(
-                    title = credit.name.resolveString(),
-                    description = credit.description.resolveString(),
+                    title = credit.displayName.resolveString(),
+                    description = credit.description?.resolveString(),
                     icon = credit.avatarURL?.let { {
                         AsyncImage(
                             model = it,

@@ -64,37 +64,41 @@ object SettingsConstant {
 
     val credits = listOf(
         CreditData(
-            name = "Mohammad Alizadeh",
-            githubUsername = "Alizadev",
+            userName = "Alizadev",
+            displayNameOverride = "Mohammad Alizadeh",
             description = R.string.settings_about_credits_pfDev,
+            fetchFromGithub = true,
             link = "https://discord.gg/X6WzGpCgDJ"
         ),
         CreditData(
-            name = "alieRN",
-            githubUsername = "aliernfrog",
-            description = R.string.settings_about_credits_pfToolDev
+            userName = "aliernfrog",
+            description = R.string.settings_about_credits_pfToolDev,
+            fetchFromGithub = true
         ),
         CreditData(
-            name = "infini0083",
-            githubUsername = "infini0083",
-            description = R.string.settings_about_credits_ui
+            userName = "candycanezz",
+            description = R.string.settings_about_credits_ui,
+            fetchFromGithub = true
         ),
         CreditData(
-            name = R.string.settings_about_credits_crowdin,
-            githubUsername = "crowdin",
+            userName = "crowdin",
+            displayNameOverride = R.string.settings_about_credits_crowdin,
             description = R.string.settings_about_credits_translations,
+            fetchFromGithub = true,
             link = "https://crowdin.com/project/pf-tool"
         ),
         CreditData(
-            name = "Vendetta Manager",
-            githubUsername = "vendetta-mod",
+            userName = "vendetta-mod",
+            displayNameOverride = "Vendetta Manager",
             description = R.string.settings_about_credits_inspiration,
+            fetchFromGithub = true,
             link = "https://github.com/vendetta-mod/VendettaManager"
         ),
         CreditData(
-            name = "ReVanced Manager",
-            githubUsername = "ReVanced",
+            userName = "ReVanced",
+            displayNameOverride = "ReVanced Manager",
             description = R.string.settings_about_credits_inspiration,
+            fetchFromGithub = true,
             link = "https://github.com/ReVanced/revanced-manager"
         )
     )
