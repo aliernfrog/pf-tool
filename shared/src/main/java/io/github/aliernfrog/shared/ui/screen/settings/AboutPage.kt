@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.CopyAll
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -277,7 +278,8 @@ fun AboutPage(
                                 .clip(CircleShape)
                         )
                     } } ?: {
-                        ExpressiveRowIcon(
+                        if (credit.fetching) CircularProgressIndicator()
+                        else ExpressiveRowIcon(
                             painter = rememberVectorPainter(Icons.Rounded.Face)
                         )
                     }
