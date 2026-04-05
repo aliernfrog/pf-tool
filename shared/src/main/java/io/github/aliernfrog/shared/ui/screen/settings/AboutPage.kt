@@ -35,11 +35,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -51,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.data.getIconPainter
 import io.github.aliernfrog.shared.impl.CreditData
@@ -72,6 +75,8 @@ import io.github.aliernfrog.shared.util.extension.resolveString
 import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -260,26 +265,37 @@ fun AboutPage(
             title = sharedStringResource(SharedString::settingsAboutCredits)
         ) {
             LaunchedEffect(Unit) {
-                credits.forEach {
-                    it.fetchDetails()
-                }
+                credits.map {
+                    async { it.fetchDetails() }
+                }.awaitAll()
             }
 
             val creditsButtons: List<@Composable () -> Unit> = credits.map { credit -> {
                 ExpressiveButtonRow(
                     title = credit.displayName.resolveString(),
                     description = credit.description?.resolveString(),
-                    icon = credit.avatarURL?.let { {
+                    icon = {
+                        var avatarState by remember { mutableStateOf<AsyncImagePainter.State?>(null) }
+                        val isLoadingAvatar = credit.fetching || avatarState == null || avatarState is AsyncImagePainter.State.Loading
+
                         AsyncImage(
-                            model = it,
+                            model = credit.avatarURL,
                             contentDescription = null,
+                            onState = { state ->
+                                avatarState = state
+                            },
                             modifier = Modifier
+                                .alpha(
+                                    if (isLoadingAvatar) 0f else 1f
+                                )
                                 .size(ROW_DEFAULT_ICON_SIZE)
                                 .clip(CircleShape)
                         )
-                    } } ?: {
-                        if (credit.fetching) CircularProgressIndicator()
-                        else ExpressiveRowIcon(
+
+                        if (isLoadingAvatar) CircularProgressIndicator(
+                            modifier = Modifier.size(ROW_DEFAULT_ICON_SIZE)
+                        )
+                        else if (credit.avatarURL == null) ExpressiveRowIcon(
                             painter = rememberVectorPainter(Icons.Rounded.Face)
                         )
                     }
