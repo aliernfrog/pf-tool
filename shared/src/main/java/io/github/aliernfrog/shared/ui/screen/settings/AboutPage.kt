@@ -75,8 +75,6 @@ import io.github.aliernfrog.shared.util.extension.resolveString
 import io.github.aliernfrog.shared.util.getSharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -265,9 +263,9 @@ fun AboutPage(
             title = sharedStringResource(SharedString::settingsAboutCredits)
         ) {
             LaunchedEffect(Unit) {
-                credits.map {
-                    async { it.fetchDetails() }
-                }.awaitAll()
+                credits.forEach {
+                    it.fetchDetails()
+                }
             }
 
             val creditsButtons: List<@Composable () -> Unit> = credits.map { credit -> {
