@@ -22,7 +22,7 @@ import androidx.compose.material.icons.rounded.CopyAll
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -292,7 +292,7 @@ fun AboutPage(
                                 .clip(CircleShape)
                         )
 
-                        if (isLoadingAvatar) CircularProgressIndicator(
+                        if (isLoadingAvatar) ContainedLoadingIndicator(
                             modifier = Modifier.size(ROW_DEFAULT_ICON_SIZE)
                         )
                         else if (credit.avatarURL == null) ExpressiveRowIcon(
