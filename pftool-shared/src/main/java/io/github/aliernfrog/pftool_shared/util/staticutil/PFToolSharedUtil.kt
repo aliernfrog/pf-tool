@@ -2,16 +2,23 @@ package io.github.aliernfrog.pftool_shared.util.staticutil
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
+import android.provider.Settings
 import android.text.format.DateUtils
+import android.util.Log
 import android.webkit.URLUtil
 import androidx.core.net.toUri
 import io.github.aliernfrog.pftool_shared.data.Language
+import io.github.aliernfrog.pftool_shared.enum.DocumentsUIPackageMetadata
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
 import io.github.aliernfrog.pftool_shared.util.hasAndroidDataRestrictions
+import io.github.aliernfrog.shared.util.TAG
 import java.io.File
 import java.io.InputStream
 import java.net.URL
@@ -20,34 +27,42 @@ import kotlin.collections.indexOf
 
 class PFToolSharedUtil {
     companion object {
-        private const val DOCUMENTS_UI_PACKAGE = "com.android.documentsui"
-        private const val GOOGLE_DOCUMENTS_UI_PACKAGE = "com.google.android.documentsui"
-
         fun documentsUIRestrictsAndroidData(context: Context): Boolean {
             if (!hasAndroidDataRestrictions) return false
-            val documentsUIPackage = getDocumentsUIPackage(context)
-            return documentsUIPackage?.let {
-                it.longVersionCode >= when (it.packageName) {
-                    DOCUMENTS_UI_PACKAGE -> 14
-                    GOOGLE_DOCUMENTS_UI_PACKAGE -> 340916000
-                    else -> Long.MAX_VALUE
-                }
+            val documentsUIPackage = getDocumentsUIPackageInfo(context)
+            return documentsUIPackage?.let { (packageInfo, metadata) ->
+                packageInfo.longVersionCode >= metadata.androidDataRestrictedVersion
             } ?: false
         }
 
-        fun getDocumentsUIPackage(context: Context) = try {
-            context.packageManager.getPackageInfo(GOOGLE_DOCUMENTS_UI_PACKAGE, 0)
-        } catch (_: Exception) {
-            try {
-                context.packageManager.getPackageInfo(DOCUMENTS_UI_PACKAGE, 0)
-            } catch (_: Exception) {
-                null
+        fun getDocumentsUIPackageInfo(context: Context): Pair<PackageInfo, DocumentsUIPackageMetadata>? {
+            var result: Pair<PackageInfo, DocumentsUIPackageMetadata>? = null
+            for (metadata in DocumentsUIPackageMetadata.entries) {
+                try {
+                    result = context.packageManager.getPackageInfo(metadata.packageName, 0) to metadata
+                    break
+                } catch (_: PackageManager.NameNotFoundException) {
+                    // Ignore
+                } catch (e: Exception) {
+                    Log.e(TAG, "PFToolSharedUtil/getDocumentsUiPackageInfo: failed to get package info for ${metadata.packageName}", e)
+                }
+            }
+            return result
+        }
+
+        fun launchDocumentsUIAppInfoPage(context: Context) {
+            val packageInfo = getDocumentsUIPackageInfo(context)
+            val metadata = packageInfo?.second ?: DocumentsUIPackageMetadata.GOOGLE
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                data = "package:${metadata.packageName}".toUri()
+                context.startActivity(this)
             }
         }
 
         /**
          * Gets [Language] from given language code.
-         * [code] must either be a language code, or language and country code splitted by a "-" (e.g.: en-US, en)
+         * [code] must either be a language code, or language and country code split by a "-" (e.g.: en-US, en)
          *
          * @return [Language] if [code] is valid, null if it is invalid
          */
