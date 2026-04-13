@@ -22,7 +22,7 @@ import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 class IPermissionsViewModel(
     private val storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     private val ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
-    initialDocumentsUINotFoundDialogVisibilityPref: () -> BasePreferenceManager.Preference<Boolean>,
+    private val initialDocumentsUINotFoundDialogVisibilityPref: () -> BasePreferenceManager.Preference<Boolean>,
     private val onSetStorageAccessType: (StorageAccessType) -> Unit,
     val topToastState: TopToastState,
     val shizukuManager: ShizukuManager,
@@ -41,7 +41,14 @@ class IPermissionsViewModel(
 
     var showShizukuIntroDialog by mutableStateOf(false)
     var showDocumentsUIDowngradeDialog by mutableStateOf(false)
-    var showDocumentsUINotFoundDialog by mutableStateOf(initialDocumentsUINotFoundDialogVisibilityPref().value)
+
+    private var _showDocumentsUINotFoundDialog by mutableStateOf(initialDocumentsUINotFoundDialogVisibilityPref().value)
+    var showDocumentsUINotFoundDialog: Boolean
+        get() = _showDocumentsUINotFoundDialog
+        set(value) {
+            _showDocumentsUINotFoundDialog = value
+            initialDocumentsUINotFoundDialogVisibilityPref().resetValue() // In case someone forgets they have this enabled
+        }
 
     fun hasPermissions(
         vararg permissionsData: PermissionData,

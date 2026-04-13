@@ -22,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.aliernfrog.toptoast.state.TopToastState
 import io.github.aliernfrog.pftool_shared.enum.DocumentsUIPackageMetadata
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
@@ -111,6 +113,9 @@ fun DocumentsUINotFoundDialog(
         dismissButton = if (isDocumentsUiAvailable) { {
             DismissButton()
         } } else null,
+        title = {
+            Text(sharedStringResource(PFToolSharedString::permissionsSAFDocumentsUiNotFound))
+                },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -125,7 +130,21 @@ fun DocumentsUINotFoundDialog(
 
                 if (!isDocumentsUiAvailable) DocumentsUIPackageMetadata.entries.forEach { metadata ->
                     val command = "adb shell pm install-existing ${metadata.packageName}"
+                    val onClick: () -> Unit = { scope.launch {
+                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
+                            /* label = */ null, /* text = */ command
+                        )))
+                        topToastState.showAndroidToast(
+                            text = context.getSharedString(PFToolSharedString::infoCopied),
+                            icon = Icons.Default.ContentCopy
+                        )
+                    } }
+
                     Card(
+                        onClick = onClick,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -134,23 +153,17 @@ fun DocumentsUINotFoundDialog(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                         ) {
-                            Text(
-                                text = command,
-                                fontFamily = FontFamily.Monospace
-                            )
                             IconButtonWithTooltip(
                                 icon = rememberVectorPainter(Icons.Rounded.ContentCopy),
                                 contentDescription = sharedStringResource(PFToolSharedString::actionCopy),
-                                modifier = Modifier.padding(horizontal = 4.dp),
-                                onClick = { scope.launch {
-                                    clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
-                                        /* label = */ null, /* text = */ command
-                                    )))
-                                    topToastState.showAndroidToast(
-                                        text = context.getSharedString(PFToolSharedString::infoCopied),
-                                        icon = Icons.Default.ContentCopy
-                                    )
-                                } }
+                                modifier = Modifier.padding(end = 2.dp),
+                                onClick = onClick
+                            )
+                            Text(
+                                text = command,
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp
                             )
                         }
                     }
@@ -161,9 +174,10 @@ fun DocumentsUINotFoundDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                            .padding(8.dp)
                     ) {
                         Text(
                             text = sharedStringResource(PFToolSharedString::permissionsSAFDocumentsUiNotFoundHelp),

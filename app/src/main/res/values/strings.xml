@@ -51,7 +51,7 @@
     <string name="permissions_saf_foldersNeeded">Following folders must be chosen in order to proceed</string>
     <string name="permissions_saf_documentsUiNotFound">Files app not found</string>
     <string name="permissions_saf_documentsUiNotFound_disabled">The system Files app (DocumentsUI) is disabled on your device.\nSince this app is mandatory for PF Tool and other apps for picking documents, please enable it using the app info button below.</string>
-    <string name="permissions_saf_documentsUiNotFound_uninstalled">The system Files app (DocumentsUI) is missing from your device.\nThis is likely because you have uninstalled it via ADB or root permissions.\nSince this app is mandatory for PF Tool and other apps for picking documents, please re-install it.\nTry running the following commands which may re-install the app:</string>
+    <string name="permissions_saf_documentsUiNotFound_uninstalled">The system Files app (DocumentsUI) is missing from your device.\nThis is likely because you have previously uninstalled it via ADB or root permissions.\nSince this app is mandatory for PF Tool and other apps for picking documents, please re-install it.\nTry running the following commands which may re-install the app:</string>
     <string name="permissions_saf_documentsUiNotFound_help">Having issues with this? Tap here to view support links</string>
     <string name="permissions_saf_documentsUiNotFound_openAppInfo">Open app info</string>
     <string name="permissions_saf_allFiles">Access all files</string>
