@@ -9,12 +9,14 @@ import io.github.aliernfrog.shared.di.getKoinInstance
 import kotlin.reflect.KProperty1
 
 data class PFToolSharedString(
+    @StringRes val actionCopy: Int,
     @StringRes val actionMore : Int,
     @StringRes val actionSelectDeselectAll : Int,
     @StringRes val actionSelectSelectAll : Int,
     @StringRes val actionTapToDismiss : Int,
 
     @StringRes val info : Int,
+    @StringRes val infoCopied: Int,
     @StringRes val infoShizukuDisconnected : Int,
 
     @StringRes val listOptions : Int,
@@ -59,6 +61,11 @@ data class PFToolSharedString(
     @StringRes val permissionsSAFFoldersNeeded : Int,
     @StringRes val permissionsSAFAllFiles : Int,
     @StringRes val permissionsSAFAllFilesDescription : Int,
+    @StringRes val permissionsSAFDocumentsUiNotFound: Int,
+    @StringRes val permissionsSAFDocumentsUiNotFoundDisabled: Int,
+    @StringRes val permissionsSAFDocumentsUiNotFoundUninstalled: Int,
+    @StringRes val permissionsSAFDocumentsUiNotFoundHelp: Int,
+    @StringRes val permissionsSAFDocumentsUiNotFoundOpenAppInfo: Int,
     @StringRes val permissionsShizukuIntroduction : Int,
     @StringRes val permissionsShizukuInstallTitle : Int,
     @StringRes val permissionsShizukuNotRunning : Int,
