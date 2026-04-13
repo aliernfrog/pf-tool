@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
@@ -39,7 +40,12 @@ class PFToolSharedUtil {
             var result: Pair<PackageInfo, DocumentsUIPackageMetadata>? = null
             for (metadata in DocumentsUIPackageMetadata.entries) {
                 try {
-                    result = context.packageManager.getPackageInfo(metadata.packageName, 0) to metadata
+                    @Suppress("DEPRECATION")
+                    result = context.packageManager.getPackageInfo(
+                        metadata.packageName,
+                        if (Build.VERSION.SDK_INT >= 24) PackageManager.MATCH_DISABLED_COMPONENTS
+                        else PackageManager.GET_DISABLED_COMPONENTS
+                    ) to metadata
                     break
                 } catch (_: PackageManager.NameNotFoundException) {
                     // Ignore

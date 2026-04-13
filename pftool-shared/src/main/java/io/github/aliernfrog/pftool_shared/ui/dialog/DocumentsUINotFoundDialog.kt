@@ -59,12 +59,27 @@ fun DocumentsUINotFoundDialog(
         if (supportLinksExpanded) 180f else 0f
     )
 
+    val isDocumentsUiAvailable = remember {
+        PFToolSharedUtil.getDocumentsUIPackageInfo(context) != null
+    }
+
+    @Composable
+    fun DismissButton() {
+        TextButton(
+            onClick = onDismissRequest,
+            shapes = ButtonDefaults.shapes()
+        ) {
+            Text(sharedStringResource(SharedString::actionDismiss))
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            Button(
+            if (isDocumentsUiAvailable) Button(
                 onClick = {
                     PFToolSharedUtil.launchDocumentsUIAppInfoPage(context)
+                    onDismissRequest()
                 },
                 shapes = ButtonDefaults.shapes()
             ) {
@@ -73,21 +88,20 @@ fun DocumentsUINotFoundDialog(
                 )
                 Text(sharedStringResource(PFToolSharedString::permissionsSAFDocumentsUiNotFoundOpenAppInfo))
             }
+            else DismissButton()
         },
-        dismissButton = {
-            TextButton(
-                onClick = onDismissRequest,
-                shapes = ButtonDefaults.shapes()
-            ) {
-                Text(sharedStringResource(SharedString::actionCancel))
-            }
-        },
+        dismissButton = if (isDocumentsUiAvailable) { {
+            DismissButton()
+        } } else null,
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = sharedStringResource(PFToolSharedString::permissionsSAFDocumentsUiNotFoundDescription),
+                    text = sharedStringResource(
+                        if (isDocumentsUiAvailable) PFToolSharedString::permissionsSAFDocumentsUiNotFoundDisabled
+                        else PFToolSharedString::permissionsSAFDocumentsUiNotFoundUninstalled
+                    ),
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
@@ -113,12 +127,12 @@ fun DocumentsUINotFoundDialog(
                     }
 
                     FadeVisibility(
-                        visible = supportLinksExpanded,
-                        modifier = Modifier.padding(8.dp)
+                        visible = supportLinksExpanded
                     ) {
                         ScrollableRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            gradientColor = CardDefaults.cardColors().containerColor
+                            gradientColor = CardDefaults.cardColors().containerColor,
+                            modifier = Modifier.padding(8.dp)
                         ) {
                             supportLinks.forEach { social ->
                                 OutlinedButton(

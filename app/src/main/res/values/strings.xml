@@ -47,8 +47,9 @@
     <string name="permissions_notRecommendedFolder_advanced_hide">Hide advanced options</string>
     <string name="permissions_notRecommendedFolder_useAnyway">Use the selected folder anyway</string>
     <string name="permissions_saf_foldersNeeded">Following folders must be chosen in order to proceed</string>
-    <string name="permissions_saf_documentsUiNotFound">Document picker not found</string>
-    <string name="permissions_saf_documentsUiNotFound_description">Document picker (DocumentsUI) is not found on your device.\nThis is likely because you have previously disabled it.\nSince this app is mandatory for PF Tool and other apps for picking documents, you must enable it. Click the button below to open app info page for the document picker app.</string>
+    <string name="permissions_saf_documentsUiNotFound">Files app not found</string>
+    <string name="permissions_saf_documentsUiNotFound_disabled">The system Files app (DocumentsUI) is disabled on your device.\nSince this app is mandatory for PF Tool and other apps for picking documents, please enable it using the app info button below.</string>
+    <string name="permissions_saf_documentsUiNotFound_uninstalled">The system Files app (DocumentsUI) is missing from your device.\nThis is likely because you have uninstalled it via ADB or root permissions.\nSince this app is mandatory for PF Tool and other apps for picking documents, please re-install it.\nRe-installing steps may vary depending on how you uninstalled it. If you need support for this, you can check out support links below.</string>
     <string name="permissions_saf_documentsUiNotFound_help">Having issues with this? Tap here to view support links</string>
     <string name="permissions_saf_documentsUiNotFound_openAppInfo">Open app info</string>
     <string name="permissions_saf_allFiles">Access all files</string>

@@ -133,6 +133,7 @@ fun PermissionsScreen(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {
                     PFToolSharedUtil.launchDocumentsUIAppInfoPage(context)
+                    vm.showDocumentsUIDowngradeDialog = false
                 }
             ) {
                 Text(sharedStringResource(SharedString::actionOK))
