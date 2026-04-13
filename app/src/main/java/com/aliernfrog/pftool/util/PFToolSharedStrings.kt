@@ -4,12 +4,14 @@ import com.aliernfrog.pftool.R
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 
 val pfToolSharedString = PFToolSharedString(
+    actionCopy = R.string.settings_about_issues_copyDebugInfo,
     actionMore = R.string.action_more,
     actionSelectDeselectAll = R.string.action_select_deselectAll,
     actionSelectSelectAll = R.string.action_select_selectAll,
     actionTapToDismiss = R.string.action_tapToDismiss,
 
     info = R.string.info,
+    infoCopied = R.string.info_copied,
     infoShizukuDisconnected = R.string.info_shizuku_disconnected,
 
     listOptions = R.string.list_options,
