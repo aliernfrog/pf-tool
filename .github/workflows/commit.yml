@@ -31,7 +31,7 @@ jobs:
         run: |
           mv app/build/outputs/apk_from_bundle/release/app-release-universal.apk pftool.apk
           mv app/build/outputs/mapping/release/mapping.txt mapping.txt
-      
+
       - name: Attest outputs
         uses: actions/attest@v4
         with:

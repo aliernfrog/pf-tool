@@ -31,14 +31,6 @@ jobs:
           mv app/build/outputs/apk_from_bundle/release/app-release-universal.apk pftool.apk
           mv app/build/outputs/mapping/release/mapping.txt mapping.txt
 
-      - name: Attest outputs
-        uses: actions/attest@v4
-        with:
-          subject-name: "PF Tool ${{ github.ref_name }}"
-          subject-path: |
-            pftool.apk
-            mapping.txt
-
       - name: Generate changelog
         id: changelog
         uses: requarks/changelog-action@v1
@@ -58,6 +50,14 @@ jobs:
           body: ${{ steps.changelog.outputs.changes }}
           token: ${{ github.token }}
           artifacts: |
+            pftool.apk
+            mapping.txt
+      
+      - name: Attest outputs
+        uses: actions/attest@v4
+        with:
+          subject-name: "PF Tool ${{ github.ref_name }}"
+          subject-path: |
             pftool.apk
             mapping.txt
 
