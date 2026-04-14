@@ -43,9 +43,9 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1.21.0
         with:
-          allowUpdates: true
           draft: false
           makeLatest: true
+          immutableCreate: true
           name: ${{ github.ref_name }}
           body: ${{ steps.changelog.outputs.changes }}
           token: ${{ github.token }}
