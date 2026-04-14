@@ -44,6 +44,7 @@ import io.github.aliernfrog.pftool_shared.ui.dialog.ChooseFolderIntroDialog
 import io.github.aliernfrog.pftool_shared.ui.dialog.UnrecommendedFolderDialog
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.extension.launchSafely
 import io.github.aliernfrog.pftool_shared.util.extension.takePersistablePermissions
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
@@ -52,6 +53,9 @@ import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
+import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.extension.showReportableErrorToast
+import io.github.aliernfrog.shared.util.getSharedString
 
 @Composable
 fun SAFPermissionsScreen(
@@ -96,7 +100,7 @@ private fun DowngradeFiles(
                     Button(
                         shapes = ButtonDefaults.shapes(),
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { vm.showFilesDowngradeDialog = true }
+                        onClick = { vm.showDocumentsUIDowngradeDialog = true }
                     ) {
                         Text(sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppUninstall))
                     }
@@ -144,24 +148,38 @@ private fun SAFPermissionsList(
         onUpdateState()
     }
 
-    val uriPermsLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree(), onResult = {
-        if (it == null) return@rememberLauncherForActivityResult if (activePermissionData?.requiresAndroidData != true) {}
-        else unrecommendedPathWarningUri = Uri.EMPTY
+    val uriPermsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree(),
+        onResult = {
+            if (it == null) return@rememberLauncherForActivityResult if (activePermissionData?.requiresAndroidData != true) {}
+            else unrecommendedPathWarningUri = Uri.EMPTY
 
-        if (activePermissionData?.forceRecommendedPath == true) {
-            val recommendedPath = activePermissionData?.recommendedPath
-            val resolvedPath = it.toPath()
-            val isRecommendedPath = resolvedPath.equals(recommendedPath, ignoreCase = true)
-            if (!isRecommendedPath) unrecommendedPathWarningUri = it
-            else takePersistableUriPermissions(it)
-        } else takePersistableUriPermissions(it)
-    })
+            if (activePermissionData?.forceRecommendedPath == true) {
+                val recommendedPath = activePermissionData?.recommendedPath
+                val resolvedPath = it.toPath()
+                val isRecommendedPath = resolvedPath.equals(recommendedPath, ignoreCase = true)
+                if (!isRecommendedPath) unrecommendedPathWarningUri = it
+                else takePersistableUriPermissions(it)
+            } else takePersistableUriPermissions(it)
+        }
+    )
 
     fun openFolderPicker(permissionData: PermissionData) {
         val starterUri = permissionData.recommendedPath?.let {
             PFToolSharedUtil.getUriForPath(it)
         }
-        uriPermsLauncher.launch(starterUri)
+        uriPermsLauncher.launchSafely(
+            starterUri,
+            onNoLauncherException = {
+                vm.showDocumentsUINotFoundDialog = true
+            },
+            onUnknownError = { e ->
+                vm.topToastState.showReportableErrorToast(
+                    text = context.getSharedString(SharedString::warningErrorTapToReport),
+                    throwable = e
+                )
+            }
+        )
         activePermissionData = permissionData
     }
 
