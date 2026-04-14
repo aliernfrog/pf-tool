@@ -1,5 +1,15 @@
 [
   {
+    "versionName": "v2.2.4",
+    "versionCode": 202400,
+    "prerelease": false,
+    "minSdk": 21,
+    "body": "### ✨ New Features\n- [`2847bea`](https://github.com/aliernfrog/pf-tool/commit/2847bea043ff231e5f04c5829fdd41743f767b9a) - Improve and update credits *(PR #106 by @aliernfrog)*\n\n### 🐛 Bug Fixes\n- [`f98322c`](https://github.com/aliernfrog/pf-tool/commit/f98322cc1f7ea75ead5693615cef0e53b90bfd3f) - **SAF**: Catch errors when checking for URI permissions *(commit by @aliernfrog)*\n- [`d1d3cf2`](https://github.com/aliernfrog/pf-tool/commit/d1d3cf2c39df3ac6dc6966a5894eac6ad1cee39a) - Handle DocumentsUI being disabled/uninstalled *(PR #107 by @aliernfrog)*",
+    "createdAt": 1776162369000,
+    "htmlUrl": "https://github.com/aliernfrog/pf-tool/releases/tag/v2.2.4",
+    "downloadUrl": "https://github.com/aliernfrog/pf-tool/releases/download/v2.2.4/pftool.apk"
+  },
+  {
     "versionName": "v2.2.1",
     "versionCode": 202100,
     "prerelease": false,
