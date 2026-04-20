@@ -57,6 +57,7 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -233,6 +234,7 @@ fun MapsListScreen(
                                     if (areAllShownMapsSelected) PFToolSharedString::actionSelectDeselectAll
                                     else PFToolSharedString::actionSelectSelectAll
                                 ),
+                                tooltipPositioning = TooltipAnchorPosition.Below,
                                 onClick = {
                                     currentlyShownSegment?.let { segment ->
                                         val maps = vm.getMapsForSegment(segment)
@@ -247,6 +249,7 @@ fun MapsListScreen(
                                 IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.MoreVert),
                                     contentDescription = sharedStringResource(PFToolSharedString::actionMore),
+                                    tooltipPositioning = TooltipAnchorPosition.Below,
                                     onClick = { multiSelectionDropdownShown = true }
                                 )
                                 MultiSelectionDropdown(
@@ -271,6 +274,7 @@ fun MapsListScreen(
                                 else IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.Refresh),
                                     contentDescription = sharedStringResource(PFToolSharedString::mapsListReload),
+                                    tooltipPositioning = TooltipAnchorPosition.Below,
                                     onClick = {
                                         vm.reloadMaps(context)
                                     }
