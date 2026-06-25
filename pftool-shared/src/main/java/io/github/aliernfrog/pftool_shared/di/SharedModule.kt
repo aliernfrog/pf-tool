@@ -34,6 +34,7 @@ fun getPFToolSharedModule(
     shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
     storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
+    initialDocumentsUINotFoundDialogVisibilityPref: () -> BasePreferenceManager.Preference<Boolean>,
     onSetStorageAccessType: (StorageAccessType) -> Unit
 ): Module = module {
     single { sharedString }
@@ -82,6 +83,7 @@ fun getPFToolSharedModule(
         IPermissionsViewModel(
             storageAccessTypePref = storageAccessTypePref,
             ignoreDocumentsUIRestrictionsPref = ignoreDocumentsUIRestrictionsPref,
+            initialDocumentsUINotFoundDialogVisibilityPref = initialDocumentsUINotFoundDialogVisibilityPref,
             onSetStorageAccessType = onSetStorageAccessType,
             topToastState = get(),
             shizukuManager = get(),

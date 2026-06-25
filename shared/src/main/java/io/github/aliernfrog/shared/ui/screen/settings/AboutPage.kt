@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.CopyAll
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -34,11 +35,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -50,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.data.getIconPainter
 import io.github.aliernfrog.shared.impl.CreditData
@@ -260,24 +264,36 @@ fun AboutPage(
         ) {
             LaunchedEffect(Unit) {
                 credits.forEach {
-                    it.fetchAvatar()
+                    it.fetchDetails()
                 }
             }
 
             val creditsButtons: List<@Composable () -> Unit> = credits.map { credit -> {
                 ExpressiveButtonRow(
-                    title = credit.name.resolveString(),
-                    description = credit.description.resolveString(),
-                    icon = credit.avatarURL?.let { {
+                    title = credit.displayName.resolveString(),
+                    description = credit.description?.resolveString(),
+                    icon = {
+                        var avatarState by remember { mutableStateOf<AsyncImagePainter.State?>(null) }
+                        val isLoadingAvatar = credit.fetching || avatarState == null || avatarState is AsyncImagePainter.State.Loading
+
                         AsyncImage(
-                            model = it,
+                            model = credit.avatarURL,
                             contentDescription = null,
+                            onState = { state ->
+                                avatarState = state
+                            },
                             modifier = Modifier
+                                .alpha(
+                                    if (isLoadingAvatar) 0f else 1f
+                                )
                                 .size(ROW_DEFAULT_ICON_SIZE)
                                 .clip(CircleShape)
                         )
-                    } } ?: {
-                        ExpressiveRowIcon(
+
+                        if (isLoadingAvatar) ContainedLoadingIndicator(
+                            modifier = Modifier.size(ROW_DEFAULT_ICON_SIZE)
+                        )
+                        else if (credit.avatarURL == null) ExpressiveRowIcon(
                             painter = rememberVectorPainter(Icons.Rounded.Face)
                         )
                     }

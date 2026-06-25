@@ -11,26 +11,33 @@ import org.json.JSONObject
 import java.net.URL
 
 class CreditData(
-    val name: Any,
-    val githubUsername: String? = null,
-    val description: Any,
-    val link: String? = githubUsername?.let { "https://github.com/$githubUsername" }
+    val userName: String,
+    val displayNameOverride: Any? = null,
+    val description: Any?,
+    val fetchFromGithub: Boolean,
+    val link: String? = if (fetchFromGithub) "https://github.com/$userName" else null
 ) {
-    private var fetchedAvatar = false
-    var avatarURL by mutableStateOf<String?>(null)
+    private var fetchedOnce = false
 
-    suspend fun fetchAvatar() {
-        if (fetchedAvatar) return
-        fetchedAvatar = true
-        if (githubUsername == null) return
+    var avatarURL by mutableStateOf<String?>(null)
+    var displayName by mutableStateOf(displayNameOverride ?: userName)
+    var fetching by mutableStateOf(false)
+
+    suspend fun fetchDetails() {
+        if (!fetchFromGithub || fetchedOnce) return
+        fetchedOnce = true
+
+        fetching = true
         withContext(Dispatchers.IO) {
             try {
-                val res = URL("https://api.github.com/users/$githubUsername").readText()
+                val res = URL("https://api.github.com/users/$userName").readText()
                 val json = JSONObject(res)
+                if (displayNameOverride == null) displayName = json.getString("name")
                 avatarURL = json.getString("avatar_url")
             } catch (e: Exception) {
-                Log.e(TAG, "CreditData/fetchAvatar: ", e)
+                Log.e(TAG, "CreditData/fetchDetails: failed to fetch details of user $userName", e)
             }
         }
+        fetching = false
     }
 }

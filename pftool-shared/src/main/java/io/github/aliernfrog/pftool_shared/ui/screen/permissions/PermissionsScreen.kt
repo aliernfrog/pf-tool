@@ -1,7 +1,5 @@
 package io.github.aliernfrog.pftool_shared.ui.screen.permissions
 
-import android.content.Intent
-import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,17 +27,18 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
+import io.github.aliernfrog.pftool_shared.ui.dialog.DocumentsUINotFoundDialog
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
+import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
@@ -52,6 +51,7 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 fun PermissionsScreen(
     vararg permissionsData: PermissionData,
     title: String,
+    supportLinks: List<Social>,
     vm: IPermissionsViewModel = koinViewModel(),
     onRestartAppRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit,
@@ -121,29 +121,29 @@ fun PermissionsScreen(
         onDismissRequest = { vm.showShizukuIntroDialog = false }
     )
 
-    if (vm.showFilesDowngradeDialog) CustomMessageDialog(
+    if (vm.showDocumentsUIDowngradeDialog) CustomMessageDialog(
         title = null,
         text = sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppGuide)
             .replace(
                 "{CANT_UNINSTALL_TEXT}", sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppCant)
             ),
-        onDismissRequest = { vm.showFilesDowngradeDialog = false },
+        onDismissRequest = { vm.showDocumentsUIDowngradeDialog = false },
         confirmButton = {
             Button(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {
-                    val documentsUIPackage = PFToolSharedUtil.getDocumentsUIPackage(context) ?: return@Button
-                    vm.showFilesDowngradeDialog = false
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        data = "package:${documentsUIPackage.packageName}".toUri()
-                        context.startActivity(this)
-                    }
+                    PFToolSharedUtil.launchDocumentsUIAppInfoPage(context)
+                    vm.showDocumentsUIDowngradeDialog = false
                 }
             ) {
                 Text(sharedStringResource(SharedString::actionOK))
             }
         }
+    )
+
+    if (vm.showDocumentsUINotFoundDialog) DocumentsUINotFoundDialog(
+        onDismissRequest = { vm.showDocumentsUINotFoundDialog = false },
+        supportLinks = supportLinks
     )
 }
 
