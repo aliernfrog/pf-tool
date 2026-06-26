@@ -9,8 +9,7 @@ plugins {
 
 android {
     namespace = "io.github.aliernfrog.pftool_shared"
-    compileSdk = 36
-    buildToolsVersion = "36.1.0"
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 23

@@ -14,13 +14,12 @@ plugins {
 
 android {
     namespace = "com.aliernfrog.pftool"
-    compileSdk = 36
-    buildToolsVersion = "36.1.0"
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.aliernfrog.pftool"
         minSdk = 23
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 202400
         versionName = "2.2.4"
         vectorDrawables { useSupportLibrary = true }
