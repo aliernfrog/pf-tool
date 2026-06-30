@@ -243,7 +243,6 @@
     <string name="settings_about_credits_ui">UI</string>
     <string name="settings_about_credits_crowdin">Crowdin members</string>
     <string name="settings_about_credits_translations">Translations</string>
-    <string name="settings_about_credits_inspiration">Inspiration</string>
     <string name="settings_experimental">Experimental settings</string>
     <string name="settings_experimental_enabled">Experimental settings enabled!</string>
     <string name="settings_experimental_description">Not intended for normal usage, might break the app when misused</string>
