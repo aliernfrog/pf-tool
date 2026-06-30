@@ -56,9 +56,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -107,6 +108,7 @@ import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.component.buildBottomSheetEnabledValues
 import io.github.aliernfrog.shared.ui.component.util.AnimatedContentShadowWorkaround
 import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
@@ -142,7 +144,10 @@ fun MapsListScreen(
     val topToastState = koinInject<TopToastState>()
     val scope = rememberCoroutineScope()
 
-    val listViewOptionsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val listViewOptionsSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = true)
+    )
     val pagerState = rememberPagerState {
         mapsListSegments.size
     }

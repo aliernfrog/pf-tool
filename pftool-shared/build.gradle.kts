@@ -45,7 +45,6 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
         optIn.add("kotlin.RequiresOptIn")
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 

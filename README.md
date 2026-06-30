@@ -7,9 +7,11 @@
   
   <br>
 
-  [![Download](https://img.shields.io/github/v/tag/aliernfrog/pf-tool?style=for-the-badge&label=Download)](https://github.com/aliernfrog/pf-tool/releases/latest/download/pftool.apk)
-  
-  <i style="font-size: 0.7rem;">At least <b>Android 6.0</b> is required</i>
+  [![Download](https://img.shields.io/github/v/tag/aliernfrog/pf-tool?style=for-the-badge&label=Download)](https://github.com/aliernfrog/pf-tool/releases/latest/download/pftool.apk)<br>
+  <sub>
+    At least <b>Android 6.0</b> is required<br>
+    For Android 5.0, latest available version is [v2.2.4](https://github.com/aliernfrog/pf-tool/releases/download/v2.2.4/pftool.apk)
+  </sub>
   
   <br>
 
@@ -33,7 +35,7 @@ You can help translate PF Tool on [Crowdin](https://crowdin.com/project/pf-tool)
 
 Shizuku method in PF Tool can be enabled or disabled anytime from settings.
 
-Shizuku method will automatically be enabled if there is no other way for the app to access Polyfield data. The app will guide you to setup Shizuku if this mode is enabled.
+Shizuku method will automatically be enabled if there is no other way for the app to access Polyfield data. The app will guide you to set up Shizuku if this mode is enabled.
 
 ## 🩹 Project structure
 PF Tool shares codebase with my other apps, including [LAC Tool](https://github.com/aliernfrog/lac-tool).

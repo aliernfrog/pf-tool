@@ -47,7 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -93,8 +93,8 @@ fun MediaOverlay(
     val zoomState = rememberZoomState()
     val isZoomedIn = zoomState.scale > 1f
     val isImeVisible = insetsManager.isImeVisible
-    val bottomSheetState = rememberStandardBottomSheetState(
-        skipHiddenState = false
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.PartiallyExpanded
     )
 
     var state by remember { mutableStateOf(
