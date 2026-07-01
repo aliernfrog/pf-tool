@@ -274,7 +274,7 @@ fun AboutPage(
                     description = credit.description?.resolveString(),
                     icon = {
                         var avatarState by remember { mutableStateOf<AsyncImagePainter.State?>(null) }
-                        val isLoadingAvatar = !credit.doneFetching || avatarState == null || avatarState is AsyncImagePainter.State.Loading
+                        val isLoadingAvatar = !credit.attemptedFetch || credit.fetching || avatarState == null || avatarState is AsyncImagePainter.State.Loading
 
                         AsyncImage(
                             model = credit.avatarURL,
