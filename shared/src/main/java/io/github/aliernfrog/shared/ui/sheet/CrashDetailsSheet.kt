@@ -11,8 +11,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.crash_handler.CrashDetails
+import io.github.aliernfrog.shared.ui.component.buildBottomSheetEnabledValues
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.sharedStringResource
@@ -42,7 +44,10 @@ fun CrashDetailsSheet(
     supportLinks: List<Social>
 ) {
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = true)
+    )
     var stackTrace by rememberSaveable {
         mutableStateOf("")
     }
