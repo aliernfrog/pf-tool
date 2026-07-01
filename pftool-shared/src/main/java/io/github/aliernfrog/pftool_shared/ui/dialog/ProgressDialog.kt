@@ -28,6 +28,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.HorizontalProgressIndicat
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -44,7 +45,7 @@ fun ProgressDialog(
 
     LaunchedEffect(isIndeterminate) {
         if (!isIndeterminate) return@LaunchedEffect
-        delay(10_000)
+        delay(10_000.milliseconds)
         showDismissButton = true
     }
 

@@ -49,7 +49,7 @@
             </intent-filter>
 
             <!-- Download map from .zip URLs -->
-            <intent-filter android:label="@string/intent_downloadMap">
+            <intent-filter android:label="@string/intent_downloadMap" android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>

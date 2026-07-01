@@ -17,7 +17,7 @@ val appModule = module {
 
     single {
         get<PreferenceManager>().let { prefs ->
-            @Suppress("KotlinConstantConditions") VersionManager(
+            VersionManager(
                 tag = TAG,
                 appName = "PF Tool",
                 releasesURLPref = prefs.releasesURL,
