@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.compose.material.icons.Icons
@@ -26,6 +25,7 @@ import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import rikka.shizuku.Shizuku
+import rikka.shizuku.ShizukuProvider
 import java.io.File
 import java.util.Timer
 import java.util.TimerTask
@@ -40,12 +40,7 @@ class ShizukuManager(
 ) {
     companion object {
         const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
-        const val SHIZUKU_PROBLEMATIC_VERSION_CODE = 1086.toLong()
-        const val SHIZUKU_RECOMMENDED_VERSION_NAME = "v13.5.4"
-        const val SHIZUKU_RECOMMENDED_VERSION_DOWNLOAD_URL = "https://github.com/RikkaApps/Shizuku/releases/download/v13.5.4/shizuku-v13.5.4.r1049.0e53409-release.apk"
-        const val SHIZUKU_DOWNLOAD_URL = //"https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api"
-            SHIZUKU_RECOMMENDED_VERSION_DOWNLOAD_URL
-        const val SHIZUKU_RELEASES_URL = "https://github.com/RikkaApps/Shizuku/releases"
+        const val SHIZUKU_DOWNLOAD_URL = "https://github.com/thedjchi/Shizuku/releases/latest"
         const val SUI_GITHUB = "https://github.com/RikkaApps/Sui"
     }
 
@@ -66,8 +61,8 @@ class ShizukuManager(
     private val _fileServiceRunning = MutableStateFlow(false)
     val fileServiceRunning = _fileServiceRunning.asStateFlow()
 
-    private val _shizukuVersionProblematic = MutableStateFlow(false)
-    val shizukuVersionProblematic = _shizukuVersionProblematic.asStateFlow()
+    private val _isRecommendedShizukuVersion = MutableStateFlow(false)
+    val isRecommendedShizukuVersion = _isRecommendedShizukuVersion.asStateFlow()
 
     private val _timedOut = MutableStateFlow(false)
     val timedOut = _timedOut.asStateFlow()
@@ -139,7 +134,7 @@ class ShizukuManager(
     }
 
     fun checkAvailability(context: Context): ShizukuStatus {
-        _shizukuVersionProblematic.value = isShizukuVersionProblematic(context)
+        _isRecommendedShizukuVersion.value = isUsingRecommendedVersion(context)
         _status.value = try {
             if (Shizuku.pingBinder()) {
                 if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) ShizukuStatus.AVAILABLE
@@ -170,19 +165,19 @@ class ShizukuManager(
 
     private fun isShizukuInstalled(context: Context) = getShizukuPackageInfo(context) != null
 
-    private fun isShizukuVersionProblematic(context: Context) = getShizukuPackageInfo(context)?.let { packageInfo ->
-        @Suppress("DEPRECATION")
-        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo.longVersionCode
-        } else packageInfo.versionCode.toLong()
-        versionCode == SHIZUKU_PROBLEMATIC_VERSION_CODE
-    } ?: false
-
-    private fun getShizukuPackageInfo(context: Context): PackageInfo? = try {
-        context.packageManager.getPackageInfo(SHIZUKU_PACKAGE, 0)
-    } catch (_: Exception) {
-        null
+    private fun isUsingRecommendedVersion(context: Context): Boolean {
+        val packageInfo = getShizukuPackageInfo(context) ?: return false
+        return packageInfo.versionName?.contains("thedjchi") == true
     }
+
+    private fun getShizukuPackageInfo(context: Context): PackageInfo? = runCatching {
+        var packageName = SHIZUKU_PACKAGE
+        runCatching {
+            packageName = context.packageManager.getPermissionInfo(ShizukuProvider.PERMISSION, 0)?.packageName
+                ?: packageName
+        }
+        context.packageManager.getPackageInfo(packageName, 0)
+    }.getOrNull()
 
     /*override fun onCleared() {
         Shizuku.removeBinderReceivedListener(binderReceivedListener)
