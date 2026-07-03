@@ -39,7 +39,7 @@ class ShizukuManager(
     context: Context
 ) {
     companion object {
-        const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
+        private const val DEFAULT_SHIZUKU_PACKAGE_NAME = "moe.shizuku.privileged.api"
         const val SHIZUKU_DOWNLOAD_URL = "https://github.com/thedjchi/Shizuku/releases/latest"
         const val SUI_GITHUB = "https://github.com/RikkaApps/Sui"
     }
@@ -120,7 +120,9 @@ class ShizukuManager(
     fun launchShizuku(context: Context) {
         try {
             if (shizukuInstalled) context.startActivity(
-                context.packageManager.getLaunchIntentForPackage(SHIZUKU_PACKAGE)
+                context.packageManager.getLaunchIntentForPackage(
+                    getShizukuPackageName(context)
+                )
             ) else {
                 val intent = Intent(Intent.ACTION_VIEW, SHIZUKU_DOWNLOAD_URL.toUri())
                 context.startActivity(intent)
@@ -171,13 +173,14 @@ class ShizukuManager(
     }
 
     private fun getShizukuPackageInfo(context: Context): PackageInfo? = runCatching {
-        var packageName = SHIZUKU_PACKAGE
-        runCatching {
-            packageName = context.packageManager.getPermissionInfo(ShizukuProvider.PERMISSION, 0)?.packageName
-                ?: packageName
-        }
-        context.packageManager.getPackageInfo(packageName, 0)
+        context.packageManager.getPackageInfo(
+            getShizukuPackageName(context), 0
+        )
     }.getOrNull()
+
+    private fun getShizukuPackageName(context: Context): String = runCatching {
+        context.packageManager.getPermissionInfo(ShizukuProvider.PERMISSION, 0)?.packageName
+    }.getOrNull() ?: DEFAULT_SHIZUKU_PACKAGE_NAME
 
     /*override fun onCleared() {
         Shizuku.removeBinderReceivedListener(binderReceivedListener)
