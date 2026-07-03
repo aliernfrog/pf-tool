@@ -35,6 +35,7 @@ class ShizukuManager(
     applicationId: String,
     isDebugBuild: Boolean,
     private val shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
+    private val shizukuForceUnrecommendedVersionPref: () -> BasePreferenceManager.Preference<Boolean>,
     private val topToastState: TopToastState,
     context: Context
 ) {
@@ -137,6 +138,7 @@ class ShizukuManager(
 
     fun checkAvailability(context: Context): ShizukuStatus {
         _isRecommendedShizukuVersion.value = isUsingRecommendedVersion(context)
+                && !shizukuForceUnrecommendedVersionPref().value
         _status.value = try {
             if (Shizuku.pingBinder()) {
                 if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) ShizukuStatus.AVAILABLE

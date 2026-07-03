@@ -335,9 +335,9 @@ private fun ShizukuSetupGuide(
             )
 
             Text(
-                text = sharedStringResource(PFToolSharedString::permissionsShizukuIntroduction),
-                style = MaterialTheme.typography.bodySmallEmphasized,
-                modifier = Modifier
+                text = sharedStringResource(PFToolSharedString::permissionsShizukuIntroduction)
+                        + "\n" + sharedStringResource(PFToolSharedString::permissionsShizukuTapToConfigure),
+                style = MaterialTheme.typography.bodySmallEmphasized
             )
         }
     }

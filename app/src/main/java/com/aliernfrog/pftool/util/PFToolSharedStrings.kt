@@ -62,6 +62,7 @@ val pfToolSharedString = PFToolSharedString(
     permissionsSAFDocumentsUiNotFoundHelp = R.string.permissions_saf_documentsUiNotFound_help,
     permissionsSAFDocumentsUiNotFoundOpenAppInfo = R.string.permissions_saf_documentsUiNotFound_openAppInfo,
     permissionsShizukuIntroduction = R.string.permissions_shizuku_introduction,
+    permissionsShizukuTapToConfigure = R.string.permissions_shizuku_tapToConfigure,
     permissionsShizukuInstallTitle = R.string.permissions_shizuku_install_title,
     permissionsShizukuNotRunning = R.string.permissions_shizuku_notRunning,
     permissionsShizukuNotRunningDescription = R.string.permissions_shizuku_notRunning_description,

@@ -67,6 +67,7 @@ data class PFToolSharedString(
     @StringRes val permissionsSAFDocumentsUiNotFoundHelp: Int,
     @StringRes val permissionsSAFDocumentsUiNotFoundOpenAppInfo: Int,
     @StringRes val permissionsShizukuIntroduction : Int,
+    @StringRes val permissionsShizukuTapToConfigure: Int,
     @StringRes val permissionsShizukuInstallTitle : Int,
     @StringRes val permissionsShizukuNotRunning : Int,
     @StringRes val permissionsShizukuNotRunningDescription : Int,
