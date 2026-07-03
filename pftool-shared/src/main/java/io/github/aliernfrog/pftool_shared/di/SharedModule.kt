@@ -32,6 +32,7 @@ fun getPFToolSharedModule(
     getFileAsMapFile: (FileWrapper) -> IMapFile,
     languagePref: () -> BasePreferenceManager.Preference<String>,
     shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
+    shizukuForceUnrecommendedVersionPref: () -> BasePreferenceManager.Preference<Boolean>,
     storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
     initialDocumentsUINotFoundDialogVisibilityPref: () -> BasePreferenceManager.Preference<Boolean>,
@@ -55,6 +56,7 @@ fun getPFToolSharedModule(
             applicationId = applicationId,
             isDebugBuild = isDebugBuild,
             shizukuNeverLoadPref = shizukuNeverLoadPref,
+            shizukuForceUnrecommendedVersionPref = shizukuForceUnrecommendedVersionPref,
             topToastState = get(),
             context = get()
         )

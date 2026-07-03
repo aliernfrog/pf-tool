@@ -38,7 +38,7 @@
     <string name="permissions_saf_allFiles_description">让PF Tool访问所有文件，这可能使设置更加容易</string>
     <string name="permissions_setupShizuku">通过Shizuku工作</string>
     <string name="permissions_setupShizuku_description">您需要使用Shizuku来让PF Tool访问Polyfield地图，\n 这是因为您设备上的安全选项不允许应用程序访问Data目录内的子文件。\n 您可以随时从设置中切换 Shizuku 模式。</string>
-    <string name="permissions_shizuku_introduction">Shizuku是一个允许其他应用使用无线调试权限的应用程序。\nShizuku 模式可以从设置 &gt; 存储 &gt; 存储访问类型禁用</string>
+    <string name="permissions_shizuku_introduction">Shizuku是一个允许其他应用使用无线调试权限的应用程序</string>
     <string name="permissions_shizuku_openShizuku">转至Shizuku</string>
     <string name="permissions_shizuku_installShizuku">安装Shizuku</string>
     <string name="permissions_shizuku_install_title">安装Shizuku以开始</string>

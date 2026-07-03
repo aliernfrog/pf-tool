@@ -3,11 +3,13 @@ package io.github.aliernfrog.pftool_shared.ui.screen.permissions
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,11 +19,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.NotStarted
-import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -51,10 +53,8 @@ import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.component.SizedButton
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
-import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
+import io.github.aliernfrog.shared.util.SharedString
 import rikka.shizuku.Shizuku
 import kotlin.reflect.KProperty1
 
@@ -72,7 +72,7 @@ fun ShizukuPermissionsScreen(
     val shizukuInstalled = vm.shizukuManager.shizukuInstalled
     val shizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsStateWithLifecycle().value
     val shizukuTimedOut = vm.shizukuManager.timedOut.collectAsStateWithLifecycle().value
-    val shizukuVersionProblematic = vm.shizukuManager.shizukuVersionProblematic.collectAsStateWithLifecycle().value
+    val isRecommendedShizukuVersion = vm.shizukuManager.isRecommendedShizukuVersion.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
         vm.shizukuManager.checkAvailability(context)
@@ -116,8 +116,7 @@ fun ShizukuPermissionsScreen(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (shizukuVersionProblematic) ProblematicManagerCard(
-                            shizukuVersion = vm.currentShizukuVersion,
+                        if (!isRecommendedShizukuVersion) RecommendedShizukuVersionCard(
                             modifier = Modifier
                                 .wrapContentWidth()
                                 .padding(16.dp)
@@ -156,6 +155,7 @@ fun ShizukuPermissionsScreen(
                 }
             } else ShizukuSetupGuide(
                 shizukuInstalled = shizukuInstalled,
+                isRecommendedShizukuVersion = isRecommendedShizukuVersion,
                 shizukuStatus = shizukuStatus,
                 deviceRooted = vm.shizukuManager.deviceRooted,
                 onLaunchShizukuRequest = {
@@ -169,45 +169,32 @@ fun ShizukuPermissionsScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun ProblematicManagerCard(
-    shizukuVersion: String,
+private fun RecommendedShizukuVersionCard(
     modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
 
     CardWithActions(
-        title = null,
+        title = io.github.aliernfrog.shared.util.sharedStringResource(SharedString::warning),
+        icon = rememberVectorPainter(Icons.Rounded.Warning),
         modifier = modifier,
         buttons = {
-            TextButton(
-                shapes = ButtonDefaults.shapes(),
-                onClick = {
-                    uriHandler.openUri(ShizukuManager.SHIZUKU_RELEASES_URL)
-                }
-            ) {
-                ButtonIcon(rememberVectorPainter(Icons.Default.OpenInBrowser))
-                Text(sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersionAllVersions))
-            }
-
             Button(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {
-                    uriHandler.openUri(ShizukuManager.SHIZUKU_RECOMMENDED_VERSION_DOWNLOAD_URL)
+                    uriHandler.openUri(ShizukuManager.SHIZUKU_DOWNLOAD_URL)
                 }
             ) {
                 ButtonIcon(rememberVectorPainter(Icons.Default.Download))
-                Text(sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersionDownloadRecommended))
+                Text(sharedStringResource(PFToolSharedString::permissionsShizukuRecommendedVersionDownload))
             }
         }
     ) {
         Text(
-            text = sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersion)
-                .replace("{CURRENT_VERSION}", shizukuVersion)
-                .replace("{RECOMMENDED_VERSION}", ShizukuManager.SHIZUKU_RECOMMENDED_VERSION_NAME)
+            text = sharedStringResource(PFToolSharedString::permissionsShizukuRecommendedVersion)
         )
         Text(
-            text = sharedStringResource(PFToolSharedString::permissionsShizukuProblematicVersionNote)
-                .replace("{CURRENT_VERSION}", shizukuVersion),
+            text = sharedStringResource(PFToolSharedString::permissionsShizukuRecommendedVersionNote),
             style = MaterialTheme.typography.bodySmallEmphasized
         )
     }
@@ -217,6 +204,7 @@ private fun ProblematicManagerCard(
 @Composable
 private fun ShizukuSetupGuide(
     shizukuInstalled: Boolean,
+    isRecommendedShizukuVersion: Boolean,
     shizukuStatus: ShizukuStatus,
     deviceRooted: Boolean,
     onLaunchShizukuRequest: () -> Unit,
@@ -327,17 +315,31 @@ private fun ShizukuSetupGuide(
         }
     }
 
-    if (shizukuInstalled) ExpressiveButtonRow(
-        title = sharedStringResource(PFToolSharedString::info),
-        description = sharedStringResource(PFToolSharedString::permissionsShizukuIntroduction),
-        icon = {
-            ExpressiveRowIcon(rememberVectorPainter(Icons.Default.Info))
-        },
-        modifier = Modifier
-            .padding(12.dp)
-            .verticalSegmentedShape()
-    ) {
-        onNavigateStorageSettingsRequest()
+    if (shizukuInstalled) {
+        if (!isRecommendedShizukuVersion)
+            RecommendedShizukuVersionCard(modifier = Modifier.padding(12.dp))
+
+        Spacer(Modifier.height(24.dp))
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .clickable {
+                    onNavigateStorageSettingsRequest()
+                }
+                .padding(12.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = sharedStringResource(PFToolSharedString::info)
+            )
+
+            Text(
+                text = sharedStringResource(PFToolSharedString::permissionsShizukuIntroduction)
+                        + "\n" + sharedStringResource(PFToolSharedString::permissionsShizukuTapToConfigure),
+                style = MaterialTheme.typography.bodySmallEmphasized
+            )
+        }
     }
 
     Spacer(Modifier.navigationBarsPadding())

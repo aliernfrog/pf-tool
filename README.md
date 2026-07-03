@@ -31,11 +31,16 @@ You can help translate PF Tool on [Crowdin](https://crowdin.com/project/pf-tool)
 [![Crowdin](https://badges.crowdin.net/pf-tool/localized.svg)](https://crowdin.com/project/pf-tool)
 
 ## 🦝 Shizuku support
-[Shizuku](https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api) is an app which lets other apps elevate their permissions using wireless debugging or root access.
+[Shizuku](https://github.com/thedjchi/Shizuku) lets other apps elevate their permissions using wireless debugging or root access.
 
 Shizuku method in PF Tool can be enabled or disabled anytime from settings.
 
 Shizuku method will automatically be enabled if there is no other way for the app to access Polyfield data. The app will guide you to set up Shizuku if this mode is enabled.
+
+> [!NOTE]
+> As original Shizuku is stale and it may have issues with Android 17 and above or with MediaTek devices, it is recommended to use the fork [thedjchi/Shizuku](https://github.com/thedjchi/Shizuku).
+> 
+> <sub>That said, PF Tool still supports [original Shizuku](https://github.com/RikkaApps/Shizuku), and you can keep using it if it works well on your device.</sub>
 
 ## 🩹 Project structure
 PF Tool shares codebase with my other apps, including [LAC Tool](https://github.com/aliernfrog/lac-tool).
