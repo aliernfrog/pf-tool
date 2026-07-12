@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -53,6 +52,7 @@ import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.component.SizedButton
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.util.SharedString
 import rikka.shizuku.Shizuku
@@ -88,8 +88,7 @@ fun ShizukuPermissionsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .navigationBarsPadding(),
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = if (isLoading) Arrangement.Center else Arrangement.Top
         ) {
             if (isLoading) {
@@ -342,5 +341,5 @@ private fun ShizukuSetupGuide(
         }
     }
 
-    Spacer(Modifier.navigationBarsPadding())
+    BottomSpacer()
 }

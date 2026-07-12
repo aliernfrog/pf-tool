@@ -3,9 +3,7 @@ package io.github.aliernfrog.pftool_shared.ui.screen.permissions
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +26,7 @@ import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.SizedButton
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -50,7 +49,6 @@ fun AllFilesPermissionsScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
     ) {
         PermissionsScreenAction(
             title = sharedStringResource(PFToolSharedString::permissionsAllFilesTitle),
@@ -85,6 +83,6 @@ fun AllFilesPermissionsScreen(
             }
         }
 
-        Spacer(Modifier.navigationBarsPadding())
+        BottomSpacer()
     }
 }

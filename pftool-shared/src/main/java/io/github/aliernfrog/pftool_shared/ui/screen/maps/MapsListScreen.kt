@@ -12,10 +12,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -110,6 +108,7 @@ import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
 import io.github.aliernfrog.shared.ui.component.buildBottomSheetEnabledValues
 import io.github.aliernfrog.shared.ui.component.util.AnimatedContentShadowWorkaround
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
@@ -558,7 +557,7 @@ private fun SegmentSummary(
 
 @Composable
 private fun Footer() {
-    Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))
+    BottomSpacer(Modifier.padding(top = AppFABPadding))
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

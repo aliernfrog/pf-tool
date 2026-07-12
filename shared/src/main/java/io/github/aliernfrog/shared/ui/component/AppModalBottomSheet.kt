@@ -76,7 +76,7 @@ fun BaseModalBottomSheet(
         dragHandle = dragHandle,
         contentWindowInsets = { WindowInsets(0.dp) }
     ) {
-        content(insetsViewModel.bottomPadding)
+        content(insetsViewModel.bottomPadding + 12.dp)
     }
 }
 

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -65,6 +64,7 @@ import io.github.aliernfrog.shared.ui.component.ContainedTextWithIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.PlainTextTooltipContainer
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
@@ -182,7 +182,7 @@ fun UpdatesScreen(
                 }
 
                 item {
-                    Spacer(Modifier.padding(top = AppFABPadding).navigationBarsPadding())
+                    BottomSpacer(Modifier.padding(top = AppFABPadding))
                 }
             }
 

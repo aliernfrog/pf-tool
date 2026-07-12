@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -59,6 +58,7 @@ import io.github.aliernfrog.shared.ui.component.FilledIconButtonWithTooltip
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.util.extension.clickableWithColor
 import kotlinx.coroutines.launch
@@ -109,7 +109,6 @@ fun MapDetailsScreen(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
         ) {
             VerticalSegmentor({
                 MapCard(
@@ -264,6 +263,8 @@ fun MapDetailsScreen(
                     horizontal = 12.dp
                 )
             )
+
+            BottomSpacer()
         }
     }
 }
