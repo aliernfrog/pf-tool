@@ -170,8 +170,9 @@ fun CrashDetails(
             expanded = supportSectionExpanded,
             onClickHeader = { supportSectionExpanded = !supportSectionExpanded },
             title = sharedStringResource(SharedString::crashHandlerSupport),
-            description = if (supportSectionExpanded) null else sharedStringResource(
-                SharedString::crashHandlerSupportDescription
+            description = sharedStringResource(
+                if (supportSectionExpanded) SharedString::crashHandlerSupportGuide
+                else SharedString::crashHandlerSupportDescription
             ),
             icon = {
                 ExpressiveRowIcon(
@@ -197,13 +198,6 @@ fun CrashDetails(
             } }
 
             VerticalSegmentor(
-                {
-                    Text(
-                        text = sharedStringResource(SharedString::crashHandlerSupportGuide),
-                        style = MaterialTheme.typography.bodySmallEmphasized,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                },
                 {
                     ExpressiveButtonRow(
                         title = sharedStringResource(SharedString::crashHandlerSupportCopyDetails),

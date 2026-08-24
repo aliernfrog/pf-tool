@@ -1,5 +1,6 @@
 package io.github.aliernfrog.shared.ui.component.expressive
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,27 +44,34 @@ fun ExpressiveRowHeader(
             }
         }
         Column {
-            Text(
-                text = title,
-                color = contentColor,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 19.sp,
-                    shadow = textShadow
-                ),
+            Crossfade(
+                targetState = title,
                 modifier = Modifier.animateContentSize()
-            )
-            description?.let {
+            ) {
                 Text(
-                    text = description,
+                    text = it,
                     color = contentColor,
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 19.sp,
                         shadow = textShadow
-                    ),
-                    modifier = Modifier
-                        .alpha(0.7f)
-                        .animateContentSize()
+                    )
                 )
+            }
+            Crossfade(
+                targetState = description,
+                modifier = Modifier.animateContentSize()
+            ) { text ->
+                text?.let {
+                    Text(
+                        text = it,
+                        color = contentColor,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            shadow = textShadow
+                        ),
+                        modifier = Modifier.alpha(0.7f)
+                    )
+                }
             }
         }
     }

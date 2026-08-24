@@ -38,6 +38,7 @@ data class SharedString(
     @StringRes val settingsAboutUpdatesAutoCheckUpdatesDescription : Int,
     @StringRes val settingsAboutIssues : Int,
     @StringRes val settingsAboutIssuesTitle : Int,
+    @StringRes val settingsAboutIssuesTapToExpand: Int,
     @StringRes val settingsAboutIssuesDescription : Int,
     @StringRes val settingsAboutIssuesCopyDebugInfo : Int,
     @StringRes val settingsAboutIssuesCopyDebugInfoDescription : Int,
