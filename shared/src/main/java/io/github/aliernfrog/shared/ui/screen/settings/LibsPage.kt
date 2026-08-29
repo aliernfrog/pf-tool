@@ -31,7 +31,6 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetState
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,11 +41,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
@@ -157,11 +154,7 @@ fun LibsPage(
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                     modifier = Modifier
                         .padding(vertical = 16.dp)
-                        .horizontalFadingEdge(
-                            scrollState = buttonsScrollState,
-                            edgeColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                            isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
-                        )
+                        .horizontalFadingEdge(buttonsScrollState)
                         .horizontalScroll(buttonsScrollState)
                         .padding(horizontal = 16.dp)
                 ) {
