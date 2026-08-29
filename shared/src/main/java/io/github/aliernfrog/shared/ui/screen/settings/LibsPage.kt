@@ -103,7 +103,6 @@ fun LibsPage(
                     if (index != 0) DividerRow()
                     ListItem(
                         overlineContent = { Text(lib.name) },
-                        headlineContent = { lib.description?.let { Text(it) } },
                         supportingContent = {
                             SuggestionChip(
                                 onClick = onClick,
@@ -117,7 +116,9 @@ fun LibsPage(
                             )
                         },
                         modifier = Modifier.clickable(onClick = onClick)
-                    )
+                    ) {
+                        lib.description?.let { Text(it) }
+                    }
                 }
             }
 

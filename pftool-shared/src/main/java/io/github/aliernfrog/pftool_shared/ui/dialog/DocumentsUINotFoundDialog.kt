@@ -198,7 +198,6 @@ fun DocumentsUINotFoundDialog(
                     ) {
                         ScrollableRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            gradientColor = CardDefaults.cardColors().containerColor,
                             modifier = Modifier
                                 .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                         ) {

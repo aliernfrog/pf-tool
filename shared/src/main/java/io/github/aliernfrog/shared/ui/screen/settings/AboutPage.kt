@@ -230,7 +230,6 @@ fun AboutPage(
                                 .padding(start = 20.dp, end = 20.dp, bottom = 8.dp)
                         ) {
                             ScrollableRow(
-                                gradientColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
                             ) {
                                 supportLinks.forEach { social ->

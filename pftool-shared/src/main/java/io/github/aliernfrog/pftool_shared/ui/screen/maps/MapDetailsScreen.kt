@@ -269,7 +269,7 @@ fun MapDetailsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun MapCard(
     chosenMap: IMapFile,

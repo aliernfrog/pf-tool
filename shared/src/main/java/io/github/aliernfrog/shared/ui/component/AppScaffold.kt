@@ -125,6 +125,7 @@ fun AppSmallTopBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
     IconButtonWithTooltip(
