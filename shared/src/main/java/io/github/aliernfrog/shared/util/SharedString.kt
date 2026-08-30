@@ -81,8 +81,10 @@ data class SharedString(
 
     @StringRes val crashHandlerTitle : Int,
     @StringRes val crashHandlerDescription : Int,
-    @StringRes val crashHandlerStackTrace : Int,
     @StringRes val crashHandlerReport : Int,
+    @StringRes val crashHandlerStackTrace : Int,
+    @StringRes val crashHandlerMessageDescription: Int,
+    @StringRes val crashHandlerMessagePlaceholder: Int,
     @StringRes val crashHandlerSendReport : Int,
     @StringRes val crashHandlerSendReportSent : Int,
     @StringRes val crashHandlerRestartApp : Int,

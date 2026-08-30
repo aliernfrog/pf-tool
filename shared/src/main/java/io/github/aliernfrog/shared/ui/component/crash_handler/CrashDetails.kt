@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,18 +21,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.QuestionMark
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.data.getIconPainter
+import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.SizedButton
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
@@ -85,10 +92,33 @@ fun CrashDetails(
     var reportState by remember {
         mutableStateOf<ReportState>(ReportState.NotSent)
     }
+    var showSubmitDialog by rememberSaveable { mutableStateOf(false) }
 
-    val getCrashDetails = {
-        debugInfo + "\n\n" + stackTrace
-    }
+    fun getCrashDetails(message: String?) =
+        (if (message.isNullOrEmpty()) "" else (message+"\n\n")) + debugInfo + "\n\n" + stackTrace
+
+    if (showSubmitDialog) SubmitReportDialog(
+        onDismissRequest = { showSubmitDialog = false },
+        onSubmit = { message ->
+            reportState = ReportState.Sending
+            showSubmitDialog = false
+            scope.launch(Dispatchers.IO) {
+                val response = sendCrashReport(
+                    toUrl = crashReportURL,
+                    app = context.getSharedString(SharedString::appName),
+                    details = getCrashDetails(message)
+                )
+                scope.launch(Dispatchers.Main) {
+                    Toast.makeText(context,
+                        if (response is ReportState.Error) "${response.body} (${response.statusCode})"
+                        else context.getSharedString(SharedString::crashHandlerSendReportSent),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    reportState = if (response is ReportState.Error) ReportState.NotSent else response
+                }
+            }
+        }
+    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,24 +131,7 @@ fun CrashDetails(
         )
 
         SizedButton(
-            onClick = {
-                reportState = ReportState.Sending
-                scope.launch(Dispatchers.IO) {
-                    val response = sendCrashReport(
-                        toUrl = crashReportURL,
-                        app = context.getSharedString(SharedString::appName),
-                        details = getCrashDetails()
-                    )
-                    scope.launch(Dispatchers.Main) {
-                        Toast.makeText(context,
-                            if (response is ReportState.Error) "${response.body} (${response.statusCode})"
-                            else context.getSharedString(SharedString::crashHandlerSendReportSent),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        reportState = if (response is ReportState.Error) ReportState.NotSent else response
-                    }
-                }
-            },
+            onClick = { showSubmitDialog = true },
             enabled = reportState is ReportState.NotSent,
             size = ButtonDefaults.MediumContainerHeight
         ) { textStyle, iconSpacing, iconSize ->
@@ -210,7 +223,7 @@ fun CrashDetails(
                         scope.launch {
                             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
                                 /* label = */null,
-                                /* text = */getCrashDetails()
+                                /* text = */getCrashDetails(null)
                             )))
                         }
                     }
@@ -244,6 +257,52 @@ fun CrashDetails(
             }
         }
     }
+}
+
+@Composable
+private fun SubmitReportDialog(
+    onDismissRequest: () -> Unit,
+    onSubmit: (String) -> Unit
+) {
+    var message by rememberSaveable { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = {},
+        confirmButton = {
+            Button(
+                onClick = { onSubmit(message) },
+                shapes = ButtonDefaults.shapes()
+            ) {
+                ButtonIcon(
+                    painter = rememberVectorPainter(Icons.AutoMirrored.Filled.Send),
+                    contentDescription = null
+                )
+                Text(sharedStringResource(SharedString::crashHandlerSendReport))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismissRequest,
+                shapes = ButtonDefaults.shapes()
+            ) {
+                Text(sharedStringResource(SharedString::actionCancel))
+            }
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(sharedStringResource(SharedString::crashHandlerMessageDescription))
+                OutlinedTextField(
+                    value = message.take(2000),
+                    onValueChange = { message = it.take(2000) },
+                    placeholder = {
+                        Text(sharedStringResource(SharedString::crashHandlerMessagePlaceholder))
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    )
 }
 
 private fun sendCrashReport(toUrl: String, app: String, details: String): ReportState {
