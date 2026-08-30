@@ -1,6 +1,13 @@
 package io.github.aliernfrog.pftool_shared.ui.dialog
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -59,20 +66,28 @@ fun ProgressDialog(
                 vertical = 16.dp
             )
     ) {
-        Column(Modifier.animateContentSize()) {
+        Column {
             HorizontalProgressIndicatorWithText(
                 progress = progress,
-                textColor = MaterialTheme.colorScheme.onSurface
+                textColor = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.animateContentSize()
             )
-            if (showDismissButton) TextButton(
-                onClick = ::dismissDialog,
-                shapes = ButtonDefaults.shapes(),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
-                ),
+
+            AnimatedVisibility(
+                visible = showDismissButton,
+                enter = slideInVertically { it } + scaleIn() + fadeIn(),
+                exit = slideOutVertically { it } + scaleOut() + fadeOut(),
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text(sharedStringResource(SharedString::actionCancel))
+                TextButton(
+                    onClick = ::dismissDialog,
+                    shapes = ButtonDefaults.shapes(),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text(sharedStringResource(SharedString::actionCancel))
+                }
             }
         }
     }
