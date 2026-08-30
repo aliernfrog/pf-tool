@@ -5,6 +5,7 @@ import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 
 val pfToolSharedString = PFToolSharedString(
     actionCopy = R.string.action_copy,
+    actionDownload = R.string.action_download,
     actionMore = R.string.action_more,
     actionSelectDeselectAll = R.string.action_select_deselectAll,
     actionSelectSelectAll = R.string.action_select_selectAll,
@@ -32,7 +33,11 @@ val pfToolSharedString = PFToolSharedString(
     mapsRename = R.string.maps_rename,
     mapsDuplicate = R.string.maps_duplicate,
     mapsListReload = R.string.mapsList_reload,
-    mapsListStorage = R.string.mapsList_storage,
+    mapsListAdd = R.string.mapsList_add,
+    mapsListAddStorage = R.string.mapsList_add_storage,
+    mapsListAddURL = R.string.mapsList_add_url,
+    mapsListDownload = R.string.mapsList_download,
+    mapsListDownloadDescription = R.string.mapsList_download_description,
     mapsListSearch = R.string.mapsList_search,
     mapsListSearchClear = R.string.mapsList_search_clear,
     mapsListSearchNoMatches = R.string.mapsList_searchNoMatches,

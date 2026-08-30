@@ -10,6 +10,7 @@ import kotlin.reflect.KProperty1
 
 data class PFToolSharedString(
     @StringRes val actionCopy: Int,
+    @StringRes val actionDownload: Int,
     @StringRes val actionMore : Int,
     @StringRes val actionSelectDeselectAll : Int,
     @StringRes val actionSelectSelectAll : Int,
@@ -37,7 +38,11 @@ data class PFToolSharedString(
     @StringRes val mapsRename : Int,
     @StringRes val mapsDuplicate : Int,
     @StringRes val mapsListReload : Int,
-    @StringRes val mapsListStorage : Int,
+    @StringRes val mapsListAdd: Int,
+    @StringRes val mapsListAddStorage : Int,
+    @StringRes val mapsListAddURL: Int,
+    @StringRes val mapsListDownload: Int,
+    @StringRes val mapsListDownloadDescription: Int,
     @StringRes val mapsListSearch : Int,
     @StringRes val mapsListSearchClear : Int,
     @StringRes val mapsListSearchNoMatches : Int,

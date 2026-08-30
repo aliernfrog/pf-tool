@@ -117,7 +117,7 @@
     <string name="mapsList_search">搜索地图</string>
     <string name="mapsList_search_clear">清空搜索内容</string>
     <string name="mapsList_count">{COUNT} 个地图</string>
-    <string name="mapsList_storage">存储</string>
+    <string name="mapsList_add_storage">存储</string>
     <string name="mapsList_imported">您的地图</string>
     <string name="mapsList_imported_noMaps">您没有任何地图</string>
     <string name="mapsList_exported">导出的地图</string>
