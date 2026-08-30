@@ -8,10 +8,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.ripple
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 fun Modifier.clickableWithColor(
@@ -42,41 +44,30 @@ fun Modifier.combinedClickableWithColor(
 
 
 fun Modifier.horizontalFadingEdge(
-    scrollState: ScrollState,
-    edgeColor: Color,
-    isRTL: Boolean
+    scrollState: ScrollState
 ): Modifier {
-    return this.drawWithContent {
-        val lengthPx = 100.dp.toPx()
-        val scrollFromStart = if (isRTL) scrollState.maxValue - scrollState.value else scrollState.value
-        val scrollFromEnd = if (isRTL) scrollState.value else scrollState.maxValue - scrollState.value
-        val startFadingEdgeStrength = lengthPx * (scrollFromStart / lengthPx).coerceAtMost(1f)
-        val endFadingEdgeStrength = lengthPx * (scrollFromEnd / lengthPx).coerceAtMost(1f)
+    return this
+        .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+        .drawWithContent {
+            val isRTL = layoutDirection == LayoutDirection.Rtl
+            val lengthPx = 100.dp.toPx()
 
-        drawContent()
+            val leftHidden = if (isRTL) scrollState.maxValue - scrollState.value else scrollState.value
+            val rightHidden = if (isRTL) scrollState.value else scrollState.maxValue - scrollState.value
 
-        drawRect(
-            brush = Brush.horizontalGradient(
-                colors = listOf(edgeColor, Color.Transparent),
-                startX = 0f,
-                endX = startFadingEdgeStrength
-            ),
-            size = Size(
-                width = startFadingEdgeStrength,
-                height = this.size.height
+            val leftStrength = (leftHidden / lengthPx).coerceAtMost(1f)
+            val rightStrength = (rightHidden / lengthPx).coerceAtMost(1f)
+
+            drawContent()
+
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    0f to Color.Transparent,
+                    (leftStrength * lengthPx / size.width).coerceIn(0f, 1f) to Color.Black,
+                    (1f - (rightStrength * lengthPx / size.width)).coerceIn(0f, 1f) to Color.Black,
+                    1f to Color.Transparent
+                ),
+                blendMode = BlendMode.DstIn
             )
-        )
-
-        drawRect(
-            brush = Brush.horizontalGradient(
-                colors = listOf(Color.Transparent, edgeColor),
-                startX = size.width - endFadingEdgeStrength,
-                endX = size.width
-            ),
-            topLeft = Offset(
-                x = size.width - endFadingEdgeStrength,
-                y = 0f
-            )
-        )
-    }
+        }
 }

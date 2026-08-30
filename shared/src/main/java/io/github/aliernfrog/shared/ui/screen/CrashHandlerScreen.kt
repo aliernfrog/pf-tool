@@ -2,7 +2,6 @@ package io.github.aliernfrog.shared.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +25,7 @@ import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.crash_handler.CrashDetails
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
 
@@ -50,7 +50,6 @@ fun CrashHandlerScreen(
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
         ) {
             ErrorWithIcon(
                 description = sharedStringResource(SharedString::crashHandlerDescription),
@@ -77,6 +76,8 @@ fun CrashHandlerScreen(
                     }
                 }
             )
+
+            BottomSpacer()
         }
     }
 }

@@ -5,22 +5,29 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
@@ -33,8 +40,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesomeMosaic
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Deselect
@@ -45,6 +52,7 @@ import androidx.compose.material.icons.outlined.SdCard
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.LocationOff
 import androidx.compose.material.icons.rounded.SearchOff
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DropdownMenu
@@ -54,10 +62,10 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -100,13 +108,17 @@ import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppTopBar
+import io.github.aliernfrog.shared.ui.component.BasicSearchField
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.FloatingActionButton
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
+import io.github.aliernfrog.shared.ui.component.OutlinedSizedButton
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
+import io.github.aliernfrog.shared.ui.component.buildBottomSheetEnabledValues
 import io.github.aliernfrog.shared.ui.component.util.AnimatedContentShadowWorkaround
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
@@ -141,7 +153,10 @@ fun MapsListScreen(
     val topToastState = koinInject<TopToastState>()
     val scope = rememberCoroutineScope()
 
-    val listViewOptionsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val listViewOptionsSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = true)
+    )
     val pagerState = rememberPagerState {
         mapsListSegments.size
     }
@@ -233,6 +248,7 @@ fun MapsListScreen(
                                     if (areAllShownMapsSelected) PFToolSharedString::actionSelectDeselectAll
                                     else PFToolSharedString::actionSelectSelectAll
                                 ),
+                                tooltipPositioning = TooltipAnchorPosition.Below,
                                 onClick = {
                                     currentlyShownSegment?.let { segment ->
                                         val maps = vm.getMapsForSegment(segment)
@@ -247,6 +263,7 @@ fun MapsListScreen(
                                 IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.MoreVert),
                                     contentDescription = sharedStringResource(PFToolSharedString::actionMore),
+                                    tooltipPositioning = TooltipAnchorPosition.Below,
                                     onClick = { multiSelectionDropdownShown = true }
                                 )
                                 MultiSelectionDropdown(
@@ -271,6 +288,7 @@ fun MapsListScreen(
                                 else IconButtonWithTooltip(
                                     icon = rememberVectorPainter(Icons.Default.Refresh),
                                     contentDescription = sharedStringResource(PFToolSharedString::mapsListReload),
+                                    tooltipPositioning = TooltipAnchorPosition.Below,
                                     onClick = {
                                         vm.reloadMaps(context)
                                     }
@@ -315,7 +333,10 @@ fun MapsListScreen(
                 isSearching = searchQuery.isNotEmpty(),
                 currentSegment = segment,
                 shownMapCount = shownMaps.size,
-                modifier = modifier
+                modifier = modifier,
+                onShowListOptionsRequest = { scope.launch {
+                    listViewOptionsSheetState.show()
+                } }
             )
         }
 
@@ -377,10 +398,7 @@ fun MapsListScreen(
                 Search(
                     searchQuery = searchQuery,
                     onSearchQueryChange = { searchQuery = it },
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    onShowListViewOptionsRequest = { scope.launch {
-                        listViewOptionsSheetState.show()
-                    } }
+                    modifier = Modifier.padding(horizontal = 12.dp)
                 )
 
                 SingleChoiceConnectedButtonGroup(
@@ -514,42 +532,66 @@ private fun SegmentSummary(
     isSearching: Boolean,
     currentSegment: MapsListSegment,
     shownMapCount: Int,
+    onShowListOptionsRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        if (shownMapCount == 0) {
-            if (isLoadingMaps) Box(Modifier.fillMaxSize()) {
-                ContainedLoadingIndicator(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(vertical = 24.dp)
+        AnimatedContent(shownMapCount == 0) { isEmpty ->
+            if (isEmpty) {
+                if (isLoadingMaps) Box(Modifier.fillMaxSize()) {
+                    ContainedLoadingIndicator(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(vertical = 24.dp)
+                    )
+                }
+                else AnimatedContent(isSearching) { searching ->
+                    ErrorWithIcon(
+                        description = sharedStringResource(
+                            if (searching) PFToolSharedString::mapsListSearchNoMatches else currentSegment.noMapsText
+                        ),
+                        icon = rememberVectorPainter(
+                            if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else Row(
+                modifier = Modifier.padding(
+                    horizontal = 6.dp, vertical = 4.dp
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = sharedStringResource(PFToolSharedString::mapsListCount)
+                        .replace("{COUNT}", shownMapCount.toString()),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.fillMaxWidth().weight(1f)
                 )
+
+                OutlinedSizedButton(
+                    onClick = onShowListOptionsRequest,
+                    size = ButtonDefaults.ExtraSmallContainerHeight
+                ) { textStyle, iconSpacing, iconSize ->
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesomeMosaic,
+                        contentDescription = null,
+                        modifier = Modifier.size(iconSize)
+                    )
+                    Spacer(Modifier.width(iconSpacing))
+                    Text(
+                        text = sharedStringResource(PFToolSharedString::listStyle),
+                        style = textStyle
+                    )
+                }
             }
-            else AnimatedContent(isSearching) { searching ->
-                ErrorWithIcon(
-                    description = sharedStringResource(
-                        if (searching) PFToolSharedString::mapsListSearchNoMatches else currentSegment.noMapsText
-                    ),
-                    icon = rememberVectorPainter(
-                        if (searching) Icons.Rounded.SearchOff else Icons.Rounded.LocationOff
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        } else Text(
-            text = sharedStringResource(PFToolSharedString::mapsListCount)
-                .replace("{COUNT}", shownMapCount.toString()),
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .padding(horizontal = 6.dp)
-                .padding(bottom = 4.dp)
-        )
+        }
     }
 }
 
 @Composable
 private fun Footer() {
-    Spacer(Modifier.navigationBarsPadding().height(AppFABPadding))
+    BottomSpacer(Modifier.padding(top = AppFABPadding))
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -557,46 +599,36 @@ private fun Footer() {
 private fun Search(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onShowListViewOptionsRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    SearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                query = searchQuery,
-                onQueryChange = onSearchQueryChange,
-                onSearch = {},
-                expanded = false,
-                onExpandedChange = {},
-                leadingIcon = {
-                    if (searchQuery.isNotEmpty()) IconButtonWithTooltip(
-                        icon = rememberVectorPainter(Icons.Default.Clear),
-                        contentDescription = sharedStringResource(PFToolSharedString::mapsListSearchClear),
-                        onClick = { onSearchQueryChange("") }
-                    )
-                    else Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = null
-                    )
-                },
-                trailingIcon = {
-                    IconButtonWithTooltip(
-                        icon = rememberVectorPainter(Icons.AutoMirrored.Filled.Sort),
-                        contentDescription = sharedStringResource(PFToolSharedString::listOptions),
-                        onClick = onShowListViewOptionsRequest
-                    )
-                },
-                placeholder = {
-                    Text(sharedStringResource(PFToolSharedString::mapsListSearch))
-                }
-            )
-        },
-        expanded = false,
-        onExpandedChange = {},
-        content = {},
+    BasicSearchField(
+        value = searchQuery,
+        onValueChange = onSearchQueryChange,
         modifier = modifier
             .fillMaxWidth()
-            .offset(y = (-12).dp)
+            .padding(bottom = 12.dp),
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Outlined.Search,
+                contentDescription = null
+            )
+        },
+        trailingIcon = {
+            AnimatedVisibility(
+                visible = searchQuery.isNotEmpty(),
+                enter = slideInHorizontally { it } + scaleIn() + fadeIn(),
+                exit = slideOutHorizontally { it } + scaleOut() + fadeOut()
+            ) {
+                IconButtonWithTooltip(
+                    icon = rememberVectorPainter(Icons.Default.Clear),
+                    contentDescription = sharedStringResource(PFToolSharedString::mapsListSearchClear),
+                    onClick = { onSearchQueryChange("") }
+                )
+            }
+        },
+        placeholder = {
+            Text(sharedStringResource(PFToolSharedString::mapsListSearch))
+        }
     )
 }
 

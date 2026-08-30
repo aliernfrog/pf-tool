@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,12 +63,13 @@ import io.github.aliernfrog.shared.ui.component.HorizontalSegmentor
 import io.github.aliernfrog.shared.ui.component.ScrollableRow
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
-import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowHeader
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSwitchRow
 import io.github.aliernfrog.shared.ui.component.expressive.ROW_DEFAULT_ICON_SIZE
 import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
+import io.github.aliernfrog.shared.ui.component.form.DividerRow
+import io.github.aliernfrog.shared.ui.component.form.ExpandableRow
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.viewmodel.settings.AboutPageViewModel
 import io.github.aliernfrog.shared.util.SharedString
@@ -203,55 +205,73 @@ fun AboutPage(
         ) {
             VerticalSegmentor(
                 {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                vertical = 8.dp, horizontal = 18.dp
+                    var supportLinksExpanded by rememberSaveable { mutableStateOf(false) }
+                    ExpandableRow(
+                        expanded = supportLinksExpanded,
+                        title = sharedStringResource(SharedString::settingsAboutIssuesTitle),
+                        description = sharedStringResource(
+                            if (supportLinksExpanded) SharedString::settingsAboutIssuesDescription
+                            else SharedString::settingsAboutIssuesTapToExpand
+                        ),
+                        icon = {
+                            ExpressiveRowIcon(
+                                painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.ContactSupport)
                             )
+                        },
+                        onClickHeader = {
+                            supportLinksExpanded = !supportLinksExpanded
+                        }
                     ) {
-                        ExpressiveRowHeader(
-                            title = sharedStringResource(SharedString::settingsAboutIssuesTitle),
-                            description = sharedStringResource(SharedString::settingsAboutIssuesDescription),
-                            icon = {
-                                ExpressiveRowIcon(
-                                    painter = rememberVectorPainter(Icons.AutoMirrored.Rounded.ContactSupport)
-                                )
-                            }
-                        )
-
-                        ScrollableRow(
-                            gradientColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                            modifier = Modifier.padding(top = 8.dp).align(Alignment.End)
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 20.dp, bottom = 8.dp)
                         ) {
-                            supportLinks.forEach { social ->
-                                OutlinedButton(
-                                    onClick = { uriHandler.openUri(social.url) },
-                                    shapes = ButtonDefaults.shapes()
-                                ) {
-                                    ButtonIcon(social.getIconPainter())
-                                    Text(social.label.resolveString())
+                            ScrollableRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+                            ) {
+                                supportLinks.forEach { social ->
+                                    OutlinedButton(
+                                        onClick = { uriHandler.openUri(social.url) },
+                                        shapes = ButtonDefaults.shapes()
+                                    ) {
+                                        ButtonIcon(social.getIconPainter())
+                                        Text(social.label.resolveString())
+                                    }
                                 }
                             }
-                        }
-                    }
-                },
-                {
-                    ExpressiveButtonRow(
-                        title = sharedStringResource(SharedString::settingsAboutIssuesCopyDebugInfo),
-                        description = sharedStringResource(SharedString::settingsAboutIssuesCopyDebugInfoDescription),
-                        icon = { ExpressiveRowIcon(rememberVectorPainter(Icons.Rounded.CopyAll)) }
-                    ) {
-                        scope.launch {
-                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
-                                context.getSharedString(SharedString::settingsAboutIssuesCopyDebugInfoClipLabel),
-                                debugInfo
-                            )))
-                            vm.topToastState.showToast(
-                                text = context.getSharedString(SharedString::settingsAboutIssuesCopyDebugInfoCopied),
-                                icon = Icons.Rounded.CopyAll
+
+                            DividerRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 2.dp)
                             )
+
+                            Text(
+                                text = sharedStringResource(SharedString::settingsAboutIssuesCopyDebugInfoDescription),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+
+                            OutlinedButton(
+                                onClick = {
+                                    scope.launch {
+                                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(
+                                            context.getSharedString(SharedString::settingsAboutIssuesCopyDebugInfoClipLabel),
+                                            debugInfo
+                                        )))
+                                        vm.topToastState.showToast(
+                                            text = context.getSharedString(SharedString::settingsAboutIssuesCopyDebugInfoCopied),
+                                            icon = Icons.Rounded.CopyAll
+                                        )
+                                    }
+                                },
+                                shapes = ButtonDefaults.shapes()
+                            ) {
+                                ButtonIcon(rememberVectorPainter(Icons.Rounded.CopyAll))
+                                Text(sharedStringResource(SharedString::settingsAboutIssuesCopyDebugInfo))
+                            }
                         }
                     }
                 },
@@ -274,7 +294,7 @@ fun AboutPage(
                     description = credit.description?.resolveString(),
                     icon = {
                         var avatarState by remember { mutableStateOf<AsyncImagePainter.State?>(null) }
-                        val isLoadingAvatar = credit.fetching || avatarState == null || avatarState is AsyncImagePainter.State.Loading
+                        val isLoadingAvatar = !credit.attemptedFetch || credit.fetching || avatarState == null || avatarState is AsyncImagePainter.State.Loading
 
                         AsyncImage(
                             model = credit.avatarURL,
