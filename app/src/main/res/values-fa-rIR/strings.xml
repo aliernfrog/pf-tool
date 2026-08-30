@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="action_back">برگشت</string>
+    <string name="action_ok">اوکی</string>
+    <string name="action_done">باشه</string>
+    <string name="action_cancel">کنسل</string>
+    <string name="action_openInBrowser">باز کردن</string>
+    <string name="action_share">انتقال</string>
+    <string name="action_delete">پاک کردن</string>
+    <string name="action_copy">کپی</string>
+    <string name="action_more">دیگران</string>
+    <string name="action_select_selectAll">همه</string>
+    <string name="intent_openMap">باز کردن نقشه</string>
+    <string name="maps_share_short">انتقال</string>
+    <string name="maps_delete_short">پاک کردن</string>
+</resources>
