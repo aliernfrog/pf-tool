@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import io.github.aliernfrog.shared.data.Social
+import io.github.aliernfrog.shared.domain.IAppState
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
@@ -34,6 +35,7 @@ import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -43,10 +45,15 @@ fun CrashDetailsSheet(
     debugInfo: String,
     supportLinks: List<Social>
 ) {
+    val iAppState = koinInject<IAppState>()
     val scope = rememberCoroutineScope()
     val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.Hidden,
-        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = true)
+        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = true),
+        confirmValueChange = {
+            if (it == SheetValue.Hidden) iAppState.lastCaughtException = null
+            true
+        }
     )
     var stackTrace by rememberSaveable {
         mutableStateOf("")
