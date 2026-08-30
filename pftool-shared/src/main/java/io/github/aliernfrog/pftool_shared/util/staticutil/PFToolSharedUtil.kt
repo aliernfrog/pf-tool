@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
@@ -17,6 +16,7 @@ import android.webkit.URLUtil
 import androidx.core.net.toUri
 import io.github.aliernfrog.pftool_shared.data.Language
 import io.github.aliernfrog.pftool_shared.enum.DocumentsUIPackageMetadata
+import io.github.aliernfrog.pftool_shared.util.extension.isHTTP
 import io.github.aliernfrog.pftool_shared.util.extension.toPath
 import io.github.aliernfrog.pftool_shared.util.hasAndroidDataRestrictions
 import io.github.aliernfrog.shared.util.TAG
@@ -40,11 +40,9 @@ class PFToolSharedUtil {
             var result: Pair<PackageInfo, DocumentsUIPackageMetadata>? = null
             for (metadata in DocumentsUIPackageMetadata.entries) {
                 try {
-                    @Suppress("DEPRECATION")
                     result = context.packageManager.getPackageInfo(
                         metadata.packageName,
-                        if (Build.VERSION.SDK_INT >= 24) PackageManager.MATCH_DISABLED_COMPONENTS
-                        else PackageManager.GET_DISABLED_COMPONENTS
+                        PackageManager.MATCH_DISABLED_COMPONENTS
                     ) to metadata
                     break
                 } catch (_: PackageManager.NameNotFoundException) {
@@ -162,23 +160,27 @@ class PFToolSharedUtil {
         fun cacheFile(
             uri: Uri,
             parentName: String?,
-            context: Context
+            context: Context,
+            onProgress: ((Float) -> Unit)? = null
         ): File? {
             return try {
-                val isHTTP = uri.scheme == "http" || uri.scheme == "https"
+                onProgress?.invoke(0f)
                 val inputStream = (
-                        if (isHTTP) URL(uri.toString()).openStream()
+                        if (uri.isHTTP) URL(uri.toString()).openStream()
                         else context.contentResolver.openInputStream(uri)
                         ) ?: return null
                 val fileName = (
-                        if (isHTTP) URLUtil.guessFileName(uri.toString(), null, null)
+                        if (uri.isHTTP) URLUtil.guessFileName(uri.toString(), null, null)
                         else getFileName(uri, context)
                         ) ?: "unknown"
+                val totalBytes = getFileSizeFromUri(uri, context)
                 val file = writeToCache(
                     fileName = fileName,
                     inputStream = inputStream,
                     parentName = parentName,
-                    context = context
+                    totalBytes = totalBytes,
+                    context = context,
+                    onProgress = onProgress
                 )
                 inputStream.close()
                 file
@@ -192,18 +194,52 @@ class PFToolSharedUtil {
             fileName: String,
             inputStream: InputStream,
             parentName: String?,
-            context: Context
+            totalBytes: Long,
+            context: Context,
+            onProgress: ((Float) -> Unit)?
         ): File {
+            onProgress?.invoke(0f)
             val cacheDir = context.externalCacheDir ?: context.cacheDir
             val outputFile = File("${cacheDir.absolutePath}${
                 if (parentName != null) "/$parentName" else ""
             }/$fileName")
             outputFile.parentFile?.mkdirs()
             if (outputFile.exists()) outputFile.delete()
+
+            outputFile.outputStream().use { os ->
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                var bytesCopied = 0L
+
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    os.write(buffer, 0, bytesRead)
+                    bytesCopied += bytesRead
+                    if (totalBytes > 0) onProgress?.invoke(
+                        (bytesCopied.toFloat() / totalBytes).coerceAtMost(1f)
+                    )
+                }
+            }
             val output = outputFile.outputStream()
             inputStream.copyTo(output)
             output.close()
             return outputFile
+        }
+
+        private fun getFileSizeFromUri(uri: Uri, context: Context): Long {
+            return try {
+                if (uri.isHTTP) {
+                    val connection = URL(uri.toString()).openConnection()
+                    connection.connect()
+                    connection.contentLengthLong
+                } else {
+                    context.contentResolver.openFileDescriptor(uri, "r")?.use { pfd ->
+                        pfd.statSize
+                    } ?: -1L
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "PFToolSharedUtil/getFileSizeFromUri: ", e)
+                -1L
+            }
         }
 
         @SuppressLint("Range")

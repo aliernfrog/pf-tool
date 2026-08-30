@@ -30,6 +30,7 @@ fun MapsListScreen(
     MapsListScreen(
         title = title,
         fileMimeType = "application/zip",
+        fileExtension = ".zip",
         mapsListSegments = vm.availableSegments,
         mapActions = mapActions,
         listViewOptions = vm.prefs.mapsListViewOptions,
