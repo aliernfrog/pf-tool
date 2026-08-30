@@ -219,9 +219,6 @@ class PFToolSharedUtil {
                     )
                 }
             }
-            val output = outputFile.outputStream()
-            inputStream.copyTo(output)
-            output.close()
             return outputFile
         }
 
