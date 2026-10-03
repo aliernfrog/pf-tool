@@ -19,6 +19,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -881,7 +882,9 @@ private fun DownloadMapFromURLDialog(
             Text(sharedStringResource(PFToolSharedString::mapsListDownload))
         },
         text = {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 OutlinedTextField(
                     value = url,
                     onValueChange = { url = it },
@@ -905,11 +908,8 @@ private fun DownloadMapFromURLDialog(
                     }
                 )
 
-                AnimatedContent(
-                    targetState = clipboardUrl,
-                    modifier = Modifier.align(Alignment.End)
-                ) { clipUrl ->
-                    if (clipUrl != null) SuggestionChip(
+                clipboardUrl?.let { clipUrl ->
+                    SuggestionChip(
                         modifier = Modifier.padding(top = 8.dp),
                         onClick = {
                             url = clipUrl
