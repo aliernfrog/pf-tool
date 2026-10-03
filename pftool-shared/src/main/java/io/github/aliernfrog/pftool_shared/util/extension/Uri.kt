@@ -12,6 +12,9 @@ import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.util.TAG
 import java.io.File
 
+val Uri.isHTTP: Boolean
+    get() = scheme == "http" || scheme == "https"
+
 fun Uri.appHasPermissions(context: Context): Boolean {
     try {
         val hasPermissions = context.checkUriPermission(
