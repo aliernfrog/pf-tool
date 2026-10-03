@@ -17,6 +17,8 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -595,6 +597,20 @@ fun MapsListScreen(
                         }
                     }
                 }
+            }
+
+            Crossfade(addMapMenuExpanded) {
+                if (it) Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f))
+                        .clickable(
+                            interactionSource = null,
+                            indication = null
+                        ) {
+                            addMapMenuExpanded = false
+                        }
+                )
             }
         }
     }
