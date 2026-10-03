@@ -182,6 +182,8 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.okhttp)
     implementation(libs.dfc)
+    implementation(libs.haze)
+    implementation(libs.haze.blur)
     implementation(libs.koin)
     implementation(libs.markdown)
     implementation(libs.shizuku.api)

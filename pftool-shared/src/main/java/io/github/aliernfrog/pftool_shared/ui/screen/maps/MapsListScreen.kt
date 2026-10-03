@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -159,7 +160,7 @@ import org.koin.compose.koinInject
 import java.io.File
 import kotlin.collections.filter
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsListScreen(
     title: String = sharedStringResource(PFToolSharedString::maps),
@@ -352,7 +353,9 @@ fun MapsListScreen(
         floatingActionButton = {
             AnimatedContentShadowWorkaround(
                 targetState = !isMultiSelecting,
-                modifier = Modifier.navigationBarsPadding()
+                modifier = Modifier
+                    .imePadding()
+                    .navigationBarsPadding()
             ) { showAddMapFAB ->
                 if (showAddMapFAB) {
                     FloatingActionButtonMenu(
@@ -697,7 +700,7 @@ private fun Footer() {
     BottomSpacer(Modifier.padding(top = AppFABPadding))
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Search(
     searchQuery: String,

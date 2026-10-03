@@ -29,7 +29,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -50,10 +49,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.material3.Material3
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.component.AppScaffold
@@ -73,7 +79,7 @@ import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sdkVersionToAndroidVersion
 import io.github.aliernfrog.shared.util.sharedStringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdatesScreen(
     availableUpdates: List<ReleaseInfo>,
@@ -83,6 +89,7 @@ fun UpdatesScreen(
     onCheckUpdatesRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
+    val hazeState = rememberHazeState()
     val lazyListState = rememberLazyListState()
     val uriHandler = LocalUriHandler.current
     val updateAvailable = availableUpdates.isNotEmpty()
@@ -114,7 +121,9 @@ fun UpdatesScreen(
         ) {
             LazyColumn(
                 state = lazyListState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeSource(hazeState)
             ) {
                 if (!updateAvailable && currentVersionInfo.body == null) item {
                     ErrorWithIcon(
@@ -188,6 +197,9 @@ fun UpdatesScreen(
 
             HorizontalFloatingToolbar(
                 expanded = true,
+                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                    toolbarContainerColor = Color.Transparent
+                ),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
@@ -195,6 +207,13 @@ fun UpdatesScreen(
                     .shadow(
                         elevation = 6.dp,
                         shape = FloatingToolbarDefaults.ContainerShape
+                    )
+                    .clip(FloatingToolbarDefaults.ContainerShape)
+                    .hazeBlur(
+                        input = HazeInput.Backdrop(hazeState),
+                        style = HazeBlurStyle.Material3(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
                     )
             ) {
                 @Composable
@@ -279,7 +298,7 @@ fun UpdatesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ReleaseCard(
     release: ReleaseInfo,
