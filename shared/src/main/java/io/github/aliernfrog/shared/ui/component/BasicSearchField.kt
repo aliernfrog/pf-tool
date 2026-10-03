@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -73,8 +74,11 @@ fun BasicSearchField(
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,
-                    textStyle = LocalTextStyle.current,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = LocalContentColor.current
+                    ),
                     singleLine = singleLine,
+                    cursorBrush = SolidColor(LocalContentColor.current),
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
