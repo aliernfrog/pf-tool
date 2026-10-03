@@ -8,7 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -155,8 +154,7 @@ import kotlin.collections.filter
 @Composable
 fun MapsListScreen(
     title: String = sharedStringResource(PFToolSharedString::maps),
-    fileMimeType: String,
-    fileExtension: String,
+    supportedFileExtensions: List<MapsListFileExtension>,
     mapsListSegments: List<MapsListSegment>,
     mapActions: List<MapAction>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
@@ -252,7 +250,7 @@ fun MapsListScreen(
 
     if (showDownloadMapDialog) DownloadMapFromURLDialog(
         onDismissRequest = { showDownloadMapDialog = false },
-        mapFileExtension = fileExtension,
+        supportedFileExtensions = supportedFileExtensions,
         onDownloadFinish = {
             onMapPick(FileWrapper(it))
             showDownloadMapDialog = false
@@ -376,7 +374,11 @@ fun MapsListScreen(
                         FloatingActionButtonMenuItem(
                             onClick = {
                                 val intent = Intent(Intent.ACTION_GET_CONTENT)
-                                    .setType(fileMimeType)
+                                    .setType("*/*")
+                                    .putExtra(
+                                        Intent.EXTRA_MIME_TYPES,
+                                        supportedFileExtensions.map { it.mimeType }.toTypedArray()
+                                    )
                                 launcher.launch(intent)
                                 addMapMenuExpanded = false
                             },
@@ -744,7 +746,7 @@ private fun MultiSelectionDropdown(
 @Composable
 private fun DownloadMapFromURLDialog(
     onDismissRequest: () -> Unit,
-    mapFileExtension: String,
+    supportedFileExtensions: List<MapsListFileExtension>,
     onDownloadFinish: (File) -> Unit
 ) {
     val context = LocalContext.current
@@ -841,9 +843,7 @@ private fun DownloadMapFromURLDialog(
             OutlinedTextField(
                 value = url,
                 onValueChange = { url = it },
-                modifier = Modifier
-                    .animateContentSize()
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 enabled = !isDownloading,
                 singleLine = true,
                 leadingIcon = {
@@ -853,12 +853,20 @@ private fun DownloadMapFromURLDialog(
                     )
                 },
                 placeholder = {
+                    Text(sharedStringResource(PFToolSharedString::mapsListDownloadPlaceholder))
+                },
+                supportingText = {
                     Text(
-                        sharedStringResource(PFToolSharedString::mapsListDownloadDescription)
-                            .format(mapFileExtension)
+                        sharedStringResource(PFToolSharedString::mapsListDownloadFooter)
+                            .format(supportedFileExtensions.joinToString { it.extension })
                     )
                 }
             )
         }
     )
 }
+
+data class MapsListFileExtension(
+    val extension: String,
+    val mimeType: String
+)

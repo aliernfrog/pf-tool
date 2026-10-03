@@ -10,6 +10,7 @@ import com.aliernfrog.pftool.impl.mapActions
 import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
+import io.github.aliernfrog.pftool_shared.ui.screen.maps.MapsListFileExtension
 import io.github.aliernfrog.pftool_shared.ui.screen.maps.MapsListScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -29,8 +30,12 @@ fun MapsListScreen(
     @Suppress("UNCHECKED_CAST")
     MapsListScreen(
         title = title,
-        fileMimeType = "application/zip",
-        fileExtension = ".zip",
+        supportedFileExtensions = listOf(
+            MapsListFileExtension(
+                extension = ".zip",
+                mimeType = "application/zip"
+            )
+        ),
         mapsListSegments = vm.availableSegments,
         mapActions = mapActions,
         listViewOptions = vm.prefs.mapsListViewOptions,
