@@ -149,6 +149,7 @@ import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.extension.showErrorToast
+import io.github.aliernfrog.shared.util.getSharedString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -258,8 +259,12 @@ fun MapsListScreen(
     if (showDownloadMapDialog) DownloadMapFromURLDialog(
         onDismissRequest = { showDownloadMapDialog = false },
         supportedFileExtensions = supportedFileExtensions,
-        onDownloadFinish = {
-            onMapPick(FileWrapper(it))
+        onDownloadFinish = { file ->
+            file?.let {
+                onMapPick(FileWrapper(it))
+            } ?: topToastState.showErrorToast(
+                context.getSharedString(SharedString::warningError)
+            )
             showDownloadMapDialog = false
         }
     )
@@ -769,7 +774,7 @@ private fun MultiSelectionDropdown(
 private fun DownloadMapFromURLDialog(
     onDismissRequest: () -> Unit,
     supportedFileExtensions: List<MapsListFileExtension>,
-    onDownloadFinish: (File) -> Unit
+    onDownloadFinish: (File?) -> Unit
 ) {
     val context = LocalContext.current
     val clipboard = LocalClipboard.current
@@ -822,7 +827,7 @@ private fun DownloadMapFromURLDialog(
                                 parentName = "downloaded_maps",
                                 context = context,
                                 onProgress = { progress = it }
-                            )?.let {
+                            ).let {
                                 onDownloadFinish(it)
                             }
                         }

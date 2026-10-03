@@ -185,7 +185,7 @@ class PFToolSharedUtil {
                 inputStream.close()
                 file
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "PFToolSharedUtil/cacheFile: ", e)
                 null
             }
         }
