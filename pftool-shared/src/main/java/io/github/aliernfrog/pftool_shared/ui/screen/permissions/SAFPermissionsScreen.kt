@@ -6,10 +6,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -52,6 +50,7 @@ import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.extension.showReportableErrorToast
@@ -87,7 +86,6 @@ private fun DowngradeFiles(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
     ) {
         CardWithActions(
             modifier = Modifier.padding(
@@ -119,6 +117,8 @@ private fun DowngradeFiles(
         ) {
             Text(sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppDescription))
         }
+
+        BottomSpacer()
     }
 }
 
@@ -270,7 +270,7 @@ private fun SAFPermissionsList(
         }
 
         item {
-            Spacer(Modifier.navigationBarsPadding())
+            BottomSpacer()
         }
     }
 

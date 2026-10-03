@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.semantics.Role
@@ -84,13 +85,33 @@ fun AppearancePage(
                         )
                     }
 
+                    /**
+                     * Works around a bug in compose material3 library which causes a crash when
+                     * user presses an already checked connected button, by normalizing press shape
+                     * to the default checked shape.
+                     *
+                     * Coercing the shapes to min 0 would probably not be enough, because it must be
+                     * something going wrong with the animation.
+                     *
+                     * TODO: Check later and remove this if fixed.
+                     */
+                    @Composable
+                    fun pressedShapeWorkaround(pressShape: Shape): Shape =
+                        if (selected) ButtonGroupDefaults.connectedButtonCheckedShape else pressShape
+
                     ToggleButton(
                         checked = selected,
                         onCheckedChange = { onSelect() },
                         shapes = when (index) {
-                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                            Theme.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                pressedShape = pressedShapeWorkaround(ButtonGroupDefaults.connectedLeadingButtonPressShape)
+                            )
+                            Theme.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes(
+                                pressedShape = pressedShapeWorkaround(ButtonGroupDefaults.connectedTrailingButtonPressShape)
+                            )
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
+                                pressedShape = pressedShapeWorkaround(ButtonGroupDefaults.connectedMiddleButtonPressShape)
+                            )
                         },
                         modifier = Modifier
                             .weight(weight)

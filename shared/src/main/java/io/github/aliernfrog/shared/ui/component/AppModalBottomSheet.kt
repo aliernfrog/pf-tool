@@ -12,6 +12,7 @@ import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -75,7 +76,7 @@ fun BaseModalBottomSheet(
         dragHandle = dragHandle,
         contentWindowInsets = { WindowInsets(0.dp) }
     ) {
-        content(insetsViewModel.bottomPadding)
+        content(insetsViewModel.bottomPadding + 12.dp)
     }
 }
 
@@ -90,8 +91,15 @@ fun createSheetStateWithDensity(
     val positionalThresholdPx = { with(density) { 56.dp.toPx() } }
     val velocityThresholdPx = { with(density) { 125.dp.toPx() } }
     return SheetState(
-        skipPartiallyExpanded = skipPartiallyExpanded,
+        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = skipPartiallyExpanded),
         positionalThreshold = positionalThresholdPx,
         velocityThreshold = velocityThresholdPx
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+fun buildBottomSheetEnabledValues(skipPartiallyExpanded: Boolean) = buildSet {
+    add(SheetValue.Expanded)
+    add(SheetValue.Hidden)
+    if (!skipPartiallyExpanded) add(SheetValue.PartiallyExpanded)
 }

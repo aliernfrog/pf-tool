@@ -8,7 +8,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,6 +42,7 @@ import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.expressive.toRowFriendlyColor
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.viewmodel.settings.SettingsViewModel
 import io.github.aliernfrog.shared.util.SharedString
@@ -77,7 +77,6 @@ fun SettingsRootPage(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
         ) {
             UpdateNotification(
                 availableUpdates = availableUpdates,
@@ -128,6 +127,8 @@ fun SettingsRootPage(
                     .padding(top = 4.dp, start = 12.dp , end = 12.dp)
                     .alpha(0.7f)
             )
+
+            BottomSpacer()
         }
     }
 }
@@ -153,9 +154,10 @@ fun SettingsPageContainer(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .navigationBarsPadding(),
-            content = content
-        )
+        ) {
+            content()
+            BottomSpacer()
+        }
     }
 }
 

@@ -76,7 +76,7 @@
     <string name="mapsList_search">Wyszukaj mapy..</string>
     <string name="mapsList_search_clear">Wyczyść wyszukiwanie</string>
     <string name="mapsList_count">{COUNT} map</string>
-    <string name="mapsList_storage">Pamięć</string>
+    <string name="mapsList_add_storage">Pamięć</string>
     <string name="mapsList_imported">Twoje mapy</string>
     <string name="mapsList_imported_noMaps">Nie posiadasz żadnych map</string>
     <string name="mapsList_exported">Wyeksportowane mapy</string>
