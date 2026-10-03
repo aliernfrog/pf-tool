@@ -55,6 +55,7 @@
     <string name="permissions_setupShizuku">Shizuku kullanın</string>
     <string name="permissions_setupShizuku_description">PF Tool\'un Polyfield haritalarına erişmesine izin vermek için Shizuku kullanmanız gerekiyor.\nÇünkü cihazındaki Dosyalar uygulaması diğer uygulamaların Android/data klasörü içindeki dosyalara erişim izni almasını engelliyor.\nShizuku modunu istediğiniz zaman ayarlardan açıp kapatabilirsiniz.</string>
     <string name="permissions_shizuku_introduction">Shizuku, uygulamaların Android hata ayıklama köprüsünü kullanarak izinleri yükseltmesine olanak tanıyan bir uygulamadır</string>
+    <string name="permissions_shizuku_tapToConfigure">Shizuku modunu ve depolama erişimini yapılandırmak için dokunun</string>
     <string name="permissions_shizuku_openShizuku">Shizuku\'yu aç</string>
     <string name="permissions_shizuku_installShizuku">Shizuku\'yu yükle</string>
     <string name="permissions_shizuku_install_title">Shizuku\'yu yükleyerek başlayın</string>
@@ -69,6 +70,9 @@
     <string name="permissions_shizuku_waitingService">Dosya hizmeti bekleniyor…</string>
     <string name="permissions_shizuku_waitingService_timedOut">Uzun mu sürüyor? PF Tool\'u yeniden başlatmayı deneyin</string>
     <string name="permissions_shizuku_waitingService_timedOut_restart">Yeniden başlat</string>
+    <string name="permissions_shizuku_recommendedVersion">Resmi Shizuku artık güncel değil ve özellikle Android 17+ veya MediaTek cihazlarda çeşitli sorunlara yol açabilir. thedjchi tarafından geliştirilen çatala geçmeniz önerilir</string>
+    <string name="permissions_shizuku_recommendedVersion_note">Çatal sürümü indirmeden önce mevcut Shizuku\'yu kaldırmayı unutmayın</string>
+    <string name="permissions_shizuku_recommendedVersion_download">Önerilen sürümü indir</string>
     <string name="permissions_allFiles_title">Depolama izinleri</string>
     <string name="permissions_allFiles_description">PF Tool\'un Polyfield verilerine erişmesi için depolama izinleri gereklidir</string>
     <string name="permissions_allFiles_grant">İzin ver</string>
@@ -213,11 +217,12 @@
     <string name="settings_about_updates_autoCheckUpdates_description">PF Tool başlatıldığında otomatik olarak güncellemeleri denetle</string>
     <string name="settings_about_issues">Sorunlar &amp; geri bildirim</string>
     <string name="settings_about_issues_title">Sorun veya geri bildiriminiz mi var?</string>
+    <string name="settings_about_issues_tapToExpand">Daha fazla bilgi için dokunun</string>
     <string name="settings_about_issues_description">PF Tool hakkında sorunları bildirmek, yardım almak veya geri bildirim sağlamak için aşağıdaki bağlantıları kullanabilirsiniz</string>
     <string name="settings_about_issues_githubIssues">GitHub Issues</string>
     <string name="settings_about_issues_discord">Discord sunucusu</string>
     <string name="settings_about_issues_copyDebugInfo">Hata ayıklama bilgilerini kopyala</string>
-    <string name="settings_about_issues_copyDebugInfo_description">Bunun hata raporlarına dahil edilmesi önerilir</string>
+    <string name="settings_about_issues_copyDebugInfo_description">Hata raporlarına hata ayıklama bilgilerini eklediğinizden emin olun</string>
     <string name="settings_about_issues_copyDebugInfo_clipLabel">PF Tool hata ayıklama bilgileri</string>
     <string name="settings_about_issues_copyDebugInfo_copied">Hata ayıklama bilgileri kopyalandı</string>
     <string name="settings_about_credits">Emeği geçenler</string>
@@ -252,6 +257,9 @@
     <string name="crashHandler_title">Hay aksi!</string>
     <string name="crashHandler_description">PF Tool beklenmedik bir hatayla karşılaştı ve çöktü</string>
     <string name="crashHandler_report">Lütfen aşağıdaki düğmeye tıklayarak çökme raporunu PF Tool geliştiricisine gönderin, bu ek adım gerektirmez</string>
+    <string name="crashHandler_stackTrace">Yığın izi</string>
+    <string name="crashHandler_message_description">Çökmenin nasıl oluştuğunu açıklamak için isteğe bağlı olarak bir mesaj bırakabilirsiniz.\nRaporu mesaj olmadan göndermek için, yazı alanını boş bırakıp aşağıdaki hata raporunu gönder düğmesine tıklayın</string>
+    <string name="crashHandler_message_placeholder">(İsteğe bağlı) Çökmenin nasıl oluştuğunu açıklayın</string>
     <string name="crashHandler_sendReport">Çökme raporunu gönder</string>
     <string name="crashHandler_sendReport_sent">Rapor gönderildi</string>
     <string name="crashHandler_restartApp">Uygulamayı yeniden başlat</string>
@@ -259,5 +267,4 @@
     <string name="crashHandler_support_description">Destek bağlantılarını genişletmek için dokunun</string>
     <string name="crashHandler_support_guide">Bu çökmeyi PF Tool geliştiricisine direkt olarak raporlamak için aşağıdaki Discord veya GitHub bağlantısını kullanın.\nSüreci hızlandırmak için çökme detaylarını kopyalayıp raporunuza eklemeyi unutmayın</string>
     <string name="crashHandler_support_copyDetails">Çökme detaylarını kopyala</string>
-    <string name="crashHandler_stackTrace">Yığın izi</string>
 </resources>
