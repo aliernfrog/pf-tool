@@ -39,6 +39,7 @@ val pfToolSharedString = PFToolSharedString(
     mapsListDownload = R.string.mapsList_download,
     mapsListDownloadPlaceholder = R.string.mapsList_download_placeholder,
     mapsListDownloadFooter = R.string.mapsList_download_footer,
+    mapsListDownloadClipboard = R.string.mapsList_download_clipboard,
     mapsListSearch = R.string.mapsList_search,
     mapsListSearchClear = R.string.mapsList_search_clear,
     mapsListSearchNoMatches = R.string.mapsList_searchNoMatches,

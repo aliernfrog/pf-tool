@@ -44,6 +44,7 @@ data class PFToolSharedString(
     @StringRes val mapsListDownload: Int,
     @StringRes val mapsListDownloadPlaceholder: Int,
     @StringRes val mapsListDownloadFooter: Int,
+    @StringRes val mapsListDownloadClipboard: Int,
     @StringRes val mapsListSearch : Int,
     @StringRes val mapsListSearchClear : Int,
     @StringRes val mapsListSearchNoMatches : Int,

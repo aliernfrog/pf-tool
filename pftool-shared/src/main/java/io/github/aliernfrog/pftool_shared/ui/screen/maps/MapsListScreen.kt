@@ -49,6 +49,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesomeMosaic
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Deselect
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Link
@@ -76,6 +77,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleFloatingActionButton
@@ -102,8 +104,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
@@ -768,14 +772,18 @@ private fun DownloadMapFromURLDialog(
     onDownloadFinish: (File) -> Unit
 ) {
     val context = LocalContext.current
+    val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
+
     var url by rememberSaveable { mutableStateOf("") }
     var progress by rememberSaveable { mutableStateOf<Float?>(null) }
+    var clipboardUrl by rememberSaveable { mutableStateOf<String?>(null) }
+
+    fun isValidURL(string: String): Boolean =
+        string.isNotEmpty() && Patterns.WEB_URL.matcher(string).matches()
 
     val isUrlValid by remember(url) {
-        derivedStateOf {
-            url.isNotEmpty() && Patterns.WEB_URL.matcher(url).matches()
-        }
+        derivedStateOf { isValidURL(url) }
     }
 
     val isDownloading by remember {
@@ -786,6 +794,16 @@ private fun DownloadMapFromURLDialog(
     val downloadButtonContentOpacity by animateFloatAsState(
         if (isDownloading) 0f else 1f
     )
+
+    LaunchedEffect(Unit) {
+        val clipboardText = clipboard.getClipEntry()?.clipData?.let { data ->
+            if (data.itemCount > 0) {
+                data.getItemAt(0).coerceToText(context).toString()
+            } else null
+        }
+        if (clipboardText != null && isValidURL(clipboardText))
+            clipboardUrl = clipboardText
+    }
 
     AlertDialog(
         properties = DialogProperties(
@@ -858,28 +876,56 @@ private fun DownloadMapFromURLDialog(
             Text(sharedStringResource(PFToolSharedString::mapsListDownload))
         },
         text = {
-            OutlinedTextField(
-                value = url,
-                onValueChange = { url = it },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isDownloading,
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Link,
-                        contentDescription = null
-                    )
-                },
-                placeholder = {
-                    Text(sharedStringResource(PFToolSharedString::mapsListDownloadPlaceholder))
-                },
-                supportingText = {
-                    Text(
-                        sharedStringResource(PFToolSharedString::mapsListDownloadFooter)
-                            .format(supportedFileExtensions.joinToString { it.extension })
+            Column {
+                OutlinedTextField(
+                    value = url,
+                    onValueChange = { url = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !isDownloading,
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Link,
+                            contentDescription = null
+                        )
+                    },
+                    placeholder = {
+                        Text(sharedStringResource(PFToolSharedString::mapsListDownloadPlaceholder))
+                    },
+                    supportingText = {
+                        Text(
+                            sharedStringResource(PFToolSharedString::mapsListDownloadFooter)
+                                .format(supportedFileExtensions.joinToString { it.extension })
+                        )
+                    }
+                )
+
+                AnimatedContent(
+                    targetState = clipboardUrl,
+                    modifier = Modifier.align(Alignment.End)
+                ) { clipUrl ->
+                    if (clipUrl != null) SuggestionChip(
+                        modifier = Modifier.padding(top = 8.dp),
+                        onClick = {
+                            url = clipUrl
+                            clipboardUrl = null
+                        },
+                        label = {
+                            Text(
+                                text = clipUrl,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.ContentPaste,
+                                contentDescription = sharedStringResource(PFToolSharedString::mapsListDownloadClipboard)
+                            )
+                        }
                     )
                 }
-            )
+            }
         }
     )
 }
