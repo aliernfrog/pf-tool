@@ -20,15 +20,15 @@ fun Modifier.toggledHazeBlur(
 ): Modifier {
     val blurEnabled = LocalBlurEnabledValue.current
     return this
-        .background(
-            containerColor.copy(
-                alpha = if (blurEnabled) containerOpacity else 1f
-            )
-        )
         .let {
             if (blurEnabled) it.hazeBlur(
                 input = input,
                 style = style
             ) else it
         }
+        .background(
+            containerColor.copy(
+                alpha = if (blurEnabled) containerOpacity else 1f
+            )
+        )
 }
