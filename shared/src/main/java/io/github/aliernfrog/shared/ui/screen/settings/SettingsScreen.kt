@@ -32,9 +32,12 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.component.AppScaffold
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
@@ -137,20 +140,27 @@ fun SettingsPageContainer(
     onNavigateBackRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    AppScaffold(
+    val hazeState = rememberHazeState()
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBar(
+            AppSmallTopBarWithBlur(
                 title = title,
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .hazeSource(hazeState)
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding()
+                )
         ) {
             content()
             BottomSpacer()

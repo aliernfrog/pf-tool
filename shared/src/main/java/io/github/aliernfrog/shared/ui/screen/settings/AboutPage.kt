@@ -24,7 +24,6 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -80,7 +79,7 @@ import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutPage(
     vm: AboutPageViewModel = koinViewModel(),
@@ -344,7 +343,6 @@ fun AboutPage(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ChangelogButton(
     updateAvailable: Boolean,

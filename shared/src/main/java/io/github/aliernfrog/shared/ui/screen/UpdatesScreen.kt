@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +42,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,8 +66,8 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import io.github.aliernfrog.shared.data.ReleaseInfo
-import io.github.aliernfrog.shared.ui.component.AppScaffold
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.ContainedTextWithIcon
@@ -102,22 +106,34 @@ fun UpdatesScreen(
         showExtendedToolbar = it
     }
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBar(
+            AppSmallTopBarWithBlur(
                 title = sharedStringResource(
                     if (updateAvailable) SharedString::updates
                     else SharedString::updatesChangelog
                 ),
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
+    ) { paddingValues ->
+        val pullToRefreshState = rememberPullToRefreshState()
         PullToRefreshBox(
             isRefreshing = isCheckingForUpdates,
-            onRefresh = onCheckUpdatesRequest
+            onRefresh = onCheckUpdatesRequest,
+            state = pullToRefreshState,
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = paddingValues.calculateTopPadding()),
+                    isRefreshing = isCheckingForUpdates,
+                    state = pullToRefreshState
+                )
+            }
         ) {
             LazyColumn(
                 state = lazyListState,
@@ -125,6 +141,10 @@ fun UpdatesScreen(
                     .fillMaxSize()
                     .hazeSource(hazeState)
             ) {
+                item {
+                    Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+                }
+
                 if (!updateAvailable && currentVersionInfo.body == null) item {
                     ErrorWithIcon(
                         description = sharedStringResource(SharedString::updatesNoChangelog),
@@ -191,7 +211,11 @@ fun UpdatesScreen(
                 }
 
                 item {
-                    BottomSpacer(Modifier.padding(top = AppFABPadding))
+                    BottomSpacer(
+                        Modifier.padding(
+                            top = AppFABPadding + paddingValues.calculateBottomPadding()
+                        )
+                    )
                 }
             }
 

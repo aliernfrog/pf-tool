@@ -2,13 +2,13 @@ package io.github.aliernfrog.shared.ui.component
 
 import android.app.Activity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,10 +29,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.material3.Material3
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(
     topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
@@ -55,7 +59,26 @@ fun AppScaffold(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun AppScaffoldNoContentPadding(
+    topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
+    modifier: Modifier = Modifier,
+    topAppBarState: TopAppBarState = rememberTopAppBarState(),
+    scrollBehavior: TopAppBarScrollBehavior = adaptiveExitUntilCollapsedScrollBehavior(topAppBarState),
+    floatingActionButton: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit
+) {
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = { topBar(scrollBehavior) },
+        floatingActionButton = floatingActionButton,
+        contentWindowInsets = WindowInsets(0,0,0,0),
+        content = {
+            content(it)
+        }
+    )
+}
+
 @Composable
 fun AppTopBar(
     title: String,
@@ -97,7 +120,6 @@ fun AppTopBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppSmallTopBar(
     title: String,
@@ -125,6 +147,37 @@ fun AppSmallTopBar(
     )
 }
 
+@Composable
+fun AppSmallTopBarWithBlur(
+    title: String,
+    hazeState: HazeState,
+    scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
+    actions: @Composable RowScope.() -> Unit = {},
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+    navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+    onNavigationClick: (() -> Unit)? = null
+) {
+    AppSmallTopBar(
+        title = title,
+        scrollBehavior = scrollBehavior,
+        modifier = modifier.hazeBlur(
+            input = HazeInput.Backdrop(hazeState),
+            style = HazeBlurStyle.Material3(
+                containerColor = colors.scrolledContainerColor
+            )
+        ),
+        actions = actions,
+        colors = colors.let {
+            it.copy(
+                scrolledContainerColor = it.scrolledContainerColor.copy(alpha = 0.7f)
+            )
+        },
+        navigationIcon = navigationIcon,
+        onNavigationClick = onNavigationClick
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
@@ -136,7 +189,6 @@ private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun adaptiveExitUntilCollapsedScrollBehavior(
     topAppBarState: TopAppBarState = rememberTopAppBarState()
