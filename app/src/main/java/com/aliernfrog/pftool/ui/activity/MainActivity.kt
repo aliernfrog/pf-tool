@@ -5,15 +5,22 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -22,9 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.util.Consumer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +55,13 @@ import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
 import com.aliernfrog.pftool.util.slideTransitionMetadata
 import com.aliernfrog.pftool.util.slideVerticalTransitionMetadata
 import com.aliernfrog.toptoast.component.TopToastHost
+import com.aliernfrog.toptoast.util.TopToastDefaults
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.material3.Material3
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
 import io.github.aliernfrog.pftool_shared.util.LocalPFToolSharedString
@@ -121,9 +140,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun App(vm: MainViewModel) {
+        val hazeState = rememberHazeState()
         val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
         val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
         val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
@@ -136,94 +155,151 @@ class MainActivity : AppCompatActivity() {
         InsetsObserver()
 
         AppContainer {
-            Scaffold(
-                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                contentWindowInsets = WindowInsets(0, 0, 0, 0)
-            ) { paddingValues ->
-                NavDisplay(
-                    backStack = vm.navigationBackStack,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues),
-                    entryProvider = entryProvider {
-                        entry<Destination> { destination ->
-                            when (destination) {
-                                Destination.MAPS -> {
-                                    MapsScreen(
-                                        map = null,
-                                        onNavigateRequest = { vm.navigationBackStack.add(it) },
-                                        onNavigateBackRequest = null
-                                    )
+            Box(
+                modifier = Modifier.hazeSource(hazeState)
+            ) {
+                Scaffold(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                ) { paddingValues ->
+                    NavDisplay(
+                        backStack = vm.navigationBackStack,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .consumeWindowInsets(paddingValues),
+                        entryProvider = entryProvider {
+                            entry<Destination> { destination ->
+                                when (destination) {
+                                    Destination.MAPS -> {
+                                        MapsScreen(
+                                            map = null,
+                                            onNavigateRequest = { vm.navigationBackStack.add(it) },
+                                            onNavigateBackRequest = null
+                                        )
+                                    }
                                 }
                             }
-                        }
 
-                        entry<SettingsDestination>(
-                            metadata = slideTransitionMetadata
-                        ) { destination ->
-                            SettingsScreen(
-                                destination = destination,
-                                onNavigateBackRequest = onNavigateBackRequest,
-                                onNavigateRequest = { vm.navigationBackStack.add(it) },
-                                onCheckUpdatesRequest = { skipVersionCheck ->
-                                    vm.checkUpdates(skipVersionCheck = skipVersionCheck)
-                                },
-                                onNavigateUpdatesScreenRequest = {
-                                    vm.navigationBackStack.add(UpdateScreenDestination)
-                                }
-                            )
-                        }
+                            entry<SettingsDestination>(
+                                metadata = slideTransitionMetadata
+                            ) { destination ->
+                                SettingsScreen(
+                                    destination = destination,
+                                    onNavigateBackRequest = onNavigateBackRequest,
+                                    onNavigateRequest = { vm.navigationBackStack.add(it) },
+                                    onCheckUpdatesRequest = { skipVersionCheck ->
+                                        vm.checkUpdates(skipVersionCheck = skipVersionCheck)
+                                    },
+                                    onNavigateUpdatesScreenRequest = {
+                                        vm.navigationBackStack.add(UpdateScreenDestination)
+                                    }
+                                )
+                            }
 
-                        entry<MapFile>(
-                            metadata = slideTransitionMetadata
-                        ) { map ->
-                            MapsScreen(
-                                map = map,
-                                onNavigateRequest = { vm.navigationBackStack.add(it) },
-                                onNavigateBackRequest = onNavigateBackRequest
-                            )
-                        }
+                            entry<MapFile>(
+                                metadata = slideTransitionMetadata
+                            ) { map ->
+                                MapsScreen(
+                                    map = map,
+                                    onNavigateRequest = { vm.navigationBackStack.add(it) },
+                                    onNavigateBackRequest = onNavigateBackRequest
+                                )
+                            }
 
-                        entry<UpdateScreenDestination>(
-                            metadata = slideVerticalTransitionMetadata
-                        ) {
-                            UpdatesScreen(
-                                availableUpdates = availableUpdates,
-                                currentVersionInfo = currentVersionInfo,
-                                isCheckingForUpdates = isCheckingForUpdates,
-                                isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
-                                onCheckUpdatesRequest = {
-                                    vm.checkUpdates(manuallyTriggered = true)
-                                },
-                                onNavigateBackRequest = onNavigateBackRequest
-                            )
+                            entry<UpdateScreenDestination>(
+                                metadata = slideVerticalTransitionMetadata
+                            ) {
+                                UpdatesScreen(
+                                    availableUpdates = availableUpdates,
+                                    currentVersionInfo = currentVersionInfo,
+                                    isCheckingForUpdates = isCheckingForUpdates,
+                                    isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
+                                    onCheckUpdatesRequest = {
+                                        vm.checkUpdates(manuallyTriggered = true)
+                                    },
+                                    onNavigateBackRequest = onNavigateBackRequest
+                                )
+                            }
                         }
-                    }
+                    )
+                }
+
+                CrashDetailsSheet(
+                    throwable = vm.lastCaughtException,
+                    crashReportURL = crashReportURL,
+                    debugInfo = vm.versionManager.getDebugInfo(),
+                    supportLinks = supportLinks
                 )
-            }
 
-            CrashDetailsSheet(
-                throwable = vm.lastCaughtException,
-                crashReportURL = crashReportURL,
-                debugInfo = vm.versionManager.getDebugInfo(),
-                supportLinks = supportLinks
-            )
+                vm.progressState.currentProgress?.let {
+                    ProgressDialog(it) {
+                        vm.progressState.currentProgress = null
+                    }
+                }
 
-            vm.progressState.currentProgress?.let {
-                ProgressDialog(it) {
-                    vm.progressState.currentProgress = null
+                Crossfade(vm.mediaOverlayData) { data ->
+                    if (data != null) MediaOverlay(
+                        data = data,
+                        showMediaOverlayGuidePref = vm.prefs.showMediaOverlayGuide,
+                        onDismissRequest = { vm.dismissMediaOverlay() }
+                    )
                 }
             }
 
-            Crossfade(vm.mediaOverlayData) { data ->
-                if (data != null) MediaOverlay(
-                    data = data,
-                    showMediaOverlayGuidePref = vm.prefs.showMediaOverlayGuide,
-                    onDismissRequest = { vm.dismissMediaOverlay() }
-                )
-            }
-            TopToastHost(vm.topToastState)
+            TopToastHost(
+                state = vm.topToastState,
+                toast = { state ->
+                    Row(
+                        modifier = Modifier
+                            .padding(TopToastDefaults.elevation+1.4.dp) // avoid shadow getting cropped
+                            .shadow(
+                                elevation = TopToastDefaults.elevation,
+                                shape = TopToastDefaults.shape
+                            )
+                            .clip(TopToastDefaults.shape)
+                            .hazeBlur(
+                                input = HazeInput.Backdrop(hazeState),
+                                style = HazeBlurStyle.Material3(
+                                    containerColor = TopToastDefaults.containerColor
+                                )
+                            )
+                            .animateContentSize()
+                            .run { state.onClick?.let {
+                                clickable(
+                                    interactionSource = null,
+                                    indication = ripple(color = MaterialTheme.colorScheme.onBackground),
+                                    onClick = it
+                                )
+                            } ?: this }
+                            .padding(
+                                horizontal = 16.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        state.resolveIcon()?.let {
+                            Icon(
+                                painter = it,
+                                contentDescription = null,
+                                tint = state.resolveIconTintColor(),
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .size(26.dp)
+                            )
+                        }
+                        Text(
+                            text = state.resolveText(),
+                            style = MaterialTheme.typography.labelLargeEmphasized.copy(
+                                lineHeight = 18.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(vertical = 12.dp)
+                        )
+                    }
+                }
+            )
         }
     }
 
