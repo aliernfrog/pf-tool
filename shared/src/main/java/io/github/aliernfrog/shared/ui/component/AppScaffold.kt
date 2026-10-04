@@ -25,6 +25,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,10 +33,11 @@ import androidx.compose.ui.platform.LocalContext
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.blur.material3.Material3
+import io.github.aliernfrog.shared.util.LocalBlurEnabledValue
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.toggledHazeBlur
 
 @Composable
 fun AppScaffold(
@@ -96,7 +98,7 @@ fun AppTopBar(
         if (disableLargeTopAppBar) scrollBehavior.state.heightOffset = 0f
     }
 
-    if (disableLargeTopAppBar && scrollBehavior.state.heightOffset == 0f) AppSmallTopBarWithBlur(
+    if (disableLargeTopAppBar && scrollBehavior.state.heightOffset == 0f) AppSmallTopBar(
         title = title,
         hazeState = hazeState,
         scrollBehavior = scrollBehavior,
@@ -110,7 +112,9 @@ fun AppTopBar(
         scrollBehavior = scrollBehavior,
         colors = colors.let {
             it.copy(
-                scrolledContainerColor = it.scrolledContainerColor.copy(alpha = 0.7f)
+                scrolledContainerColor = it.scrolledContainerColor.copy(
+                    alpha = if (LocalBlurEnabledValue.current) 0.7f else 1f
+                )
             )
         },
         navigationIcon = {
@@ -122,17 +126,19 @@ fun AppTopBar(
             }
         },
         actions = actions,
-        modifier = modifier.hazeBlur(
+        modifier = modifier.toggledHazeBlur(
+            containerColor = Color.Transparent,
+            containerOpacity = 0f,
             input = HazeInput.Backdrop(hazeState),
             style = HazeBlurStyle.Material3(
                 containerColor = colors.scrolledContainerColor
             )
-        )
+        ),
     )
 }
 
 @Composable
-fun AppSmallTopBar(
+fun AppSmallTopBarNoBlur(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
@@ -159,7 +165,7 @@ fun AppSmallTopBar(
 }
 
 @Composable
-fun AppSmallTopBarWithBlur(
+fun AppSmallTopBar(
     title: String,
     hazeState: HazeState,
     scrollBehavior: TopAppBarScrollBehavior,
@@ -169,10 +175,12 @@ fun AppSmallTopBarWithBlur(
     navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
     onNavigationClick: (() -> Unit)? = null
 ) {
-    AppSmallTopBar(
+    AppSmallTopBarNoBlur(
         title = title,
         scrollBehavior = scrollBehavior,
-        modifier = modifier.hazeBlur(
+        modifier = modifier.toggledHazeBlur(
+            containerColor = Color.Transparent,
+            containerOpacity = 0f,
             input = HazeInput.Backdrop(hazeState),
             style = HazeBlurStyle.Material3(
                 containerColor = colors.scrolledContainerColor
@@ -181,7 +189,9 @@ fun AppSmallTopBarWithBlur(
         actions = actions,
         colors = colors.let {
             it.copy(
-                scrolledContainerColor = it.scrolledContainerColor.copy(alpha = 0.7f)
+                scrolledContainerColor = it.scrolledContainerColor.copy(
+                    alpha = if (LocalBlurEnabledValue.current) 0.7f else 1f
+                )
             )
         },
         navigationIcon = navigationIcon,

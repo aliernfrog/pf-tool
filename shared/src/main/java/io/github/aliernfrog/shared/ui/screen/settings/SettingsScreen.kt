@@ -36,7 +36,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
@@ -146,7 +146,7 @@ fun SettingsPageContainer(
     val hazeState = rememberHazeState()
     AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBarWithBlur(
+            AppSmallTopBar(
                 title = title,
                 hazeState = hazeState,
                 scrollBehavior = scrollBehavior,

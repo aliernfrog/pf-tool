@@ -60,14 +60,13 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.blur.material3.Material3
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.ContainedTextWithIcon
@@ -82,6 +81,7 @@ import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sdkVersionToAndroidVersion
 import io.github.aliernfrog.shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.toggledHazeBlur
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +108,7 @@ fun UpdatesScreen(
 
     AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBarWithBlur(
+            AppSmallTopBar(
                 title = sharedStringResource(
                     if (updateAvailable) SharedString::updates
                     else SharedString::updatesChangelog
@@ -233,7 +233,9 @@ fun UpdatesScreen(
                         shape = FloatingToolbarDefaults.ContainerShape
                     )
                     .clip(FloatingToolbarDefaults.ContainerShape)
-                    .hazeBlur(
+                    .toggledHazeBlur(
+                        containerColor = FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor,
+                        containerOpacity = 0f,
                         input = HazeInput.Backdrop(hazeState),
                         style = HazeBlurStyle.Material3(
                             containerColor = MaterialTheme.colorScheme.surfaceContainer

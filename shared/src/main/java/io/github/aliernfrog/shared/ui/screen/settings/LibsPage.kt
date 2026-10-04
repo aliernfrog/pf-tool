@@ -52,7 +52,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.form.DividerRow
@@ -80,7 +80,7 @@ fun LibsPage(
 
     AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBarWithBlur(
+            AppSmallTopBar(
                 title = sharedStringResource(SharedString::settingsAboutLibs),
                 hazeState = hazeState,
                 scrollBehavior = scrollBehavior,

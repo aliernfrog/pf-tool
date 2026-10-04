@@ -52,7 +52,7 @@ import io.github.aliernfrog.pftool_shared.ui.component.maps.GridMapItem
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.component.FilledIconButtonWithTooltip
@@ -96,7 +96,7 @@ fun MapDetailsScreen(
 
     AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBarWithBlur(
+            AppSmallTopBar(
                 title = map.name,
                 hazeState = hazeState,
                 scrollBehavior = scrollBehavior,

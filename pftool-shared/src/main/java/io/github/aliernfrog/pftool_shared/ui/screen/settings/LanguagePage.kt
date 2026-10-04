@@ -58,7 +58,7 @@ import io.github.aliernfrog.pftool_shared.util.extension.copy
 import io.github.aliernfrog.pftool_shared.util.getSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
@@ -136,7 +136,7 @@ fun LanguagePage(
 
     AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBarWithBlur(
+            AppSmallTopBar(
                 title = sharedStringResource(PFToolSharedString::settingsLanguage),
                 hazeState = hazeState,
                 scrollBehavior = scrollBehavior,

@@ -46,7 +46,6 @@ import com.aliernfrog.toptoast.component.TopToast
 import com.aliernfrog.toptoast.component.TopToastHost
 import com.aliernfrog.toptoast.util.TopToastDefaults
 import dev.chrisbanes.haze.HazeInput
-import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
@@ -60,8 +59,10 @@ import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.sheet.CrashDetailsSheet
 import io.github.aliernfrog.shared.ui.theme.Theme
+import io.github.aliernfrog.shared.util.LocalBlurEnabledValue
 import io.github.aliernfrog.shared.util.LocalSharedString
 import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.toggledHazeBlur
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -97,7 +98,8 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 CompositionLocalProvider(
                     LocalSharedString provides sharedString,
-                    LocalPFToolSharedString provides pfToolSharedString
+                    LocalPFToolSharedString provides pfToolSharedString,
+                    LocalBlurEnabledValue provides vm.prefs.blur.value
                 ) {
                     App(vm)
                 }
@@ -239,10 +241,11 @@ class MainActivity : AppCompatActivity() {
                 toast = { state ->
                     TopToast(
                         modifier = Modifier
-                            .hazeBlur(
+                            .toggledHazeBlur(
+                                containerColor = TopToastDefaults.containerColor,
+                                containerOpacity = 0.7f,
                                 input = HazeInput.Backdrop(hazeState)
-                            )
-                            .background(TopToastDefaults.containerColor.copy(alpha = 0.7f)),
+                            ),
                         state = state
                     )
                 }

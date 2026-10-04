@@ -182,6 +182,8 @@
     <string name="settings_appearance_materialYou_unavailable">Only available on Android 12 and above</string>
     <string name="settings_appearance_pitchBlack">Pitch black</string>
     <string name="settings_appearance_pitchBlack_description">Pitch black background when dark mode is enabled</string>
+    <string name="settings_appearance_blur">Blur effects</string>
+    <string name="settings_appearance_blur_description">Transparency and blur effects across the app.\nDisabling may improve performance and battery life</string>
     <string name="settings_maps">Maps</string>
     <string name="settings_maps_description">Various configurations for maps</string>
     <string name="settings_maps_thumbnails">Thumbnails</string>
