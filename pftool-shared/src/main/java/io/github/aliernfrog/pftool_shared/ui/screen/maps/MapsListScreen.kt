@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -110,6 +109,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
@@ -172,6 +172,7 @@ fun MapsListScreen(
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
     showThumbnailsInList: Boolean,
     showMultiSelectionActions: Boolean = true,
+    extraBottomPadding: Dp = 0.dp,
     vm: IMapsListViewModel = koinViewModel(),
     multiSelectFloatingActionButton: @Composable (
         selectedMaps: List<IMapFile>, clearSelection: () -> Unit
@@ -358,8 +359,10 @@ fun MapsListScreen(
             AnimatedContentShadowWorkaround(
                 targetState = !isMultiSelecting,
                 modifier = Modifier
-                    .imePadding()
-                    .navigationBarsPadding()
+                    .then(
+                        if (extraBottomPadding > 0.dp) Modifier.padding(bottom = extraBottomPadding)
+                        else Modifier.navigationBarsPadding()
+                    )
             ) { showAddMapFAB ->
                 if (showAddMapFAB) {
                     FloatingActionButtonMenu(
@@ -480,6 +483,11 @@ fun MapsListScreen(
                 if (isMultiSelecting) toggleSelection()
                 else onMapPick(map)
             }
+        }
+
+        @Composable
+        fun Footer() {
+            BottomSpacer(Modifier.padding(top = AppFABPadding + extraBottomPadding))
         }
 
         BoxWithConstraints(
@@ -700,11 +708,6 @@ private fun SegmentSummary(
             }
         }
     }
-}
-
-@Composable
-private fun Footer() {
-    BottomSpacer(Modifier.padding(top = AppFABPadding))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

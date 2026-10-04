@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -70,6 +71,7 @@ fun MapDetailsScreen(
     mapActions: List<MapAction>,
     showMapThumbnail: Boolean,
     showMapNameFieldGuide: Boolean,
+    extraBottomPadding: Dp = 0.dp,
     settingsButton: (@Composable () -> Unit)?,
     onDismissMapNameFieldGuide: () -> Unit,
     onViewThumbnailRequest: () -> Unit,
@@ -268,7 +270,7 @@ fun MapDetailsScreen(
                 )
             )
 
-            BottomSpacer()
+            BottomSpacer(Modifier.padding(bottom = extraBottomPadding))
         }
     }
 }

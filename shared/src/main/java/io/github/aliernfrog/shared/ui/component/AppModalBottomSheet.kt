@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -39,12 +40,12 @@ fun AppModalBottomSheet(
     BaseModalBottomSheet(
         sheetState = sheetState,
         dragHandle = dragHandle,
-    ) { bottomPadding ->
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(sheetScrollState)
-                .padding(bottom = bottomPadding)
+                .imePadding()
         ) {
             title?.let {
                 Text(
@@ -74,9 +75,9 @@ fun BaseModalBottomSheet(
         modifier = Modifier.padding(top = insetsViewModel.topPadding),
         sheetState = sheetState,
         dragHandle = dragHandle,
-        contentWindowInsets = { WindowInsets(0.dp) }
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) }
     ) {
-        content(insetsViewModel.bottomPadding + 12.dp)
+        content(0.dp)
     }
 }
 

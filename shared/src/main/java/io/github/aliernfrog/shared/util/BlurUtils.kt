@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.material3.Material3
 
 val LocalBlurEnabledValue = compositionLocalOf { true }
 
@@ -16,7 +17,9 @@ fun Modifier.toggledHazeBlur(
     containerColor: Color,
     containerOpacity: Float,
     input: HazeInput,
-    style: HazeBlurStyle = HazeBlurStyle
+    style: HazeBlurStyle = HazeBlurStyle.Material3(
+        containerColor = containerColor
+    )
 ): Modifier {
     val blurEnabled = LocalBlurEnabledValue.current
     return this

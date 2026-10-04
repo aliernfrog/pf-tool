@@ -4,6 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -24,7 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -52,12 +57,14 @@ fun PermissionsScreen(
     title: String,
     supportLinks: List<Social>,
     vm: IPermissionsViewModel = koinViewModel(),
+    extraBottomPadding: Dp = 0.dp,
     onRestartAppRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit,
     settingsButton: (@Composable () -> Unit)?,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
     val hazeState = rememberHazeState()
 
     val isShizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsStateWithLifecycle().value
@@ -88,7 +95,14 @@ fun PermissionsScreen(
                         settingsButton?.invoke()
                     }
                 ) }
-            ) { paddingValues ->
+            ) { pValues ->
+                val paddingValues = PaddingValues(
+                    start = pValues.calculateStartPadding(layoutDirection),
+                    top = pValues.calculateTopPadding(),
+                    end = pValues.calculateEndPadding(layoutDirection),
+                    bottom = pValues.calculateBottomPadding() + extraBottomPadding
+                )
+
                 when (method) {
                     StorageAccessType.SAF -> SAFPermissionsScreen(
                         *permissionsData,
