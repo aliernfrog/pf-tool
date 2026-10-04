@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.shared.data.ReleaseInfo
-import io.github.aliernfrog.shared.ui.component.AppScaffold
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
 import io.github.aliernfrog.shared.ui.component.AppTopBar
@@ -64,20 +63,24 @@ fun SettingsRootPage(
     onNavigateRequest: (SettingsDestination) -> Unit
 ) {
     val context = LocalContext.current
+    val hazeState = rememberHazeState()
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
             AppTopBar(
                 title = sharedStringResource(SharedString::settings),
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .hazeSource(hazeState)
         ) {
             UpdateNotification(
                 availableUpdates = availableUpdates,
@@ -157,10 +160,7 @@ fun SettingsPageContainer(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .hazeSource(hazeState)
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
-                )
+                .padding(paddingValues)
         ) {
             content()
             BottomSpacer()

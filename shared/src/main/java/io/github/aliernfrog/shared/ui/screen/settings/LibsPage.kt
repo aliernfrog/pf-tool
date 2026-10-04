@@ -6,8 +6,10 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -20,7 +22,6 @@ import androidx.compose.material.icons.filled.Engineering
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -47,9 +48,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
-import io.github.aliernfrog.shared.ui.component.AppScaffold
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
 import io.github.aliernfrog.shared.ui.component.form.DividerRow
@@ -59,12 +62,13 @@ import io.github.aliernfrog.shared.util.extension.horizontalFadingEdge
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibsPage(
     @RawRes librariesJSONRes: Int,
     onNavigateBackRequest: () -> Unit
 ) {
+    val hazeState = rememberHazeState()
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
 
@@ -74,19 +78,26 @@ fun LibsPage(
         mutableStateOf<Library?>(null)
     }
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBar(
+            AppSmallTopBarWithBlur(
                 title = sharedStringResource(SharedString::settingsAboutLibs),
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
+    ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .hazeSource(hazeState)
         ) {
+            item {
+                Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+            }
+
             libs?.libraries?.let { libraries ->
                 itemsIndexed(libraries) { index, lib ->
                     val onClick: () -> Unit = {
@@ -123,7 +134,9 @@ fun LibsPage(
             }
 
             item {
-                BottomSpacer()
+                BottomSpacer(Modifier.padding(
+                    bottom = paddingValues.calculateBottomPadding()
+                ))
             }
         }
     }

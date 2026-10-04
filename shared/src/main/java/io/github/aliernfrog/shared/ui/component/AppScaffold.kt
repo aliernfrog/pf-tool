@@ -82,6 +82,7 @@ fun AppScaffoldNoContentPadding(
 @Composable
 fun AppTopBar(
     title: String,
+    hazeState: HazeState,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
@@ -95,18 +96,23 @@ fun AppTopBar(
         if (disableLargeTopAppBar) scrollBehavior.state.heightOffset = 0f
     }
 
-    if (disableLargeTopAppBar && scrollBehavior.state.heightOffset == 0f) AppSmallTopBar(
+    if (disableLargeTopAppBar && scrollBehavior.state.heightOffset == 0f) AppSmallTopBarWithBlur(
         title = title,
+        hazeState = hazeState,
         scrollBehavior = scrollBehavior,
         actions = actions,
-        colors = colors,
+        colors = colors, // scrolledContainerColor transparency is automatically handled here
         navigationIcon = navigationIcon,
         onNavigationClick = onNavigationClick,
         modifier = modifier
     ) else LargeFlexibleTopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
-        colors = colors,
+        colors = colors.let {
+            it.copy(
+                scrolledContainerColor = it.scrolledContainerColor.copy(alpha = 0.7f)
+            )
+        },
         navigationIcon = {
             onNavigationClick?.let {
                 BackButtonWithTooltip(
@@ -116,7 +122,12 @@ fun AppTopBar(
             }
         },
         actions = actions,
-        modifier = modifier
+        modifier = modifier.hazeBlur(
+            input = HazeInput.Backdrop(hazeState),
+            style = HazeBlurStyle.Material3(
+                containerColor = colors.scrolledContainerColor
+            )
+        )
     )
 }
 

@@ -43,14 +43,16 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.data.MapAction
 import io.github.aliernfrog.pftool_shared.impl.DefaultMapActionArguments
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
 import io.github.aliernfrog.pftool_shared.ui.component.maps.GridMapItem
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
-import io.github.aliernfrog.shared.ui.component.AppScaffold
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
+import io.github.aliernfrog.shared.ui.component.AppSmallTopBarWithBlur
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.FadeVisibility
 import io.github.aliernfrog.shared.ui.component.FilledIconButtonWithTooltip
@@ -75,6 +77,7 @@ fun MapDetailsScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val hazeState = rememberHazeState()
 
     val renameAction = remember {
         mapActions.find { it.id == MapAction.RENAME_ID }
@@ -91,10 +94,11 @@ fun MapDetailsScreen(
         it.isBlank() || it == map.name
     }
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
-            AppSmallTopBar(
+            AppSmallTopBarWithBlur(
                 title = map.name,
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest,
                 actions = {
@@ -103,10 +107,12 @@ fun MapDetailsScreen(
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .hazeSource(hazeState)
         ) {
             VerticalSegmentor({
                 MapCard(

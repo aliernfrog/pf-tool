@@ -115,6 +115,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aliernfrog.toptoast.state.TopToastState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.data.MapAction
 import io.github.aliernfrog.pftool_shared.data.MapsListSegment
 import io.github.aliernfrog.pftool_shared.enum.ListSorting
@@ -132,7 +134,7 @@ import io.github.aliernfrog.pftool_shared.util.getSharedString
 import io.github.aliernfrog.pftool_shared.util.manager.base.PFToolBasePreferenceManager
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
-import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.BasicSearchField
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
@@ -181,6 +183,7 @@ fun MapsListScreen(
     val context = LocalContext.current
     val topToastState = koinInject<TopToastState>()
     val scope = rememberCoroutineScope()
+    val hazeState = rememberHazeState()
 
     val listViewOptionsSheetState = rememberBottomSheetState(
         initialValue = SheetValue.Hidden,
@@ -276,13 +279,14 @@ fun MapsListScreen(
         listViewOptionsPreference = listViewOptions
     )
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
             AnimatedContent(targetState = isMultiSelecting) { multiSelecting ->
                 AppTopBar(
                     title = if (!multiSelecting) title
                     else sharedStringResource(PFToolSharedString::mapsListMultiSelection)
                         .replace("{COUNT}", selectedMaps.size.toString()),
+                    hazeState = hazeState,
                     scrollBehavior = scrollBehavior,
                     navigationIcon = if (multiSelecting) Icons.Default.Close else Icons.AutoMirrored.Rounded.ArrowBack,
                     onNavigationClick = if (multiSelecting) { {
@@ -413,7 +417,7 @@ fun MapsListScreen(
                 }
             }
         }
-    ) {
+    ) { paddingValues ->
         @Composable
         fun SegmentSummary(
             segment: MapsListSegment,
@@ -478,7 +482,9 @@ fun MapsListScreen(
             }
         }
 
-        BoxWithConstraints {
+        BoxWithConstraints(
+            modifier = Modifier.hazeSource(hazeState)
+        ) {
             val viewportHeight = maxHeight
             val scrollState = rememberScrollState()
 
@@ -486,6 +492,7 @@ fun MapsListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
+                    .padding(paddingValues)
             ) {
                 Search(
                     searchQuery = searchQuery,
