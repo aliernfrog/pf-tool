@@ -51,9 +51,9 @@ fun AllFilesPermissionsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .hazeSource(hazeState)
             .verticalScroll(rememberScrollState())
             .padding(paddingValues)
-            .hazeSource(hazeState)
     ) {
         PermissionsScreenAction(
             title = sharedStringResource(PFToolSharedString::permissionsAllFilesTitle),

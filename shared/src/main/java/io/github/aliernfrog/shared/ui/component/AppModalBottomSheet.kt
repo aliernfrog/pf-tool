@@ -3,9 +3,7 @@ package io.github.aliernfrog.shared.ui.component
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.aliernfrog.shared.impl.InsetsManager
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.util.extension.isAnyVisible
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -45,7 +44,6 @@ fun AppModalBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(sheetScrollState)
-                .imePadding()
         ) {
             title?.let {
                 Text(
@@ -55,6 +53,7 @@ fun AppModalBottomSheet(
                 )
             }
             sheetContent()
+            BottomSpacer()
         }
     }
 }
@@ -74,8 +73,7 @@ fun BaseModalBottomSheet(
         } },
         modifier = Modifier.padding(top = insetsViewModel.topPadding),
         sheetState = sheetState,
-        dragHandle = dragHandle,
-        contentWindowInsets = { WindowInsets(0, 0, 0, 0) }
+        dragHandle = dragHandle
     ) {
         content(0.dp)
     }

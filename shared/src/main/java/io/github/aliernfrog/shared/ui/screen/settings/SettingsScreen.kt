@@ -78,9 +78,9 @@ fun SettingsRootPage(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .hazeSource(hazeState)
                 .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
-                .hazeSource(hazeState)
         ) {
             UpdateNotification(
                 availableUpdates = availableUpdates,
@@ -158,8 +158,8 @@ fun SettingsPageContainer(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
         ) {
             content()

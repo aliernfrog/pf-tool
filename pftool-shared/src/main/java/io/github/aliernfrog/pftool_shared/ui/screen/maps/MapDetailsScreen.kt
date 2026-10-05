@@ -112,9 +112,9 @@ fun MapDetailsScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
+                .hazeSource(hazeState)
                 .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
-                .hazeSource(hazeState)
         ) {
             VerticalSegmentor({
                 MapCard(
