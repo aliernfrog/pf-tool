@@ -64,6 +64,8 @@ data class SharedString(
     @StringRes val settingsAppearanceColorsMaterialYouUnavailable : Int,
     @StringRes val settingsAppearanceColorsPitchBlack : Int,
     @StringRes val settingsAppearanceColorsPitchBlackDescription : Int,
+    @StringRes val settingsAppearanceColorsBlur : Int,
+    @StringRes val settingsAppearanceColorsBlurDescription : Int,
     @StringRes val settingsExperimental : Int,
     @StringRes val settingsExperimentalDescription : Int,
     @StringRes val settingsUpdateNotificationUpdateAvailable : Int,

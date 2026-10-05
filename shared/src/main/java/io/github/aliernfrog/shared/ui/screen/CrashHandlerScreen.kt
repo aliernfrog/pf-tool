@@ -9,11 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.shared.data.Social
 import io.github.aliernfrog.shared.ui.component.AppScaffold
-import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.crash_handler.CrashDetails
@@ -29,7 +27,6 @@ import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CrashHandlerScreen(
     crashReportURL: String,
@@ -40,8 +37,10 @@ fun CrashHandlerScreen(
 ) {
     AppScaffold(
         topBar = { scrollBehavior ->
-            AppSmallTopBar(
-                title = sharedStringResource(SharedString::crashHandlerTitle),
+            TopAppBar(
+                title = {
+                    Text(sharedStringResource(SharedString::crashHandlerTitle))
+                },
                 scrollBehavior = scrollBehavior
             )
         },

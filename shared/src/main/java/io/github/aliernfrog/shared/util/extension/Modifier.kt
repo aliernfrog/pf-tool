@@ -1,6 +1,5 @@
 package io.github.aliernfrog.shared.util.extension
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -28,7 +27,6 @@ fun Modifier.clickableWithColor(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 fun Modifier.combinedClickableWithColor(
     color: Color,
     onLongClick: () -> Unit,

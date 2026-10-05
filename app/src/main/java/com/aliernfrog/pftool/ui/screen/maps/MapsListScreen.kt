@@ -1,7 +1,5 @@
 package com.aliernfrog.pftool.ui.screen.maps
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.aliernfrog.pftool.R
@@ -14,7 +12,6 @@ import io.github.aliernfrog.pftool_shared.ui.screen.maps.MapsListFileExtension
 import io.github.aliernfrog.pftool_shared.ui.screen.maps.MapsListScreen
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MapsListScreen(
     title: String = stringResource(R.string.mapsList_pickMap),

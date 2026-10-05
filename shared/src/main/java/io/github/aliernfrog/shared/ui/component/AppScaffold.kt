@@ -2,13 +2,13 @@ package io.github.aliernfrog.shared.ui.component
 
 import android.app.Activity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,14 +25,20 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.material3.Material3
+import io.github.aliernfrog.shared.util.LocalBlurEnabledValue
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.toggledHazeBlur
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(
     topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
@@ -55,10 +61,30 @@ fun AppScaffold(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun AppScaffoldNoContentPadding(
+    topBar: @Composable (scrollBehavior: TopAppBarScrollBehavior) -> Unit,
+    modifier: Modifier = Modifier,
+    topAppBarState: TopAppBarState = rememberTopAppBarState(),
+    scrollBehavior: TopAppBarScrollBehavior = adaptiveExitUntilCollapsedScrollBehavior(topAppBarState),
+    floatingActionButton: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit
+) {
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = { topBar(scrollBehavior) },
+        floatingActionButton = floatingActionButton,
+        contentWindowInsets = WindowInsets(0,0,0,0),
+        content = {
+            content(it)
+        }
+    )
+}
+
 @Composable
 fun AppTopBar(
     title: String,
+    hazeState: HazeState,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
@@ -74,16 +100,23 @@ fun AppTopBar(
 
     if (disableLargeTopAppBar && scrollBehavior.state.heightOffset == 0f) AppSmallTopBar(
         title = title,
+        hazeState = hazeState,
         scrollBehavior = scrollBehavior,
         actions = actions,
-        colors = colors,
+        colors = colors, // scrolledContainerColor transparency is automatically handled here
         navigationIcon = navigationIcon,
         onNavigationClick = onNavigationClick,
         modifier = modifier
     ) else LargeFlexibleTopAppBar(
         title = { Text(title) },
         scrollBehavior = scrollBehavior,
-        colors = colors,
+        colors = colors.let {
+            it.copy(
+                scrolledContainerColor = it.scrolledContainerColor.copy(
+                    alpha = if (LocalBlurEnabledValue.current) 0.7f else 1f
+                )
+            )
+        },
         navigationIcon = {
             onNavigationClick?.let {
                 BackButtonWithTooltip(
@@ -93,13 +126,19 @@ fun AppTopBar(
             }
         },
         actions = actions,
-        modifier = modifier
+        modifier = modifier.toggledHazeBlur(
+            containerColor = Color.Transparent,
+            containerOpacity = 0f,
+            input = HazeInput.Backdrop(hazeState),
+            style = HazeBlurStyle.Material3(
+                containerColor = colors.scrolledContainerColor
+            )
+        ),
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AppSmallTopBar(
+fun AppSmallTopBarNoBlur(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
@@ -125,6 +164,41 @@ fun AppSmallTopBar(
     )
 }
 
+@Composable
+fun AppSmallTopBar(
+    title: String,
+    hazeState: HazeState,
+    scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
+    actions: @Composable RowScope.() -> Unit = {},
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+    navigationIcon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+    onNavigationClick: (() -> Unit)? = null
+) {
+    AppSmallTopBarNoBlur(
+        title = title,
+        scrollBehavior = scrollBehavior,
+        modifier = modifier.toggledHazeBlur(
+            containerColor = Color.Transparent,
+            containerOpacity = 0f,
+            input = HazeInput.Backdrop(hazeState),
+            style = HazeBlurStyle.Material3(
+                containerColor = colors.scrolledContainerColor
+            )
+        ),
+        actions = actions,
+        colors = colors.let {
+            it.copy(
+                scrolledContainerColor = it.scrolledContainerColor.copy(
+                    alpha = if (LocalBlurEnabledValue.current) 0.7f else 1f
+                )
+            )
+        },
+        navigationIcon = navigationIcon,
+        onNavigationClick = onNavigationClick
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
@@ -136,7 +210,6 @@ private fun BackButtonWithTooltip(icon: ImageVector, onClick: () -> Unit) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun adaptiveExitUntilCollapsedScrollBehavior(
     topAppBarState: TopAppBarState = rememberTopAppBarState()

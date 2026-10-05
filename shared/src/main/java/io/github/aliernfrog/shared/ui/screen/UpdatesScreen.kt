@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,7 +31,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -41,6 +42,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,13 +53,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.material3.Material3
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import io.github.aliernfrog.shared.data.ReleaseInfo
-import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.CardWithActions
@@ -72,8 +81,9 @@ import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.sdkVersionToAndroidVersion
 import io.github.aliernfrog.shared.util.sharedStringResource
+import io.github.aliernfrog.shared.util.toggledHazeBlur
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdatesScreen(
     availableUpdates: List<ReleaseInfo>,
@@ -83,6 +93,7 @@ fun UpdatesScreen(
     onCheckUpdatesRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
+    val hazeState = rememberHazeState()
     val lazyListState = rememberLazyListState()
     val uriHandler = LocalUriHandler.current
     val updateAvailable = availableUpdates.isNotEmpty()
@@ -95,27 +106,45 @@ fun UpdatesScreen(
         showExtendedToolbar = it
     }
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
                 title = sharedStringResource(
                     if (updateAvailable) SharedString::updates
                     else SharedString::updatesChangelog
                 ),
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
+    ) { paddingValues ->
+        val pullToRefreshState = rememberPullToRefreshState()
         PullToRefreshBox(
             isRefreshing = isCheckingForUpdates,
-            onRefresh = onCheckUpdatesRequest
+            onRefresh = onCheckUpdatesRequest,
+            state = pullToRefreshState,
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = paddingValues.calculateTopPadding()),
+                    isRefreshing = isCheckingForUpdates,
+                    state = pullToRefreshState
+                )
+            }
         ) {
             LazyColumn(
                 state = lazyListState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeSource(hazeState)
             ) {
+                item {
+                    Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+                }
+
                 if (!updateAvailable && currentVersionInfo.body == null) item {
                     ErrorWithIcon(
                         description = sharedStringResource(SharedString::updatesNoChangelog),
@@ -182,12 +211,19 @@ fun UpdatesScreen(
                 }
 
                 item {
-                    BottomSpacer(Modifier.padding(top = AppFABPadding))
+                    BottomSpacer(
+                        Modifier.padding(
+                            top = AppFABPadding + paddingValues.calculateBottomPadding()
+                        )
+                    )
                 }
             }
 
             HorizontalFloatingToolbar(
                 expanded = true,
+                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                    toolbarContainerColor = Color.Transparent
+                ),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
@@ -195,6 +231,15 @@ fun UpdatesScreen(
                     .shadow(
                         elevation = 6.dp,
                         shape = FloatingToolbarDefaults.ContainerShape
+                    )
+                    .clip(FloatingToolbarDefaults.ContainerShape)
+                    .toggledHazeBlur(
+                        containerColor = FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor,
+                        containerOpacity = 0f,
+                        input = HazeInput.Backdrop(hazeState),
+                        style = HazeBlurStyle.Material3(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
                     )
             ) {
                 @Composable
@@ -279,7 +324,7 @@ fun UpdatesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ReleaseCard(
     release: ReleaseInfo,

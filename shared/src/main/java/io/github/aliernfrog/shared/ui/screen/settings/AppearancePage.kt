@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.BlurOn
 import androidx.compose.material.icons.rounded.Brush
 import androidx.compose.material.icons.rounded.Contrast
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -49,12 +49,12 @@ import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import io.github.aliernfrog.shared.util.sharedStringResource
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AppearancePage(
     themePref: BasePreferenceManager.Preference<Int>,
     materialYouPref: BasePreferenceManager.Preference<Boolean>,
     pitchBlackPref: BasePreferenceManager.Preference<Boolean>,
+    blurPref: BasePreferenceManager.Preference<Boolean>,
     onNavigateBackRequest: () -> Unit
 ) {
     SettingsPageContainer(
@@ -192,6 +192,20 @@ fun AppearancePage(
                         checked = pitchBlackPref.value,
                         onCheckedChange = { pitchBlackPref.value = it }
                     )
+                },
+                {
+                  ExpressiveSwitchRow(
+                      title = sharedStringResource(SharedString::settingsAppearanceColorsBlur),
+                      description = sharedStringResource(SharedString::settingsAppearanceColorsBlurDescription),
+                      icon = {
+                          ExpressiveRowIcon(
+                              painter = rememberVectorPainter(Icons.Rounded.BlurOn),
+                              containerColor = Color.Magenta.toRowFriendlyColor
+                          )
+                      },
+                      checked = blurPref.value,
+                      onCheckedChange = { blurPref.value = it }
+                  )
                 },
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
