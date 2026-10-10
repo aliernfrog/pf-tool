@@ -75,6 +75,7 @@ import java.io.File
 fun MapsListFAB(
     expanded: Boolean,
     supportedFileExtensions: List<FileExtension>,
+    fixOffset: Boolean,
     modifier: Modifier = Modifier,
     onExpandedStateChange: (Boolean) -> Unit,
     onMapPick: (FileWrapper) -> Unit
@@ -102,7 +103,11 @@ fun MapsListFAB(
 
     FloatingActionButtonMenu(
         expanded = expanded,
-        modifier = modifier.offset(x = 16.dp, y = 16.dp),
+        modifier = modifier
+            .offset(
+                x = if (fixOffset) 16.dp else 0.dp,
+                y = if (fixOffset) 16.dp else 0.dp
+            ),
         button = {
             ToggleFloatingActionButton(
                 checked = expanded,

@@ -50,6 +50,7 @@ fun MapsListScreen(
                     extension = ".zip",
                     mimeType = "application/zip"
                 )),
+                fixOffset = true,
                 onExpandedStateChange = { addMapMenuExpanded = it },
                 onMapPick = mapPickHandler
             )
