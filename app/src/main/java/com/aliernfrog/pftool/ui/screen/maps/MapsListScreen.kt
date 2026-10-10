@@ -15,7 +15,7 @@ import com.aliernfrog.pftool.ui.component.SettingsButton
 import com.aliernfrog.pftool.ui.viewmodel.MapsListViewModel
 import io.github.aliernfrog.pftool_shared.data.FileExtension
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
-import io.github.aliernfrog.pftool_shared.ui.component.maps.MapsListFAB
+import io.github.aliernfrog.pftool_shared.ui.component.maps.MapsListFABMenu
 import io.github.aliernfrog.pftool_shared.ui.screen.maps.MapsListScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -44,13 +44,12 @@ fun MapsListScreen(
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold(
         floatingActionButton = {
-            MapsListFAB(
+            MapsListFABMenu(
                 expanded = addMapMenuExpanded,
                 supportedFileExtensions = listOf(FileExtension(
                     extension = ".zip",
                     mimeType = "application/zip"
                 )),
-                fixOffset = true,
                 onExpandedStateChange = { addMapMenuExpanded = it },
                 onMapPick = mapPickHandler
             )

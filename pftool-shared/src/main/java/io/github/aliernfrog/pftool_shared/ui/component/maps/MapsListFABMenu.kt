@@ -72,13 +72,19 @@ import org.koin.compose.koinInject
 import java.io.File
 
 @Composable
-fun MapsListFAB(
+fun MapsListFABMenu(
     expanded: Boolean,
     supportedFileExtensions: List<FileExtension>,
-    fixOffset: Boolean,
     modifier: Modifier = Modifier,
+    fixOffset: Boolean = true,
     onExpandedStateChange: (Boolean) -> Unit,
-    onMapPick: (FileWrapper) -> Unit
+    onMapPick: (FileWrapper) -> Unit,
+    button: @Composable () -> Unit = {
+        MapsListFABToggleButton(
+            expanded = expanded,
+            onExpandedStateChange = onExpandedStateChange
+        )
+    }
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -108,19 +114,7 @@ fun MapsListFAB(
                 x = if (fixOffset) 16.dp else 0.dp,
                 y = if (fixOffset) 16.dp else 0.dp
             ),
-        button = {
-            ToggleFloatingActionButton(
-                checked = expanded,
-                onCheckedChange = onExpandedStateChange
-            ) {
-                Icon(
-                    imageVector = if (checkedProgress > 0.5f) Icons.Default.Close else Icons.Default.Add,
-                    contentDescription = if (!expanded) sharedStringResource(PFToolSharedString::mapsListAdd)
-                    else io.github.aliernfrog.shared.util.sharedStringResource(SharedString::actionClose),
-                    modifier = Modifier.animateIcon({ checkedProgress })
-                )
-            }
-        }
+        button = button
     ) {
         FloatingActionButtonMenuItem(
             onClick = {
@@ -168,6 +162,26 @@ fun MapsListFAB(
             downloadDialogShown = false
         }
     )
+}
+
+@Composable
+fun MapsListFABToggleButton(
+    expanded: Boolean,
+    modifier: Modifier = Modifier,
+    onExpandedStateChange: (Boolean) -> Unit
+) {
+    ToggleFloatingActionButton(
+        checked = expanded,
+        onCheckedChange = onExpandedStateChange,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (checkedProgress > 0.5f) Icons.Default.Close else Icons.Default.Add,
+            contentDescription = if (!expanded) sharedStringResource(PFToolSharedString::mapsListAdd)
+            else io.github.aliernfrog.shared.util.sharedStringResource(SharedString::actionClose),
+            modifier = Modifier.animateIcon({ checkedProgress })
+        )
+    }
 }
 
 @Composable
