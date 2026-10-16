@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Link
@@ -33,8 +32,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ToggleFloatingActionButton
-import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -47,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
@@ -62,6 +60,7 @@ import io.github.aliernfrog.pftool_shared.util.getSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
+import io.github.aliernfrog.shared.ui.component.ToggleFloatingActionButton
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.extension.showErrorToast
 import io.github.aliernfrog.shared.util.getSharedString
@@ -175,11 +174,16 @@ fun MapsListFABToggleButton(
         onCheckedChange = onExpandedStateChange,
         modifier = modifier
     ) {
+        val iconRotation by animateFloatAsState(
+            if (expanded) 45f else 0f
+        )
         Icon(
-            imageVector = if (checkedProgress > 0.5f) Icons.Default.Close else Icons.Default.Add,
+            imageVector = Icons.Default.Add,
             contentDescription = if (!expanded) sharedStringResource(PFToolSharedString::mapsListAdd)
             else io.github.aliernfrog.shared.util.sharedStringResource(SharedString::actionClose),
-            modifier = Modifier.animateIcon({ checkedProgress })
+            modifier = Modifier.graphicsLayer {
+                rotationZ = iconRotation
+            }
         )
     }
 }
