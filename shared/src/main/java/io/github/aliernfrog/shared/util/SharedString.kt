@@ -64,8 +64,11 @@ data class SharedString(
     @StringRes val settingsAppearanceColorsMaterialYouUnavailable : Int,
     @StringRes val settingsAppearanceColorsPitchBlack : Int,
     @StringRes val settingsAppearanceColorsPitchBlackDescription : Int,
-    @StringRes val settingsAppearanceColorsBlur : Int,
-    @StringRes val settingsAppearanceColorsBlurDescription : Int,
+    @StringRes val settingsAppearanceEffects: Int,
+    @StringRes val settingsAppearanceEffectsBlur : Int,
+    @StringRes val settingsAppearanceEffectsBlurDescription : Int,
+    @StringRes val settingsAppearanceEffectsBottomGradient: Int?,
+    @StringRes val settingsAppearanceEffectsBottomGradientDescription: Int?,
     @StringRes val settingsExperimental : Int,
     @StringRes val settingsExperimentalDescription : Int,
     @StringRes val settingsUpdateNotificationUpdateAvailable : Int,
@@ -106,9 +109,25 @@ fun sharedStringResource(property: KProperty1<SharedString, Int>): String {
     return stringResource(property.get(provider))
 }
 
+@Composable
+fun nullableSharedStringResource(property: KProperty1<SharedString, Int?>, fallback: String): String {
+    val provider = LocalSharedString.current
+    return property.get(provider)?.let {
+        stringResource(it)
+    } ?: fallback
+}
+
 fun Context.getSharedString(property: KProperty1<SharedString, Int>): String {
     val provider = getKoinInstance<SharedString>()
     return getString(property.get(provider))
+}
+
+@Suppress("unused")
+fun Context.getNullableSharedString(property: KProperty1<SharedString, Int?>, fallback: String): String {
+    val provider = getKoinInstance<SharedString>()
+    return property.get(provider)?.let {
+        getString(it)
+    } ?: fallback
 }
 
 sealed interface SharedStringResolvable {

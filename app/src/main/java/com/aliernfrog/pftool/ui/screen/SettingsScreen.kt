@@ -81,6 +81,7 @@ fun SettingsScreen(
                 materialYouPref = vm.prefs.materialYou,
                 pitchBlackPref = vm.prefs.pitchBlack,
                 blurPref = vm.prefs.blur,
+                bottomGradientPref = null,
                 onNavigateBackRequest = onNavigateBackRequest
             )
         }
