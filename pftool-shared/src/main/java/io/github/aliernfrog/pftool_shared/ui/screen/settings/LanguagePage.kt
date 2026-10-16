@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
@@ -47,6 +48,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.data.Language
 import io.github.aliernfrog.pftool_shared.data.getAvailableLanguage
 import io.github.aliernfrog.pftool_shared.data.getNameIn
@@ -54,7 +57,7 @@ import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.extension.copy
 import io.github.aliernfrog.pftool_shared.util.getSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
-import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
@@ -66,7 +69,6 @@ import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguagePage(
     crowdinURL: String,
@@ -78,6 +80,7 @@ fun LanguagePage(
     onSetLanguageRequest: (Language?) -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
+    val hazeState = rememberHazeState()
     val availableDeviceLanguage = remember {
         deviceLanguage?.getAvailableLanguage(languages = languages)
     }
@@ -131,17 +134,24 @@ fun LanguagePage(
         )
     }
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
                 title = sharedStringResource(PFToolSharedString::settingsLanguage),
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
-        LazyColumn {
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier.hazeSource(hazeState)
+        ) {
+            item {
+                Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+            }
+
             item {
                 TranslationHelp(
                     isDeviceLanguageAvailable = availableDeviceLanguage != null,
@@ -184,13 +194,15 @@ fun LanguagePage(
             }
 
             item {
-                BottomSpacer()
+                BottomSpacer(Modifier.padding(
+                    bottom = paddingValues.calculateBottomPadding()
+                ))
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TranslationProgressIndicator(
     progress: Float,

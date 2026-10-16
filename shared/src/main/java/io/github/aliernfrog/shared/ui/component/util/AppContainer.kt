@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 
 @Composable
 fun AppContainer(
+    modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
 ) {
     val config = LocalConfiguration.current
@@ -28,7 +29,7 @@ fun AppContainer(
 
     Box(
         content = content,
-        modifier = Modifier
+        modifier = modifier
             .background(MaterialTheme.colorScheme.surface)
             .let {
                 var modifier = it

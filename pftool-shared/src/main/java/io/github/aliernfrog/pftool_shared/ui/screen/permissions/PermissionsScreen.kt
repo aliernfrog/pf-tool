@@ -4,11 +4,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -25,11 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.ui.dialog.CustomMessageDialog
@@ -39,26 +44,28 @@ import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.data.Social
-import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveRowIcon
 import io.github.aliernfrog.shared.util.SharedString
 import org.koin.androidx.compose.koinViewModel
 import io.github.aliernfrog.shared.util.sharedStringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PermissionsScreen(
     vararg permissionsData: PermissionData,
     title: String,
     supportLinks: List<Social>,
     vm: IPermissionsViewModel = koinViewModel(),
+    extraBottomPadding: Dp = 0.dp,
     onRestartAppRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit,
     settingsButton: (@Composable () -> Unit)?,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val layoutDirection = LocalLayoutDirection.current
+    val hazeState = rememberHazeState()
 
     val isShizukuFileServiceRunning = vm.isShizukuFileServiceRunning.collectAsStateWithLifecycle().value
 
@@ -79,25 +86,37 @@ fun PermissionsScreen(
     AnimatedContent(vm.storageAccessType) { method ->
         AnimatedContent(permissionsGranted) { showContent ->
             if (showContent) content()
-            else AppScaffold(
+            else AppScaffoldNoContentPadding(
                 topBar = { AppTopBar(
                     title = title,
+                    hazeState = hazeState,
                     scrollBehavior = it,
                     actions = {
                         settingsButton?.invoke()
                     }
                 ) }
-            ) {
+            ) { pValues ->
+                val paddingValues = PaddingValues(
+                    start = pValues.calculateStartPadding(layoutDirection),
+                    top = pValues.calculateTopPadding(),
+                    end = pValues.calculateEndPadding(layoutDirection),
+                    bottom = pValues.calculateBottomPadding() + extraBottomPadding
+                )
+
                 when (method) {
                     StorageAccessType.SAF -> SAFPermissionsScreen(
                         *permissionsData,
                         vm = vm,
+                        hazeState = hazeState,
+                        paddingValues = paddingValues,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
                     )
                     StorageAccessType.SHIZUKU -> ShizukuPermissionsScreen(
                         vm = vm,
+                        hazeState = hazeState,
+                        paddingValues = paddingValues,
                         onRestartAppRequest = onRestartAppRequest,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
@@ -106,6 +125,8 @@ fun PermissionsScreen(
                     )
                     StorageAccessType.ALL_FILES -> AllFilesPermissionsScreen(
                         vm = vm,
+                        hazeState = hazeState,
+                        paddingValues = paddingValues,
                         onUpdateStateRequest = {
                             permissionsGranted = hasPermissions()
                         }
