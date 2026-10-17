@@ -33,14 +33,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -66,6 +70,7 @@ fun AppearancePage(
     bottomGradientPref: BasePreferenceManager.Preference<Boolean>?,
     onNavigateBackRequest: () -> Unit
 ) {
+    val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
     SettingsPageContainer(
@@ -95,9 +100,10 @@ fun AppearancePage(
                         else MaterialTheme.colorScheme.onSurface
                     )
 
+                    var height by remember { mutableStateOf(200.dp) }
                     val roundness by animateDpAsState(
                         if (pressed) 4.dp
-                        else if (selected) 200.dp
+                        else if (selected) height / 2
                         else 8.dp
                     )
                     val iconRotation = remember { Animatable(0f) }
@@ -117,6 +123,11 @@ fun AppearancePage(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                             modifier = Modifier
+                                .onSizeChanged {
+                                    with(density) {
+                                        it.height.toDp()
+                                    }
+                                }
                                 .weight(weight)
                                 .semantics { Role.RadioButton }
                                 .fillMaxWidth()
@@ -131,7 +142,7 @@ fun AppearancePage(
                                     interactionSource = interactionSource,
                                     onClick = { onSelect() }
                                 )
-                                .padding(top = 24.dp)
+                                .padding(top = 36.dp)
                         ) {
                             @Composable
                             fun ThemeIcon(useFilled: Boolean) {
