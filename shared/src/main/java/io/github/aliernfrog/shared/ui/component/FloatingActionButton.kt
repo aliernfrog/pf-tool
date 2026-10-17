@@ -12,9 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -67,6 +72,9 @@ fun ToggleFloatingActionButton(
     modifier: Modifier = Modifier,
     icon: @Composable (iconSize: Dp) -> Unit
 ) {
+    val density = LocalDensity.current
+    var height by remember { mutableStateOf(200.dp) }
+
     val containerColor by animateColorAsState(
         if (checked) MaterialTheme.colorScheme.primary
         else MaterialTheme.colorScheme.primaryContainer
@@ -76,7 +84,7 @@ fun ToggleFloatingActionButton(
         else MaterialTheme.colorScheme.onPrimaryContainer
     )
     val roundness by animateDpAsState(
-        if (checked) 200.dp else 16.dp
+        if (checked) (height / 2) else 16.dp
     )
 
     FloatingActionButton(
@@ -85,6 +93,11 @@ fun ToggleFloatingActionButton(
         containerColor = containerColor,
         contentColor = contentColor,
         modifier = modifier
+            .onSizeChanged {
+                with(density) {
+                    height = it.height.toDp()
+                }
+            }
     ) {
         icon(24.dp)
     }
