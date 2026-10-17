@@ -117,12 +117,11 @@ fun MediaOverlay(
 
     LaunchedEffect(overlayCanBeShown) {
         showOverlay = overlayCanBeShown
-        if (data.optionsSheetContent != null && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
     }
 
     LaunchedEffect(showOverlay) {
         if (data.optionsSheetContent == null) return@LaunchedEffect bottomSheetState.hide()
-        if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
+        if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.expand()
         else if (!showOverlay && bottomSheetState.targetValue != SheetValue.Hidden) bottomSheetState.hide()
     }
 
