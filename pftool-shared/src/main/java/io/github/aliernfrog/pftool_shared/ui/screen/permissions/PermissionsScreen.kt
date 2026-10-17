@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.neverEqualPolicy
@@ -58,6 +59,7 @@ fun PermissionsScreen(
     supportLinks: List<Social>,
     vm: IPermissionsViewModel = koinViewModel(),
     extraBottomPadding: Dp = 0.dp,
+    onPermissionsGrantedStateChange: (granted: Boolean) -> Unit = {},
     onRestartAppRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit,
     settingsButton: (@Composable () -> Unit)?,
@@ -77,10 +79,16 @@ fun PermissionsScreen(
         )
     }
 
-    var permissionsGranted by remember { mutableStateOf(hasPermissions(), neverEqualPolicy()) }
+    var permissionsGranted by remember {
+        mutableStateOf(hasPermissions(), neverEqualPolicy())
+    }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         permissionsGranted = hasPermissions()
+    }
+
+    LaunchedEffect(permissionsGranted) {
+        onPermissionsGrantedStateChange(permissionsGranted)
     }
 
     AnimatedContent(vm.storageAccessType) { method ->
