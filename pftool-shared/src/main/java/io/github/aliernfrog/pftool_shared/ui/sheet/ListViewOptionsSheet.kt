@@ -15,6 +15,7 @@ import androidx.compose.material3.InputChip
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -118,11 +119,17 @@ fun ListViewOptionsSheet(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Slider(
+                        val sliderState = rememberSliderState(
                             value = gridMaxLineSpan.toFloat(),
-                            onValueChange = { onGridMaxLineSpanChange(it.toInt()) },
-                            valueRange = 1f..6f,
                             steps = 4,
+                            trackRange = 1f..6f
+                        )
+                        Slider(
+                            state = sliderState,
+                            onValueChange = {
+                                onGridMaxLineSpanChange(it.toInt())
+                                sliderState.value = it
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 12.dp, end = 4.dp)

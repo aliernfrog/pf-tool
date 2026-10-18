@@ -17,7 +17,6 @@ import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Science
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Update
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,8 +32,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.shared.data.ReleaseInfo
-import io.github.aliernfrog.shared.ui.component.AppScaffold
+import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.AppTopBar
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
@@ -51,7 +52,6 @@ import io.github.aliernfrog.shared.util.resolve
 import io.github.aliernfrog.shared.util.sharedStringResource
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsRootPage(
     categories: List<SettingsCategory>,
@@ -63,20 +63,24 @@ fun SettingsRootPage(
     onNavigateRequest: (SettingsDestination) -> Unit
 ) {
     val context = LocalContext.current
+    val hazeState = rememberHazeState()
 
-    AppScaffold(
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
             AppTopBar(
                 title = sharedStringResource(SharedString::settings),
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .hazeSource(hazeState)
                 .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
         ) {
             UpdateNotification(
                 availableUpdates = availableUpdates,
@@ -133,27 +137,30 @@ fun SettingsRootPage(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPageContainer(
     title: String,
     onNavigateBackRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    AppScaffold(
+    val hazeState = rememberHazeState()
+    AppScaffoldNoContentPadding(
         topBar = { scrollBehavior ->
             AppSmallTopBar(
                 title = title,
+                hazeState = hazeState,
                 scrollBehavior = scrollBehavior,
                 onNavigationClick = onNavigateBackRequest
             )
         },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .hazeSource(hazeState)
                 .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
         ) {
             content()
             BottomSpacer()

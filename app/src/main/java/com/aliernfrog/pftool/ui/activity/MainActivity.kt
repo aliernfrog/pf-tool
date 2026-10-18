@@ -7,12 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -43,7 +42,12 @@ import com.aliernfrog.pftool.util.UpdateScreenDestination
 import com.aliernfrog.pftool.util.extension.removeLastIfMultiple
 import com.aliernfrog.pftool.util.slideTransitionMetadata
 import com.aliernfrog.pftool.util.slideVerticalTransitionMetadata
+import com.aliernfrog.toptoast.component.TopToast
 import com.aliernfrog.toptoast.component.TopToastHost
+import com.aliernfrog.toptoast.util.TopToastDefaults
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import io.github.aliernfrog.pftool_shared.impl.SAFFileCreator
 import io.github.aliernfrog.pftool_shared.ui.dialog.ProgressDialog
 import io.github.aliernfrog.pftool_shared.util.LocalPFToolSharedString
@@ -55,8 +59,10 @@ import io.github.aliernfrog.shared.ui.screen.UpdatesScreen
 import io.github.aliernfrog.shared.ui.screen.settings.SettingsDestination
 import io.github.aliernfrog.shared.ui.sheet.CrashDetailsSheet
 import io.github.aliernfrog.shared.ui.theme.Theme
+import io.github.aliernfrog.shared.util.LocalBlurEnabledValue
 import io.github.aliernfrog.shared.util.LocalSharedString
 import io.github.aliernfrog.shared.util.SharedString
+import io.github.aliernfrog.shared.util.toggledHazeBlur
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
@@ -92,7 +98,8 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 CompositionLocalProvider(
                     LocalSharedString provides sharedString,
-                    LocalPFToolSharedString provides pfToolSharedString
+                    LocalPFToolSharedString provides pfToolSharedString,
+                    LocalBlurEnabledValue provides vm.prefs.blur.value
                 ) {
                     App(vm)
                 }
@@ -122,9 +129,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun App(vm: MainViewModel) {
+        val hazeState = rememberHazeState()
         val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
         val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
         val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
@@ -137,95 +144,112 @@ class MainActivity : AppCompatActivity() {
         InsetsObserver()
 
         AppContainer {
-            Scaffold(
-                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                contentWindowInsets = WindowInsets(0, 0, 0, 0)
-            ) { paddingValues ->
-                NavDisplay(
-                    backStack = vm.navigationBackStack,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                        .imePadding(),
-                    entryProvider = entryProvider {
-                        entry<Destination> { destination ->
-                            when (destination) {
-                                Destination.MAPS -> {
-                                    MapsScreen(
-                                        map = null,
-                                        onNavigateRequest = { vm.navigationBackStack.add(it) },
-                                        onNavigateBackRequest = null
-                                    )
+            Box(
+                modifier = Modifier.hazeSource(hazeState)
+            ) {
+                Scaffold(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0)
+                ) { paddingValues ->
+                    NavDisplay(
+                        backStack = vm.navigationBackStack,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .consumeWindowInsets(paddingValues),
+                        entryProvider = entryProvider {
+                            entry<Destination> { destination ->
+                                when (destination) {
+                                    Destination.MAPS -> {
+                                        MapsScreen(
+                                            map = null,
+                                            onNavigateRequest = { vm.navigationBackStack.add(it) },
+                                            onNavigateBackRequest = null
+                                        )
+                                    }
                                 }
                             }
-                        }
 
-                        entry<SettingsDestination>(
-                            metadata = slideTransitionMetadata
-                        ) { destination ->
-                            SettingsScreen(
-                                destination = destination,
-                                onNavigateBackRequest = onNavigateBackRequest,
-                                onNavigateRequest = { vm.navigationBackStack.add(it) },
-                                onCheckUpdatesRequest = { skipVersionCheck ->
-                                    vm.checkUpdates(skipVersionCheck = skipVersionCheck)
-                                },
-                                onNavigateUpdatesScreenRequest = {
-                                    vm.navigationBackStack.add(UpdateScreenDestination)
-                                }
-                            )
-                        }
+                            entry<SettingsDestination>(
+                                metadata = slideTransitionMetadata
+                            ) { destination ->
+                                SettingsScreen(
+                                    destination = destination,
+                                    onNavigateBackRequest = onNavigateBackRequest,
+                                    onNavigateRequest = { vm.navigationBackStack.add(it) },
+                                    onCheckUpdatesRequest = { skipVersionCheck ->
+                                        vm.checkUpdates(skipVersionCheck = skipVersionCheck)
+                                    },
+                                    onNavigateUpdatesScreenRequest = {
+                                        vm.navigationBackStack.add(UpdateScreenDestination)
+                                    }
+                                )
+                            }
 
-                        entry<MapFile>(
-                            metadata = slideTransitionMetadata
-                        ) { map ->
-                            MapsScreen(
-                                map = map,
-                                onNavigateRequest = { vm.navigationBackStack.add(it) },
-                                onNavigateBackRequest = onNavigateBackRequest
-                            )
-                        }
+                            entry<MapFile>(
+                                metadata = slideTransitionMetadata
+                            ) { map ->
+                                MapsScreen(
+                                    map = map,
+                                    onNavigateRequest = { vm.navigationBackStack.add(it) },
+                                    onNavigateBackRequest = onNavigateBackRequest
+                                )
+                            }
 
-                        entry<UpdateScreenDestination>(
-                            metadata = slideVerticalTransitionMetadata
-                        ) {
-                            UpdatesScreen(
-                                availableUpdates = availableUpdates,
-                                currentVersionInfo = currentVersionInfo,
-                                isCheckingForUpdates = isCheckingForUpdates,
-                                isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
-                                onCheckUpdatesRequest = {
-                                    vm.checkUpdates(manuallyTriggered = true)
-                                },
-                                onNavigateBackRequest = onNavigateBackRequest
-                            )
+                            entry<UpdateScreenDestination>(
+                                metadata = slideVerticalTransitionMetadata
+                            ) {
+                                UpdatesScreen(
+                                    availableUpdates = availableUpdates,
+                                    currentVersionInfo = currentVersionInfo,
+                                    isCheckingForUpdates = isCheckingForUpdates,
+                                    isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
+                                    onCheckUpdatesRequest = {
+                                        vm.checkUpdates(manuallyTriggered = true)
+                                    },
+                                    onNavigateBackRequest = onNavigateBackRequest
+                                )
+                            }
                         }
-                    }
+                    )
+                }
+
+                CrashDetailsSheet(
+                    throwable = vm.lastCaughtException,
+                    crashReportURL = crashReportURL,
+                    debugInfo = vm.versionManager.getDebugInfo(),
+                    supportLinks = supportLinks
                 )
-            }
 
-            CrashDetailsSheet(
-                throwable = vm.lastCaughtException,
-                crashReportURL = crashReportURL,
-                debugInfo = vm.versionManager.getDebugInfo(),
-                supportLinks = supportLinks
-            )
+                vm.progressState.currentProgress?.let {
+                    ProgressDialog(it) {
+                        vm.progressState.currentProgress = null
+                    }
+                }
 
-            vm.progressState.currentProgress?.let {
-                ProgressDialog(it) {
-                    vm.progressState.currentProgress = null
+                Crossfade(vm.mediaOverlayData) { data ->
+                    if (data != null) MediaOverlay(
+                        data = data,
+                        showMediaOverlayGuidePref = vm.prefs.showMediaOverlayGuide,
+                        onDismissRequest = { vm.dismissMediaOverlay() }
+                    )
                 }
             }
 
-            Crossfade(vm.mediaOverlayData) { data ->
-                if (data != null) MediaOverlay(
-                    data = data,
-                    showMediaOverlayGuidePref = vm.prefs.showMediaOverlayGuide,
-                    onDismissRequest = { vm.dismissMediaOverlay() }
-                )
-            }
-            TopToastHost(vm.topToastState)
+            TopToastHost(
+                state = vm.topToastState,
+                toast = { state ->
+                    TopToast(
+                        modifier = Modifier
+                            .toggledHazeBlur(
+                                containerColor = TopToastDefaults.containerColor,
+                                containerOpacity = 0.7f,
+                                input = HazeInput.Backdrop(hazeState)
+                            ),
+                        state = state
+                    )
+                }
+            )
         }
     }
 

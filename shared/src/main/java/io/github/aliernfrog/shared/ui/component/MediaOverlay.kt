@@ -37,7 +37,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -80,7 +79,7 @@ import net.engawapg.lib.zoomable.zoomable
 import org.koin.compose.koinInject
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaOverlay(
     data: MediaOverlayData,
@@ -118,12 +117,11 @@ fun MediaOverlay(
 
     LaunchedEffect(overlayCanBeShown) {
         showOverlay = overlayCanBeShown
-        if (data.optionsSheetContent != null && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
     }
 
     LaunchedEffect(showOverlay) {
         if (data.optionsSheetContent == null) return@LaunchedEffect bottomSheetState.hide()
-        if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
+        if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.expand()
         else if (!showOverlay && bottomSheetState.targetValue != SheetValue.Hidden) bottomSheetState.hide()
     }
 
@@ -299,7 +297,6 @@ fun MediaOverlay(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun GuideDialog(
     onDismissRequest: () -> Unit

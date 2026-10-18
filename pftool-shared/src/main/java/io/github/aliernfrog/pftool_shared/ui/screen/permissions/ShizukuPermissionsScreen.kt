@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import io.github.aliernfrog.pftool_shared.enum.ShizukuStatus
 import io.github.aliernfrog.pftool_shared.impl.ShizukuManager
 import io.github.aliernfrog.pftool_shared.ui.viewmodel.IPermissionsViewModel
@@ -62,6 +65,8 @@ import kotlin.reflect.KProperty1
 @Composable
 fun ShizukuPermissionsScreen(
     vm: IPermissionsViewModel,
+    hazeState: HazeState,
+    paddingValues: PaddingValues,
     onRestartAppRequest: () -> Unit,
     onUpdateStateRequest: () -> Unit,
     onNavigateStorageSettingsRequest: () -> Unit
@@ -83,12 +88,14 @@ fun ShizukuPermissionsScreen(
     }
 
     AnimatedContent(
-        shizukuStatus == ShizukuStatus.AVAILABLE
+        targetState = shizukuStatus == ShizukuStatus.AVAILABLE,
+        modifier = Modifier.hazeSource(hazeState)
     ) { isLoading ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues),
             verticalArrangement = if (isLoading) Arrangement.Center else Arrangement.Top
         ) {
             if (isLoading) {
@@ -166,7 +173,6 @@ fun ShizukuPermissionsScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun RecommendedShizukuVersionCard(
     modifier: Modifier = Modifier
@@ -199,7 +205,6 @@ private fun RecommendedShizukuVersionCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ShizukuSetupGuide(
     shizukuInstalled: Boolean,
