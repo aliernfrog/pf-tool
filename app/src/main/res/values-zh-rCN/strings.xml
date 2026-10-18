@@ -10,6 +10,7 @@
     <string name="action_share">分享</string>
     <string name="action_delete">删除</string>
     <string name="action_more">更多</string>
+    <string name="action_select_selectAll"></string>
     <string name="intent_openMap">打开地图</string>
     <string name="intent_downloadMap">下载地图</string>
     <string name="warning_error">出现了一些错误</string>
