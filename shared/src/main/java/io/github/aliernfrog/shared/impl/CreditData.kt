@@ -17,15 +17,21 @@ class CreditData(
     val fetchFromGithub: Boolean,
     val link: String? = if (fetchFromGithub) "https://github.com/$userName" else null
 ) {
-    private var fetchedOnce = false
+    var attemptedFetch by mutableStateOf(false)
+        private set
+
+    var fetching by mutableStateOf(false)
+        private set
 
     var avatarURL by mutableStateOf<String?>(null)
+        private set
+  
     var displayName by mutableStateOf(displayNameOverride ?: userName)
-    var fetching by mutableStateOf(false)
-
+        private set
+    
     suspend fun fetchDetails() {
-        if (!fetchFromGithub || fetchedOnce) return
-        fetchedOnce = true
+        if (!fetchFromGithub || attemptedFetch) return
+        attemptedFetch = true
 
         fetching = true
         withContext(Dispatchers.IO) {

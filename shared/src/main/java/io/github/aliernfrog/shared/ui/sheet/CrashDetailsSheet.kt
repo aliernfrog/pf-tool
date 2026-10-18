@@ -11,8 +11,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,14 +25,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import io.github.aliernfrog.shared.data.Social
+import io.github.aliernfrog.shared.domain.IAppState
 import io.github.aliernfrog.shared.ui.component.AppModalBottomSheet
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.crash_handler.CrashDetails
+import io.github.aliernfrog.shared.ui.component.buildBottomSheetEnabledValues
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.TAG
 import io.github.aliernfrog.shared.util.sharedStringResource
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -41,8 +45,16 @@ fun CrashDetailsSheet(
     debugInfo: String,
     supportLinks: List<Social>
 ) {
+    val iAppState = koinInject<IAppState>()
     val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = buildBottomSheetEnabledValues(skipPartiallyExpanded = true),
+        confirmValueChange = {
+            if (it == SheetValue.Hidden) iAppState.lastCaughtException = null
+            true
+        }
+    )
     var stackTrace by rememberSaveable {
         mutableStateOf("")
     }

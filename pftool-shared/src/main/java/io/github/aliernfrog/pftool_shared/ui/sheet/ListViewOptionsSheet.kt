@@ -12,15 +12,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.enum.ListSorting
 import io.github.aliernfrog.pftool_shared.enum.ListStyle
@@ -56,11 +54,7 @@ fun ListViewOptionsSheet(
                 val filtersScrollState = rememberScrollState()
                 Row(
                     modifier = Modifier
-                        .horizontalFadingEdge(
-                            scrollState = filtersScrollState,
-                            edgeColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                            isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
-                        )
+                        .horizontalFadingEdge(filtersScrollState)
                         .horizontalScroll(filtersScrollState)
                         .padding(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -99,11 +93,7 @@ fun ListViewOptionsSheet(
             val stylesScrollState = rememberScrollState()
             Row(
                 modifier = Modifier
-                    .horizontalFadingEdge(
-                        scrollState = stylesScrollState,
-                        edgeColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        isRTL = LocalLayoutDirection.current == LayoutDirection.Rtl
-                    )
+                    .horizontalFadingEdge(stylesScrollState)
                     .horizontalScroll(stylesScrollState)
                     .padding(horizontal = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -129,11 +119,17 @@ fun ListViewOptionsSheet(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Slider(
+                        val sliderState = rememberSliderState(
                             value = gridMaxLineSpan.toFloat(),
-                            onValueChange = { onGridMaxLineSpanChange(it.toInt()) },
-                            valueRange = 1f..6f,
                             steps = 4,
+                            trackRange = 1f..6f
+                        )
+                        Slider(
+                            state = sliderState,
+                            onValueChange = {
+                                onGridMaxLineSpanChange(it.toInt())
+                                sliderState.value = it
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 12.dp, end = 4.dp)

@@ -6,10 +6,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -21,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import io.github.aliernfrog.pftool_shared.data.PermissionData
 import io.github.aliernfrog.pftool_shared.data.requiresAndroidData
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
@@ -52,6 +54,7 @@ import io.github.aliernfrog.pftool_shared.util.staticutil.PFToolSharedUtil
 import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveButtonRow
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
+import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.util.SharedString
 import io.github.aliernfrog.shared.util.extension.showReportableErrorToast
@@ -61,6 +64,8 @@ import io.github.aliernfrog.shared.util.getSharedString
 fun SAFPermissionsScreen(
     vararg permissionsData: PermissionData,
     vm: IPermissionsViewModel,
+    hazeState: HazeState,
+    paddingValues: PaddingValues,
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -68,26 +73,30 @@ fun SAFPermissionsScreen(
     val needsToDowngradeFiles = requiresAndroidData && PFToolSharedUtil.documentsUIRestrictsAndroidData(context)
             && !vm.ignoreDocumentsUIRestrictions
 
-    AnimatedContent(needsToDowngradeFiles) {
-        if (it) DowngradeFiles(vm)
+    AnimatedContent(
+        targetState = needsToDowngradeFiles,
+        modifier = Modifier.hazeSource(hazeState)
+    ) {
+        if (it) DowngradeFiles(vm, paddingValues = paddingValues)
         else SAFPermissionsList(
             *permissionsData,
             vm = vm,
+            paddingValues = paddingValues,
             onUpdateStateRequest = onUpdateStateRequest
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DowngradeFiles(
-    vm: IPermissionsViewModel
+    vm: IPermissionsViewModel,
+    paddingValues: PaddingValues
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
+            .padding(paddingValues)
     ) {
         CardWithActions(
             modifier = Modifier.padding(
@@ -119,14 +128,16 @@ private fun DowngradeFiles(
         ) {
             Text(sharedStringResource(PFToolSharedString::permissionsDowngradeFilesAppDescription))
         }
+
+        BottomSpacer()
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SAFPermissionsList(
     vararg permissionsData: PermissionData,
     vm: IPermissionsViewModel,
+    paddingValues: PaddingValues,
     onUpdateStateRequest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -187,6 +198,10 @@ private fun SAFPermissionsList(
         modifier = Modifier.fillMaxSize()
     ) {
         item {
+            Spacer(Modifier.height(paddingValues.calculateTopPadding()))
+        }
+
+        item {
             PermissionsScreenAction(
                 title = null,
                 description = sharedStringResource(PFToolSharedString::permissionsSAFFoldersNeeded),
@@ -216,7 +231,6 @@ private fun SAFPermissionsList(
                 colors = ListItemDefaults.colors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 ),
-                headlineContent = { Text(stringResource(permissionData.title)) },
                 supportingContent = {
                     Column(Modifier.fillMaxWidth()) {
                         permissionData.content()
@@ -250,7 +264,9 @@ private fun SAFPermissionsList(
                     .padding(horizontal = 12.dp)
                     .verticalSegmentedShape(index = index, totalSize = missingPermissions.size)
                     .clickable(onClick = ::onClick)
-            )
+            ) {
+                Text(stringResource(permissionData.title))
+            }
         }
 
         if (StorageAccessType.ALL_FILES.isCompatible()) item {
@@ -270,7 +286,9 @@ private fun SAFPermissionsList(
         }
 
         item {
-            Spacer(Modifier.navigationBarsPadding())
+            BottomSpacer(Modifier.padding(
+                bottom = paddingValues.calculateBottomPadding()
+            ))
         }
     }
 
