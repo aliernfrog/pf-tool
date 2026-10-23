@@ -13,9 +13,9 @@ androidx-splashscreen = "1.2.0"
 
 compose = "1.12.1"
 compose-material-icons = "1.7.8"
-compose-material3 = "1.5.0-beta01"
+compose-material3 = "1.5.0-beta02"
 
-aboutlibraries = "15.2.0"
+aboutlibraries = "15.3.0"
 coil = "3.6.3"
 dfc = "2.0"
 haze = "2.0.1"

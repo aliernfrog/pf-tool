@@ -177,6 +177,8 @@ class MapFile(
 
     override fun getThumbnailFile() = thumbnailFile
 
+    override fun getThumbnailPainterModel() = mapsState.zipThumbnailCache[file.path]
+
     override suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
             try {
@@ -184,6 +186,28 @@ class MapFile(
             } catch (e: Exception) {
                 topToastState.showReportableErrorToast(e)
                 Log.e(TAG, this.toString(), e)
+            }
+        }
+    }
+
+    suspend fun loadThumbnailPainterModel(context: Context) {
+        if (!isZip || mapsState.zipThumbnailCache.contains(file.path)) return
+        withContext(Dispatchers.IO) {
+            try {
+                file.inputStream(context).use { fis ->
+                    ZipInputStream(fis).use { zis ->
+                        var entry = zis.nextEntry
+                        while (entry != null) {
+                            val fileName = PFToolSharedUtil.getFileName(entry.name)
+                            val isThumbnailFile = !entry.isDirectory && fileName.equals(THUMBNAIL_FILE_NAME, ignoreCase = true)
+                            if (isThumbnailFile) mapsState.zipThumbnailCache[file.path] = zis.readBytes()
+                            zis.closeEntry()
+                            entry = if (isThumbnailFile) null else zis.nextEntry
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "MapFile/loadThumbnailPainterModel:", e)
             }
         }
     }

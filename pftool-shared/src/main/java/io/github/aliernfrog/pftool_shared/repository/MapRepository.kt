@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 class MapRepository(
     private val importedMapsFinder: MapFileFinder,
     private val exportedMapsFinder: MapFileFinder,
-    private val getFileAsMapFile: (FileWrapper) -> IMapFile,
+    private val getFileAsMapFile: suspend (FileWrapper, Context) -> IMapFile,
     private val fileRepository: FileRepository
 ) {
     private val _importedMaps = MutableStateFlow(listOf<IMapFile>())
@@ -46,7 +46,7 @@ class MapRepository(
             fileRepository.getFile(finder.pathPref().value, context)?.let { file ->
                 listStateFlow.value = file.listFiles()
                     .filter { finder.isMapFile(it) }
-                    .map { getFileAsMapFile(it) }
+                    .map { getFileAsMapFile(it, context) }
             }
         }
         _isLoading.value = false

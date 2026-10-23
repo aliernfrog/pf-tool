@@ -28,7 +28,7 @@ interface IMapFile {
     val importedState: MapImportedState
 
     val thumbnailModel: Any?
-        get() = if (importedState != MapImportedState.IMPORTED) null else getThumbnailFile()?.painterModel
+        get() = getThumbnailPainterModel() ?: getThumbnailFile()?.painterModel
 
     val readableSize: String
         get() = "${size / 1024} KB"
@@ -55,9 +55,18 @@ interface IMapFile {
     fun delete() = file.delete()
 
     /**
-     * Returns the thumbnail file. This must return a cached object to avoid performance issues.
+     * Returns the thumbnail file.
+     * This must return a cached object to avoid performance issues.
      */
     fun getThumbnailFile(): FileWrapper?
+
+    /**
+     * Returns the thumbnail painter model, priotized over [getThumbnailFile] if not null.
+     * This can return a value even if [getThumbnailFile] returns null, such as when the thumbnail
+     * is from a non-file.
+     * This must return a cached object to avoid performance issues.
+     */
+    fun getThumbnailPainterModel(): Any?
 
     suspend fun runInIOThreadSafe(block: suspend () -> Unit)
 }
