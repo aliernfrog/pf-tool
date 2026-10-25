@@ -57,6 +57,7 @@ data class PFToolSharedString(
     @StringRes val mapsListSegmentExportedNoMaps : Int,
     @StringRes val mapsListSegmentShared : Int,
     @StringRes val mapsListSegmentSharedNoMaps : Int,
+    @StringRes val mapsListShowThumbnails: Int,
 
     @StringRes val permissionsDowngradeFilesApp : Int,
     @StringRes val permissionsDowngradeFilesAppGuide : Int,

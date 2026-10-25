@@ -44,6 +44,8 @@ import androidx.compose.material.icons.filled.AutoAwesomeMosaic
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Deselect
+import androidx.compose.material.icons.filled.HideImage
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SelectAll
@@ -62,6 +64,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -119,6 +123,7 @@ import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibility
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
+import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -132,7 +137,7 @@ fun MapsListScreen(
     mapsListSegments: List<MapsListSegment>,
     mapActions: List<MapAction>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
-    showThumbnailsInList: Boolean,
+    showThumbnailsInListPref: BasePreferenceManager.Preference<Boolean>,
     dimList: Boolean,
     showMultiSelectionActions: Boolean = true,
     extraBottomPadding: Dp = 0.dp,
@@ -208,7 +213,24 @@ fun MapsListScreen(
 
     ListViewOptionsSheet(
         sheetState = listViewOptionsSheetState,
-        listViewOptionsPreference = listViewOptions
+        listViewOptionsPreference = listViewOptions,
+        extraStyleOptions = {
+            ToggleButton(
+                checked = showThumbnailsInListPref.value,
+                onCheckedChange = { showThumbnailsInListPref.value = it },
+                modifier = Modifier.padding(horizontal = 12.dp)
+            ) {
+                Crossfade(showThumbnailsInListPref.value) { shown ->
+                    Icon(
+                        imageVector = if (shown) Icons.Default.Image else Icons.Default.HideImage,
+                        contentDescription = null,
+                        modifier = Modifier.size(ToggleButtonDefaults.IconSize)
+                    )
+                }
+                Spacer(Modifier.width(ToggleButtonDefaults.IconSpacing))
+                Text(sharedStringResource(PFToolSharedString::mapsListShowThumbnails))
+            }
+        }
     )
 
     AppScaffoldNoContentPadding(
@@ -341,7 +363,7 @@ fun MapsListScreen(
             if (isGrid) GridMapItem(
                 map = map,
                 selected = selected,
-                showMapThumbnail = showThumbnailsInList,
+                showMapThumbnail = showThumbnailsInListPref.value,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
                 aspectRatio = 1f,
@@ -355,7 +377,7 @@ fun MapsListScreen(
             else ListMapItem(
                 map = map,
                 selected = selected,
-                showMapThumbnail = showThumbnailsInList,
+                showMapThumbnail = showThumbnailsInListPref.value,
                 onSelectedChange = { toggleSelection() },
                 onLongClick = { toggleSelection() },
                 modifier = modifier.scale(scale).clip(RoundedCornerShape(roundness))

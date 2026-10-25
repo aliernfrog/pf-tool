@@ -83,7 +83,7 @@
     <string name="mapsList_exported_noMaps">Nie masz żadnych wyeksportowanych map</string>
     <string name="mapsList_shared">Udostępnione</string>
     <string name="mapsList_shared_noMaps">Nie udostępniłeś żadnych map do PF Tool</string>
-    <string name="mapsList_searchNoMatches">Nie znaleziono pasujących map</string>
+    <string name="mapsList_search_noMatches">Nie znaleziono pasujących map</string>
     <string name="settings">Ustawienia</string>
     <string name="settings_updateNotification_updateAvailable">Dostępna aktualizacja: {VERSION}</string>
     <string name="settings_updateNotification_description">Kliknij, aby wyświetlić więcej szczegółów i działań</string>

@@ -42,7 +42,7 @@ val pfToolSharedString = PFToolSharedString(
     mapsListDownloadClipboard = R.string.mapsList_download_clipboard,
     mapsListSearch = R.string.mapsList_search,
     mapsListSearchClear = R.string.mapsList_search_clear,
-    mapsListSearchNoMatches = R.string.mapsList_searchNoMatches,
+    mapsListSearchNoMatches = R.string.mapsList_search_noMatches,
     mapsListCount = R.string.mapsList_count,
     mapsListMultiSelection = R.string.mapsList_multiSelection,
     mapsListPickMapFailed = R.string.mapsList_pickMap_failed,
@@ -52,6 +52,7 @@ val pfToolSharedString = PFToolSharedString(
     mapsListSegmentExportedNoMaps = R.string.mapsList_exported_noMaps,
     mapsListSegmentShared = R.string.mapsList_shared,
     mapsListSegmentSharedNoMaps = R.string.mapsList_shared_noMaps,
+    mapsListShowThumbnails = R.string.mapsList_showThumbnails,
 
     permissionsDowngradeFilesApp = R.string.permissions_downgradeFilesApp,
     permissionsDowngradeFilesAppGuide = R.string.permissions_downgradeFilesApp_guide,
