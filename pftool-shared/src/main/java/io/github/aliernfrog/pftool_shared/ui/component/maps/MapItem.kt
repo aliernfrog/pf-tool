@@ -240,7 +240,6 @@ fun GridMapItem(
 
 @Composable
 private fun crossfadeModel(context: Context, map: IMapFile) = ImageRequest.Builder(context)
-    .memoryCacheKey("thumbnail_${map.path}")
     .data(
         remember(map.path, map.thumbnailModel) { map.thumbnailModel }
     )
