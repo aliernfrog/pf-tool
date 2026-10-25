@@ -43,13 +43,11 @@ class MapFile(
     val topToastState by inject<TopToastState>()
     override val contextUtils by inject<ContextUtils>()
 
-    val isZip: Boolean = fileName.lowercase().endsWith(".zip")
-
     override val importedState = if (path.startsWith(mapsState.mapsDir)) MapImportedState.IMPORTED
     else if (path.startsWith(mapsState.exportedMapsDir)) MapImportedState.EXPORTED
     else MapImportedState.NONE
 
-    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZip) null
+    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZipFile) null
     else file.findFile(THUMBNAIL_FILE_NAME)
 
     override fun rename(
@@ -155,7 +153,7 @@ class MapFile(
                 successful = false,
                 message = R.string.maps_exportCustomTarget_cancelled
             )
-        if (this.isZip) file.inputStream(context).use { input ->
+        if (this.isZipFile) file.inputStream(context).use { input ->
             context.contentResolver.openOutputStream(uri)!!.use { output ->
                 input?.copyTo(output)
             }
@@ -197,7 +195,7 @@ class MapFile(
     }
 
     suspend fun loadThumbnailPainterModel(context: Context) {
-        if (!isZip || mapsState.zipThumbnailCache.contains(file.path)) return
+        if (!isZipFile || !mapsState.loadZipThumbnails || mapsState.zipThumbnailCache.contains(file.path)) return
         withContext(Dispatchers.IO) {
             try {
                 file.inputStream(context).use { fis ->

@@ -32,6 +32,9 @@ class MapsState(
     val exportedMapsDir: String
         get() = prefs.exportedMapsDir.value
 
+    val loadZipThumbnails: Boolean
+        get() = prefs.loadZipThumbnails.value
+
     val zipThumbnailCache = mutableStateMapOf<String, ByteArray?>()
 
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)

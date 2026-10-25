@@ -95,7 +95,9 @@ class MapsViewModel(
         val hasThumbnail = map.thumbnailModel != null
         appState.mediaOverlayData = MediaOverlayData(
             model = map.thumbnailModel,
-            title = if (hasThumbnail) map.name else contextUtils.getString(R.string.maps_thumbnail_noThumbnail),
+            title = if (hasThumbnail) map.name else contextUtils.getString(
+                if (map.isZipFile) R.string.maps_thumbnail_zipFile else R.string.maps_thumbnail_noThumbnail
+            ),
             zoomEnabled = hasThumbnail,
             toolbarContent = if (map.importedState == MapImportedState.IMPORTED && hasThumbnail) { {
                 val context = LocalContext.current

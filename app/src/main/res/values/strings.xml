@@ -117,6 +117,7 @@
     <string name="maps_duplicating">Duplicating {NAME} as {NEW_NAME}…</string>
     <string name="maps_thumbnail">Map thumbnail</string>
     <string name="maps_thumbnail_noThumbnail">No thumbnail</string>
+    <string name="maps_thumbnail_zipFile">ZIP file</string>
     <string name="maps_import">Import this map</string>
     <string name="maps_import_short">Import</string>
     <string name="maps_imported_single">Imported as {NAME}</string>
@@ -192,6 +193,8 @@
     <string name="settings_maps_thumbnails_chosen_description">Know which map you are on</string>
     <string name="settings_maps_thumbnails_list">Show map thumbnails in map list</string>
     <string name="settings_maps_thumbnails_list_description">Easily identify the maps you have</string>
+    <string name="settings_maps_thumbnails_zip">Load thumbnails of unimported maps</string>
+    <string name="settings_maps_thumbnails_zip_description">Extract and load thumbnails from unimported map ZIP files.\nThis may slow down loading times depending on map count</string>
     <string name="settings_maps_behavior">Behavior</string>
     <string name="settings_maps_behavior_stackup">Keep previous maps open</string>
     <string name="settings_maps_behavior_stackup_description">When enabled; exporting, importing or duplicating maps will keep previous maps in navigation stack, so you can return to them using the back button</string>

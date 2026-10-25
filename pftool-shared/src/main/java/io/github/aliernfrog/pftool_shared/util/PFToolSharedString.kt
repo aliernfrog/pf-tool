@@ -125,6 +125,8 @@ data class PFToolSharedString(
     @StringRes val settingsMapsThumbnailsChosenDescription : Int,
     @StringRes val settingsMapsThumbnailsList : Int,
     @StringRes val settingsMapsThumbnailsListDescription : Int,
+    @StringRes val settingsMapsThumbnailsZip: Int?,
+    @StringRes val settingsMapsThumbnailsZipDescription: Int?,
     @StringRes val settingsMapsBehavior : Int,
     @StringRes val settingsMapsBehaviorStackup : Int,
     @StringRes val settingsMapsBehaviorStackupDescription : Int,
@@ -154,6 +156,14 @@ val LocalPFToolSharedString = staticCompositionLocalOf<PFToolSharedString> {
 fun sharedStringResource(property: KProperty1<PFToolSharedString, Int>): String {
     val provider = LocalPFToolSharedString.current
     return stringResource(property.get(provider))
+}
+
+@Composable
+fun nullableSharedStringResource(property: KProperty1<PFToolSharedString, Int?>, fallback: String): String {
+    val provider = LocalPFToolSharedString.current
+    return property.get(provider)?.let {
+        stringResource(it)
+    } ?: fallback
 }
 
 fun Context.getSharedString(property: KProperty1<PFToolSharedString, Int>): String {

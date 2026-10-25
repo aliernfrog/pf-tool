@@ -58,6 +58,7 @@ fun SettingsScreen(
             MapsPage(
                 showChosenMapThumbnailPref = vm.prefs.showChosenMapThumbnail,
                 showMapThumbnailsInListPref = vm.prefs.showMapThumbnailsInList,
+                loadZipThumbnailsPref = vm.prefs.loadZipThumbnails,
                 stackupMapsPref = vm.prefs.stackupMaps,
                 onNavigateBackRequest = onNavigateBackRequest
             )

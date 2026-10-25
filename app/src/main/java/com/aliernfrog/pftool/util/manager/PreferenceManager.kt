@@ -25,6 +25,7 @@ class PreferenceManager(context: Context) : PFToolBasePreferenceManager(
     // Maps options
     val showChosenMapThumbnail = booleanPreference("showChosenMapThumbnail", true)
     val showMapThumbnailsInList = booleanPreference("showMapThumbnailsList", true)
+    val loadZipThumbnails = booleanPreference("loadZipThumbnails", true)
     val stackupMaps = booleanPreference("stackupMaps", false)
 
     // Storage options

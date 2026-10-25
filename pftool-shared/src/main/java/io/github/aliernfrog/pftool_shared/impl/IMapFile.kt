@@ -41,6 +41,8 @@ interface IMapFile {
     val details: String
         get() = "$readableSize | $readableLastModified"
 
+    val isZipFile: Boolean
+        get() = fileName.endsWith(".zip", ignoreCase = true)
 
     fun rename(newName: String): MapActionResult
 
