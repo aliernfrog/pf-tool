@@ -1,5 +1,6 @@
 package io.github.aliernfrog.pftool_shared.ui.component.maps
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,12 +39,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
 import io.github.aliernfrog.pftool_shared.ui.component.ImageButtonInfo
 import io.github.aliernfrog.shared.util.extension.combinedClickableWithColor
@@ -60,6 +64,7 @@ fun ListMapItem(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val density = LocalDensity.current
     var headerHeight by remember { mutableStateOf(0.dp) }
 
@@ -79,7 +84,7 @@ fun ListMapItem(
             )
     ) {
         if (showMapThumbnail) AsyncImage(
-            model = map.thumbnailModel,
+            model = crossfadeModel(context, map),
             contentDescription = null,
             modifier = Modifier.height(headerHeight).fillMaxWidth(),
             placeholder = ColorPainter(containerColor),
@@ -138,6 +143,7 @@ fun GridMapItem(
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val density = LocalDensity.current
     var width by remember { mutableStateOf(0.dp) }
 
@@ -177,7 +183,7 @@ fun GridMapItem(
             )
 
             if (showMapThumbnail) AsyncImage(
-                model = map.thumbnailModel,
+                model = crossfadeModel(context, map),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
@@ -231,3 +237,13 @@ fun GridMapItem(
         }
     }
 }
+
+@Composable
+private fun crossfadeModel(context: Context, map: IMapFile) = ImageRequest.Builder(context)
+    .memoryCacheKey("thumbnail_${map.path}")
+    .data(
+        remember(map.path, map.thumbnailModel) { map.thumbnailModel }
+    )
+    .crossfade(true)
+    .crossfade(300)
+    .build()

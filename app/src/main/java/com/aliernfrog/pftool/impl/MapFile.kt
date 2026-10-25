@@ -60,6 +60,7 @@ class MapFile(
             successful = false,
             message = R.string.maps_alreadyExists
         )
+        mapsState.zipThumbnailCache.remove(path)
         val newFile = file.rename(toName)
         return MapActionResult(
             successful = true,
@@ -173,6 +174,11 @@ class MapFile(
             successful = true,
             newFile = DocumentFileCompat.fromSingleUri(context, uri)
         )
+    }
+
+    override fun delete() {
+        super.delete()
+        mapsState.zipThumbnailCache.remove(path)
     }
 
     override fun getThumbnailFile() = thumbnailFile
