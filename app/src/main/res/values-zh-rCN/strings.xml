@@ -10,6 +10,7 @@
     <string name="action_share">分享</string>
     <string name="action_delete">删除</string>
     <string name="action_more">更多</string>
+    <string name="action_select_selectAll"></string>
     <string name="intent_openMap">打开地图</string>
     <string name="intent_downloadMap">下载地图</string>
     <string name="warning_error">出现了一些错误</string>
@@ -125,6 +126,7 @@
     <string name="mapsList_shared">已分享</string>
     <string name="mapsList_shared_noMaps">您尚未将任何地图分享到 PF 工具</string>
     <string name="mapsList_search_noMatches">未找到匹配的地图</string>
+    <string name="mapsList_showThumbnails">略缩图</string>
     <string name="settings">设置</string>
     <string name="settings_updateNotification_updateAvailable">更新可用:{VERSION}</string>
     <string name="settings_updateNotification_description">点击查看更多详细信息和操作</string>
