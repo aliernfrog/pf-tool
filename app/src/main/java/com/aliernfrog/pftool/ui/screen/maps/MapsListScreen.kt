@@ -61,7 +61,7 @@ fun MapsListScreen(
             mapsListSegments = vm.availableSegments,
             mapActions = mapActions,
             listViewOptions = vm.prefs.mapsListViewOptions,
-            showThumbnailsInList = vm.prefs.showMapThumbnailsInList.value,
+            showThumbnailsInListPref = vm.prefs.showMapThumbnailsInList,
             dimList = addMapMenuExpanded,
             showMultiSelectionActions = showMultiSelectionActions,
             multiSelectFloatingActionButton = { selectedMaps, clearSelection ->

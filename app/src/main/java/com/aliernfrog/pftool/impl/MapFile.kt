@@ -43,13 +43,11 @@ class MapFile(
     val topToastState by inject<TopToastState>()
     override val contextUtils by inject<ContextUtils>()
 
-    val isZip: Boolean = fileName.lowercase().endsWith(".zip")
-
     override val importedState = if (path.startsWith(mapsState.mapsDir)) MapImportedState.IMPORTED
     else if (path.startsWith(mapsState.exportedMapsDir)) MapImportedState.EXPORTED
     else MapImportedState.NONE
 
-    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZip) null
+    private val thumbnailFile = if (importedState != MapImportedState.IMPORTED || isZipFile) null
     else file.findFile(THUMBNAIL_FILE_NAME)
 
     override fun rename(
@@ -60,6 +58,7 @@ class MapFile(
             successful = false,
             message = R.string.maps_alreadyExists
         )
+        mapsState.byteArrayThumbnailCache.remove(path)
         val newFile = file.rename(toName)
         return MapActionResult(
             successful = true,
@@ -154,7 +153,7 @@ class MapFile(
                 successful = false,
                 message = R.string.maps_exportCustomTarget_cancelled
             )
-        if (this.isZip) file.inputStream(context).use { input ->
+        if (this.isZipFile) file.inputStream(context).use { input ->
             context.contentResolver.openOutputStream(uri)!!.use { output ->
                 input?.copyTo(output)
             }
@@ -175,7 +174,14 @@ class MapFile(
         )
     }
 
+    override fun delete() {
+        super.delete()
+        mapsState.byteArrayThumbnailCache.remove(path)
+    }
+
     override fun getThumbnailFile() = thumbnailFile
+
+    override fun getThumbnailPainterModel() = mapsState.byteArrayThumbnailCache[file.path]
 
     override suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
@@ -184,6 +190,32 @@ class MapFile(
             } catch (e: Exception) {
                 topToastState.showReportableErrorToast(e)
                 Log.e(TAG, this.toString(), e)
+            }
+        }
+    }
+
+    suspend fun loadThumbnailPainterModel(context: Context) {
+        if (mapsState.byteArrayThumbnailCache.contains(file.path)) return
+        thumbnailFile?.painterModel?.let { painterModel ->
+            if (painterModel is ByteArray) mapsState.byteArrayThumbnailCache[file.path] = painterModel
+        }
+        if (!isZipFile || !mapsState.loadZipThumbnails) return
+        withContext(Dispatchers.IO) {
+            try {
+                file.inputStream(context).use { fis ->
+                    ZipInputStream(fis).use { zis ->
+                        var entry = zis.nextEntry
+                        while (entry != null) {
+                            val fileName = PFToolSharedUtil.getFileName(entry.name)
+                            val isThumbnailFile = !entry.isDirectory && fileName.equals(THUMBNAIL_FILE_NAME, ignoreCase = true)
+                            if (isThumbnailFile) mapsState.byteArrayThumbnailCache[file.path] = zis.readBytes()
+                            zis.closeEntry()
+                            entry = if (isThumbnailFile) null else zis.nextEntry
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "MapFile/loadThumbnailPainterModel:", e)
             }
         }
     }

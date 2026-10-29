@@ -2,9 +2,11 @@ package io.github.aliernfrog.pftool_shared.ui.screen.settings
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.aliernfrog.pftool_shared.util.PFToolSharedString
+import io.github.aliernfrog.pftool_shared.util.nullableSharedStringResource
 import io.github.aliernfrog.pftool_shared.util.sharedStringResource
 import io.github.aliernfrog.shared.ui.component.VerticalSegmentor
 import io.github.aliernfrog.shared.ui.component.expressive.ExpressiveSection
@@ -16,6 +18,7 @@ import io.github.aliernfrog.shared.util.manager.BasePreferenceManager
 fun MapsPage(
     showChosenMapThumbnailPref: BasePreferenceManager.Preference<Boolean>,
     showMapThumbnailsInListPref: BasePreferenceManager.Preference<Boolean>,
+    loadZipThumbnailsPref: BasePreferenceManager.Preference<Boolean>? = null,
     stackupMapsPref: BasePreferenceManager.Preference<Boolean>,
     onNavigateBackRequest: () -> Unit
 ) {
@@ -24,7 +27,7 @@ fun MapsPage(
         onNavigateBackRequest = onNavigateBackRequest
     ) {
         ExpressiveSection(sharedStringResource(PFToolSharedString::settingsMapsThumbnails)) {
-            VerticalSegmentor(
+            val thumbnailOptions: Array<(@Composable () -> Unit)?> = remember { arrayOf(
                 {
                     ExpressiveSwitchRow(
                         title = sharedStringResource(PFToolSharedString::settingsMapsThumbnailsChosen),
@@ -41,6 +44,17 @@ fun MapsPage(
                         onCheckedChange = { showMapThumbnailsInListPref.value = it }
                     )
                 },
+                loadZipThumbnailsPref?.let { pref -> {
+                    ExpressiveSwitchRow(
+                        title = nullableSharedStringResource(PFToolSharedString::settingsMapsThumbnailsZip, ""),
+                        description = nullableSharedStringResource(PFToolSharedString::settingsMapsThumbnailsZipDescription, ""),
+                        checked = pref.value,
+                        onCheckedChange = { pref.value = it }
+                    )
+                }}
+            ) }
+            VerticalSegmentor(
+                *thumbnailOptions.filterNotNull().toTypedArray(),
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
         }

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FileCopy
 import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.outlined.FolderZip
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.rounded.TextFields
@@ -297,7 +298,9 @@ private fun MapCard(
             onLongClick = {},
             onClick = onViewThumbnailRequest,
             aspectRatio = null,
-            placeholderIcon = if (chosenMap.thumbnailModel != null) Icons.Outlined.Image else Icons.Outlined.HideImage,
+            placeholderIcon = if (chosenMap.thumbnailModel != null) Icons.Outlined.Image
+            else if (chosenMap.isZipFile) Icons.Outlined.FolderZip
+            else Icons.Outlined.HideImage,
             modifier = modifier
         )
         if (chosenMap.thumbnailModel != null && showMapThumbnail) FilledIconButtonWithTooltip(

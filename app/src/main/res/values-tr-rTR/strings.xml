@@ -145,7 +145,7 @@
     <string name="mapsList_exported_noMaps">Hiç harita dışa aktarmadınız</string>
     <string name="mapsList_shared">Paylaşılan</string>
     <string name="mapsList_shared_noMaps">PF Tool ile herhangi bir harita paylaşmadınız</string>
-    <string name="mapsList_searchNoMatches">Eşleşen harita bulunamadı</string>
+    <string name="mapsList_search_noMatches">Eşleşen harita bulunamadı</string>
     <string name="settings">Ayarlar</string>
     <string name="settings_category_game">Polyfield</string>
     <string name="settings_category_app">Uygulama</string>
