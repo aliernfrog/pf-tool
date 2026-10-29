@@ -58,7 +58,7 @@ class MapFile(
             successful = false,
             message = R.string.maps_alreadyExists
         )
-        mapsState.zipThumbnailCache.remove(path)
+        mapsState.byteArrayThumbnailCache.remove(path)
         val newFile = file.rename(toName)
         return MapActionResult(
             successful = true,
@@ -176,12 +176,12 @@ class MapFile(
 
     override fun delete() {
         super.delete()
-        mapsState.zipThumbnailCache.remove(path)
+        mapsState.byteArrayThumbnailCache.remove(path)
     }
 
     override fun getThumbnailFile() = thumbnailFile
 
-    override fun getThumbnailPainterModel() = mapsState.zipThumbnailCache[file.path]
+    override fun getThumbnailPainterModel() = mapsState.byteArrayThumbnailCache[file.path]
 
     override suspend fun runInIOThreadSafe(block: suspend () -> Unit) {
         withContext(Dispatchers.IO) {
@@ -195,7 +195,11 @@ class MapFile(
     }
 
     suspend fun loadThumbnailPainterModel(context: Context) {
-        if (!isZipFile || !mapsState.loadZipThumbnails || mapsState.zipThumbnailCache.contains(file.path)) return
+        if (mapsState.byteArrayThumbnailCache.contains(file.path)) return
+        thumbnailFile?.painterModel?.let { painterModel ->
+            if (painterModel is ByteArray) mapsState.byteArrayThumbnailCache[file.path] = painterModel
+        }
+        if (!isZipFile || !mapsState.loadZipThumbnails) return
         withContext(Dispatchers.IO) {
             try {
                 file.inputStream(context).use { fis ->
@@ -204,7 +208,7 @@ class MapFile(
                         while (entry != null) {
                             val fileName = PFToolSharedUtil.getFileName(entry.name)
                             val isThumbnailFile = !entry.isDirectory && fileName.equals(THUMBNAIL_FILE_NAME, ignoreCase = true)
-                            if (isThumbnailFile) mapsState.zipThumbnailCache[file.path] = zis.readBytes()
+                            if (isThumbnailFile) mapsState.byteArrayThumbnailCache[file.path] = zis.readBytes()
                             zis.closeEntry()
                             entry = if (isThumbnailFile) null else zis.nextEntry
                         }

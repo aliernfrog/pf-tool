@@ -35,7 +35,7 @@ class MapsState(
     val loadZipThumbnails: Boolean
         get() = prefs.loadZipThumbnails.value
 
-    val zipThumbnailCache = mutableStateMapOf<String, ByteArray?>()
+    val byteArrayThumbnailCache = mutableStateMapOf<String, ByteArray?>()
 
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)

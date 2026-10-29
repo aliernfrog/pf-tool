@@ -36,7 +36,7 @@ val appModules = listOf(
         ),
         getFileAsMapFile = { file, context ->
             val file = MapFile(file)
-            if (file.isZipFile) file.loadThumbnailPainterModel(context)
+            file.loadThumbnailPainterModel(context)
             file
         },
         languagePref = {
