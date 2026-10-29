@@ -37,7 +37,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -45,8 +44,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -79,7 +79,7 @@ import net.engawapg.lib.zoomable.zoomable
 import org.koin.compose.koinInject
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaOverlay(
     data: MediaOverlayData,
@@ -92,8 +92,8 @@ fun MediaOverlay(
     val zoomState = rememberZoomState()
     val isZoomedIn = zoomState.scale > 1f
     val isImeVisible = insetsManager.isImeVisible
-    val bottomSheetState = rememberStandardBottomSheetState(
-        skipHiddenState = false
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.PartiallyExpanded
     )
 
     var state by remember { mutableStateOf(
@@ -117,12 +117,11 @@ fun MediaOverlay(
 
     LaunchedEffect(overlayCanBeShown) {
         showOverlay = overlayCanBeShown
-        if (data.optionsSheetContent != null && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
     }
 
     LaunchedEffect(showOverlay) {
         if (data.optionsSheetContent == null) return@LaunchedEffect bottomSheetState.hide()
-        if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.partialExpand()
+        if (showOverlay && overlayCanBeShown && bottomSheetState.targetValue == SheetValue.Hidden) bottomSheetState.expand()
         else if (!showOverlay && bottomSheetState.targetValue != SheetValue.Hidden) bottomSheetState.hide()
     }
 
@@ -183,6 +182,7 @@ fun MediaOverlay(
                         IconButtonWithTooltip(
                             icon = rememberVectorPainter(Icons.Default.Close),
                             contentDescription = sharedStringResource(SharedString::actionClose),
+                            tooltipPositioning = TooltipAnchorPosition.Below,
                             modifier = Modifier.padding(8.dp),
                             onClick = onDismissRequest
                         )
@@ -198,6 +198,7 @@ fun MediaOverlay(
                     IconButtonWithTooltip(
                         icon = rememberVectorPainter(Icons.AutoMirrored.Filled.HelpOutline),
                         contentDescription = sharedStringResource(SharedString::mediaOverlayGuide),
+                        tooltipPositioning = TooltipAnchorPosition.Below,
                         modifier = Modifier.padding(8.dp),
                         onClick = { showMediaOverlayGuidePref.value = true }
                     )
@@ -296,7 +297,6 @@ fun MediaOverlay(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun GuideDialog(
     onDismissRequest: () -> Unit

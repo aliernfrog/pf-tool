@@ -42,7 +42,6 @@ class CrashHandlerActivity : ComponentActivity() {
         val crashStackTrace = intent.getStringExtra(EXTRA_CRASH_STACKTRACE)
             ?: return
 
-        @Suppress("KotlinConstantConditions")
         val debugInfo = intent.getStringExtra(EXTRA_DEBUG_INFO)
             ?: "Android SDK ${Build.VERSION.SDK_INT}, commit ${BuildConfig.GIT_COMMIT} ${
                 if (BuildConfig.GIT_LOCAL_CHANGES) "(has local changes)" else ""

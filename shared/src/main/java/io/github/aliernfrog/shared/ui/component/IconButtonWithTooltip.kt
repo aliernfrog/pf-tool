@@ -11,6 +11,7 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -18,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun IconButtonWithTooltip(
     icon: Painter,
@@ -26,11 +27,13 @@ fun IconButtonWithTooltip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    tooltipPositioning: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors()
 ) {
     PlainTextTooltipContainer(
         tooltipText = contentDescription,
-        modifier = modifier
+        modifier = modifier,
+        positioning = tooltipPositioning
     ) {
         IconButton(
             onClick = onClick,
@@ -45,7 +48,7 @@ fun IconButtonWithTooltip(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FilledIconButtonWithTooltip(
     icon: Painter,
@@ -53,11 +56,13 @@ fun FilledIconButtonWithTooltip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    tooltipPositioning: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors()
 ) {
     PlainTextTooltipContainer(
         tooltipText = contentDescription,
-        modifier = modifier
+        modifier = modifier,
+        positioning = tooltipPositioning
     ) {
         FilledIconButton(
             onClick = onClick,
@@ -72,7 +77,7 @@ fun FilledIconButtonWithTooltip(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FilledTonalIconButtonWithTooltip(
     icon: Painter,
@@ -104,6 +109,7 @@ fun FilledTonalIconButtonWithTooltip(
 fun PlainTextTooltipContainer(
     tooltipText: String,
     modifier: Modifier = Modifier,
+    positioning: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     content: @Composable () -> Unit
 ) {
     val tooltipState = rememberTooltipState()
@@ -117,7 +123,9 @@ fun PlainTextTooltipContainer(
                     Text(tooltipText)
                 }
             },
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = positioning
+            ),
             state = tooltipState,
             content = content
         )

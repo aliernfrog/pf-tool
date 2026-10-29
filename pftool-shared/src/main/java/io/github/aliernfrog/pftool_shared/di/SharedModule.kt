@@ -1,5 +1,6 @@
 package io.github.aliernfrog.pftool_shared.di
 
+import android.content.Context
 import io.github.aliernfrog.pftool_shared.enum.StorageAccessType
 import io.github.aliernfrog.pftool_shared.impl.FileWrapper
 import io.github.aliernfrog.pftool_shared.impl.IMapFile
@@ -29,9 +30,10 @@ fun getPFToolSharedModule(
     sharedString: PFToolSharedString,
     importedMapsFinder: MapFileFinder,
     exportedMapsFinder: MapFileFinder,
-    getFileAsMapFile: (FileWrapper) -> IMapFile,
+    getFileAsMapFile: suspend (FileWrapper, Context) -> IMapFile,
     languagePref: () -> BasePreferenceManager.Preference<String>,
     shizukuNeverLoadPref: () -> BasePreferenceManager.Preference<Boolean>,
+    shizukuForceUnrecommendedVersionPref: () -> BasePreferenceManager.Preference<Boolean>,
     storageAccessTypePref: () -> BasePreferenceManager.Preference<Int>,
     ignoreDocumentsUIRestrictionsPref: () -> BasePreferenceManager.Preference<Boolean>,
     initialDocumentsUINotFoundDialogVisibilityPref: () -> BasePreferenceManager.Preference<Boolean>,
@@ -55,6 +57,7 @@ fun getPFToolSharedModule(
             applicationId = applicationId,
             isDebugBuild = isDebugBuild,
             shizukuNeverLoadPref = shizukuNeverLoadPref,
+            shizukuForceUnrecommendedVersionPref = shizukuForceUnrecommendedVersionPref,
             topToastState = get(),
             context = get()
         )

@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import kotlin.reflect.KProperty
 
-@Suppress("SameParameterValue", "MemberVisibilityCanBePrivate")
+@Suppress("SameParameterValue")
 abstract class BasePreferenceManager(
     private val prefs: SharedPreferences
 ) {

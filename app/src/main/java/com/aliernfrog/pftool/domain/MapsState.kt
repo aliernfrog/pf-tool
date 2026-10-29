@@ -3,6 +3,7 @@ package com.aliernfrog.pftool.domain
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.aliernfrog.pftool.R
@@ -30,6 +31,11 @@ class MapsState(
 
     val exportedMapsDir: String
         get() = prefs.exportedMapsDir.value
+
+    val loadZipThumbnails: Boolean
+        get() = prefs.loadZipThumbnails.value
+
+    val byteArrayThumbnailCache = mutableStateMapOf<String, ByteArray?>()
 
     var mapsPendingDelete by mutableStateOf<List<MapFile>?>(null)
     var customDialogTitleAndText: Pair<String, String>? by mutableStateOf(null)
