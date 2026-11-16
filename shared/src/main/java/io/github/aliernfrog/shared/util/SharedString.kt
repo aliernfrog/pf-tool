@@ -70,7 +70,6 @@ data class SharedString(
 
     @StringRes val updates : Int,
     @StringRes val updatesChangelog : Int,
-    @StringRes val updatesIncompatible : Int,
     @StringRes val updatesNoChangelog : Int,
     @StringRes val updatesCheckUpdates : Int,
     @StringRes val updatesCurrentVersion : Int,

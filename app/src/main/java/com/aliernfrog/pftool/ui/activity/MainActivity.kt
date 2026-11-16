@@ -115,7 +115,6 @@ class MainActivity : AppCompatActivity() {
     private fun App(vm: MainViewModel) {
         val availableUpdates = vm.availableUpdates.collectAsStateWithLifecycle().value
         val currentVersionInfo = vm.currentVersionInfo.collectAsStateWithLifecycle().value
-        val isCompatibleWithLatestVersion = vm.isCompatibleWithLatestVersion.collectAsStateWithLifecycle().value
         val isCheckingForUpdates = vm.isCheckingForUpdates.collectAsStateWithLifecycle().value
 
         val onNavigateBackRequest: () -> Unit = {
@@ -182,7 +181,6 @@ class MainActivity : AppCompatActivity() {
                                 availableUpdates = availableUpdates,
                                 currentVersionInfo = currentVersionInfo,
                                 isCheckingForUpdates = isCheckingForUpdates,
-                                isCompatibleWithLatestVersion = isCompatibleWithLatestVersion,
                                 onCheckUpdatesRequest = {
                                     vm.checkUpdates(manuallyTriggered = true)
                                 },
