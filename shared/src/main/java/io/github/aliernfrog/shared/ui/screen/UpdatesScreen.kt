@@ -23,13 +23,11 @@ import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Biotech
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.DownloadDone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingToolbarDefaults
@@ -68,7 +66,6 @@ import io.github.aliernfrog.shared.data.ReleaseInfo
 import io.github.aliernfrog.shared.ui.component.AppScaffoldNoContentPadding
 import io.github.aliernfrog.shared.ui.component.AppSmallTopBar
 import io.github.aliernfrog.shared.ui.component.ButtonIcon
-import io.github.aliernfrog.shared.ui.component.CardWithActions
 import io.github.aliernfrog.shared.ui.component.ContainedTextWithIcon
 import io.github.aliernfrog.shared.ui.component.ErrorWithIcon
 import io.github.aliernfrog.shared.ui.component.IconButtonWithTooltip
@@ -79,7 +76,6 @@ import io.github.aliernfrog.shared.ui.component.verticalSegmentedShape
 import io.github.aliernfrog.shared.ui.theme.AppComponentShape
 import io.github.aliernfrog.shared.ui.theme.AppFABPadding
 import io.github.aliernfrog.shared.util.SharedString
-import io.github.aliernfrog.shared.util.sdkVersionToAndroidVersion
 import io.github.aliernfrog.shared.util.sharedStringResource
 import io.github.aliernfrog.shared.util.toggledHazeBlur
 
@@ -89,7 +85,6 @@ fun UpdatesScreen(
     availableUpdates: List<ReleaseInfo>,
     currentVersionInfo: ReleaseInfo,
     isCheckingForUpdates: Boolean,
-    isCompatibleWithLatestVersion: Boolean,
     onCheckUpdatesRequest: () -> Unit,
     onNavigateBackRequest: () -> Unit
 ) {
@@ -159,33 +154,6 @@ fun UpdatesScreen(
                             }
                         }
                     )
-                }
-
-                if (!isCompatibleWithLatestVersion) item {
-                    val minAndroidVersion = remember(availableUpdates) {
-                        sdkVersionToAndroidVersion(availableUpdates.firstOrNull()?.minSdk ?: 0)
-                    }
-
-                    CardWithActions(
-                        title = sharedStringResource(SharedString::warning),
-                        icon = rememberVectorPainter(Icons.Default.Warning),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer
-                        ),
-                        buttons = null,
-                        modifier = Modifier
-                            .padding(start = 12.dp, end = 12.dp, bottom = 8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                sharedStringResource(SharedString::updatesIncompatible)
-                                    .replace("{ANDROID_VERSION}", minAndroidVersion)
-                            )
-                        }
-                    }
                 }
 
                 itemsIndexed(availableUpdates) { index, release ->

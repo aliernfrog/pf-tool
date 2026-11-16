@@ -45,9 +45,6 @@ class VersionManager(
     private val _availableUpdates = MutableStateFlow(listOf<ReleaseInfo>())
     val availableUpdates = _availableUpdates.asStateFlow()
 
-    private val _isCompatibleWithLatestVersion = MutableStateFlow(true)
-    val isCompatibleWithLatestVersion = _isCompatibleWithLatestVersion.asStateFlow()
-
     private val _isCheckingForUpdates = MutableStateFlow(false)
     val isCheckingForUpdates = _isCheckingForUpdates.asStateFlow()
 
@@ -86,7 +83,6 @@ class VersionManager(
                         && (isCurrentlyUsingPreRelease || !release.prerelease)
                         && Build.VERSION.SDK_INT >= release.minSdk)
             }
-            val isCompatibleWithLatest = Build.VERSION.SDK_INT >= releases.first().minSdk
             val currentRelease = releases.find { release ->
                 release.versionCode == currentVersionCode
             }
@@ -94,7 +90,6 @@ class VersionManager(
                 _currentVersionInfo.value = it
             }
             _availableUpdates.value = updates
-            _isCompatibleWithLatestVersion.value = isCompatibleWithLatest
             if (updates.isEmpty()) UpdateCheckResult.NoUpdates
             else UpdateCheckResult.UpdatesAvailable(updates)
         } catch (_: CancellationException) {

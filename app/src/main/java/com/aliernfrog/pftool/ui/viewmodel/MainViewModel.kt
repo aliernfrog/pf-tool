@@ -50,7 +50,6 @@ class MainViewModel(
 
     val availableUpdates = versionManager.availableUpdates
     val currentVersionInfo = versionManager.currentVersionInfo
-    val isCompatibleWithLatestVersion = versionManager.isCompatibleWithLatestVersion
     val isCheckingForUpdates = versionManager.isCheckingForUpdates
 
     val mediaOverlayData
