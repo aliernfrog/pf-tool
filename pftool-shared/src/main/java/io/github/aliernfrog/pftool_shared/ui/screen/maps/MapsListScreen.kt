@@ -13,8 +13,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -23,7 +21,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -117,7 +114,6 @@ import io.github.aliernfrog.shared.ui.component.SEGMENTOR_DEFAULT_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SEGMENTOR_SMALL_ROUNDNESS
 import io.github.aliernfrog.shared.ui.component.SingleChoiceConnectedButtonGroup
 import io.github.aliernfrog.shared.ui.component.buildBottomSheetEnabledValues
-import io.github.aliernfrog.shared.ui.component.util.AnimatedVisibilityShadowWorkaround
 import io.github.aliernfrog.shared.ui.component.util.BottomSpacer
 import io.github.aliernfrog.shared.ui.component.util.LazyGridScrollAccessibilityListener
 import io.github.aliernfrog.shared.ui.component.util.LazyListScrollAccessibilityListener
@@ -136,20 +132,22 @@ fun MapsListScreen(
     title: String = sharedStringResource(PFToolSharedString::maps),
     mapsListSegments: List<MapsListSegment>,
     mapActions: List<MapAction>,
+    selectedMaps: List<IMapFile>,
     listViewOptions: PFToolBasePreferenceManager.ListViewOptionsPreference,
     showThumbnailsInListPref: BasePreferenceManager.Preference<Boolean>,
-    dimList: Boolean,
     showMultiSelectionActions: Boolean = true,
     extraBottomPadding: Dp = 0.dp,
     vm: IMapsListViewModel = koinViewModel(),
-    multiSelectFloatingActionButton: @Composable (
-        selectedMaps: List<IMapFile>, clearSelection: () -> Unit
-    ) -> Unit = { _, _ -> },
     settingsButton: (@Composable () -> Unit)? = null,
-    onRemoveDimRequest: () -> Unit,
+    onToggleMapSelectionRequest: (List<IMapFile>) -> Unit,
+    onClearMapSelectionRequest: () -> Unit,
     onBackClick: (() -> Unit)?,
     onMapPick: (Any) -> Unit
 ) {
+    val onToggleMapSelectionRequest: (IMapFile) -> Unit = {
+        onToggleMapSelectionRequest(listOf(it))
+    }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val hazeState = rememberHazeState()
@@ -162,7 +160,6 @@ fun MapsListScreen(
         mapsListSegments.size
     }
     val currentlyShownSegment = mapsListSegments.getOrNull(pagerState.currentPage)
-    val selectedMaps = vm.selectedMaps
     val sharedMaps = vm.sharedMaps.collectAsStateWithLifecycle().value
     val isLoading = vm.isLoading.collectAsStateWithLifecycle().value
     val isMultiSelecting = selectedMaps.isNotEmpty()
@@ -202,14 +199,9 @@ fun MapsListScreen(
     BackHandler(
         enabled = isMultiSelecting || onBackClick != null
     ) {
-        if (isMultiSelecting) selectedMaps.clear()
+        if (isMultiSelecting) onClearMapSelectionRequest()
         else onBackClick?.invoke()
     }
-
-    BackHandler(
-        enabled = dimList,
-        onBack = onRemoveDimRequest
-    )
 
     ListViewOptionsSheet(
         sheetState = listViewOptionsSheetState,
@@ -244,7 +236,7 @@ fun MapsListScreen(
                     scrollBehavior = scrollBehavior,
                     navigationIcon = if (multiSelecting) Icons.Default.Close else Icons.AutoMirrored.Rounded.ArrowBack,
                     onNavigationClick = if (multiSelecting) { {
-                        selectedMaps.clear()
+                        onClearMapSelectionRequest()
                     } } else onBackClick,
                     actions = {
                         if (multiSelecting) {
@@ -260,8 +252,8 @@ fun MapsListScreen(
                                 onClick = {
                                     currentlyShownSegment?.let { segment ->
                                         val maps = vm.getMapsForSegment(segment)
-                                        if (areAllShownMapsSelected) selectedMaps.removeAll(maps)
-                                        else selectedMaps.addAll(
+                                        if (areAllShownMapsSelected) onToggleMapSelectionRequest(maps)
+                                        else onToggleMapSelectionRequest(
                                             maps.filter { !selectedMaps.contains(it) }
                                         )
                                     }
@@ -284,7 +276,7 @@ fun MapsListScreen(
                                     },
                                     onDismissRequest = { clearSelection ->
                                         multiSelectionDropdownShown = false
-                                        if (clearSelection) selectedMaps.clear()
+                                        if (clearSelection) onClearMapSelectionRequest()
                                     }
                                 )
                             }
@@ -306,20 +298,6 @@ fun MapsListScreen(
                         }
                     }
                 )
-            }
-        },
-        floatingActionButton = {
-            AnimatedVisibilityShadowWorkaround(
-                visible = isMultiSelecting,
-                modifier = Modifier
-                    .then(
-                        if (extraBottomPadding > 0.dp) Modifier.padding(bottom = extraBottomPadding)
-                        else Modifier.navigationBarsPadding()
-                    )
-            ) {
-                multiSelectFloatingActionButton(selectedMaps) {
-                    selectedMaps.clear()
-                }
             }
         }
     ) { paddingValues ->
@@ -348,9 +326,7 @@ fun MapsListScreen(
             } else null
 
             fun toggleSelection() {
-                selectedMaps.run {
-                    if (selected == true) remove(map) else add(map)
-                }
+                onToggleMapSelectionRequest(map)
             }
 
             val scale by animateFloatAsState(
@@ -529,19 +505,6 @@ fun MapsListScreen(
                         }
                     }
                 }
-            }
-
-            Crossfade(dimList) {
-                if (it) Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f))
-                        .clickable(
-                            interactionSource = null,
-                            indication = null,
-                            onClick = onRemoveDimRequest
-                        )
-                )
             }
         }
     }

@@ -8,7 +8,11 @@ plugins {
 
 android {
     namespace = "io.github.aliernfrog.shared"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
 
     defaultConfig {
         minSdk = 24
