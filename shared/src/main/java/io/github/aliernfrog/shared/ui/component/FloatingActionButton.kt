@@ -1,6 +1,8 @@
 package io.github.aliernfrog.shared.ui.component
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -9,11 +11,18 @@ import androidx.compose.material3.SmallExtendedFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FloatingActionButton(
     icon: ImageVector,
@@ -54,4 +63,42 @@ fun FloatingActionButton(
         containerColor = containerColor,
         contentColor = contentColor
     )
+}
+
+@Composable
+fun ToggleFloatingActionButton(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    icon: @Composable (iconSize: Dp) -> Unit
+) {
+    val density = LocalDensity.current
+    var height by remember { mutableStateOf(200.dp) }
+
+    val containerColor by animateColorAsState(
+        if (checked) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.primaryContainer
+    )
+    val contentColor by animateColorAsState(
+        if (checked) MaterialTheme.colorScheme.onPrimary
+        else MaterialTheme.colorScheme.onPrimaryContainer
+    )
+    val roundness by animateDpAsState(
+        if (checked) (height / 2) else 16.dp
+    )
+
+    FloatingActionButton(
+        onClick = { onCheckedChange(!checked) },
+        shape = RoundedCornerShape(roundness),
+        containerColor = containerColor,
+        contentColor = contentColor,
+        modifier = modifier
+            .onSizeChanged {
+                with(density) {
+                    height = it.height.toDp()
+                }
+            }
+    ) {
+        icon(24.dp)
+    }
 }

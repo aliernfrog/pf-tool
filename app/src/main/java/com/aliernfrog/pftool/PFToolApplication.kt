@@ -1,5 +1,6 @@
 package com.aliernfrog.pftool
 
+import android.annotation.SuppressLint
 import android.app.Application
 import com.aliernfrog.pftool.di.appModules
 import com.aliernfrog.pftool.ui.activity.CrashHandlerActivity
@@ -13,6 +14,7 @@ class PFToolApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        @SuppressLint("DefaultUncaughtExceptionDelegation")
         Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
             CrashHandlerActivity.start(
                 context = this,

@@ -123,9 +123,9 @@ open class PFToolBasePreferenceManager(prefs: SharedPreferences) : BasePreferenc
         defaultSorting: Int = ListSorting.ALPHABETICAL.ordinal,
         defaultSortingReversed: Boolean = false,
         defaultListStyles: WindowSizeClassValueGroup<Int> = WindowSizeClassValueGroup(
-            compact = ListStyle.LIST.ordinal,
-            medium = ListStyle.LIST.ordinal,
-            expanded = ListStyle.LIST.ordinal
+            compact = ListStyle.GRID.ordinal,
+            medium = ListStyle.GRID.ordinal,
+            expanded = ListStyle.GRID.ordinal
         ),
         defaultGridMaxLineSpans: WindowSizeClassValueGroup<Int> = WindowSizeClassValueGroup(
             compact = 3,

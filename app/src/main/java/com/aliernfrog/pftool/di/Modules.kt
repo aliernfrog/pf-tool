@@ -34,12 +34,19 @@ val appModules = listOf(
             pathPref = { getKoinInstance<PreferenceManager>().exportedMapsDir },
             isMapFile = { it.isFile && it.name.endsWith(".zip", ignoreCase = true) }
         ),
-        getFileAsMapFile = { MapFile(it) },
+        getFileAsMapFile = { file, context ->
+            val file = MapFile(file)
+            file.loadThumbnailPainterModel(context)
+            file
+        },
         languagePref = {
             getKoinInstance<PreferenceManager>().language
         },
         shizukuNeverLoadPref = {
             getKoinInstance<PreferenceManager>().shizukuNeverLoad
+        },
+        shizukuForceUnrecommendedVersionPref = {
+            getKoinInstance<PreferenceManager>().shizukuForceUnrecommendedVersion
         },
         storageAccessTypePref = {
             getKoinInstance<PreferenceManager>().storageAccessType
