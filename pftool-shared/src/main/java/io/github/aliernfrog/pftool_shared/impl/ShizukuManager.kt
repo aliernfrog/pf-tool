@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.compose.material.icons.Icons
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuProvider
 import java.io.File
+import java.security.MessageDigest
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.concurrent.schedule
@@ -41,7 +43,9 @@ class ShizukuManager(
 ) {
     companion object {
         private const val DEFAULT_SHIZUKU_PACKAGE_NAME = "moe.shizuku.privileged.api"
+        private const val OFFICIAL_SHIZUKU_SIGNATURE = "268b5590e868fb08bae7e0ac413564cd1ff88f5ccff74af9dbd0dc918e30db30"
         const val SHIZUKU_DOWNLOAD_URL = "https://github.com/thedjchi/Shizuku/releases/latest"
+        const val SHIZUKU_IMPLS_URL = "https://github.com/timschneeb/awesome-shizuku#shizuku-implementations"
         const val SUI_GITHUB = "https://github.com/RikkaApps/Sui"
     }
 
@@ -169,14 +173,28 @@ class ShizukuManager(
 
     private fun isShizukuInstalled(context: Context) = getShizukuPackageInfo(context) != null
 
+    @Suppress("DEPRECATION")
     private fun isUsingRecommendedVersion(context: Context): Boolean {
-        val packageInfo = getShizukuPackageInfo(context) ?: return false
-        return packageInfo.versionName?.contains("thedjchi") == true
+        val signature = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val info = getShizukuPackageInfo(context, PackageManager.GET_SIGNING_CERTIFICATES)
+            info?.signingInfo?.apkContentsSigners?.firstOrNull()
+                ?: info?.signingInfo?.signingCertificateHistory?.firstOrNull()
+        } else {
+            val info = getShizukuPackageInfo(context, PackageManager.GET_SIGNATURES)
+            info?.signatures?.firstOrNull()
+        } ?: return false
+        val bytes = MessageDigest.getInstance("SHA-256").digest(signature.toByteArray())
+        val shaSignature = bytes.joinToString("") { "%02x".format(it) }
+        Log.d(TAG, "shaSignature: $shaSignature")
+        return shaSignature != OFFICIAL_SHIZUKU_SIGNATURE
     }
 
-    private fun getShizukuPackageInfo(context: Context): PackageInfo? = runCatching {
+    private fun getShizukuPackageInfo(
+        context: Context,
+        flags: Int = 0
+    ): PackageInfo? = runCatching {
         context.packageManager.getPackageInfo(
-            getShizukuPackageName(context), 0
+            getShizukuPackageName(context), flags
         )
     }.getOrNull()
 

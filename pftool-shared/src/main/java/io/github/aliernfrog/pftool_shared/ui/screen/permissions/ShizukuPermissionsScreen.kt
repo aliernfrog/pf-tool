@@ -184,6 +184,16 @@ private fun RecommendedShizukuVersionCard(
         icon = rememberVectorPainter(Icons.Rounded.Warning),
         modifier = modifier,
         buttons = {
+            OutlinedButton(
+                shapes = ButtonDefaults.shapes(),
+                onClick = {
+                    uriHandler.openUri(ShizukuManager.SHIZUKU_IMPLS_URL)
+                }
+            ) {
+                ButtonIcon(rememberVectorPainter(Icons.AutoMirrored.Filled.OpenInNew))
+                Text(sharedStringResource(PFToolSharedString::permissionsShizukuRecommendedVersionOther))
+            }
+
             Button(
                 shapes = ButtonDefaults.shapes(),
                 onClick = {

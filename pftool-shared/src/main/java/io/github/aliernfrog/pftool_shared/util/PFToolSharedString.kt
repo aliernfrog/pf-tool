@@ -93,6 +93,7 @@ data class PFToolSharedString(
     @StringRes val permissionsShizukuRecommendedVersion : Int,
     @StringRes val permissionsShizukuRecommendedVersionNote : Int,
     @StringRes val permissionsShizukuRecommendedVersionDownload: Int,
+    @StringRes val permissionsShizukuRecommendedVersionOther: Int,
     @StringRes val permissionsAllFilesTitle : Int,
     @StringRes val permissionsAllFilesDescription : Int,
     @StringRes val permissionsAllFilesGrant : Int,
