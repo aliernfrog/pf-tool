@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
       
       - name: Crowdin sync
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@v3
         with:
           create_pull_request: false
           localization_branch_name: "l10n"
@@ -41,10 +41,10 @@ jobs:
           ref: l10n
           path: l10n
       
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         if: success()
         with:
-          node-version: 24
+          node-version: 26
       
       - name: Clean untranslated files
         if: success()
