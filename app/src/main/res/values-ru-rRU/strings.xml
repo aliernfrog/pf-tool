@@ -4,6 +4,7 @@
     <string name="action_done">Готово</string>
     <string name="action_close">Закрыть</string>
     <string name="action_cancel">Отмена</string>
+    <string name="action_dismiss">Убрать</string>
     <string name="action_delete">Удалить</string>
     <string name="action_more">Ещё</string>
     <string name="action_select_selectAll">Выбрать всё</string>
