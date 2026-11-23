@@ -92,7 +92,7 @@ val mapActions = listOf(
         longLabel = R.string.maps_import,
         icon = Icons.Rounded.Download,
         availableFor = {
-            (it as MapFile).isZip && it.importedState != MapImportedState.IMPORTED
+            (it as MapFile).isZipFile && it.importedState != MapImportedState.IMPORTED
         },
         availableForMultiSelection = true,
         execute = { context, maps, args ->
@@ -121,7 +121,7 @@ val mapActions = listOf(
         description = R.string.maps_export_description,
         icon = Icons.Rounded.Upload,
         availableFor = {
-            !(it as MapFile).isZip && it.importedState == MapImportedState.IMPORTED
+            !(it as MapFile).isZipFile && it.importedState == MapImportedState.IMPORTED
         },
         availableForMultiSelection = true,
         execute = { context, maps, args ->
@@ -175,7 +175,7 @@ val mapActions = listOf(
         shortLabel = R.string.maps_share_short,
         longLabel = R.string.maps_share,
         icon = Icons.Rounded.Share,
-        availableFor = { (it as MapFile).isZip },
+        availableFor = { (it as MapFile).isZipFile },
         availableForMultiSelection = true,
         execute = { context, maps, _ ->
             val first = maps.first() as MapFile
