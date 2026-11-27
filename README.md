@@ -10,7 +10,7 @@
   [![Download](https://img.shields.io/github/v/tag/aliernfrog/pf-tool?style=for-the-badge&label=Download)](https://github.com/aliernfrog/pf-tool/releases/latest/download/pftool.apk)<br>
   <sub>
     At least <b>Android 7.0</b> is required<br>
-    For Android 5.0 & 6.0, latest available version is [v2.2.4](https://github.com/aliernfrog/pf-tool/releases/download/v2.2.4/pftool.apk)
+    For Android 5.0 & 6.0, latest available version is [v2.2.5](https://github.com/aliernfrog/pf-tool/releases/download/v2.2.5/pftool.apk)
   </sub>
   
   <br>
